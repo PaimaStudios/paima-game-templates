@@ -14,7 +14,6 @@
   "keywords": [],
   "author": "PaimaStudios",
   "dependencies": {
-    "@dcspark/cardano-multiplatform-lib-browser": "^3.0.0-beta.0",
     "@game/game-logic": "1.0.0",
     "@game/utils": "1.0.0",
     "@metamask/providers": "^9.0.0",
@@ -25,7 +24,6 @@
     "@esbuild-plugins/node-modules-polyfill": "^0.1.4",
     "dotenv": "^16.0.3",
     "esbuild": "^0.15.15",
-    "esbuild-plugin-d.ts": "^1.1.0",
-    "esbuild-plugin-wasm": "^1.0.0"
+    "esbuild-plugin-d.ts": "^1.1.0"
   }
 }

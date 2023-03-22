@@ -22,7 +22,7 @@
     "webpack-dev-server": "^4.12.0"
   },
   "dependencies": {
-    "@game/middleware": "file:../../../../middleware",
+    "@game/middleware": "file:../middleware",
     "phaser": "^3.55.2"
   }
 }

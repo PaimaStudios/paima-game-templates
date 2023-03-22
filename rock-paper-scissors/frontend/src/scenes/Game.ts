@@ -18,27 +18,27 @@ export class Game extends Phaser.Scene {
   papers: string[] = [];
   scissors: string[] = [];
 
-  graphics: Phaser.GameObjects.Graphics = null!;
-  graphicsText: Phaser.GameObjects.Text = null!;
-  graphicsText2: Phaser.GameObjects.Text = null!;
+  graphics: Phaser.GameObjects.Graphics = null;
+  graphicsText: Phaser.GameObjects.Text = null;
+  graphicsText2: Phaser.GameObjects.Text = null;
 
   lobbyInfo: any = null;
   wallet = '';
-  lobbyId: string = null!;
+  lobbyId: string = null;
   round = 0;
 
-  rock: RPSButton = null!;
-  paper: RPSButton = null!;
-  scissor: RPSButton = null!;
-  scoreText: Phaser.GameObjects.Text = null!;
-  timer: Phaser.GameObjects.Text = null!;
-  battle_music: Phaser.Sound.BaseSound = null!;
+  rock: RPSButton = null;
+  paper: RPSButton = null;
+  scissor: RPSButton = null;
+  scoreText: Phaser.GameObjects.Text = null;
+  timer: Phaser.GameObjects.Text = null;
+  battle_music: Phaser.Sound.BaseSound = null;
   tick = 0;
   waitingToEnd = false;
   alert: {
     text: Phaser.GameObjects.Text;
     background: Phaser.GameObjects.Graphics;
-  } = { text: null!, background: null! };
+  } = { text: null, background: null };
 
   constructor() {
     super('game_scene');

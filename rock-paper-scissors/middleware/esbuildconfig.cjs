@@ -1,4 +1,3 @@
-
 const g = require('@esbuild-plugins/node-globals-polyfill');
 const m = require('@esbuild-plugins/node-modules-polyfill');
 
