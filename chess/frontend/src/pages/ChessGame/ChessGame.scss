@@ -1,0 +1,93 @@
+// Defaults
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  color: #b6b5ca;
+  font-family: "Arial", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+h5 {
+  font-weight: 400;
+  padding: 0 20px;
+}
+
+/* Tic-tac-toe constants */
+
+$size-sm: 90px;
+$size: 140px;
+$spacing: 5px;
+
+$player-1-color: #dc685a;
+$player-2-color: #ecaf4f;
+$hover-color: #3d4250;
+$hover-color-player-1: #cf5f53;
+$hover-color-player-2: #c99643;
+
+/* Tic-tac-toe constants */
+
+.game {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .board-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .game-board {
+    width: 300px;
+    height: 300px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+
+    .square {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      width: 100px;
+      height: 100px;
+      font-size: 100px;
+      font-weight: bold;
+      text-align: center;
+      line-height: 100px;
+      border: 1px solid #ccc;
+      transition: background-color 0.3s;
+      margin: 5px;
+      border-radius: 16px;
+      cursor: pointer;
+      color: white;
+
+      &.cross {
+        background-color: $player-1-color;
+      }
+      &.circle {
+        background-color: $player-2-color;
+      }
+      &.winner {
+        pointer-events: none;
+      }
+    }
+  }
+
+  .game-info {
+    margin-top: 50px;
+    font-size: 20px;
+    font-weight: bold;
+    padding-bottom: 20px;
+  }
+}

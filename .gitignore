@@ -1,0 +1,10 @@
+# Files needed to run individual templates with paima-standalone locally, not relevant for version control
+/documentation
+/packaged
+/paima-sdk
+/smart-contract
+/snapshots
+
+/logs.log
+/paima-engine-*
+/.env*

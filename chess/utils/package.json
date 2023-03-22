@@ -1,0 +1,15 @@
+{
+  "name": "@chess/utils",
+  "version": "1.0.0",
+  "description": "Helper library for Paima Chess",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "prettier --write '**/*.ts'"
+  },
+  "author": "",
+  "license": "ISC"
+}

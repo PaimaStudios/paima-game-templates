@@ -1,0 +1,12 @@
+.create-lobby {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+
+  .input-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+}

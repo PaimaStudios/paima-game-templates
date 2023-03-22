@@ -1,0 +1,28 @@
+import type { FailedResult, Result } from 'paima-sdk/paima-mw-core';
+import type { MatchWinnerResponse } from '@chess/utils';
+import type { LobbyStates, MatchExecutor, NewLobbies, PackedLobbyState, PackedRoundExecutionState, PackedUserLobbies, PackedUserStats, RoundExecutor } from '../types';
+declare function getLobbyState(lobbyID: string): Promise<PackedLobbyState | FailedResult>;
+declare function getLobbySearch(wallet: string, searchQuery: string, page: number, count?: number): Promise<LobbyStates | FailedResult>;
+declare function getRoundExecutionState(lobbyID: string, round: number): Promise<PackedRoundExecutionState | FailedResult>;
+declare function getUserStats(walletAddress: string): Promise<PackedUserStats | FailedResult>;
+declare function getNewLobbies(wallet: string, blockHeight: number): Promise<NewLobbies | FailedResult>;
+declare function getUserLobbiesMatches(walletAddress: string, page: number, count?: number): Promise<PackedUserLobbies | FailedResult>;
+declare function getOpenLobbies(wallet: string, page: number, count?: number): Promise<LobbyStates | FailedResult>;
+declare function getRandomOpenLobby(): Promise<PackedLobbyState | FailedResult>;
+declare function getMatchWinner(lobbyId: string): Promise<Result<MatchWinnerResponse>>;
+declare function getRoundExecutor(lobbyId: string, roundNumber: number): Promise<Result<RoundExecutor>>;
+declare function getMatchExecutor(lobbyId: string): Promise<Result<MatchExecutor>>;
+export declare const queryEndpoints: {
+    getUserStats: typeof getUserStats;
+    getLobbyState: typeof getLobbyState;
+    getLobbySearch: typeof getLobbySearch;
+    getRoundExecutionState: typeof getRoundExecutionState;
+    getRandomOpenLobby: typeof getRandomOpenLobby;
+    getOpenLobbies: typeof getOpenLobbies;
+    getUserLobbiesMatches: typeof getUserLobbiesMatches;
+    getNewLobbies: typeof getNewLobbies;
+    getMatchWinner: typeof getMatchWinner;
+    getRoundExecutor: typeof getRoundExecutor;
+    getMatchExecutor: typeof getMatchExecutor;
+};
+export {};
