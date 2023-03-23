@@ -24,11 +24,6 @@ const LandingPage: React.FC = () => {
   //   console.log("Paima Wallet Connection: ", connect);
   // }
 
-  // const getLatestBlockheight = async () => {
-  //   const blockheight = await Paima.default.getLatestProcessedBlockHeight();
-  //   console.log("Paima Wallet Last Processed Block Height: ", blockheight);
-  // }
-
   return (
     <Container>
       <div className="landing-page">
@@ -36,8 +31,7 @@ const LandingPage: React.FC = () => {
         <h2 className="subtitle">Running on Paima Engine</h2>
         {/* <button onClick={logMiddleware}>i</button>
         <button onClick={statusMiddleware}>s</button>
-        <button onClick={connectMiddleware}>c</button>
-      <button onClick={getLatestBlockheight}>b</button> */}
+        <button onClick={connectMiddleware}>c</button> */}
         <label className="accept-tos">
           <input
             type="checkbox"

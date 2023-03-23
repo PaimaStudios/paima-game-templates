@@ -117,42 +117,6 @@ WHERE lobbies.lobby_state = 'active';
 SELECT * FROM lobbies
 WHERE lobby_id = :lobby_id;
 
-
-/* @name getLatestRoundByMatchID */
-SELECT
-rounds.id,
-rounds.lobby_id, 
-rounds.round_within_match,
-lobbies.num_of_rounds AS final_round,
-lobbies.lobby_creator,
-lobbies.player_two,
-lobbies.player_one_iswhite,
-lobbies.latest_match_state,
-block_heights.block_height AS starting_block_height
-FROM rounds
-INNER JOIN block_heights 
-ON rounds.starting_block_height = block_heights.block_height
-INNER JOIN lobbies
-ON lobbies.lobby_id = rounds.lobby_id
-WHERE rounds.lobby_id = :lobby_id!
-ORDER BY rounds.id DESC
-LIMIT 1;
-
-/* @name getAllUnexecutedRounds */
-SELECT 
-rounds.id,
-rounds.lobby_id, 
-rounds.round_within_match,
-lobbies.num_of_rounds AS final_round,
-block_heights.block_height AS starting_block_height
-FROM rounds
-INNER JOIN block_heights 
-ON rounds.starting_block_height = block_heights.block_height
-INNER JOIN lobbies
-
-ON lobbies.lobby_id = rounds.lobby_id
-WHERE execution_block_height IS NULL;
-
 /* @name getUserStats */
 SELECT * FROM global_user_state
 WHERE wallet = :wallet;
@@ -205,10 +169,6 @@ AND creation_block_height = :block_height;
 SELECT * FROM rounds
 WHERE lobby_id = :lobby_id!
 AND round_within_match = :round_number;
-
-/* @name getBlockData */
-SELECT * FROM block_heights 
-WHERE block_height = :block_height;
 
 /* @name getMatchSeeds */
 SELECT * FROM rounds

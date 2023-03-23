@@ -490,99 +490,6 @@ const getLobbyByIdIR: any = {"usedParamSet":{"lobby_id":true},"params":[{"name":
 export const getLobbyById = new PreparedQuery<IGetLobbyByIdParams,IGetLobbyByIdResult>(getLobbyByIdIR);
 
 
-/** 'GetLatestRoundByMatchId' parameters type */
-export interface IGetLatestRoundByMatchIdParams {
-  lobby_id: string;
-}
-
-/** 'GetLatestRoundByMatchId' return type */
-export interface IGetLatestRoundByMatchIdResult {
-  final_round: number;
-  id: number;
-  latest_match_state: string;
-  lobby_creator: string;
-  lobby_id: string;
-  player_one_iswhite: boolean;
-  player_two: string | null;
-  round_within_match: number;
-  starting_block_height: number;
-}
-
-/** 'GetLatestRoundByMatchId' query type */
-export interface IGetLatestRoundByMatchIdQuery {
-  params: IGetLatestRoundByMatchIdParams;
-  result: IGetLatestRoundByMatchIdResult;
-}
-
-const getLatestRoundByMatchIdIR: any = {"usedParamSet":{"lobby_id":true},"params":[{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":432,"b":441}]}],"statement":"SELECT\nrounds.id,\nrounds.lobby_id, \nrounds.round_within_match,\nlobbies.num_of_rounds AS final_round,\nlobbies.lobby_creator,\nlobbies.player_two,\nlobbies.player_one_iswhite,\nlobbies.latest_match_state,\nblock_heights.block_height AS starting_block_height\nFROM rounds\nINNER JOIN block_heights \nON rounds.starting_block_height = block_heights.block_height\nINNER JOIN lobbies\nON lobbies.lobby_id = rounds.lobby_id\nWHERE rounds.lobby_id = :lobby_id!\nORDER BY rounds.id DESC\nLIMIT 1"};
-
-/**
- * Query generated from SQL:
- * ```
- * SELECT
- * rounds.id,
- * rounds.lobby_id, 
- * rounds.round_within_match,
- * lobbies.num_of_rounds AS final_round,
- * lobbies.lobby_creator,
- * lobbies.player_two,
- * lobbies.player_one_iswhite,
- * lobbies.latest_match_state,
- * block_heights.block_height AS starting_block_height
- * FROM rounds
- * INNER JOIN block_heights 
- * ON rounds.starting_block_height = block_heights.block_height
- * INNER JOIN lobbies
- * ON lobbies.lobby_id = rounds.lobby_id
- * WHERE rounds.lobby_id = :lobby_id!
- * ORDER BY rounds.id DESC
- * LIMIT 1
- * ```
- */
-export const getLatestRoundByMatchId = new PreparedQuery<IGetLatestRoundByMatchIdParams,IGetLatestRoundByMatchIdResult>(getLatestRoundByMatchIdIR);
-
-
-/** 'GetAllUnexecutedRounds' parameters type */
-export type IGetAllUnexecutedRoundsParams = void;
-
-/** 'GetAllUnexecutedRounds' return type */
-export interface IGetAllUnexecutedRoundsResult {
-  final_round: number;
-  id: number;
-  lobby_id: string;
-  round_within_match: number;
-  starting_block_height: number;
-}
-
-/** 'GetAllUnexecutedRounds' query type */
-export interface IGetAllUnexecutedRoundsQuery {
-  params: IGetAllUnexecutedRoundsParams;
-  result: IGetAllUnexecutedRoundsResult;
-}
-
-const getAllUnexecutedRoundsIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT \nrounds.id,\nrounds.lobby_id, \nrounds.round_within_match,\nlobbies.num_of_rounds AS final_round,\nblock_heights.block_height AS starting_block_height\nFROM rounds\nINNER JOIN block_heights \nON rounds.starting_block_height = block_heights.block_height\nINNER JOIN lobbies\n\nON lobbies.lobby_id = rounds.lobby_id\nWHERE execution_block_height IS NULL"};
-
-/**
- * Query generated from SQL:
- * ```
- * SELECT 
- * rounds.id,
- * rounds.lobby_id, 
- * rounds.round_within_match,
- * lobbies.num_of_rounds AS final_round,
- * block_heights.block_height AS starting_block_height
- * FROM rounds
- * INNER JOIN block_heights 
- * ON rounds.starting_block_height = block_heights.block_height
- * INNER JOIN lobbies
- * 
- * ON lobbies.lobby_id = rounds.lobby_id
- * WHERE execution_block_height IS NULL
- * ```
- */
-export const getAllUnexecutedRounds = new PreparedQuery<IGetAllUnexecutedRoundsParams,IGetAllUnexecutedRoundsResult>(getAllUnexecutedRoundsIR);
-
-
 /** 'GetUserStats' parameters type */
 export interface IGetUserStatsParams {
   wallet: string | null | void;
@@ -868,36 +775,6 @@ const getRoundDataIR: any = {"usedParamSet":{"lobby_id":true,"round_number":true
  * ```
  */
 export const getRoundData = new PreparedQuery<IGetRoundDataParams,IGetRoundDataResult>(getRoundDataIR);
-
-
-/** 'GetBlockData' parameters type */
-export interface IGetBlockDataParams {
-  block_height: number | null | void;
-}
-
-/** 'GetBlockData' return type */
-export interface IGetBlockDataResult {
-  block_height: number;
-  done: boolean;
-  seed: string;
-}
-
-/** 'GetBlockData' query type */
-export interface IGetBlockDataQuery {
-  params: IGetBlockDataParams;
-  result: IGetBlockDataResult;
-}
-
-const getBlockDataIR: any = {"usedParamSet":{"block_height":true},"params":[{"name":"block_height","required":false,"transform":{"type":"scalar"},"locs":[{"a":50,"b":62}]}],"statement":"SELECT * FROM block_heights \nWHERE block_height = :block_height"};
-
-/**
- * Query generated from SQL:
- * ```
- * SELECT * FROM block_heights 
- * WHERE block_height = :block_height
- * ```
- */
-export const getBlockData = new PreparedQuery<IGetBlockDataParams,IGetBlockDataResult>(getBlockDataIR);
 
 
 /** 'GetMatchSeeds' parameters type */

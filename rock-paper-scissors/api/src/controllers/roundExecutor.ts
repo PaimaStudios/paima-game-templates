@@ -1,8 +1,9 @@
 import { Controller, Get, Query, Route, ValidateError } from 'tsoa';
-import { requirePool, getBlockData, getLobbyById, getRoundData, getRoundMoves } from '@game/db';
+import { requirePool, getLobbyById, getRoundData, getRoundMoves } from '@game/db';
 import { isLeft } from 'fp-ts/Either';
 import { psqlNum } from '../validation.js';
 import type { RoundExecutorData } from '@game/utils';
+import { getBlockHeight } from 'paima-sdk/paima-db';
 
 type Response = RoundExecutorData | Error;
 
@@ -37,12 +38,12 @@ export class RoundExecutorController extends Controller {
           );
           if (!round_data) return { error: 'round not found' };
           else {
-            const [block_data] = await getBlockData.run(
+            const [block_height] = await getBlockHeight.run(
               { block_height: round_data.execution_block_height },
               pool
             );
             const moves = await getRoundMoves.run({ lobby_id: lobbyID, round: round }, pool);
-            return { lobby, moves, block_data };
+            return { lobby, moves, block_height };
           }
         }
       }

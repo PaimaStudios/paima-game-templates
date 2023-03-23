@@ -1,5 +1,4 @@
 import type {
-  IGetBlockDataResult,
   IGetLobbyByIdResult,
   IGetMovesByLobbyResult,
   IGetNewLobbiesByUserAndBlockHeightResult,
@@ -7,6 +6,7 @@ import type {
   IGetUserStatsResult,
 } from '@game/db';
 
+import type { IGetBlockHeightResult } from 'paima-sdk/paima-db';
 import type { WalletAddress } from 'paima-sdk/paima-utils';
 
 export interface QueryLobby {
@@ -31,7 +31,7 @@ export interface MatchWinnerResponse {
 export interface RoundExecutorData {
   lobby: IGetLobbyByIdResult;
   moves: IGetMovesByLobbyResult[];
-  block_data: IGetBlockDataResult;
+  block_height: IGetBlockHeightResult;
 }
 
 interface ExecutorDataSeed {

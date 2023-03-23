@@ -1,5 +1,4 @@
 import type {
-  IGetBlockDataResult,
   IGetLobbyByIdResult,
   IGetMovesByLobbyResult,
   IGetUserStatsResult,
@@ -7,6 +6,7 @@ import type {
   IGetPaginatedUserLobbiesResult,
 } from '@chess/db';
 import type { WalletAddress } from 'paima-sdk/paima-utils';
+import type { IGetBlockHeightResult } from 'paima-sdk/paima-db';
 
 export type LobbyStatus = 'open' | 'active' | 'finished' | 'closed';
 export type ConciseResult = 'w' | 't' | 'l';
@@ -22,7 +22,7 @@ export interface RoundExecutorData {
   lobby: IGetLobbyByIdResult;
   match_state: string;
   moves: IGetMovesByLobbyResult[];
-  block_data: IGetBlockDataResult;
+  block_height: IGetBlockHeightResult;
 }
 
 interface ExecutorDataSeed {

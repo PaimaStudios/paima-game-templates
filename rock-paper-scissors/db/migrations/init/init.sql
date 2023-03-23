@@ -1,25 +1,11 @@
--- Generic paima engine tables, that shouldn't be modified
-
+-- Generic paima engine table, that can't be modified
 CREATE TABLE block_heights ( 
   block_height INTEGER PRIMARY KEY,
   seed TEXT NOT NULL,
   done BOOLEAN NOT NULL DEFAULT false
 );
 
-CREATE TABLE scheduled_data (
-  id SERIAL PRIMARY KEY,
-  block_height INTEGER NOT NULL,
-  input_data TEXT NOT NULL
-);
-
-CREATE TABLE nonces (
-  nonce TEXT PRIMARY KEY,
-  block_height INTEGER NOT NULL
-);
-
 -- Extend the schema to fit your needs
-
-
 CREATE TYPE lobby_status AS ENUM ('open', 'active', 'finished', 'closed');
 CREATE TABLE lobbies (
   lobby_id TEXT PRIMARY KEY,

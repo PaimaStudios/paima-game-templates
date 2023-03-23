@@ -1,5 +1,6 @@
 import type { FailedResult, Result } from 'paima-sdk/paima-mw-core';
 import { getBlockNumber } from 'paima-sdk/paima-mw-core';
+import type { MatchExecutor, RoundExecutor } from 'paima-sdk/paima-executors';
 
 import type {
   MatchWinnerResponse,
@@ -33,13 +34,11 @@ import {
 } from '../helpers/query-constructors';
 import type {
   LobbyStates,
-  MatchExecutor,
   NewLobbies,
   PackedLobbyState,
   PackedRoundExecutionState,
   PackedUserLobbies,
   PackedUserStats,
-  RoundExecutor,
 } from '../types';
 import type { MatchState, TickEvent } from '@chess/game-logic';
 import { isPlayersTurn } from '@chess/game-logic';
