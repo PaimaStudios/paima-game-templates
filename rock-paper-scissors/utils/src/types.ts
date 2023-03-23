@@ -1,8 +1,3 @@
-export type Hash = string;
-export type URI = string;
-export type EthAddress = Hash;
-export type ContractAddress = EthAddress;
-
 import type {
   IGetBlockDataResult,
   IGetLobbyByIdResult,
@@ -14,10 +9,6 @@ import type {
 
 import type { WalletAddress } from 'paima-sdk/paima-utils';
 
-export interface InvalidInput {
-  input: 'invalidString';
-}
-
 export interface QueryLobby {
   created_at: Date;
   creation_block_height: number;
@@ -28,12 +19,6 @@ export interface QueryLobby {
   lobby_state: LobbyStatus;
   num_of_rounds: number;
   round_length: number;
-}
-
-export interface RichOpenLobbyState extends QueryLobby {
-  wins: number;
-  ties: number;
-  losses: number;
 }
 
 export type LobbyStatus = 'open' | 'active' | 'finished' | 'closed';

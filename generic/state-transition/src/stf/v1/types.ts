@@ -1,10 +1,11 @@
 import type { InvalidInput } from '@game/utils';
+import type { WalletAddress } from 'paima-sdk/paima-utils';
 
 export type InputTypes = 'xp';
 
 export interface GainExperienceInput {
   input: 'gainedExperience';
-  address: string;
+  address: WalletAddress;
   experience: number;
 }
 

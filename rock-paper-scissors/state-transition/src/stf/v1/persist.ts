@@ -1,9 +1,4 @@
-import type {
-  CreatedLobbyInput,
-  JoinedLobbyInput,
-  SubmittedMovesInput,
-  WalletAddress,
-} from './types.js';
+import type { CreatedLobbyInput, JoinedLobbyInput, SubmittedMovesInput } from './types.js';
 import type {
   IGetLobbyByIdResult,
   IGetRoundDataResult,
@@ -35,6 +30,7 @@ import { GameResult, RockPaperScissors, ShortNotationGameResult } from '@game/ga
 import type { SQLUpdate } from 'paima-sdk/paima-db';
 import { createScheduledData, deleteScheduledData } from 'paima-sdk/paima-db';
 import { PRACTICE_BOT_ADDRESS } from '@game/utils';
+import type { WalletAddress } from 'paima-sdk/paima-utils';
 
 // Generate blank/empty user stats
 function blankStats(wallet: string): SQLUpdate {

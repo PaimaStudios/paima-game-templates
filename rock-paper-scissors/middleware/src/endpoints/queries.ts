@@ -20,7 +20,6 @@ import {
 import { getRawLobbyState, getRawNewLobbies } from '../helpers/auxiliary-queries';
 import { calculateRoundEnd } from '../helpers/utility-functions';
 import { buildRoundExecutor } from '../helpers/executors';
-// import { buildMatchExecutor, buildRoundExecutor } from '../helpers/executor-internals';
 import {
   backendQueryMatchExecutor,
   backendQueryMatchWinner,
@@ -34,14 +33,13 @@ import {
 } from '../helpers/query-constructors';
 import type {
   LobbyStates,
-  MatchExecutor,
   NewLobbies,
   PackedLobbyState,
   PackedRoundExecutionState,
   PackedUserLobbies,
   PackedUserStats,
-  RoundExecutor,
 } from '../types';
+import type { MatchExecutor, RoundExecutor } from 'paima-sdk/paima-executors';
 
 async function getLobbyState(lobbyID: string): Promise<PackedLobbyState | FailedResult> {
   const errorFxn = buildEndpointErrorFxn('getLobbyState');

@@ -1,4 +1,3 @@
-import type { RoundExecutor, MatchExecutor } from 'paima-sdk/paima-executors';
 import type { Hash } from 'paima-sdk/paima-utils';
 
 import type {
@@ -10,8 +9,6 @@ import type {
   UserLobby,
   UserStats,
 } from '@game/utils';
-
-export type { RoundExecutor, MatchExecutor };
 
 export interface RoundEnd {
   blocks: number;
