@@ -1,3 +1,5 @@
+import type { InvalidInput } from '@game/utils';
+
 export type InputTypes = 'xp';
 
 export interface GainExperienceInput {
@@ -5,3 +7,5 @@ export interface GainExperienceInput {
   address: string;
   experience: number;
 }
+
+export type ParsedSubmittedInput = GainExperienceInput | InvalidInput;
