@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "initialize": "git init ../paima-sdk && npm --prefix ../paima-sdk install && npm ci && cp .env.example ../.env.development && rm -rf ../paima-sdk/.git",
+    "initialize": "npm --prefix ../paima-sdk install && npm ci && cp .env.example ../.env.development",
     "pack": "sh scripts/pack.sh",
     "pack:middleware": "npm run build -w middleware/",
     "build": "npx tsc --build tsconfig.build.json",
