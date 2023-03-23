@@ -1,10 +1,3 @@
-.env
-.env.production
-.env.development
-jestSetup.d.ts
-jestSetup.js
-db/src/pgPool.js
-
 node_modules
 *.tsbuildinfo
 
@@ -34,6 +27,8 @@ snapshots
 
 *.local
 
+.env
+.env.production
 .env.development
 
 # Frontend

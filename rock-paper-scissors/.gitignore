@@ -27,6 +27,8 @@ snapshots
 
 *.local
 
+.env
+.env.production
 .env.development
 
 # Frontend
