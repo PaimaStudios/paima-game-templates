@@ -11,7 +11,7 @@ export function buildRoundExecutor(
   data: RoundExecutorData,
   round: number
 ): RoundExecutor<MatchState, TickEvent> {
-  const { seed } = data.block_data;
+  const { seed } = data.block_height;
   console.log(seed, 'seed used for the round executor at the middleware');
   const randomnessGenerator = new Prando(seed);
   return initRoundExecutor(data.lobby, round, data.match_state, data.moves, randomnessGenerator);

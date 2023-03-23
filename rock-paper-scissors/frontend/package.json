@@ -1,0 +1,28 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm run clean && webpack serve --mode development --config webpack.config.dev.js",
+    "build": "npm run clean && webpack --mode production --config webpack.config.prod.js",
+    "clean": "rm -f public/dist/*"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "dotenv": "^16.0.3",
+    "expose-loader": "^4.1.0",
+    "node-polyfill-webpack-plugin": "^2.0.1",
+    "ts-loader": "^9.4.2",
+    "typescript": "^4.9.5",
+    "webpack": "^5.76.2",
+    "webpack-cli": "^5.0.1",
+    "webpack-dev-middleware": "^6.0.1",
+    "webpack-dev-server": "^4.12.0"
+  },
+  "dependencies": {
+    "@game/middleware": "file:../middleware",
+    "phaser": "^3.55.2"
+  }
+}

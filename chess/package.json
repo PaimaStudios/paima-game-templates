@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "initialize": "git init ../paima-sdk && npm --prefix ../paima-sdk install && npm ci && cp .env.example ../.env.development && rm -rf ../paima-sdk/.git",
+    "initialize": "npm --prefix ../paima-sdk install && npm ci && cp .env.example ../.env.development",
     "pack": "sh scripts/pack.sh",
     "pack:middleware": "npm run build -w middleware/",
     "build": "npx tsc --build tsconfig.build.json",
@@ -36,7 +36,6 @@
     "dotenv": "^16.0.3",
     "esbuild": "^0.17.5",
     "eslint": "^8.25.0",
-    "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.2.1",

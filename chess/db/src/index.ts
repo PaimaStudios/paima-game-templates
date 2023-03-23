@@ -14,7 +14,6 @@ export {
   ISearchPaginatedOpenLobbiesResult,
   searchPaginatedOpenLobbies,
   getOpenLobbyById,
-  getLatestProcessedBlockHeight,
   getMatchSeeds,
   getMovesByLobby,
   IGetMovesByLobbyResult,
@@ -28,8 +27,6 @@ export {
   IGetNewLobbiesByUserAndBlockHeightResult,
   IGetRandomActiveLobbyResult,
   getRandomActiveLobby,
-  IGetBlockDataResult,
-  getBlockData,
   getFinalState,
   IGetFinalStateResult,
 } from './select.queries.js';

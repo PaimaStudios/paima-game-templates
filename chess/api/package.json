@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Webserver REST API for the middleware to interact with game node.",
   "main": "build/index.js",
+  "types": "build/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "npx tsoa routes"
   },
