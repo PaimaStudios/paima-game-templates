@@ -490,35 +490,6 @@ const getLobbyByIdIR: any = {"usedParamSet":{"lobby_id":true},"params":[{"name":
 export const getLobbyById = new PreparedQuery<IGetLobbyByIdParams,IGetLobbyByIdResult>(getLobbyByIdIR);
 
 
-/** 'GetLatestBlockData' parameters type */
-export type IGetLatestBlockDataParams = void;
-
-/** 'GetLatestBlockData' return type */
-export interface IGetLatestBlockDataResult {
-  block_height: number;
-  done: boolean;
-  seed: string;
-}
-
-/** 'GetLatestBlockData' query type */
-export interface IGetLatestBlockDataQuery {
-  params: IGetLatestBlockDataParams;
-  result: IGetLatestBlockDataResult;
-}
-
-const getLatestBlockDataIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT * FROM block_heights \nORDER BY block_height DESC\nLIMIT 1"};
-
-/**
- * Query generated from SQL:
- * ```
- * SELECT * FROM block_heights 
- * ORDER BY block_height DESC
- * LIMIT 1
- * ```
- */
-export const getLatestBlockData = new PreparedQuery<IGetLatestBlockDataParams,IGetLatestBlockDataResult>(getLatestBlockDataIR);
-
-
 /** 'GetLatestRoundByMatchId' parameters type */
 export interface IGetLatestRoundByMatchIdParams {
   lobby_id: string;
@@ -832,36 +803,6 @@ const getMovesByLobbyIR: any = {"usedParamSet":{"lobby_id":true},"params":[{"nam
  * ```
  */
 export const getMovesByLobby = new PreparedQuery<IGetMovesByLobbyParams,IGetMovesByLobbyResult>(getMovesByLobbyIR);
-
-
-/** 'GetLatestProcessedBlockHeight' parameters type */
-export type IGetLatestProcessedBlockHeightParams = void;
-
-/** 'GetLatestProcessedBlockHeight' return type */
-export interface IGetLatestProcessedBlockHeightResult {
-  block_height: number;
-  done: boolean;
-  seed: string;
-}
-
-/** 'GetLatestProcessedBlockHeight' query type */
-export interface IGetLatestProcessedBlockHeightQuery {
-  params: IGetLatestProcessedBlockHeightParams;
-  result: IGetLatestProcessedBlockHeightResult;
-}
-
-const getLatestProcessedBlockHeightIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT * FROM block_heights \nWHERE done IS TRUE\nORDER BY block_height DESC\nLIMIT 1"};
-
-/**
- * Query generated from SQL:
- * ```
- * SELECT * FROM block_heights 
- * WHERE done IS TRUE
- * ORDER BY block_height DESC
- * LIMIT 1
- * ```
- */
-export const getLatestProcessedBlockHeight = new PreparedQuery<IGetLatestProcessedBlockHeightParams,IGetLatestProcessedBlockHeightResult>(getLatestProcessedBlockHeightIR);
 
 
 /** 'GetNewLobbiesByUserAndBlockHeight' parameters type */

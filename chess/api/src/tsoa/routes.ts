@@ -3,8 +3,6 @@
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, HttpStatusCodeLiteral, TsoaResponse, fetchMiddlewares } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { LatestProcessedBlockheightController } from './../controllers/latestProcessedBlockheight';
-// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { LobbyStatecontroller } from './../controllers/lobbyState';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { MatchExecutorController } from './../controllers/matchExecutor';
@@ -34,10 +32,37 @@ import * as express from 'express';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
+    "lobby_status": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["active"]},{"dataType":"enum","enums":["closed"]},{"dataType":"enum","enums":["finished"]},{"dataType":"enum","enums":["open"]}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "LobbyStateQuery": {
+        "dataType": "refObject",
+        "properties": {
+            "created_at": {"dataType":"datetime","required":true},
+            "creation_block_height": {"dataType":"double","required":true},
+            "current_round": {"dataType":"double","required":true},
+            "hidden": {"dataType":"boolean","required":true},
+            "latest_match_state": {"dataType":"string","required":true},
+            "lobby_creator": {"dataType":"string","required":true},
+            "lobby_id": {"dataType":"string","required":true},
+            "lobby_state": {"ref":"lobby_status","required":true},
+            "num_of_rounds": {"dataType":"double","required":true},
+            "play_time_per_player": {"dataType":"double","required":true},
+            "player_one_iswhite": {"dataType":"boolean","required":true},
+            "player_two": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "practice": {"dataType":"boolean","required":true},
+            "round_length": {"dataType":"double","required":true},
+            "round_start_height": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Response": {
         "dataType": "refObject",
         "properties": {
-            "block_height": {"dataType":"double"},
+            "lobby": {"dataType":"union","subSchemas":[{"ref":"LobbyStateQuery"},{"dataType":"enum","enums":[null]}],"required":true},
         },
         "additionalProperties": false,
     },
@@ -54,11 +79,6 @@ const models: TsoaRoute.Models = {
             "winner_address": {"dataType":"string"},
         },
         "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "lobby_status": {
-        "dataType": "refAlias",
-        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["active"]},{"dataType":"enum","enums":["closed"]},{"dataType":"enum","enums":["finished"]},{"dataType":"enum","enums":["open"]}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IGetPaginatedOpenLobbiesResult": {
@@ -200,30 +220,6 @@ export function RegisterRoutes(app: express.Router) {
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
-        app.get('/latest_processed_blockheight',
-            ...(fetchMiddlewares<RequestHandler>(LatestProcessedBlockheightController)),
-            ...(fetchMiddlewares<RequestHandler>(LatestProcessedBlockheightController.prototype.get)),
-
-            function LatestProcessedBlockheightController_get(request: any, response: any, next: any) {
-            const args = {
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-
-                const controller = new LatestProcessedBlockheightController();
-
-
-              const promise = controller.get.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/lobby_state',
             ...(fetchMiddlewares<RequestHandler>(LobbyStatecontroller)),
             ...(fetchMiddlewares<RequestHandler>(LobbyStatecontroller.prototype.get)),

@@ -114,11 +114,6 @@ SELECT * FROM lobbies
 WHERE lobby_id = :lobby_id;
 
 
-/* @name getLatestBlockData */
-SELECT * FROM block_heights 
-ORDER BY block_height DESC
-LIMIT 1;
-
 /* @name getLatestRoundByMatchID */
 SELECT
 rounds.id,
@@ -196,12 +191,6 @@ SELECT *
 FROM match_moves
 WHERE match_moves.lobby_id = :lobby_id;
 
-
-/* @name getLatestProcessedBlockHeight */
-SELECT * FROM block_heights 
-WHERE done IS TRUE
-ORDER BY block_height DESC
-LIMIT 1;
 
 /* @name getNewLobbiesByUserAndBlockHeight */
 SELECT lobby_id FROM lobbies
