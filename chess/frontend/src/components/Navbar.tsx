@@ -5,6 +5,7 @@ import Toolbar from "@mui/material/Toolbar";
 import { IconButton } from "@mui/material";
 import BackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
+import Logo from "./Logo";
 interface NavbarProps {
   children?: React.ReactNode;
 }
@@ -12,7 +13,7 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ children }) => {
   const navigate = useNavigate();
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 1, paddingBottom: "32px" }}>
       <AppBar position="static">
         <Toolbar>
           <IconButton
@@ -25,6 +26,7 @@ const Navbar: React.FC<NavbarProps> = ({ children }) => {
           >
             <BackIcon />
           </IconButton>
+          <Logo height={64} />
           {children}
         </Toolbar>
       </AppBar>

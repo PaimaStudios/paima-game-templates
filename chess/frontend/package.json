@@ -44,17 +44,14 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
-    "@babylonjs/core": "^5.45.1",
-    "@emotion/react": "^11.10.5",
-    "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.11.9",
     "@mui/material": "^5.11.7",
     "chess.js": "^1.0.0-beta.3",
     "clsx": "^1.2.1",
+    "date-fns": "^2.29.3",
     "react": "^18.2.0",
     "react-chessboard": "^2.0.8",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.9.0",
-    "web3": "^1.8.1"
+    "react-router-dom": "^6.9.0"
   }
 }

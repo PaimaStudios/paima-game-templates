@@ -1,13 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./ChessGame.scss";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Container,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { LobbyState, TickEvent } from "../../paima/types.d";
 import { ChessLogic, ChessService } from "./GameLogic";
 
@@ -16,6 +9,8 @@ import * as ChessJS from "chess.js";
 import Navbar from "@src/components/Navbar";
 import MainController from "@src/MainController";
 import { AppContext } from "@src/main";
+import Wrapper from "@src/components/Wrapper";
+import Button from "@src/components/Button";
 
 interface ChessGameProps {
   lobby: LobbyState;
@@ -118,46 +113,46 @@ const ChessGame: React.FC<ChessGameProps> = ({ lobby, address }) => {
   return (
     <>
       <Navbar />
-      <Container>
-        <Paper>
-          <h1>Chess Board {lobbyState.lobby_id}</h1>
-          {/*  Hide board if there isn't a defined lobbyState */}
-          {lobbyState && (
-            <div className="game">
-              <div className="game-info">
-                <div>
-                  {chessLogic.gameStateText(lobbyState, waitingConfirmation)}
-                </div>
-                {waitingConfirmation && (
-                  <CircularProgress size={20} sx={{ ml: 2 }} />
-                )}
-              </div>
-              <div className="game-board">
-                <Chessboard
-                  position={game.fen()}
-                  onPieceDrop={onDrop}
-                  arePiecesDraggable={interactionEnabled}
-                />
-              </div>
+      <Wrapper small>
+        <Typography variant="h1">Chess Board {lobbyState.lobby_id}</Typography>
+        {/*  Hide board if there isn't a defined lobbyState */}
+        {lobbyState && (
+          <div className="game">
+            <p className="game-info">
+              {chessLogic.gameStateText(lobbyState, waitingConfirmation)}
+              {waitingConfirmation && (
+                <CircularProgress size={20} sx={{ ml: 2 }} />
+              )}
+            </p>
+            <div className="game-board">
+              <Chessboard
+                position={game.fen()}
+                onPieceDrop={onDrop}
+                arePiecesDraggable={interactionEnabled}
+              />
             </div>
+          </div>
+        )}
+        {lobbyState.lobby_state === "finished" && (
+          <Button onClick={handleReplay}>Replay</Button>
+        )}
+        <Box>
+          <Button
+            onClick={() => setShowMore((prev) => !prev)}
+            variant="text"
+            disableRipple
+          >
+            {showMore ? "Hide" : "Show More Information"}
+          </Button>
+          {showMore && (
+            <Typography>
+              {!lobby.lobby_id
+                ? "No current lobby"
+                : JSON.stringify(lobbyState, null, 2)}
+            </Typography>
           )}
-          {lobbyState.lobby_state === "finished" && (
-            <Button onClick={handleReplay}>Replay</Button>
-          )}
-          <Box paddingTop="20px">
-            <Button onClick={() => setShowMore((prev) => !prev)}>
-              {showMore ? "Hide" : "Show More Information"}
-            </Button>
-            {showMore && (
-              <Typography>
-                {!lobby.lobby_id
-                  ? "No current lobby"
-                  : JSON.stringify(lobbyState, null, 2)}
-              </Typography>
-            )}
-          </Box>
-        </Paper>
-      </Container>
+        </Box>
+      </Wrapper>
     </>
   );
 };
