@@ -1,6 +1,7 @@
-.chess-app {
-  background-image: url(@assets/images/chess_background_v2.jpg);
+#app {
+  background-image: url(@assets/images/chess_board.png);
   background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
   height: 100%;
 

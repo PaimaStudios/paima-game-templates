@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import {
-  Button,
-  Container,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -16,6 +13,9 @@ import { LobbyState } from "../paima/types.d";
 import Navbar from "@src/components/Navbar";
 import SearchBar from "@src/components/SearchBar";
 import { AppContext } from "@src/main";
+import Wrapper from "@src/components/Wrapper";
+import Button from "@src/components/Button";
+import { formatDate } from "@src/utils";
 
 type Column = {
   id: keyof LobbyState | "action";
@@ -33,6 +33,10 @@ const columns: Column[] = [
 const expandValue = (id: keyof LobbyState, value: unknown) => {
   if (id === "player_one_iswhite") {
     return value ? "White" : "Black";
+  }
+  if (id === "created_at" && typeof value === "string") {
+    console.log({ date: formatDate(value) });
+    return formatDate(value);
   }
   if (typeof value === "string") {
     return value;
@@ -101,69 +105,66 @@ const OpenLobbies: React.FC = () => {
           onSearch={handleSearchTextChange}
         />
       </Navbar>
-      <Container>
-        <Paper>
-          <TableContainer>
-            <Table stickyHeader aria-label="sticky table">
-              <TableHead>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      align={"left"}
-                      style={{ minWidth: column.minWidth }}
+      <Wrapper>
+        <TableContainer>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    align={"left"}
+                    style={{ minWidth: column.minWidth }}
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredLobbies
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((lobby) => {
+                  return (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={lobby.lobby_id}
                     >
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredLobbies
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((lobby) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={lobby.lobby_id}
-                      >
-                        {columns.map((column) => {
-                          return (
-                            <TableCell key={column.id} align="left">
-                              {column.id === "action" ? (
-                                <Button
-                                  variant="contained"
-                                  onClick={() =>
-                                    mainController.joinLobby(lobby.lobby_id)
-                                  }
-                                >
-                                  ENTER
-                                </Button>
-                              ) : (
-                                expandValue(column.id, lobby[column.id])
-                              )}
-                            </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={filteredLobbies.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Paper>
-      </Container>
+                      {columns.map((column) => {
+                        return (
+                          <TableCell key={column.id} align="left">
+                            {column.id === "action" ? (
+                              <Button
+                                onClick={() =>
+                                  mainController.joinLobby(lobby.lobby_id)
+                                }
+                              >
+                                Enter
+                              </Button>
+                            ) : (
+                              expandValue(column.id, lobby[column.id])
+                            )}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredLobbies.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Wrapper>
     </>
   );
 };

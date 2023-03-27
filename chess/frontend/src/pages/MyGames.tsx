@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import {
-  Button,
-  Container,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -16,6 +13,9 @@ import { LobbyStatus, UserLobby } from "../paima/types.d";
 import Navbar from "@src/components/Navbar";
 import SearchBar from "@src/components/SearchBar";
 import { AppContext } from "@src/main";
+import Wrapper from "@src/components/Wrapper";
+import Button from "@src/components/Button";
+import { formatDate } from "@src/utils";
 
 type Column = {
   id: keyof UserLobby | "action";
@@ -37,9 +37,9 @@ interface MyGamesProps {
 }
 
 const actionMap: Record<LobbyStatus, string> = {
-  active: "enter",
-  finished: "enter",
-  open: "close",
+  active: "Enter",
+  finished: "Enter",
+  open: "Close",
   closed: "",
 };
 
@@ -82,6 +82,10 @@ const MyGames: React.FC<MyGamesProps> = ({ myAddress }) => {
     if (id === "lobby_creator" && typeof value === "string") {
       return value.toLowerCase() === myAddress.toLowerCase() ? "Yes" : "No";
     }
+    if (id === "created_at" && typeof value === "string") {
+      console.log({ date: formatDate(value) });
+      return formatDate(value);
+    }
     if (id === "myTurn") {
       return value ? "Yes" : "No";
     }
@@ -108,73 +112,70 @@ const MyGames: React.FC<MyGamesProps> = ({ myAddress }) => {
           onSearch={setSearchText}
         />
       </Navbar>
-      <Container>
-        <Paper>
-          <TableContainer>
-            <Table stickyHeader aria-label="sticky table">
-              <TableHead>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      align={"left"}
-                      style={{ minWidth: column.minWidth }}
+      <Wrapper>
+        <TableContainer>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    align="left"
+                    sx={{ minWidth: column.minWidth }}
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredLobbies
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((lobby) => {
+                  return (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={lobby.lobby_id}
                     >
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredLobbies
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((lobby) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={lobby.lobby_id}
-                      >
-                        {columns.map((column) => {
-                          return (
-                            <TableCell key={column.id} align="left">
-                              {column.id === "action" ? (
-                                <Button
-                                  variant="contained"
-                                  disabled={lobby.lobby_state === "closed"}
-                                  onClick={() =>
-                                    handleLobbyAction(
-                                      lobby.lobby_state,
-                                      lobby.lobby_id
-                                    )
-                                  }
-                                >
-                                  {actionMap[lobby.lobby_state]}
-                                </Button>
-                              ) : (
-                                expandValue(column.id, lobby[column.id])
-                              )}
-                            </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={filteredLobbies.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={(_e, newPage) => setPage(newPage)}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Paper>
-      </Container>
+                      {columns.map((column) => {
+                        return (
+                          <TableCell key={column.id} align="left">
+                            {column.id === "action" ? (
+                              <Button
+                                disabled={lobby.lobby_state === "closed"}
+                                onClick={() =>
+                                  handleLobbyAction(
+                                    lobby.lobby_state,
+                                    lobby.lobby_id
+                                  )
+                                }
+                              >
+                                {actionMap[lobby.lobby_state]}
+                              </Button>
+                            ) : (
+                              expandValue(column.id, lobby[column.id])
+                            )}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredLobbies.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={(_e, newPage) => setPage(newPage)}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Wrapper>
     </>
   );
 };

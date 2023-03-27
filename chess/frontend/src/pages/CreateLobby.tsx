@@ -1,18 +1,12 @@
 import React, { useContext, useState } from "react";
 import "./CreateLobby.scss";
-import {
-  Button,
-  Checkbox,
-  Container,
-  FormControlLabel,
-  List,
-  Paper,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Checkbox, FormControlLabel } from "@mui/material";
 import MainController from "@src/MainController";
 import Navbar from "@src/components/Navbar";
 import { AppContext } from "@src/main";
+import Wrapper from "@src/components/Wrapper";
+import Button from "@src/components/Button";
+import NumericField from "@src/components/NumericField";
 
 const CreateLobby: React.FC = () => {
   const mainController: MainController = useContext(AppContext);
@@ -22,7 +16,6 @@ const CreateLobby: React.FC = () => {
   const [playersTime, setPlayersTime] = useState("100");
   const [isHidden, setIsHidden] = useState(false);
   const [isPractice, setIsPractice] = useState(false);
-  const [createLobbyMessage, setCreateLobbyMessage] = useState("");
 
   const handleCreateLobby = async () => {
     const numberOfRoundsNum = parseInt(numberOfRounds);
@@ -36,63 +29,56 @@ const CreateLobby: React.FC = () => {
       isHidden,
       isPractice
     );
-    setCreateLobbyMessage("Lobby Created Successfully");
   };
 
   return (
     <>
       <Navbar />
-      <Container>
-        <Paper className="create-lobby">
-          <List>
-            <div className="input-wrapper">
-              <TextField
-                label="Number of Rounds"
-                type="number"
-                value={numberOfRounds}
-                onChange={(event) => setNumberOfRounds(event.target.value)}
-              />
-              <TextField
-                label="Player's Time"
-                type="number"
-                value={playersTime}
-                onChange={(event) => setPlayersTime(event.target.value)}
-              />
-              <TextField
-                label="Round Length"
-                type="number"
-                value={roundLength}
-                onChange={(event) => setRoundLength(event.target.value)}
-              />
-            </div>
-            <div>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={isPractice}
-                    onChange={(event) => setIsPractice(event.target.checked)}
-                  />
-                }
-                label="Is Practice?"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={isHidden}
-                    onChange={(event) => setIsHidden(event.target.checked)}
-                  />
-                }
-                label="Is Hidden?"
-              />
-            </div>
+      <Wrapper small>
+        <Box>
+          <Box sx={{ display: "flex", flexFlow: "column", gap: "2rem" }}>
+            <NumericField
+              label="Number of Rounds"
+              value={numberOfRounds}
+              onChange={setNumberOfRounds}
+            />
+            <NumericField
+              label="Player's Time"
+              value={playersTime}
+              onChange={setPlayersTime}
+            />
+            <NumericField
+              label="Round Length"
+              value={roundLength}
+              onChange={setRoundLength}
+            />
+          </Box>
+          <Box sx={{ display: "flex", paddingTop: "24px" }}>
+            <FormControlLabel
+              sx={{ flex: "1" }}
+              control={
+                <Checkbox
+                  checked={isPractice}
+                  onChange={(event) => setIsPractice(event.target.checked)}
+                />
+              }
+              label="Is Practice?"
+            />
+            <FormControlLabel
+              sx={{ flex: "1" }}
+              control={
+                <Checkbox
+                  checked={isHidden}
+                  onChange={(event) => setIsHidden(event.target.checked)}
+                />
+              }
+              label="Is Hidden?"
+            />
+          </Box>
+        </Box>
 
-            <Button variant="contained" onClick={handleCreateLobby}>
-              Create
-            </Button>
-            <Typography>{createLobbyMessage}</Typography>
-          </List>
-        </Paper>
-      </Container>
+        <Button onClick={handleCreateLobby}>Create</Button>
+      </Wrapper>
     </>
   );
 };
