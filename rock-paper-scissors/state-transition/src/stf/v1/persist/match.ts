@@ -1,5 +1,3 @@
-// This function inserts a new empty round in the database.
-
 import type {
   IExecutedRoundParams,
   IGetFinalStateResult,
@@ -20,6 +18,7 @@ import type { WalletAddress } from 'paima-sdk/paima-utils';
 import type { SubmittedMovesInput } from '../types';
 import { deleteZombieRound, scheduleZombieRound } from './zombie';
 
+// This function inserts a new empty round in the database.
 // We also schedule a future zombie round execution.
 export function persistNewRound(
   lobbyId: string,
