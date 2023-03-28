@@ -6,5 +6,6 @@
 /snapshots
 
 /logs.log
-/paima-engine-*
+# [dev-]paima-engine-[linux|mac] maybe others in the future
+/*paima-engine*
 /.env*
