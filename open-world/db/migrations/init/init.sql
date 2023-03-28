@@ -3,6 +3,7 @@ CREATE TABLE block_heights (
   block_height INTEGER PRIMARY KEY,
   seed TEXT NOT NULL,
   done BOOLEAN NOT NULL DEFAULT false
+);
 
 -- world is Y by X matrix
 --        0     1     2    X
