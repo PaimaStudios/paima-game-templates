@@ -17,7 +17,7 @@ import {
   persistExecutedRound,
   persistMatchResults,
   schedulePracticeMove,
-} from './persist.js';
+} from './persist';
 
 import type {
   ClosedLobbyInput,
@@ -34,7 +34,7 @@ import {
   RockPaperScissors,
   GameResult,
 } from '@game/game-logic';
-import { PracticeAI } from './practice-ai';
+import { PracticeAI } from './persist/practice-ai';
 import type { WalletAddress } from 'paima-sdk/paima-utils';
 
 // State transition when a create lobby input is processed
@@ -298,7 +298,7 @@ function finalizeMatch(
   const matchEnvironment = extractMatchEnvironment(lobby, round);
 
   // Create update which sets lobby state to 'finished'
-  const endMatchTuple: SQLUpdate = [endMatch as any, { lobby_id: lobby.lobby_id }];
+  const endMatchTuple: SQLUpdate = [endMatch, { lobby_id: lobby.lobby_id }];
 
   // If practice lobby, then no extra results/stats need to be updated
   if (lobby.practice) {
@@ -325,10 +325,4 @@ function finalizeMatch(
     blockHeight + 1
   );
   return [endMatchTuple, resultsUpdate, statsUpdate1, statsUpdate2];
-}
-
-// Check if lobby is in final round
-function isFinalRound(lobby: IGetLobbyByIdResult): boolean {
-  if (lobby.num_of_rounds && lobby.current_round >= lobby.num_of_rounds) return true;
-  return false;
 }
