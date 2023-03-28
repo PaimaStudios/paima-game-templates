@@ -113,7 +113,7 @@ const ChessGame: React.FC<ChessGameProps> = ({ lobby, address }) => {
   return (
     <>
       <Navbar />
-      <Wrapper small>
+      <Wrapper small blurred={false}>
         <Typography variant="h1">Chess Board {lobbyState.lobby_id}</Typography>
         {/*  Hide board if there isn't a defined lobbyState */}
         {lobbyState && (

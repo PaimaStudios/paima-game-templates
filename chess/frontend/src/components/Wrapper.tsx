@@ -6,17 +6,22 @@ import "./Wrapper.scss";
 interface WrapperProps extends React.HTMLProps<HTMLDivElement> {
   children?: React.ReactNode;
   small?: boolean;
+  blurred?: boolean;
 }
 
 const Wrapper: React.FC<WrapperProps> = ({
   children,
   className,
   small,
+  blurred = true,
   ...props
 }) => {
   return (
     <Container maxWidth={small ? "sm" : "xl"}>
-      <div className={clsx("wrapper", className)} {...props}>
+      <div
+        className={clsx("wrapper", blurred && "wrapper--blurred", className)}
+        {...props}
+      >
         {children}
       </div>
     </Container>
