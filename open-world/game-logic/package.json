@@ -11,8 +11,5 @@
     "lint": "prettier --write '**/*.ts'"
   },
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "chess.js": "^1.0.0-beta.3"
-  }
+  "license": "ISC"
 }

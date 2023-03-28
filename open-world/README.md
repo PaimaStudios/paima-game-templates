@@ -1,4 +1,4 @@
-# Chess Game Node Template
+# OpenWorld Game Node Template
 
 Following is a basic overview of useful commands and project structure. Each module has it's own README file with more detailed information.
 

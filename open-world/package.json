@@ -1,5 +1,5 @@
 {
-  "name": "@paima/chess",
+  "name": "@paima/open-world",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -16,7 +16,7 @@
     "database:up": "cd db/docker && docker compose up",
     "compile:api": "npm run compile -w api/",
     "compile:db": "npm run compile -w db/",
-    "frontend": "http-server ./frontend"
+    "frontend": "npm run pack:middleware && http-server ./frontend"
   },
   "workspaces": [
     "./utils",

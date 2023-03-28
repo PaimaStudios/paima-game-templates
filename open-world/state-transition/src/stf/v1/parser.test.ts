@@ -23,7 +23,7 @@ describe('Input parsing', () => {
   });
 
   test('parses submitMoves', () => {
-    const parsed = parse('s|*Xs6Q9GAqZVwe|2|f4 e5'); // Chess PGN
+    const parsed = parse('s|*Xs6Q9GAqZVwe|2|f4 e5'); // OpenWorld PGN
     expect(parsed.input).toBe('submittedMoves');
   });
 

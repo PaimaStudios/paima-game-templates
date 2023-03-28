@@ -4,7 +4,7 @@ import type { MatchExecutorData, RoundExecutorData, UserStats } from '@game/util
 
 import {
   buildEndpointErrorFxn,
-  ChessMiddlewareErrorCode,
+  OpenWorldMiddlewareErrorCode,
   PaimaMiddlewareErrorCode,
 } from '../errors';
 import { buildMatchExecutor, buildRoundExecutor } from '../helpers/executors';
@@ -47,7 +47,7 @@ async function getRoundExecutor(
       result: executor,
     };
   } catch (err) {
-    return errorFxn(ChessMiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR, err);
+    return errorFxn(OpenWorldMiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR, err);
   }
 }
 
@@ -80,7 +80,7 @@ async function getMatchExecutor(
       result: executor,
     };
   } catch (err) {
-    return errorFxn(ChessMiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR, err);
+    return errorFxn(OpenWorldMiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR, err);
   }
 }
 

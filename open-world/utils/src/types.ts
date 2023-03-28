@@ -1,17 +1,8 @@
-import type {
-  IGetBlockDataResult,
-  // IGetLobbyByIdResult,
-  // IGetMovesByLobbyResult,
-  IGetUserStatsResult,
-  // IGetNewLobbiesByUserAndBlockHeightResult,
-  // IGetPaginatedUserLobbiesResult,
-  IGetWorldStatsResult,
-} from '@game/db';
+import type { IGetBlockDataResult, IGetUserStatsResult, IGetWorldStatsResult } from '@game/db';
 import type { WalletAddress } from 'paima-sdk/paima-utils';
 
 export interface RoundExecutorData {
   match_state: string;
-  // moves: IGetMovesByLobbyResult[];
   block_data: IGetBlockDataResult;
 }
 

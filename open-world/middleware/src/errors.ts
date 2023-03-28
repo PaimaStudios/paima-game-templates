@@ -9,11 +9,11 @@ import {
 
 export type EndpointErrorFxn = (errorDescription: ErrorCode | string, err?: any) => FailedResult;
 
-type ChessErrorMessageMapping = Record<ChessMiddlewareErrorCode, string>;
+type OpenWorldErrorMessageMapping = Record<OpenWorldMiddlewareErrorCode, string>;
 
 export { PaimaMiddlewareErrorCode };
-export const enum ChessMiddlewareErrorCode {
-  GENERIC_CHESS_ERROR = PaimaMiddlewareErrorCode.FINAL_PAIMA_GENERIC_ERROR + 1,
+export const enum OpenWorldMiddlewareErrorCode {
+  GENERIC_OPENWORLD_ERROR = PaimaMiddlewareErrorCode.FINAL_PAIMA_GENERIC_ERROR + 1,
   // Query endpoint related:
   CALCULATED_ROUND_END_IN_PAST,
   UNABLE_TO_BUILD_EXECUTOR,
@@ -32,32 +32,32 @@ export const enum ChessMiddlewareErrorCode {
   INTERNAL_INVALID_POSTING_MODE,
 }
 
-const CHESS_MIDDLEWARE_ERROR_MESSAGES: ChessErrorMessageMapping = {
-  [ChessMiddlewareErrorCode.CALCULATED_ROUND_END_IN_PAST]: 'Calculated round end is in the past',
-  [ChessMiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR]:
+const OPENWORLD_MIDDLEWARE_ERROR_MESSAGES: OpenWorldErrorMessageMapping = {
+  [OpenWorldMiddlewareErrorCode.CALCULATED_ROUND_END_IN_PAST]: 'Calculated round end is in the past',
+  [OpenWorldMiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR]:
     'Unable to build executor from data returned from server -- executor might not exist',
-  [ChessMiddlewareErrorCode.NO_OPEN_LOBBIES]: 'No open lobbies were found, please try again later',
-  [ChessMiddlewareErrorCode.RANDOM_OPEN_LOBBY_FALLBACK]:
+  [OpenWorldMiddlewareErrorCode.NO_OPEN_LOBBIES]: 'No open lobbies were found, please try again later',
+  [OpenWorldMiddlewareErrorCode.RANDOM_OPEN_LOBBY_FALLBACK]:
     'getRandomOpenLobby returned no lobby, falling back on getOpenLobbies',
-  [ChessMiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CREATION]:
+  [OpenWorldMiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CREATION]:
     'Failure while verifying lobby creation',
-  [ChessMiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CLOSE]: 'Failure while verifying lobby closing',
-  [ChessMiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_JOIN]: 'Failure while verifying lobby join',
-  [ChessMiddlewareErrorCode.CANNOT_JOIN_OWN_LOBBY]: 'Cannot join your own lobby',
-  [ChessMiddlewareErrorCode.CANNOT_CLOSE_SOMEONES_LOBBY]:
+  [OpenWorldMiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CLOSE]: 'Failure while verifying lobby closing',
+  [OpenWorldMiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_JOIN]: 'Failure while verifying lobby join',
+  [OpenWorldMiddlewareErrorCode.CANNOT_JOIN_OWN_LOBBY]: 'Cannot join your own lobby',
+  [OpenWorldMiddlewareErrorCode.CANNOT_CLOSE_SOMEONES_LOBBY]:
     'Cannot close lobby created by someone else',
-  [ChessMiddlewareErrorCode.SUBMIT_MOVES_EXACTLY_3]: 'Exactly three moves must be submitted',
-  [ChessMiddlewareErrorCode.SUBMIT_MOVES_INVALID_MOVES]: 'One or more invalid moves submitted',
-  [ChessMiddlewareErrorCode.INTERNAL_INVALID_DEPLOYMENT]: 'Internal error: Invalid deployment set',
-  [ChessMiddlewareErrorCode.INTERNAL_INVALID_POSTING_MODE]:
+  [OpenWorldMiddlewareErrorCode.SUBMIT_MOVES_EXACTLY_3]: 'Exactly three moves must be submitted',
+  [OpenWorldMiddlewareErrorCode.SUBMIT_MOVES_INVALID_MOVES]: 'One or more invalid moves submitted',
+  [OpenWorldMiddlewareErrorCode.INTERNAL_INVALID_DEPLOYMENT]: 'Internal error: Invalid deployment set',
+  [OpenWorldMiddlewareErrorCode.INTERNAL_INVALID_POSTING_MODE]:
     'Internal error: Invalid posting mode set',
 };
 
-export const chessErrorMessageFxn: ErrorMessageFxn = buildErrorCodeTranslator({
+export const openworldErrorMessageFxn: ErrorMessageFxn = buildErrorCodeTranslator({
   ...PAIMA_MIDDLEWARE_ERROR_MESSAGES,
-  ...CHESS_MIDDLEWARE_ERROR_MESSAGES,
+  ...OPENWORLD_MIDDLEWARE_ERROR_MESSAGES,
 });
 
 export function buildEndpointErrorFxn(endpointName: string): EndpointErrorFxn {
-  return buildAbstractEndpointErrorFxn(chessErrorMessageFxn, endpointName);
+  return buildAbstractEndpointErrorFxn(openworldErrorMessageFxn, endpointName);
 }

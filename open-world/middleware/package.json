@@ -1,7 +1,7 @@
 {
   "name": "@game/middleware",
   "version": "1.0.0",
-  "description": "Middleware for Chess game, to be imported into any frontend",
+  "description": "Middleware for OpenWorld game, to be imported into any frontend",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "type": "module",

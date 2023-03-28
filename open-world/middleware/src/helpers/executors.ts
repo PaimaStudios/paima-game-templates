@@ -22,12 +22,5 @@ export function buildMatchExecutor({
   console.log(seeds, 'seeds used for the match executor at the middleware');
 
   const matchState: MatchState = {};
-  return matchExecutor.initialize(
-    extractMatchEnvironment(),
-    0,
-    matchState,
-    seeds,
-    [],
-    processTick
-  );
+  return matchExecutor.initialize(extractMatchEnvironment(), 0, matchState, seeds, [], processTick);
 }

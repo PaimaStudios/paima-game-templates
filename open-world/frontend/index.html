@@ -48,14 +48,12 @@
 
     const world = await endpoints.getWorldStats();
     if (!world.success) throw new Error('World Error');
-      
-
 
     let max_Y = Number.NEGATIVE_INFINITY;
     let min_Y = Number.POSITIVE_INFINITY;
     let min_X = Number.POSITIVE_INFINITY;
     let max_X = Number.NEGATIVE_INFINITY;
-    
+
     // Get matrix size
     world.stats.forEach(stat => {
       if (stat.x < min_X) min_X = stat.x;
@@ -72,7 +70,7 @@
         const cell = row.insertCell(x_i);
         const stat = world.stats.find(s => s.x === x_i && s.y === y_i);
         let style = 'text-align:center;height:80px;width:80px; overflow:hidden;border: solid black 1px;'
-        
+
         // If user in square, paint green.
         if (user.stats.x === x_i && user.stats.y === y_i) {
           style += 'background: #2ecc71; color: #2c3e50;'
@@ -107,7 +105,7 @@
           let increment = document.createElement("button");
           increment.style = 'width:50px;  margin: 4px;'
           increment.innerHTML = "+1";
-          increment.onclick = () => { 
+          increment.onclick = () => {
             endpoints.submitIncrement(x_i, y_i).then(x => {
               if (x.success) {
                 stat.counter += 1;
@@ -120,14 +118,8 @@
           };
           cell.appendChild(increment);
         }
-
-
       }
     }
-    
-
-
-    console.log({ wallet, user, world })
   }
 
   start().then(r => r);
