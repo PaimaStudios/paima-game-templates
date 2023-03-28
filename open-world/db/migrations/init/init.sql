@@ -38,10 +38,7 @@ CREATE TABLE global_world_state (
 
 CREATE TABLE global_user_state (
   wallet TEXT NOT NULL PRIMARY KEY,
-  -- previous_x INTEGER NOT NULL for monster game,
-  -- previous_y INTEGER NOT NULL for monster game,
   x INTEGER NOT NULL,
   y INTEGER NOT NULL,
-  -- move_block_height INTEGER NOT NULL references block_heights(block_height),
   FOREIGN KEY (x, y) REFERENCES global_world_state (x, y)
 );

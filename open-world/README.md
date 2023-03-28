@@ -8,7 +8,7 @@ Install dependencies/initial setup with
 `npm run initialize`
 
 ## Building
-
+**
 Compile projects  
 `npm run build`
 
@@ -29,6 +29,10 @@ paima-sdk and paima-engine-{linux|mac} executable must be in the parent of this 
 .env.development or .env.production must be in the parent folder
 `./../.env.name`
 
+## Frontend
+
+`npm run frontend`
+
 ## Development
 
 To reflect changes in `API` use `npm run compile:api`. This regenerates all `tsoa` routes.
@@ -43,3 +47,7 @@ Start Database
 Run Game Node  
 `cd ..` To parent dir where packaged folder was generated  
 `./paima-engine-linux run`
+
+## Migrations
+
+Database is set at relative blockheight "1" file: `1.sql`
