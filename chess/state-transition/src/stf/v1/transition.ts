@@ -21,6 +21,7 @@ import {
   persistNewRound,
   persistExecutedRound,
   persistMatchResults,
+  schedulePracticeMove,
 } from './persist';
 import { isValidMove } from '@chess/game-logic';
 import type {
@@ -33,7 +34,6 @@ import type {
 import type { ConciseResult } from '@chess/utils';
 import type { SQLUpdate } from 'paima-sdk/paima-db';
 import { PracticeAI } from './persist/practice-ai';
-import { schedulePracticeMove } from './persist/practice';
 
 // State transition when a create lobby input is processed
 export const createdLobby = async (
