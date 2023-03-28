@@ -11,15 +11,13 @@ interface LogoProps {
 
 const Logo: React.FC<LogoProps> = ({ width, height, mainMenu = false }) => {
   return (
-    <>
-      <img
-        className={clsx("chess-logo", mainMenu && "chess-logo--main")}
-        src={logo}
-        alt="Paima Chess"
-        width={width}
-        height={height}
-      />
-    </>
+    <img
+      className={clsx("chess-logo", mainMenu && "chess-logo--main")}
+      src={logo}
+      alt="Paima Chess"
+      width={width}
+      height={height}
+    />
   );
 };
 

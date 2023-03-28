@@ -11,8 +11,8 @@ const MainMenu = () => {
 
   return (
     <>
-      <Logo width={130} height={160} mainMenu />
-      <Box paddingTop="96px"></Box>
+      <Logo height={160} mainMenu />
+      <Box paddingTop="96px" />
       <Wrapper small>
         <Typography variant="h1" marginTop="96px">
           Running on Paima Engine
