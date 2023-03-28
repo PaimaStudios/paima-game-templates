@@ -83,7 +83,6 @@ const MyGames: React.FC<MyGamesProps> = ({ myAddress }) => {
       return value.toLowerCase() === myAddress.toLowerCase() ? "Yes" : "No";
     }
     if (id === "created_at" && typeof value === "string") {
-      console.log({ date: formatDate(value) });
       return formatDate(value);
     }
     if (id === "myTurn") {

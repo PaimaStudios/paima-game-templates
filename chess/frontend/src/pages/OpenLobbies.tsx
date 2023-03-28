@@ -35,7 +35,6 @@ const expandValue = (id: keyof LobbyState, value: unknown) => {
     return value ? "White" : "Black";
   }
   if (id === "created_at" && typeof value === "string") {
-    console.log({ date: formatDate(value) });
     return formatDate(value);
   }
   if (typeof value === "string") {
