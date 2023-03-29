@@ -3,13 +3,13 @@ import type { UserStats, ZombieRound } from './types';
 
 describe('Input parsing', () => {
   test('parses createLobby', () => {
-    const normalLobby = parse('c|20|100|100|||T');
+    const normalLobby = parse('c|20|100||');
     expect(normalLobby.input).toBe('createdLobby');
 
-    const hiddenLobby = parse('c|20|100|100|T|T|');
+    const hiddenLobby = parse('c|20|100|T|');
     expect(hiddenLobby.input).toBe('createdLobby');
 
-    const practiceLobby = parse('c|20|100|100||T|T');
+    const practiceLobby = parse('c|20|100||T');
     expect(practiceLobby.input).toBe('createdLobby');
   });
 
@@ -24,7 +24,7 @@ describe('Input parsing', () => {
   });
 
   test('parses submitMoves', () => {
-    const parsed = parse('s|*Xs6Q9GAqZVwe|2|f4 e5'); // Chess PGN
+    const parsed = parse('s|*Xs6Q9GAqZVwe|2|R');
     expect(parsed.input).toBe('submittedMoves');
   });
 

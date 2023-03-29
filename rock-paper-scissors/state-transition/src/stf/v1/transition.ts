@@ -26,6 +26,7 @@ import type {
   ScheduledDataInput,
   SubmittedMovesInput,
 } from './types';
+import { isUserStats, isZombieRound } from './types';
 
 import type { MatchState, RPSActions, RPSSummary, ShortNotationGameResult } from '@game/game-logic';
 import {
@@ -41,31 +42,31 @@ import type { WalletAddress } from 'paima-sdk/paima-utils';
 export const createdLobby = async (
   player: WalletAddress,
   blockHeight: number,
-  expanded: CreatedLobbyInput,
+  input: CreatedLobbyInput,
   randomnessGenerator: Prando
 ): Promise<SQLUpdate[]> => {
-  return persistLobbyCreation(player, blockHeight, expanded, randomnessGenerator);
+  return persistLobbyCreation(player, blockHeight, input, randomnessGenerator);
 };
 
 // State transition when a join lobby input is processed
 export const joinedLobby = async (
   player: WalletAddress,
   blockHeight: number,
-  expanded: JoinedLobbyInput,
+  input: JoinedLobbyInput,
   dbConn: Pool
 ): Promise<SQLUpdate[]> => {
-  const [lobby] = await getLobbyById.run({ lobby_id: expanded.lobbyID }, dbConn);
+  const [lobby] = await getLobbyById.run({ lobby_id: input.lobbyID }, dbConn);
   if (!lobby) return [];
-  return persistLobbyJoin(blockHeight, player, expanded, lobby);
+  return persistLobbyJoin(blockHeight, player, input, lobby);
 };
 
 // State transition when a close lobby input is processed
 export const closedLobby = async (
   player: WalletAddress,
-  expanded: ClosedLobbyInput,
+  input: ClosedLobbyInput,
   dbConn: Pool
 ): Promise<SQLUpdate[]> => {
-  const [lobby] = await getLobbyById.run({ lobby_id: expanded.lobbyID }, dbConn);
+  const [lobby] = await getLobbyById.run({ lobby_id: input.lobbyID }, dbConn);
   if (!lobby) return [];
   const query = persistCloseLobby(player, lobby);
   // persisting failed the validation, bail
@@ -77,36 +78,36 @@ export const closedLobby = async (
 export const submittedMoves = async (
   player: WalletAddress,
   blockHeight: number,
-  expanded: SubmittedMovesInput,
+  input: SubmittedMovesInput,
   dbConn: Pool,
   randomnessGenerator: Prando
 ): Promise<SQLUpdate[]> => {
   // Perform DB read queries to get needed data
-  const [lobby] = await getLobbyById.run({ lobby_id: expanded.lobbyID }, dbConn);
+  const [lobby] = await getLobbyById.run({ lobby_id: input.lobbyID }, dbConn);
   if (!lobby) {
-    console.log(`Error lobby ${expanded.lobbyID} not found`);
+    console.log(`Error lobby ${input.lobbyID} not found`);
     return [];
   }
 
   const [round] = await getRoundData.run(
-    { lobby_id: lobby.lobby_id, round_number: expanded.roundNumber },
+    { lobby_id: lobby.lobby_id, round_number: input.roundNumber },
     dbConn
   );
   if (!round) {
-    console.log(`Error round ${expanded.roundNumber} for ${expanded.lobbyID} not found`);
+    console.log(`Error round ${input.roundNumber} for ${input.lobbyID} not found`);
     return [];
   }
 
-  const newMove = expanded.move_rps;
+  const newMove = input.move_rps;
   // If the submitted moves are usable/all validation passes, continue
-  if (!validateSubmittedMoves(lobby, round, expanded, player, newMove)) {
+  if (!validateSubmittedMoves(lobby, round, input, player, newMove)) {
     return [];
   }
 
   // Now we capture the params (the moves typed as we need) and pass it to the round executor.
   // Generate update to persist the moves
   // We generated an SQL update for persisting the moves.
-  const nextMove = persistMoveSubmission(player, expanded, lobby);
+  const nextMove = persistMoveSubmission(player, input, lobby);
 
   // We get previous moves in the same round.
   const cachedMoved = await getCachedMoves.run({ lobby_id: lobby.lobby_id }, dbConn);
@@ -116,11 +117,11 @@ export const submittedMoves = async (
   if (cachedMoved.length === 1) {
     // Only persist internal state until next player plays OR zombie round is executed.
     const rps = new RockPaperScissors(lobby.latest_match_state);
-    if (!rps.isValidMove(lobby.lobby_creator === player, expanded.move_rps, expanded.roundNumber)) {
+    if (!rps.isValidMove(lobby.lobby_creator === player, input.move_rps, input.roundNumber)) {
       return [];
     }
 
-    rps.inputMove(lobby.lobby_creator === player, expanded.move_rps, expanded.roundNumber);
+    rps.inputMove(lobby.lobby_creator === player, input.move_rps, input.roundNumber);
 
     if (lobby.practice) {
       const practiceAI = new PracticeAI(rps.state, randomnessGenerator);
@@ -155,7 +156,7 @@ export const submittedMoves = async (
 function validateSubmittedMoves(
   lobby: IGetLobbyByIdResult,
   round: IGetRoundDataResult,
-  expanded: SubmittedMovesInput,
+  input: SubmittedMovesInput,
   player: WalletAddress,
   newMove: string
 ): boolean {
@@ -174,7 +175,7 @@ function validateSubmittedMoves(
   if (!round) return false;
 
   // If moves submitted don't target the current round
-  if (expanded.roundNumber !== lobby.current_round) return false;
+  if (input.roundNumber !== lobby.current_round) return false;
 
   // If a move is sent that doesn't fit in the lobby grid size or is strictly invalid
   const isPlayerOne = lobby.lobby_creator === player;
@@ -187,18 +188,19 @@ function validateSubmittedMoves(
 // State transition when scheduled data is processed
 export const scheduledData = async (
   blockHeight: number,
-  expanded: ScheduledDataInput,
+  input: ScheduledDataInput,
   dbConn: Pool,
   randomnessGenerator: Prando
 ): Promise<SQLUpdate[]> => {
   // This executes 'zombie rounds', rounds which have reached the specified timeout time per round.
-  if (expanded.effect.type == 'zombie') {
-    return zombieRound(blockHeight, expanded.effect.lobbyID, dbConn, randomnessGenerator);
+  if (isZombieRound(input)) {
+    return zombieRound(blockHeight, input.lobbyID, dbConn, randomnessGenerator);
   }
   // Update the users stats
-  else if (expanded.effect.type == 'stats') {
-    return updateStats(expanded.effect.user, expanded.effect.result, dbConn);
-  } else return [];
+  if (isUserStats(input)) {
+    return updateStats(input.user, input.result, dbConn);
+  }
+  return [];
 };
 
 // State transition when a zombie round input is processed
