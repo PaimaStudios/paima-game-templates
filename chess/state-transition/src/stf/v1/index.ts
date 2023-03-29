@@ -20,22 +20,22 @@ export default async function (
 ): Promise<SQLUpdate[]> {
   console.log(inputData, 'parsing input data');
   const user = inputData.userAddress.toLowerCase();
-  const expanded = parse(inputData.inputData);
+  const parsed = parse(inputData.inputData);
   console.log(`Processing input string: ${inputData.inputData}`);
-  console.log(`Input string parsed as: ${expanded.input}`);
+  console.log(`Input string parsed as: ${parsed.input}`);
 
-  switch (expanded.input) {
+  switch (parsed.input) {
     case 'createdLobby':
-      return createdLobby(user, blockHeight, expanded, randomnessGenerator);
+      return createdLobby(user, blockHeight, parsed, randomnessGenerator);
     case 'joinedLobby':
-      return joinedLobby(user, blockHeight, expanded, dbConn);
+      return joinedLobby(user, blockHeight, parsed, dbConn);
     case 'closedLobby':
-      return closedLobby(user, expanded, dbConn);
+      return closedLobby(user, parsed, dbConn);
     case 'submittedMoves':
-      return submittedMoves(user, blockHeight, expanded, dbConn, randomnessGenerator);
+      return submittedMoves(user, blockHeight, parsed, dbConn, randomnessGenerator);
     case 'scheduledData': {
       if (!inputData.scheduled) return [];
-      return scheduledData(blockHeight, expanded, dbConn, randomnessGenerator);
+      return scheduledData(blockHeight, parsed, dbConn, randomnessGenerator);
     }
     default:
       return [];

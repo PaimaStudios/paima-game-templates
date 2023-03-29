@@ -40,24 +40,23 @@ export interface SubmittedMovesInput {
 
 export interface ScheduledDataInput {
   input: 'scheduledData';
-  effect: SideEffect;
 }
 
-type SideEffect = ZombieRoundEffect | UserStatsEffect;
-
-export interface ZombieRoundEffect {
-  type: 'zombie';
+export interface ZombieRound extends ScheduledDataInput {
+  effect: 'zombie';
   lobbyID: string;
 }
 
-export interface UserStatsEffect {
-  type: 'stats';
+export interface UserStats extends ScheduledDataInput {
+  effect: 'stats';
   user: WalletAddress;
   result: ShortNotationGameResult;
 }
 
-export interface UserStats {
-  wins: number;
-  ties: number;
-  losses: number;
+export function isZombieRound(input: ScheduledDataInput): input is ZombieRound {
+  return (input as ZombieRound).effect === 'zombie';
+}
+
+export function isUserStats(input: ScheduledDataInput): input is UserStats {
+  return (input as UserStats).effect === 'stats';
 }

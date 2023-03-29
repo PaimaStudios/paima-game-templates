@@ -10,7 +10,7 @@
     "lint:fix": "eslint --ext ts,tsx --ignore-path .gitignore --fix .",
     "prettier": "prettier --config .prettierrc --ignore-path .prettierignore --check .",
     "prettier:fix": "prettier --write --config .prettierrc --ignore-path .prettierignore --check .",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test": "DOTENV_CONFIG_PATH=../.env.development jest",
     "test:watch": "npm test -- --watch",
     "database:up": "cd db/docker && docker compose up",
     "pack:middleware": "npm run build -w middleware/",

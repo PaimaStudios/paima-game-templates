@@ -31,6 +31,7 @@ import type {
   ScheduledDataInput,
   SubmittedMovesInput,
 } from './types.js';
+import { isUserStats, isZombieRound } from './types.js';
 import type { ConciseResult } from '@chess/utils';
 import type { SQLUpdate } from 'paima-sdk/paima-db';
 import { PracticeAI } from './persist/practice-ai';
@@ -39,31 +40,31 @@ import { PracticeAI } from './persist/practice-ai';
 export const createdLobby = async (
   player: WalletAddress,
   blockHeight: number,
-  expanded: CreatedLobbyInput,
+  input: CreatedLobbyInput,
   randomnessGenerator: Prando
 ): Promise<SQLUpdate[]> => {
-  return persistLobbyCreation(player, blockHeight, expanded, randomnessGenerator);
+  return persistLobbyCreation(player, blockHeight, input, randomnessGenerator);
 };
 
 // State transition when a join lobby input is processed
 export const joinedLobby = async (
   player: WalletAddress,
   blockHeight: number,
-  expanded: JoinedLobbyInput,
+  input: JoinedLobbyInput,
   dbConn: Pool
 ): Promise<SQLUpdate[]> => {
-  const [lobby] = await getLobbyById.run({ lobby_id: expanded.lobbyID }, dbConn);
-  if (lobby) return persistLobbyJoin(blockHeight, player, expanded, lobby);
+  const [lobby] = await getLobbyById.run({ lobby_id: input.lobbyID }, dbConn);
+  if (lobby) return persistLobbyJoin(blockHeight, player, input, lobby);
   else return [];
 };
 
 // State transition when a close lobby input is processed
 export const closedLobby = async (
   player: WalletAddress,
-  expanded: ClosedLobbyInput,
+  input: ClosedLobbyInput,
   dbConn: Pool
 ): Promise<SQLUpdate[]> => {
-  const [lobby] = await getLobbyById.run({ lobby_id: expanded.lobbyID }, dbConn);
+  const [lobby] = await getLobbyById.run({ lobby_id: input.lobbyID }, dbConn);
   if (!lobby) return [];
   const query = persistCloseLobby(player, lobby);
   // persisting failed the validation, bail
@@ -76,20 +77,20 @@ export const closedLobby = async (
 export const submittedMoves = async (
   player: WalletAddress,
   blockHeight: number,
-  expanded: SubmittedMovesInput,
+  input: SubmittedMovesInput,
   dbConn: Pool,
   randomnessGenerator: Prando
 ): Promise<SQLUpdate[]> => {
   // Perform DB read queries to get needed data
-  const [lobby] = await getLobbyById.run({ lobby_id: expanded.lobbyID }, dbConn);
+  const [lobby] = await getLobbyById.run({ lobby_id: input.lobbyID }, dbConn);
   const [round] = await getRoundData.run(
-    { lobby_id: lobby.lobby_id, round_number: expanded.roundNumber },
+    { lobby_id: lobby.lobby_id, round_number: input.roundNumber },
     dbConn
   );
   // If the submitted moves are usable/all validation passes, continue
-  if (!validateSubmittedMoves(lobby, round, expanded, player)) return [];
+  if (!validateSubmittedMoves(lobby, round, input, player)) return [];
   // Generate update to persist the moves
-  const persistMoveTuple = persistMoveSubmission(player, expanded, lobby);
+  const persistMoveTuple = persistMoveSubmission(player, input, lobby);
   // We generated an SQL update for persisting the moves.
   // Now we capture the params (the moves typed as we need) and pass it to the round executor.
   const newMove: IGetRoundMovesResult = persistMoveTuple[1].new_move;
@@ -107,11 +108,7 @@ export const submittedMoves = async (
     // This is an example implementation of AI/Practice mode
     // Chess does not have a practice mode implemented.
     if (1) throw new Error('Practice AI : NYI');
-    const practiceAI = new PracticeAI(
-      lobby.latest_match_state,
-      expanded.pgnMove,
-      randomnessGenerator
-    );
+    const practiceAI = new PracticeAI(lobby.latest_match_state, input.pgnMove, randomnessGenerator);
     const practiceMove = practiceAI.getNextMove();
     if (practiceMove) {
       const practiceMoveSchedule = schedulePracticeMove(
@@ -131,7 +128,7 @@ export const submittedMoves = async (
 function validateSubmittedMoves(
   lobby: IGetLobbyByIdResult,
   round: IGetRoundDataResult,
-  expanded: SubmittedMovesInput,
+  input: SubmittedMovesInput,
   player: WalletAddress
 ): boolean {
   // If lobby not active or existing
@@ -145,10 +142,10 @@ function validateSubmittedMoves(
   if (!round) return false;
 
   // If moves submitted don't target the current round
-  if (expanded.roundNumber !== lobby.current_round) return false;
+  if (input.roundNumber !== lobby.current_round) return false;
 
   // If a move is sent that doesn't fit in the lobby grid size or is strictly invalid
-  if (!isValidMove(lobby.latest_match_state, expanded.pgnMove)) return false;
+  if (!isValidMove(lobby.latest_match_state, input.pgnMove)) return false;
 
   return true;
 }
@@ -156,18 +153,19 @@ function validateSubmittedMoves(
 // State transition when scheduled data is processed
 export const scheduledData = async (
   blockHeight: number,
-  expanded: ScheduledDataInput,
+  input: ScheduledDataInput,
   dbConn: Pool,
   randomnessGenerator: Prando
 ): Promise<SQLUpdate[]> => {
   // This executes 'zombie rounds', rounds which have reached the specified timeout time per round.
-  if (expanded.effect.type == 'zombie') {
-    return zombieRound(blockHeight, expanded.effect.lobbyID, dbConn, randomnessGenerator);
+  if (isZombieRound(input)) {
+    return zombieRound(blockHeight, input.lobbyID, dbConn, randomnessGenerator);
   }
   // Update the users stats
-  else if (expanded.effect.type == 'stats') {
-    return updateStats(expanded.effect.user, expanded.effect.result, dbConn);
-  } else return [];
+  if (isUserStats(input)) {
+    return updateStats(input.user, input.result, dbConn);
+  }
+  return [];
 };
 
 // State transition when a zombie round input is processed
