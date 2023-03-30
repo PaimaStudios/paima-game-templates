@@ -29,8 +29,7 @@ async function submitMoves(x: number, y: number): Promise<OldResult> {
   const userWalletAddress = query.result;
 
   const conciseBuilder = builder.initialize();
-  conciseBuilder.setPrefix('m'); // m|*user|x|y
-  conciseBuilder.addValue({ value: userWalletAddress, isStateIdentifier: true });
+  conciseBuilder.setPrefix('m', true); // @m||x|y
   conciseBuilder.addValue({ value: String(x) });
   conciseBuilder.addValue({ value: String(y) });
 

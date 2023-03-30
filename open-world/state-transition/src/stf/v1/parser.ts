@@ -3,7 +3,7 @@ import type { ParsedSubmittedInput } from './types';
 
 const myGrammar = `
         joinWorld       = j|
-        submitMove      = m|*user|x|y
+        submitMove      = @m||x|y
         submitIncrement = i|*x|*y
 `;
 
