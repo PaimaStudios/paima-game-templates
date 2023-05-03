@@ -83,6 +83,7 @@ export const submittedMoves = async (
 ): Promise<SQLUpdate[]> => {
   // Perform DB read queries to get needed data
   const [lobby] = await getLobbyById.run({ lobby_id: input.lobbyID }, dbConn);
+  if (!lobby) return [];
   const [round] = await getRoundData.run(
     { lobby_id: lobby.lobby_id, round_number: input.roundNumber },
     dbConn
@@ -176,6 +177,7 @@ export const zombieRound = async (
   randomnessGenerator: Prando
 ): Promise<SQLUpdate[]> => {
   const [lobby] = await getLobbyById.run({ lobby_id: lobbyId }, dbConn);
+  if (!lobby) return [];
   const [round] = await getRoundData.run(
     { lobby_id: lobby.lobby_id, round_number: lobby.current_round },
     dbConn
