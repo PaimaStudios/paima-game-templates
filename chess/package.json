@@ -1,6 +1,9 @@
 {
   "name": "@paima/chess",
   "version": "1.0.0",
+  "engines": {
+    "node": "^16.18"
+  },
   "private": true,
   "scripts": {
     "initialize": "npm --prefix ../paima-sdk install && npm ci && cp .env.example ../.env.development",

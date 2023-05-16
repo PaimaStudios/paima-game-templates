@@ -19,5 +19,6 @@ echo "Vanilla Middleware (With Exports) Prepared In: packaged/middleware.js"
 
 head -n $(( $(grep -n '^export {' packaged/middleware.js | head -1 | cut -d: -f1) - 1 )) packaged/middleware.js > packaged/paimaMiddleware.js
 
+cp -R packaged/paimaMiddleware.js ../frontend/
 
 echo "Frontend-ready Middleware (Without Exports) Prepared In: packaged/paimaMiddleware.js"
