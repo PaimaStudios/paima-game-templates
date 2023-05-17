@@ -1,0 +1,6 @@
+extensions:
+  - name: "LvlUp NFT contract"
+    type: erc721
+    contractAddress: "0xf2DAaaE587dfc4a51ff2d559eA0bC13358d0b712"
+    startBlockHeight: 12792156
+    initializationPrefix: nftmint
