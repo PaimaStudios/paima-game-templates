@@ -8,6 +8,7 @@ export const supportedChain: Chain = {
   name: NETWORK_NAME,
   network: NETWORK_NAME,
   nativeCurrency: {
+    // TODO: from env file too
     name: 'Milk Ada',
     symbol: 'mADA',
     decimals: 18,

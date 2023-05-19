@@ -4,4 +4,3 @@ export const NFT: string = process.env.NFT ?? '';
 export const EXPLORER_URL: string = process.env.EXPLORER_URL ?? '';
 export const CHAIN_ID: string = process.env.CHAIN_ID ?? '';
 export const NETWORK_NAME: string = process.env.NETWORK_NAME ?? '';
-export const INDEXER_BASE_URL: string = process.env.INDEXER_BASE_URL ?? '';

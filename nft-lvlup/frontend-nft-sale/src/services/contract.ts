@@ -1,9 +1,8 @@
 import type { Signer } from '@ethersproject/abstract-signer';
-import axios from 'axios';
 import type { Contract } from 'ethers';
 import { BigNumber, providers } from 'ethers';
 import { NativeNftSale__factory } from '../typechain';
-import { INDEXER_BASE_URL, NATIVE_NFT_SALE_PROXY, RPC_URL } from './constants';
+import { NATIVE_NFT_SALE_PROXY, RPC_URL } from './constants';
 
 declare let window: any;
 
@@ -31,26 +30,27 @@ export const NativeNftSaleProxyContract = (
   return NativeNftSale__factory.connect(NATIVE_NFT_SALE_PROXY, signer);
 };
 
-export const getNftPrice = async (): Promise<number> => {
-  const contractDataURL = `${INDEXER_BASE_URL}/contract-data`;
-  const response = await axios.get(contractDataURL);
-
-  return response.data.result.nftPrice;
+export const getNftPrice = (): number => {
+  // TODO: read from contract?
+  return 3;
 };
 
-export const buyNft = async (account: string) => {
+export const buyNft = async (account: string, character: string) => {
   const signer = getSignerOrProvider(account);
   const nativeNftSaleProxyContract = NativeNftSaleProxyContract(signer);
   const price = await getNftPrice();
   const priceBN = BigNumber.from(price.toString()).mul(DECIMALS);
+  console.log('priceBN', priceBN.toString());
 
   const provider = getSignerOrProvider();
   const gasPrice = await provider.getGasPrice();
 
+  // TODO: addd Nft type (character)
   const tx = await nativeNftSaleProxyContract.buyNft(account, {
     gasPrice,
     gasLimit: 800000,
     value: priceBN,
+    // character,
   });
 
   return tx;

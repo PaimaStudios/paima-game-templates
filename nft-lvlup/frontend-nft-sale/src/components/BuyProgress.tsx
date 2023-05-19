@@ -10,10 +10,9 @@ interface BuyProgressProps {
   imageModal: string;
   nftPrice: number;
   tokenId: string;
-  nftTotal: number;
 }
 
-const BuyProgress = ({ imageModal, nftPrice, tokenId, nftTotal }: BuyProgressProps) => {
+const BuyProgress = ({ imageModal, nftPrice, tokenId }: BuyProgressProps) => {
   const [isPending, setIsPending] = useState<boolean>(false);
   const [buySuccessful, setBuySuccessful] = useState<boolean>(false);
   const [buyNftDetail, setBuyNftDetail] = useState<boolean>(true);
@@ -40,7 +39,6 @@ const BuyProgress = ({ imageModal, nftPrice, tokenId, nftTotal }: BuyProgressPro
         imageModal={imageModal}
         nftPrice={nftPrice}
         tokenId={tokenId}
-        nftTotal={nftTotal}
         txIsPending={txIsPending}
         done={done}
         cancel={cancel}
@@ -54,7 +52,6 @@ const BuyProgress = ({ imageModal, nftPrice, tokenId, nftTotal }: BuyProgressPro
         imageModal={imageModal}
         nftPrice={nftPrice}
         tokenId={tokenId}
-        nftTotal={nftTotal}
         explorerURL={`${EXPLORER_URL}/${txHash}`}
       />
     );
