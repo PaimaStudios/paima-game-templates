@@ -3,18 +3,33 @@
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, HttpStatusCodeLiteral, TsoaResponse, fetchMiddlewares } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { UserStateController } from './../controllers/userState';
+import { OwnedCharactersController } from './../controllers/ownedCharacters';
 import type { RequestHandler } from 'express';
 import * as express from 'express';
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "IGetUserResult": {
+    "nft_type": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["air"]},{"dataType":"enum","enums":["earth"]},{"dataType":"enum","enums":["ether"]},{"dataType":"enum","enums":["fire"]},{"dataType":"enum","enums":["water"]}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IGetUserCharactersResult": {
         "dataType": "refObject",
         "properties": {
-            "experience": {"dataType":"double","required":true},
-            "wallet": {"dataType":"string","required":true},
+            "address": {"dataType":"double","required":true},
+            "level": {"dataType":"double","required":true},
+            "nft_id": {"dataType":"string","required":true},
+            "type": {"ref":"nft_type","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Response": {
+        "dataType": "refObject",
+        "properties": {
+            "characters": {"dataType":"array","array":{"dataType":"refObject","ref":"IGetUserCharactersResult"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -29,11 +44,11 @@ export function RegisterRoutes(app: express.Router) {
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
-        app.get('/user_state',
-            ...(fetchMiddlewares<RequestHandler>(UserStateController)),
-            ...(fetchMiddlewares<RequestHandler>(UserStateController.prototype.get)),
+        app.get('/owned_characters',
+            ...(fetchMiddlewares<RequestHandler>(OwnedCharactersController)),
+            ...(fetchMiddlewares<RequestHandler>(OwnedCharactersController.prototype.get)),
 
-            function UserStateController_get(request: any, response: any, next: any) {
+            function OwnedCharactersController_get(request: any, response: any, next: any) {
             const args = {
                     wallet: {"in":"query","name":"wallet","required":true,"dataType":"string"},
             };
@@ -44,7 +59,7 @@ export function RegisterRoutes(app: express.Router) {
             try {
                 validatedArgs = getValidatedArgs(args, request, response);
 
-                const controller = new UserStateController();
+                const controller = new OwnedCharactersController();
 
 
               const promise = controller.get.apply(controller, validatedArgs as any);
