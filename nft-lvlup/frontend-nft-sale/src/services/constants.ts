@@ -4,3 +4,6 @@ export const NFT: string = process.env.NFT ?? '';
 export const EXPLORER_URL: string = process.env.EXPLORER_URL ?? '';
 export const CHAIN_ID: string = process.env.CHAIN_ID ?? '';
 export const NETWORK_NAME: string = process.env.NETWORK_NAME ?? '';
+
+export const NFT_PRICE: string = process.env.NFT_PRICE ?? '';
+export const NFT_SUPPLY: string = process.env.NFT_SUPPLY ?? '';

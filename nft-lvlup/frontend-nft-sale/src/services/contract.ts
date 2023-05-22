@@ -30,17 +30,10 @@ export const NativeNftSaleProxyContract = (
   return NativeNftSale__factory.connect(NATIVE_NFT_SALE_PROXY, signer);
 };
 
-export const getNftPrice = (): number => {
-  // TODO: read from contract?
-  return 3;
-};
-
 export const buyNft = async (account: string, character: string) => {
   const signer = getSignerOrProvider(account);
   const nativeNftSaleProxyContract = NativeNftSaleProxyContract(signer);
-  const price = await getNftPrice();
-  const priceBN = BigNumber.from(price.toString()).mul(DECIMALS);
-  console.log('priceBN', priceBN.toString());
+  const tokenPrice = await nativeNftSaleProxyContract.nftPrice();
 
   const provider = getSignerOrProvider();
   const gasPrice = await provider.getGasPrice();
@@ -49,7 +42,7 @@ export const buyNft = async (account: string, character: string) => {
   const tx = await nativeNftSaleProxyContract.buyNft(account, {
     gasPrice,
     gasLimit: 800000,
-    value: priceBN,
+    value: tokenPrice.toString(),
     // character,
   });
 

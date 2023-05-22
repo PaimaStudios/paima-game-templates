@@ -10,7 +10,8 @@ import { useState } from 'react';
 
 interface Props {
   imageModal: string;
-  nftPrice: number;
+  nftPrice: string;
+  nftSupply: string;
   tokenId: string;
   txIsPending: (arg0: string) => void;
   done: () => void;
@@ -19,7 +20,15 @@ interface Props {
 
 const characters = ['fire', 'water', 'earth', 'air', 'ether'];
 
-const Purchase = ({ imageModal, nftPrice, tokenId, txIsPending, done, cancel }: Props) => {
+const Purchase = ({
+  imageModal,
+  nftPrice,
+  nftSupply,
+  tokenId,
+  txIsPending,
+  done,
+  cancel,
+}: Props) => {
   const [character, setCharacter] = useState(characters[0]);
   const { connected, currentAccount, network } = useWeb3Context();
 
@@ -39,7 +48,7 @@ const Purchase = ({ imageModal, nftPrice, tokenId, txIsPending, done, cancel }: 
   return (
     <div className="flex flex-col gap-8">
       <AddressInfo network={network} address={NFT} />
-      <NFTImage imageModal={imageModal} status={`#${tokenId}`} />
+      <NFTImage imageModal={imageModal} status={`#${tokenId}/${nftSupply}`} />
       <div className="flex">
         <h3 className="text-left font-bold text-black font-base flex-1">{nftPrice} milkTADA</h3>
         <select value={character} onChange={e => setCharacter(e.target.value)} className="flex-1">
