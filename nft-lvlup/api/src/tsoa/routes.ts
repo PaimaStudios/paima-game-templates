@@ -18,7 +18,7 @@ const models: TsoaRoute.Models = {
     "IGetUserCharactersResult": {
         "dataType": "refObject",
         "properties": {
-            "address": {"dataType":"double","required":true},
+            "address": {"dataType":"string","required":true},
             "level": {"dataType":"double","required":true},
             "nft_id": {"dataType":"string","required":true},
             "type": {"ref":"nft_type","required":true},
