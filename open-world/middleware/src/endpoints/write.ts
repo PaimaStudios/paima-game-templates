@@ -1,13 +1,12 @@
 import { builder } from 'paima-sdk/paima-concise';
-import type { OldResult, Result } from 'paima-sdk/paima-mw-core';
-import { postConciselyEncodedData, getActiveAddress } from 'paima-sdk/paima-mw-core';
-
-import type { EndpointErrorFxn } from '../errors';
+import type { EndpointErrorFxn, OldResult, Result } from 'paima-sdk/paima-mw-core';
 import {
-  buildEndpointErrorFxn,
-  OpenWorldMiddlewareErrorCode,
   PaimaMiddlewareErrorCode,
-} from '../errors';
+  postConciselyEncodedData,
+  getActiveAddress,
+} from 'paima-sdk/paima-mw-core';
+
+import { buildEndpointErrorFxn, MiddlewareErrorCode } from '../errors';
 
 const getUserWallet = (errorFxn: EndpointErrorFxn): Result<string> => {
   try {
@@ -17,7 +16,7 @@ const getUserWallet = (errorFxn: EndpointErrorFxn): Result<string> => {
     }
     return { result: wallet, success: true };
   } catch (err) {
-    return errorFxn(OpenWorldMiddlewareErrorCode.INTERNAL_INVALID_POSTING_MODE, err);
+    return errorFxn(MiddlewareErrorCode.INTERNAL_INVALID_POSTING_MODE, err);
   }
 };
 

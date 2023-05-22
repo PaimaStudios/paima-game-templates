@@ -1,5 +1,5 @@
 import { ENV } from 'paima-sdk/paima-utils';
-import { buildEndpointErrorFxn, OpenWorldMiddlewareErrorCode } from '../errors';
+import { buildEndpointErrorFxn, MiddlewareErrorCode } from '../errors';
 import type { RoundEnd } from '../types';
 
 export function calculateRoundEnd(
@@ -11,7 +11,7 @@ export function calculateRoundEnd(
 
   let roundEnd = roundStart + roundLength;
   if (roundEnd < current) {
-    errorFxn(OpenWorldMiddlewareErrorCode.CALCULATED_ROUND_END_IN_PAST);
+    errorFxn(MiddlewareErrorCode.CALCULATED_ROUND_END_IN_PAST);
     roundEnd = current;
   }
 
@@ -24,7 +24,7 @@ export function calculateRoundEnd(
       seconds: secondsToEnd,
     };
   } catch (err) {
-    errorFxn(OpenWorldMiddlewareErrorCode.INTERNAL_INVALID_DEPLOYMENT, err);
+    errorFxn(MiddlewareErrorCode.INTERNAL_INVALID_DEPLOYMENT, err);
     return {
       blocks: 0,
       seconds: 0,

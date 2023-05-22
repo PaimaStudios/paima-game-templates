@@ -1,5 +1,5 @@
 import type { FailedResult, Result } from 'paima-sdk/paima-mw-core';
-import { getBlockNumber } from 'paima-sdk/paima-mw-core';
+import { PaimaMiddlewareErrorCode, getBlockNumber } from 'paima-sdk/paima-mw-core';
 
 import type {
   MatchWinnerResponse,
@@ -12,11 +12,7 @@ import type {
   UserLobby,
 } from '@game/utils';
 
-import {
-  buildEndpointErrorFxn,
-  ChessMiddlewareErrorCode,
-  PaimaMiddlewareErrorCode,
-} from '../errors';
+import { buildEndpointErrorFxn, MiddlewareErrorCode } from '../errors';
 import { getRawLobbyState, getRawNewLobbies } from '../helpers/auxiliary-queries';
 import { calculateRoundEnd } from '../helpers/utility-functions';
 import { buildRoundExecutor } from '../helpers/executors';
@@ -246,7 +242,7 @@ async function getRandomOpenLobby(): Promise<PackedLobbyState | FailedResult> {
   try {
     const j = (await res.json()) as { lobby: LobbyState };
     if (j.lobby === null) {
-      return errorFxn(ChessMiddlewareErrorCode.NO_OPEN_LOBBIES);
+      return errorFxn(MiddlewareErrorCode.NO_OPEN_LOBBIES);
     }
     return {
       success: true,
@@ -309,7 +305,7 @@ async function getRoundExecutor(
       result: executor,
     };
   } catch (err) {
-    return errorFxn(ChessMiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR, err);
+    return errorFxn(MiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR, err);
   }
 }
 
@@ -345,7 +341,7 @@ async function getMatchExecutor(lobbyId: string): Promise<Result<MatchExecutor>>
   //   return errorFxn(MiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR, err);
   // }
 
-  return errorFxn(ChessMiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR);
+  return errorFxn(MiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR);
 }
 
 export const queryEndpoints = {
