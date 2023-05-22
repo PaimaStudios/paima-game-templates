@@ -1,13 +1,12 @@
--- Generic paima engine table, that can't be modified
-CREATE TABLE block_heights ( 
-  block_height INTEGER PRIMARY KEY,
-  seed TEXT NOT NULL,
-  done BOOLEAN NOT NULL DEFAULT false
-);
-
 -- Extend the schema to fit your needs
+CREATE TYPE nft_type AS ENUM ('fire', 'water', 'earth', 'air', 'ether');
 
-CREATE TABLE users (
-  wallet TEXT NOT NULL PRIMARY KEY,
-  experience INTEGER NOT NULL DEFAULT 0
+-- verify ownership of the character from cde-access.ts
+-- check if it exists (contract address + id)
+CREATE TABLE characters (
+  address TEXT NOT NULL,
+  nft_id TEXT NOT NULL,
+  level INTEGER NOT NULL DEFAULT 1,
+  type nft_type NOT NULL,
+  PRIMARY KEY (address, nft_id)
 );

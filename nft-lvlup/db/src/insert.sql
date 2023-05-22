@@ -1,9 +1,14 @@
 /* 
-  @name upsertUser
-  @param stats -> (wallet!, experience!)
+  @name createCharacter
 */
-INSERT INTO users
-VALUES :stats
-ON CONFLICT (wallet)
-DO UPDATE SET
-experience = EXCLUDED.experience;
+INSERT INTO characters(
+  address,
+  nft_id,
+  level,
+  type)
+VALUES (
+  :address!,
+  :nft_id!,
+  1,
+  :type!
+);

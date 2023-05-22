@@ -1,32 +1,36 @@
 /** Types generated for queries found in "src/select.sql" */
 import { PreparedQuery } from '@pgtyped/query';
 
-/** 'GetUser' parameters type */
-export interface IGetUserParams {
-  wallet: string | null | void;
+export type nft_type = 'air' | 'earth' | 'ether' | 'fire' | 'water';
+
+/** 'GetUserCharacters' parameters type */
+export interface IGetUserCharactersParams {
+  characters: readonly (string)[];
 }
 
-/** 'GetUser' return type */
-export interface IGetUserResult {
-  experience: number;
-  wallet: string;
+/** 'GetUserCharacters' return type */
+export interface IGetUserCharactersResult {
+  address: string;
+  level: number;
+  nft_id: string;
+  type: nft_type;
 }
 
-/** 'GetUser' query type */
-export interface IGetUserQuery {
-  params: IGetUserParams;
-  result: IGetUserResult;
+/** 'GetUserCharacters' query type */
+export interface IGetUserCharactersQuery {
+  params: IGetUserCharactersParams;
+  result: IGetUserCharactersResult;
 }
 
-const getUserIR: any = {"usedParamSet":{"wallet":true},"params":[{"name":"wallet","required":false,"transform":{"type":"scalar"},"locs":[{"a":41,"b":47}]}],"statement":"SELECT * FROM users\nWHERE users.wallet = :wallet"};
+const getUserCharactersIR: any = {"usedParamSet":{"characters":true},"params":[{"name":"characters","required":true,"transform":{"type":"array_spread"},"locs":[{"a":42,"b":53}]}],"statement":"SELECT * FROM characters \nWHERE nft_id IN :characters!"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT * FROM users
- * WHERE users.wallet = :wallet
+ * SELECT * FROM characters 
+ * WHERE nft_id IN :characters!
  * ```
  */
-export const getUser = new PreparedQuery<IGetUserParams,IGetUserResult>(getUserIR);
+export const getUserCharacters = new PreparedQuery<IGetUserCharactersParams,IGetUserCharactersResult>(getUserCharactersIR);
 
 
