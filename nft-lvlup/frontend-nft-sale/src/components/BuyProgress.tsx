@@ -16,12 +16,10 @@ interface BuyProgressProps {
 const BuyProgress = ({ imageModal, nftPrice, nftSupply, tokenId }: BuyProgressProps) => {
   const [isPending, setIsPending] = useState<boolean>(false);
   const [buySuccessful, setBuySuccessful] = useState<boolean>(false);
-  const [buyNftDetail, setBuyNftDetail] = useState<boolean>(true);
   const [txHash, setTxHash] = useState<string>('');
 
   const txIsPending = (hash: string) => {
     setTxHash(hash);
-    setBuyNftDetail(false);
     setIsPending(true);
   };
 
@@ -33,20 +31,6 @@ const BuyProgress = ({ imageModal, nftPrice, nftSupply, tokenId }: BuyProgressPr
   const cancel = () => {
     setIsPending(false);
   };
-
-  if (buyNftDetail) {
-    return (
-      <Purchase
-        imageModal={imageModal}
-        nftPrice={nftPrice}
-        nftSupply={nftSupply}
-        tokenId={tokenId}
-        txIsPending={txIsPending}
-        done={done}
-        cancel={cancel}
-      />
-    );
-  }
 
   if (isPending) {
     return (
@@ -60,10 +44,21 @@ const BuyProgress = ({ imageModal, nftPrice, nftSupply, tokenId }: BuyProgressPr
     );
   }
 
-  if (!buySuccessful) {
+  if (buySuccessful) {
     return <PurchaseSuccessful />;
   }
-  return null;
+
+  return (
+    <Purchase
+      imageModal={imageModal}
+      nftPrice={nftPrice}
+      nftSupply={nftSupply}
+      tokenId={tokenId}
+      txIsPending={txIsPending}
+      done={done}
+      cancel={cancel}
+    />
+  );
 };
 
 export default BuyProgress;
