@@ -3,6 +3,8 @@ import type { Contract } from 'ethers';
 import { BigNumber, providers } from 'ethers';
 import { NativeNftSale__factory } from '../typechain';
 import { NATIVE_NFT_SALE_PROXY, RPC_URL } from './constants';
+import type { Characters } from './utils';
+import { characterToNumberMap } from './utils';
 
 declare let window: any;
 
@@ -30,7 +32,7 @@ export const NativeNftSaleProxyContract = (
   return NativeNftSale__factory.connect(NATIVE_NFT_SALE_PROXY, signer);
 };
 
-export const buyNft = async (account: string, character: string) => {
+export const buyNft = async (account: string, character: Characters) => {
   const signer = getSignerOrProvider(account);
   const nativeNftSaleProxyContract = NativeNftSaleProxyContract(signer);
   const tokenPrice = await nativeNftSaleProxyContract.nftPrice();
@@ -38,12 +40,11 @@ export const buyNft = async (account: string, character: string) => {
   const provider = getSignerOrProvider();
   const gasPrice = await provider.getGasPrice();
 
-  // TODO: addd Nft type (character)
-  const tx = await nativeNftSaleProxyContract.buyNft(account, {
+  const characterNumber = characterToNumberMap[character];
+  const tx = await nativeNftSaleProxyContract.buyNft(account, characterNumber, {
     gasPrice,
     gasLimit: 800000,
     value: tokenPrice.toString(),
-    // character,
   });
 
   return tx;

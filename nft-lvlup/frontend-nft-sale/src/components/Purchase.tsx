@@ -7,6 +7,8 @@ import NFTImage from './NFTImage';
 import Button from './Buttons';
 import AddressInfo from './AddressInfo';
 import { useState } from 'react';
+import type { Characters } from '../services/utils';
+import { characters } from '../services/utils';
 
 interface Props {
   imageModal: string;
@@ -18,8 +20,6 @@ interface Props {
   cancel: () => void;
 }
 
-const characters = ['fire', 'water', 'earth', 'air', 'ether'];
-
 const Purchase = ({
   imageModal,
   nftPrice,
@@ -29,7 +29,7 @@ const Purchase = ({
   done,
   cancel,
 }: Props) => {
-  const [character, setCharacter] = useState(characters[0]);
+  const [character, setCharacter] = useState<Characters>(characters[0]);
   const { connected, currentAccount, network } = useWeb3Context();
 
   const buy = async () => {
@@ -51,7 +51,11 @@ const Purchase = ({
       <NFTImage imageModal={imageModal} status={`#${tokenId}/${nftSupply}`} />
       <div className="flex">
         <h3 className="text-left font-bold text-black font-base flex-1">{nftPrice} milkTADA</h3>
-        <select value={character} onChange={e => setCharacter(e.target.value)} className="flex-1">
+        <select
+          value={character}
+          onChange={e => setCharacter(e.target.value as Characters)}
+          className="flex-1"
+        >
           {characters.map(character => (
             <option value={character} key={character}>
               {character}
