@@ -1,12 +1,26 @@
-import type { InvalidInput } from '@game/utils';
+import type { CharacterType, InvalidInput } from '@game/utils';
 import type { WalletAddress } from 'paima-sdk/paima-utils';
 
-export type InputTypes = 'xp';
-
-export interface GainExperienceInput {
-  input: 'gainedExperience';
+export interface LvlUpInput {
+  input: 'lvlUp';
   address: WalletAddress;
-  experience: number;
+  tokenId: string;
 }
 
-export type ParsedSubmittedInput = GainExperienceInput | InvalidInput;
+export interface ScheduledDataInput {
+  input: 'scheduledData';
+}
+
+export interface NftMintInput extends ScheduledDataInput {
+  effect: 'nftMint';
+  tokenId: string;
+  // contract address
+  address: WalletAddress;
+  type: CharacterType;
+}
+
+export function isNftMint(input: ScheduledDataInput): input is NftMintInput {
+  return (input as NftMintInput).effect === 'nftMint';
+}
+
+export type ParsedSubmittedInput = LvlUpInput | NftMintInput | InvalidInput;

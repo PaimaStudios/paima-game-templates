@@ -1,21 +1,34 @@
-import type { IGetUserResult } from '@game/db';
-import { getUser } from '@game/db';
 import type { SQLUpdate } from 'paima-sdk/paima-db';
 import type { Pool } from 'pg';
-import type { GainExperienceInput } from './types';
-import { persistUserUpdate } from './persist';
+import type { LvlUpInput, NftMintInput, ScheduledDataInput } from './types';
+import { isNftMint } from './types';
+import { persistCreate, persistLvlUp } from './persist';
+import { isNftOwner } from 'paima-sdk/paima-utils-backend';
+import type { WalletAddress } from 'paima-sdk/paima-utils';
+import { CHARACTERS_CDE } from '@game/utils';
 
-// State transition when a gain experience input is processed
-export const gainExperience = async (
-  expanded: GainExperienceInput,
+export const lvlUp = async (
+  user: WalletAddress,
+  input: LvlUpInput,
   dbConn: Pool
 ): Promise<SQLUpdate[]> => {
-  const [userState] = await getUser.run({ wallet: expanded.address }, dbConn);
-  const blankUserState: IGetUserResult = { experience: 0, wallet: expanded.address };
-  const userUpdateQuery = persistUserUpdate(
-    expanded.address,
-    expanded.experience,
-    userState ?? blankUserState
-  );
-  return [userUpdateQuery];
+  const nftId = BigInt(input.tokenId);
+  if (!isNftOwner(dbConn, CHARACTERS_CDE, nftId, user)) {
+    console.log('NFT to lvlup not owned by user');
+    return [];
+  }
+  const lvlUpQuery = persistLvlUp(input.address, input.tokenId);
+  return [lvlUpQuery];
+};
+
+export const nftMint = async (input: NftMintInput): Promise<SQLUpdate[]> => {
+  const characterCreateQuery = persistCreate(input.address, input.tokenId, input.type);
+  return [characterCreateQuery];
+};
+
+export const scheduledData = async (input: ScheduledDataInput): Promise<SQLUpdate[]> => {
+  if (isNftMint(input)) {
+    return nftMint(input);
+  }
+  return [];
 };

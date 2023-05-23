@@ -1,0 +1,30 @@
+import type { ICreateCharacterParams, ILvlUpCharacterParams } from '@game/db';
+import { createCharacter } from '@game/db';
+import { lvlUpCharacter } from '@game/db';
+import type { CharacterType } from '@game/utils';
+import type { SQLUpdate } from 'paima-sdk/paima-db';
+import type { WalletAddress } from 'paima-sdk/paima-utils';
+
+// this file deals with receiving blockchain data input and outputting SQL updates (imported from pgTyped output of our SQL files)
+// PGTyped SQL updates are a tuple of the function calling the database and the params sent to it.
+
+export function persistLvlUp(nftId: string, address: WalletAddress): SQLUpdate {
+  const params: ILvlUpCharacterParams = {
+    address,
+    nft_id: nftId,
+  };
+  return [lvlUpCharacter, params];
+}
+
+export function persistCreate(
+  nftId: string,
+  address: WalletAddress,
+  type: CharacterType
+): SQLUpdate {
+  const params: ICreateCharacterParams = {
+    type,
+    address,
+    nft_id: nftId,
+  };
+  return [createCharacter, params];
+}
