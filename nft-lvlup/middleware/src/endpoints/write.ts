@@ -27,7 +27,7 @@ async function levelUp(
 
   const currentBlock = response.blockHeight;
   try {
-    await awaitBlock(currentBlock);
+    await awaitBlock(currentBlock + 1);
     const ownedCharacters = await getOwnedCharacters(userWalletAddress);
     const updatedCharacter =
       ownedCharacters.success &&
