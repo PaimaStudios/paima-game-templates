@@ -8,7 +8,7 @@ import type { WalletAddress } from 'paima-sdk/paima-utils';
 // this file deals with receiving blockchain data input and outputting SQL updates (imported from pgTyped output of our SQL files)
 // PGTyped SQL updates are a tuple of the function calling the database and the params sent to it.
 
-export function persistLvlUp(nftId: string, address: WalletAddress): SQLUpdate {
+export function persistLvlUp(address: WalletAddress, nftId: string): SQLUpdate {
   const params: ILvlUpCharacterParams = {
     address,
     nft_id: nftId,
@@ -17,8 +17,8 @@ export function persistLvlUp(nftId: string, address: WalletAddress): SQLUpdate {
 }
 
 export function persistCreate(
-  nftId: string,
   address: WalletAddress,
+  nftId: string,
   type: CharacterType
 ): SQLUpdate {
   const params: ICreateCharacterParams = {
