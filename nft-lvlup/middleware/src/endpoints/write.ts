@@ -1,12 +1,16 @@
-import type { ActionResult } from '../types';
+import type { LevelUpResponse } from '../types';
 import { builder } from 'paima-sdk/paima-concise';
+import type { Result } from 'paima-sdk/paima-mw-core';
 import { awaitBlock, postConciseData } from 'paima-sdk/paima-mw-core';
 import { MiddlewareErrorCode, buildEndpointErrorFxn } from '../errors';
 import type { WalletAddress } from 'paima-sdk/paima-utils';
 import { getOwnedCharacters } from './queries';
 import { getUserWallet } from '../helpers/utility-functions';
 
-async function levelUp(contractAddress: WalletAddress, nftId: string): Promise<ActionResult> {
+async function levelUp(
+  contractAddress: WalletAddress,
+  nftId: string
+): Promise<Result<LevelUpResponse>> {
   const errorFxn = buildEndpointErrorFxn('levelUp');
 
   const query = getUserWallet(errorFxn);
@@ -28,10 +32,13 @@ async function levelUp(contractAddress: WalletAddress, nftId: string): Promise<A
     const updatedCharacter =
       ownedCharacters.success &&
       ownedCharacters.result.characters.find(character => character.nft_id === nftId);
-    if (updatedCharacter) {
+    if (!updatedCharacter) {
       return errorFxn(MiddlewareErrorCode.FAILURE_VERIFYING_NFT_OWNERSHIP);
     }
-    return { success: true };
+    return {
+      success: true,
+      result: { character: updatedCharacter },
+    };
   } catch (err) {
     return errorFxn(MiddlewareErrorCode.FAILURE_VERIFYING_NFT_OWNERSHIP);
   }
