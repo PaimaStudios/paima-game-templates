@@ -1,3 +1,4 @@
 # Frontend - Testing
 
-simple JS integration similar to test FE (probably just the posting input one done by eddie)
+Simple "Frontend" just to showcase owned NFT characters and a possibility to level them up
+
