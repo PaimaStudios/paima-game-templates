@@ -1,11 +1,12 @@
-import { backendQueryUser } from '../helpers/query-constructors';
-import type { Result, UserState } from '../types';
+import type { OwnedCharactersResponse } from '@game/utils';
+import { backendQueryOwnedCharacters } from '../helpers/query-constructors';
+import type { Result } from '../types';
 
-async function getUserState(wallet: string): Promise<Result<UserState>> {
-  const query = backendQueryUser(wallet);
+export async function getOwnedCharacters(wallet: string): Promise<Result<OwnedCharactersResponse>> {
+  const query = backendQueryOwnedCharacters(wallet);
   const response = await fetch(query);
 
-  const json = (await response.json()) as UserState;
+  const json = (await response.json()) as OwnedCharactersResponse;
   return {
     success: true,
     result: json,
@@ -13,5 +14,5 @@ async function getUserState(wallet: string): Promise<Result<UserState>> {
 }
 
 export const queryEndpoints = {
-  getUserState,
+  getOwnedCharacters,
 };
