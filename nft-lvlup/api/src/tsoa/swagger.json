@@ -20,8 +20,7 @@
 				"description": "'GetUserCharacters' return type",
 				"properties": {
 					"address": {
-						"type": "number",
-						"format": "double"
+						"type": "string"
 					},
 					"level": {
 						"type": "number",

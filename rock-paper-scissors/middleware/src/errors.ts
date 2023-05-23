@@ -42,7 +42,7 @@ const MIDDLEWARE_ERROR_MESSAGES: ErrorMessageMapping = {
   [MiddlewareErrorCode.INTERNAL_INVALID_POSTING_MODE]: 'Internal error: Invalid posting mode set',
 };
 
-export const errorMessageFxn: ErrorMessageFxn = buildErrorCodeTranslator({
+const errorMessageFxn: ErrorMessageFxn = buildErrorCodeTranslator({
   ...PAIMA_MIDDLEWARE_ERROR_MESSAGES,
   ...MIDDLEWARE_ERROR_MESSAGES,
 });

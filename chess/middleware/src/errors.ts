@@ -28,7 +28,7 @@ export const enum MiddlewareErrorCode {
 }
 
 type ErrorMessageMapping = Record<MiddlewareErrorCode, string>;
-const CHESS_MIDDLEWARE_ERROR_MESSAGES: ErrorMessageMapping = {
+const MIDDLEWARE_ERROR_MESSAGES: ErrorMessageMapping = {
   [MiddlewareErrorCode.GENERIC_ERROR]: 'Unspecified generic Game error',
   [MiddlewareErrorCode.CALCULATED_ROUND_END_IN_PAST]: 'Calculated round end is in the past',
   [MiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR]:
@@ -47,11 +47,11 @@ const CHESS_MIDDLEWARE_ERROR_MESSAGES: ErrorMessageMapping = {
   [MiddlewareErrorCode.INTERNAL_INVALID_POSTING_MODE]: 'Internal error: Invalid posting mode set',
 };
 
-export const chessErrorMessageFxn: ErrorMessageFxn = buildErrorCodeTranslator({
+const errorMessageFxn: ErrorMessageFxn = buildErrorCodeTranslator({
   ...PAIMA_MIDDLEWARE_ERROR_MESSAGES,
-  ...CHESS_MIDDLEWARE_ERROR_MESSAGES,
+  ...MIDDLEWARE_ERROR_MESSAGES,
 });
 
 export function buildEndpointErrorFxn(endpointName: string): EndpointErrorFxn {
-  return buildAbstractEndpointErrorFxn(chessErrorMessageFxn, endpointName);
+  return buildAbstractEndpointErrorFxn(errorMessageFxn, endpointName);
 }
