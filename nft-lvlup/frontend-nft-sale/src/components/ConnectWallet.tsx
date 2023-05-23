@@ -4,7 +4,6 @@ import Button from './Buttons';
 const ConnectWallet = () => {
   const { connectWallet } = useWeb3Context();
 
-  // TODO: done silently in bg?
   return (
     <>
       <h2 className="text-28 leading-9 font-bold font-heading">Connect your wallet</h2>

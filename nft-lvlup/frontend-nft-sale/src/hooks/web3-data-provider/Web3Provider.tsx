@@ -1,13 +1,21 @@
 import type { Provider } from '@wagmi/core';
 import type { ReactElement } from 'react';
 import React from 'react';
-import { useAccount, useConnect, useDisconnect, useNetwork, useProvider } from 'wagmi';
+import {
+  useAccount,
+  useConnect,
+  useDisconnect,
+  useNetwork,
+  useProvider,
+  useSwitchNetwork,
+} from 'wagmi';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { Web3Context } from '../useWeb3Context';
 import { supportedChain } from './wagmi';
 
 export type Web3Data = {
   connectWallet: () => void;
+  switchChain: ((chainId?: number) => void) | undefined;
   disconnectWallet: () => void;
   currentAccount: string;
   connected: boolean;
@@ -24,6 +32,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
     chainId: supportedChain.id,
   });
 
+  const { switchNetwork } = useSwitchNetwork();
   const { chain } = useNetwork();
   const { disconnect } = useDisconnect();
   const { isConnected, isConnecting, address: account } = useAccount();
@@ -35,6 +44,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
         web3ProviderData: {
           connectWallet,
           disconnectWallet: disconnect,
+          switchChain: switchNetwork,
           provider,
           connected: isConnected,
           loading: isConnecting,

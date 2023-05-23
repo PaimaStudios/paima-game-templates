@@ -2,7 +2,7 @@ import { ExternalLinkIcon } from '@heroicons/react/outline';
 
 import { useWeb3Context } from '../hooks/useWeb3Context';
 import { buyNft } from '../services/contract';
-import { NFT } from '../services/constants';
+import { CHAIN_ID, NFT } from '../services/constants';
 import NFTImage from './NFTImage';
 import Button from './Buttons';
 import AddressInfo from './AddressInfo';
@@ -30,7 +30,7 @@ const Purchase = ({
   cancel,
 }: Props) => {
   const [character, setCharacter] = useState<Characters>(characters[0]);
-  const { connected, currentAccount, network } = useWeb3Context();
+  const { connected, currentAccount, network, chainId, switchChain } = useWeb3Context();
 
   const buy = async () => {
     if (!connected) return;
@@ -44,6 +44,8 @@ const Purchase = ({
       cancel();
     }
   };
+
+  const intendedChain = parseInt(CHAIN_ID);
 
   return (
     <div className="flex flex-col gap-8">
@@ -73,9 +75,15 @@ const Purchase = ({
           <ExternalLinkIcon className="h-4 w-4 " aria-hidden="true" />
         </a>
       </div>
-      <Button onClick={buy} disabled={!connected}>
-        Buy NFT
-      </Button>
+      {chainId !== intendedChain ? (
+        <Button onClick={() => switchChain?.(intendedChain)} disabled={!connected}>
+          Switch network
+        </Button>
+      ) : (
+        <Button onClick={buy} disabled={!connected}>
+          Buy NFT
+        </Button>
+      )}
     </div>
   );
 };
