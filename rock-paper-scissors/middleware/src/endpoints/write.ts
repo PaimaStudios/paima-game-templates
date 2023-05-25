@@ -1,14 +1,14 @@
 import { retryPromise } from 'paima-sdk/paima-utils';
 import { builder } from 'paima-sdk/paima-concise';
-import type { FailedResult, OldResult, Result } from 'paima-sdk/paima-mw-core';
-import { awaitBlock, postConciselyEncodedData, getActiveAddress } from 'paima-sdk/paima-mw-core';
-
-import type { EndpointErrorFxn } from '../errors';
 import {
-  buildEndpointErrorFxn,
-  ChessMiddlewareErrorCode,
   PaimaMiddlewareErrorCode,
-} from '../errors';
+  awaitBlock,
+  postConciselyEncodedData,
+  getActiveAddress,
+} from 'paima-sdk/paima-mw-core';
+import type { EndpointErrorFxn, FailedResult, OldResult, Result } from 'paima-sdk/paima-mw-core';
+
+import { buildEndpointErrorFxn, MiddlewareErrorCode } from '../errors';
 import { getLobbyStateWithUser, getNonemptyNewLobbies } from '../helpers/auxiliary-queries';
 import { lobbyWasClosed, userCreatedLobby, userJoinedLobby } from '../helpers/utility-functions';
 import type { MatchMove } from '@game/game-logic';
@@ -25,7 +25,7 @@ const getUserWallet = (errorFxn: EndpointErrorFxn): Result<string> => {
     }
     return { result: wallet, success: true };
   } catch (err) {
-    return errorFxn(ChessMiddlewareErrorCode.INTERNAL_INVALID_POSTING_MODE, err);
+    return errorFxn(MiddlewareErrorCode.INTERNAL_INVALID_POSTING_MODE, err);
   }
 };
 
@@ -81,7 +81,7 @@ async function createLobby(
       !Array.isArray(newLobbies.lobbies) ||
       newLobbies.lobbies.length === 0
     ) {
-      return errorFxn(ChessMiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CREATION);
+      return errorFxn(MiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CREATION);
     } else {
       return {
         success: true,
@@ -90,7 +90,7 @@ async function createLobby(
       };
     }
   } catch (err) {
-    return errorFxn(ChessMiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CREATION, err);
+    return errorFxn(MiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CREATION, err);
   }
 }
 
@@ -137,12 +137,12 @@ async function joinLobby(lobbyID: string): Promise<OldResult> {
         message: '',
       };
     } else if (userCreatedLobby(userWalletAddress, lobbyState)) {
-      return errorFxn(ChessMiddlewareErrorCode.CANNOT_JOIN_OWN_LOBBY);
+      return errorFxn(MiddlewareErrorCode.CANNOT_JOIN_OWN_LOBBY);
     } else {
-      return errorFxn(ChessMiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_JOIN);
+      return errorFxn(MiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_JOIN);
     }
   } catch (err) {
-    return errorFxn(ChessMiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_JOIN);
+    return errorFxn(MiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_JOIN);
   }
 }
 
@@ -186,12 +186,12 @@ async function closeLobby(lobbyID: string): Promise<OldResult> {
     if (lobbyWasClosed(lobbyState)) {
       return { success: true, message: '' };
     } else if (!userCreatedLobby(userWalletAddress, lobbyState)) {
-      return errorFxn(ChessMiddlewareErrorCode.CANNOT_CLOSE_SOMEONES_LOBBY);
+      return errorFxn(MiddlewareErrorCode.CANNOT_CLOSE_SOMEONES_LOBBY);
     } else {
-      return errorFxn(ChessMiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CLOSE);
+      return errorFxn(MiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CLOSE);
     }
   } catch (err) {
-    return errorFxn(ChessMiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CLOSE);
+    return errorFxn(MiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CLOSE);
   }
 }
 
@@ -213,7 +213,7 @@ async function submitMoves(
   try {
     conciseBuilder.addValue({ value: move });
   } catch (err) {
-    return errorFxn(ChessMiddlewareErrorCode.SUBMIT_MOVES_INVALID_MOVES, err);
+    return errorFxn(MiddlewareErrorCode.SUBMIT_MOVES_INVALID_MOVES, err);
   }
 
   try {

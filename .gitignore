@@ -4,6 +4,10 @@
 /paima-sdk
 /smart-contract
 /snapshots
+/contracts
+
+# Config files for CDE
+/*.yml
 
 /logs.log
 # [dev-]paima-engine-[linux|mac] maybe others in the future

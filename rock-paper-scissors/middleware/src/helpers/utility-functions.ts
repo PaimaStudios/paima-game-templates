@@ -1,5 +1,5 @@
 import { ENV } from 'paima-sdk/paima-utils';
-import { buildEndpointErrorFxn, ChessMiddlewareErrorCode } from '../errors';
+import { buildEndpointErrorFxn, MiddlewareErrorCode } from '../errors';
 import type { PackedLobbyState, RoundEnd } from '../types';
 
 export function userJoinedLobby(address: String, lobby: PackedLobbyState): boolean {
@@ -50,7 +50,7 @@ export function calculateRoundEnd(
 
   let roundEnd = roundStart + roundLength;
   if (roundEnd < current) {
-    errorFxn(ChessMiddlewareErrorCode.CALCULATED_ROUND_END_IN_PAST);
+    errorFxn(MiddlewareErrorCode.CALCULATED_ROUND_END_IN_PAST);
     roundEnd = current;
   }
 
@@ -63,7 +63,7 @@ export function calculateRoundEnd(
       seconds: secondsToEnd,
     };
   } catch (err) {
-    errorFxn(ChessMiddlewareErrorCode.INTERNAL_INVALID_DEPLOYMENT, err);
+    errorFxn(MiddlewareErrorCode.INTERNAL_INVALID_DEPLOYMENT, err);
     return {
       blocks: 0,
       seconds: 0,

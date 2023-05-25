@@ -1,12 +1,9 @@
 import type { FailedResult, Result } from 'paima-sdk/paima-mw-core';
+import { PaimaMiddlewareErrorCode } from 'paima-sdk/paima-mw-core';
 
 import type { MatchExecutorData, RoundExecutorData, UserStats } from '@game/utils';
 
-import {
-  buildEndpointErrorFxn,
-  OpenWorldMiddlewareErrorCode,
-  PaimaMiddlewareErrorCode,
-} from '../errors';
+import { buildEndpointErrorFxn, MiddlewareErrorCode } from '../errors';
 import { buildMatchExecutor, buildRoundExecutor } from '../helpers/executors';
 import {
   backendQueryMatchExecutor,
@@ -47,7 +44,7 @@ async function getRoundExecutor(
       result: executor,
     };
   } catch (err) {
-    return errorFxn(OpenWorldMiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR, err);
+    return errorFxn(MiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR, err);
   }
 }
 
@@ -80,7 +77,7 @@ async function getMatchExecutor(
       result: executor,
     };
   } catch (err) {
-    return errorFxn(OpenWorldMiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR, err);
+    return errorFxn(MiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR, err);
   }
 }
 

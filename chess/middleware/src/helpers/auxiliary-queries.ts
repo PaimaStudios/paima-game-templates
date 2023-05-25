@@ -1,6 +1,7 @@
 import type { FailedResult } from 'paima-sdk/paima-mw-core';
+import { PaimaMiddlewareErrorCode } from 'paima-sdk/paima-mw-core';
 
-import { buildEndpointErrorFxn, PaimaMiddlewareErrorCode } from '../errors';
+import { buildEndpointErrorFxn } from '../errors';
 import type { NewLobbies, PackedLobbyState } from '../types';
 import { userCreatedLobby, userJoinedLobby } from './utility-functions';
 import { backendQueryLobbyState, backendQueryUserLobbiesBlockheight } from './query-constructors';
