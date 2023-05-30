@@ -13,18 +13,13 @@ export const enum MiddlewareErrorCode {
   CALCULATED_ROUND_END_IN_PAST,
   UNABLE_TO_BUILD_EXECUTOR,
   NO_OPEN_LOBBIES,
-  RANDOM_OPEN_LOBBY_FALLBACK,
   // Write endpoint related:
   FAILURE_VERIFYING_LOBBY_CREATION,
   FAILURE_VERIFYING_LOBBY_CLOSE,
   FAILURE_VERIFYING_LOBBY_JOIN,
   CANNOT_JOIN_OWN_LOBBY,
   CANNOT_CLOSE_SOMEONES_LOBBY,
-  SUBMIT_MOVES_EXACTLY_3,
   SUBMIT_MOVES_INVALID_MOVES,
-  // Internal, should never occur:
-  INTERNAL_INVALID_DEPLOYMENT,
-  INTERNAL_INVALID_POSTING_MODE,
 }
 
 type ErrorMessageMapping = Record<MiddlewareErrorCode, string>;
@@ -34,17 +29,12 @@ const MIDDLEWARE_ERROR_MESSAGES: ErrorMessageMapping = {
   [MiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR]:
     'Unable to build executor from data returned from server -- executor might not exist',
   [MiddlewareErrorCode.NO_OPEN_LOBBIES]: 'No open lobbies were found, please try again later',
-  [MiddlewareErrorCode.RANDOM_OPEN_LOBBY_FALLBACK]:
-    'getRandomOpenLobby returned no lobby, falling back on getOpenLobbies',
   [MiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CREATION]: 'Failure while verifying lobby creation',
   [MiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CLOSE]: 'Failure while verifying lobby closing',
   [MiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_JOIN]: 'Failure while verifying lobby join',
   [MiddlewareErrorCode.CANNOT_JOIN_OWN_LOBBY]: 'Cannot join your own lobby',
   [MiddlewareErrorCode.CANNOT_CLOSE_SOMEONES_LOBBY]: 'Cannot close lobby created by someone else',
-  [MiddlewareErrorCode.SUBMIT_MOVES_EXACTLY_3]: 'Exactly three moves must be submitted',
   [MiddlewareErrorCode.SUBMIT_MOVES_INVALID_MOVES]: 'One or more invalid moves submitted',
-  [MiddlewareErrorCode.INTERNAL_INVALID_DEPLOYMENT]: 'Internal error: Invalid deployment set',
-  [MiddlewareErrorCode.INTERNAL_INVALID_POSTING_MODE]: 'Internal error: Invalid posting mode set',
 };
 
 const errorMessageFxn: ErrorMessageFxn = buildErrorCodeTranslator({

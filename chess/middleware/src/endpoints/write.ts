@@ -10,12 +10,7 @@ import {
 
 import { buildEndpointErrorFxn, MiddlewareErrorCode } from '../errors';
 import { getLobbyStateWithUser, getNonemptyNewLobbies } from '../helpers/auxiliary-queries';
-import {
-  lobbyWasClosed,
-  // moveToString,
-  userCreatedLobby,
-  userJoinedLobby,
-} from '../helpers/utility-functions';
+import { lobbyWasClosed, userCreatedLobby, userJoinedLobby } from '../helpers/utility-functions';
 import type { MatchMove } from '@chess/game-logic';
 import type { CreateLobbySuccessfulResponse } from '../types';
 
@@ -30,7 +25,7 @@ const getUserWallet = (errorFxn: EndpointErrorFxn): Result<string> => {
     }
     return { result: wallet, success: true };
   } catch (err) {
-    return errorFxn(MiddlewareErrorCode.INTERNAL_INVALID_POSTING_MODE, err);
+    return errorFxn(PaimaMiddlewareErrorCode.INTERNAL_INVALID_POSTING_MODE, err);
   }
 };
 

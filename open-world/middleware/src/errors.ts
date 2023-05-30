@@ -12,9 +12,6 @@ export const enum MiddlewareErrorCode {
   // Query endpoint related:
   CALCULATED_ROUND_END_IN_PAST,
   UNABLE_TO_BUILD_EXECUTOR,
-  // Internal, should never occur:
-  INTERNAL_INVALID_DEPLOYMENT,
-  INTERNAL_INVALID_POSTING_MODE,
 }
 
 type ErrorMessageMapping = Record<MiddlewareErrorCode, string>;
@@ -23,8 +20,6 @@ const MIDDLEWARE_ERROR_MESSAGES: ErrorMessageMapping = {
   [MiddlewareErrorCode.CALCULATED_ROUND_END_IN_PAST]: 'Calculated round end is in the past',
   [MiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR]:
     'Unable to build executor from data returned from server -- executor might not exist',
-  [MiddlewareErrorCode.INTERNAL_INVALID_DEPLOYMENT]: 'Internal error: Invalid deployment set',
-  [MiddlewareErrorCode.INTERNAL_INVALID_POSTING_MODE]: 'Internal error: Invalid posting mode set',
 };
 
 const errorMessageFxn: ErrorMessageFxn = buildErrorCodeTranslator({

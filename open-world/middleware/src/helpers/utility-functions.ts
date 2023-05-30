@@ -1,6 +1,7 @@
 import { ENV } from 'paima-sdk/paima-utils';
 import { buildEndpointErrorFxn, MiddlewareErrorCode } from '../errors';
 import type { RoundEnd } from '../types';
+import { PaimaMiddlewareErrorCode } from 'paima-sdk/paima-mw-core';
 
 export function calculateRoundEnd(
   roundStart: number,
@@ -24,7 +25,7 @@ export function calculateRoundEnd(
       seconds: secondsToEnd,
     };
   } catch (err) {
-    errorFxn(MiddlewareErrorCode.INTERNAL_INVALID_DEPLOYMENT, err);
+    errorFxn(PaimaMiddlewareErrorCode.INTERNAL_INVALID_DEPLOYMENT, err);
     return {
       blocks: 0,
       seconds: 0,
