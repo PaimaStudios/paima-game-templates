@@ -1,8 +1,7 @@
-export {};
-
 declare global {
   interface Window {
-    roundExecutor?: any;
-    matchExecutor?: any;
+    ethereum: Web3Provider;
   }
 }
+
+export {};
