@@ -1,5 +1,3 @@
-// change-db.js
-// RUN: node change-db.js && npm run database:up
 const fs = require('fs');
 const https = require('https');
 
