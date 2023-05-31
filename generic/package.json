@@ -17,6 +17,7 @@
     "test": "DOTENV_CONFIG_PATH=../.env.development jest",
     "test:watch": "npm test -- --watch",
     "database:up": "cd db/docker && docker compose up",
+    "database:reset": "node change-db.js",
     "compile:api": "npm run compile -w api/",
     "compile:db": "npm run compile -w db/"
   },
