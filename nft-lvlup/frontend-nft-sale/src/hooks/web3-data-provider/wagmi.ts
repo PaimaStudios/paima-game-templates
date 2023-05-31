@@ -42,7 +42,7 @@ export const client = createClient({
   ...(typeof window !== 'undefined' && {
     storage: createStorage({
       storage: window.localStorage,
-      key: 'ps.volcanners',
+      key: 'nft.characters',
     }),
   }),
   provider,

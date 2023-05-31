@@ -45,8 +45,6 @@ const Purchase = ({
     }
   };
 
-  const intendedChain = parseInt(CHAIN_ID);
-
   return (
     <div className="flex flex-col gap-8">
       <AddressInfo network={network} address={NFT} />
@@ -75,8 +73,8 @@ const Purchase = ({
           <ExternalLinkIcon className="h-4 w-4 " aria-hidden="true" />
         </a>
       </div>
-      {chainId !== intendedChain ? (
-        <Button onClick={() => switchChain?.(intendedChain)} disabled={!connected}>
+      {chainId !== CHAIN_ID ? (
+        <Button onClick={() => switchChain?.(CHAIN_ID)} disabled={!connected}>
           Switch network
         </Button>
       ) : (
