@@ -42,7 +42,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Response": {
+			"OwnedCharactersResponse": {
 				"properties": {
 					"characters": {
 						"items": {
@@ -80,7 +80,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Response"
+									"$ref": "#/components/schemas/OwnedCharactersResponse"
 								}
 							}
 						}
