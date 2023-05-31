@@ -3,42 +3,44 @@ import { EXPLORER_URL } from '../services/constants';
 import Purchase from './Purchase';
 import PurchaseSuccessful from './PurchaseSuccessful';
 import PurchasePending from './PurchasePending';
+import { useWeb3Context } from '../hooks/useWeb3Context';
+import { buyNft } from '../services/contract';
+import type { Characters } from '../services/utils';
 
-interface BuyProgressProps {
-  titleModal?: string;
-  nftName?: string;
-  imageModal: string;
+interface Props {
+  image: string;
   nftPrice: string;
   nftSupply: string;
-  tokenId: string;
 }
 
-const BuyProgress = ({ imageModal, nftPrice, nftSupply, tokenId }: BuyProgressProps) => {
+const BuyProgress = ({ image, nftPrice, nftSupply }: Props) => {
+  const { connected, currentAccount } = useWeb3Context();
+
   const [isPending, setIsPending] = useState<boolean>(false);
   const [buySuccessful, setBuySuccessful] = useState<boolean>(false);
   const [txHash, setTxHash] = useState<string>('');
 
-  const txIsPending = (hash: string) => {
-    setTxHash(hash);
-    setIsPending(true);
-  };
+  const handleNftBuy = async (character: Characters) => {
+    if (!connected) return;
 
-  const done = () => {
-    setIsPending(false);
-    setBuySuccessful(true);
-  };
-
-  const cancel = () => {
-    setIsPending(false);
+    try {
+      const tx = await buyNft(currentAccount, character);
+      setIsPending(true);
+      setTxHash(tx.hash);
+      await tx.wait(3);
+      setIsPending(false);
+      setBuySuccessful(true);
+    } catch {
+      setIsPending(false);
+    }
   };
 
   if (isPending) {
     return (
       <PurchasePending
-        imageModal={imageModal}
+        image={image}
         nftPrice={nftPrice}
         nftSupply={nftSupply}
-        tokenId={tokenId}
         explorerURL={`${EXPLORER_URL}/${txHash}`}
       />
     );
@@ -50,13 +52,10 @@ const BuyProgress = ({ imageModal, nftPrice, nftSupply, tokenId }: BuyProgressPr
 
   return (
     <Purchase
-      imageModal={imageModal}
+      imageModal={image}
       nftPrice={nftPrice}
       nftSupply={nftSupply}
-      tokenId={tokenId}
-      txIsPending={txIsPending}
-      done={done}
-      cancel={cancel}
+      onNftBuy={handleNftBuy}
     />
   );
 };

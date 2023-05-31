@@ -11,15 +11,8 @@ const NFTSale = () => {
     return <ConnectWallet />;
   }
 
-  return (
-    <BuyProgress
-      imageModal="https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg"
-      nftPrice={NFT_PRICE}
-      nftSupply={NFT_SUPPLY}
-      // TODO: change tokenId to a real value
-      tokenId="tokenId"
-    />
-  );
+  const nftImage = 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg';
+  return <BuyProgress image={nftImage} nftPrice={NFT_PRICE} nftSupply={NFT_SUPPLY} />;
 };
 
 export default NFTSale;

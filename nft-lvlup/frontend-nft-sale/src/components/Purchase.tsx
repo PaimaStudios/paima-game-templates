@@ -1,7 +1,6 @@
 import { ExternalLinkIcon } from '@heroicons/react/outline';
 
 import { useWeb3Context } from '../hooks/useWeb3Context';
-import { buyNft } from '../services/contract';
 import { CHAIN_ID, NFT } from '../services/constants';
 import NFTImage from './NFTImage';
 import Button from './Buttons';
@@ -14,41 +13,17 @@ interface Props {
   imageModal: string;
   nftPrice: string;
   nftSupply: string;
-  tokenId: string;
-  txIsPending: (arg0: string) => void;
-  done: () => void;
-  cancel: () => void;
+  onNftBuy: (character: Characters) => void;
 }
 
-const Purchase = ({
-  imageModal,
-  nftPrice,
-  nftSupply,
-  tokenId,
-  txIsPending,
-  done,
-  cancel,
-}: Props) => {
+const Purchase = ({ imageModal, nftPrice, nftSupply, onNftBuy }: Props) => {
   const [character, setCharacter] = useState<Characters>(characters[0]);
-  const { connected, currentAccount, network, chainId, switchChain } = useWeb3Context();
-
-  const buy = async () => {
-    if (!connected) return;
-
-    try {
-      const tx = await buyNft(currentAccount, character);
-      txIsPending(tx.hash);
-      await tx.wait(3);
-      done();
-    } catch {
-      cancel();
-    }
-  };
+  const { connected, network, chainId, switchChain } = useWeb3Context();
 
   return (
     <div className="flex flex-col gap-8">
       <AddressInfo network={network} address={NFT} />
-      <NFTImage imageModal={imageModal} status={`#${tokenId}/${nftSupply}`} />
+      <NFTImage image={imageModal} status={`MAX:${nftSupply}`} />
       <div className="flex">
         <h3 className="text-left font-bold text-black font-base flex-1">{nftPrice} milkTADA</h3>
         <select
@@ -70,7 +45,7 @@ const Purchase = ({
           target="_blank"
         >
           <p className="font-base text-14 mr-4 underline">How to get milkTADA</p>
-          <ExternalLinkIcon className="h-4 w-4 " aria-hidden="true" />
+          <ExternalLinkIcon className="h-4 w-4" aria-hidden="true" />
         </a>
       </div>
       {chainId !== CHAIN_ID ? (
@@ -78,7 +53,7 @@ const Purchase = ({
           Switch network
         </Button>
       ) : (
-        <Button onClick={buy} disabled={!connected}>
+        <Button onClick={() => onNftBuy(character)} disabled={!connected}>
           Buy NFT
         </Button>
       )}

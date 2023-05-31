@@ -57,22 +57,26 @@ function App() {
             <button onClick={() => fetchCharacters(wallet)}>Refresh</button>
           </div>
         </div>
-        {hasCharacters ? (
-          <div className="characters">
-            {characters.map(character => (
-              <div key={character.nft_id} className={`character character-${character.type}`}>
-                <p>
-                  {character.type} lvl. {character.level}
-                </p>
-                <button onClick={() => characterLvlUp(character)}>Lvl Up</button>
+        {wallet && (
+          <>
+            {hasCharacters ? (
+              <div className="characters">
+                {characters.map(character => (
+                  <div key={character.nft_id} className={`character character-${character.type}`}>
+                    <p>
+                      {character.type} lvl. {character.level}
+                    </p>
+                    <button onClick={() => characterLvlUp(character)}>Lvl Up</button>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        ) : (
-          <p>
-            You don't own any characters. Look into <code>frontend-nft-sale</code> directory to test
-            buying some.
-          </p>
+            ) : (
+              <p>
+                You don't own any characters. Look into <code>frontend-nft-sale</code> directory to
+                test buying some.
+              </p>
+            )}
+          </>
         )}
       </main>
     </div>
