@@ -12,6 +12,7 @@ import {
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { Web3Context } from '../useWeb3Context';
 import { supportedChain } from './wagmi';
+import { CHAIN_ID } from '../../services/constants';
 
 export type Web3Data = {
   connectWallet: () => void;
@@ -48,7 +49,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
           provider,
           connected: isConnected,
           loading: isConnecting,
-          chainId: chain?.id || 2001,
+          chainId: chain?.id || CHAIN_ID,
           network: chain?.id == 2001 ? 'mainnet' : 'testnet',
           currentAccount: account?.toLowerCase() || '',
           error,

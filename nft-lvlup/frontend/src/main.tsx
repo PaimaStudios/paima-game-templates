@@ -6,7 +6,7 @@ import App from './App';
 const appRoot = document.getElementById('root');
 
 if (!appRoot) {
-  throw new Error('Test app root not found');
+  throw new Error('App root not found');
 }
 
 ReactDOM.createRoot(appRoot).render(

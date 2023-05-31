@@ -11,15 +11,12 @@ export const enum MiddlewareErrorCode {
   GENERIC_ERROR = PaimaMiddlewareErrorCode.FINAL_PAIMA_GENERIC_ERROR + 1,
   // Write endpoint related:
   FAILURE_VERIFYING_NFT_OWNERSHIP,
-  // Internal, should never occur:
-  INTERNAL_INVALID_POSTING_MODE,
 }
 
 type ErrorMessageMapping = Record<MiddlewareErrorCode, string>;
 const MIDDLEWARE_ERROR_MESSAGES: ErrorMessageMapping = {
   [MiddlewareErrorCode.GENERIC_ERROR]: 'Unspecified generic Game error',
-  [MiddlewareErrorCode.FAILURE_VERIFYING_NFT_OWNERSHIP]: 'Failure while verifying lobby creation',
-  [MiddlewareErrorCode.INTERNAL_INVALID_POSTING_MODE]: 'Internal error: Invalid posting mode set',
+  [MiddlewareErrorCode.FAILURE_VERIFYING_NFT_OWNERSHIP]: 'Failure while verifying nft ownership',
 };
 
 const errorMessageFxn: ErrorMessageFxn = buildErrorCodeTranslator({

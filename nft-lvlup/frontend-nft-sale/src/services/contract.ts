@@ -1,40 +1,24 @@
 import type { Signer } from '@ethersproject/abstract-signer';
-import type { Contract } from 'ethers';
 import { BigNumber, providers } from 'ethers';
 import { NativeNftSale__factory } from '../typechain';
-import { NATIVE_NFT_SALE_PROXY, RPC_URL } from './constants';
+import { NATIVE_NFT_SALE_PROXY, CHAIN_URI, CHAIN_CURRENCY_DECIMALS } from './constants';
 import type { Characters } from './utils';
 import { characterToNumberMap } from './utils';
 
-declare let window: any;
-
 export type SignerProvider = Signer | providers.Provider;
 
-export const DECIMALS = BigNumber.from(10).pow(18);
-
 export const getSignerOrProvider = (account?: string): SignerProvider => {
-  let signerOrProvider;
-
   if (account) {
     const provider = new providers.Web3Provider(window.ethereum);
-    signerOrProvider = provider.getSigner();
-  } else {
-    const provider = new providers.JsonRpcProvider(RPC_URL);
-    signerOrProvider = provider;
+    return provider.getSigner();
   }
 
-  return signerOrProvider;
-};
-
-export const NativeNftSaleProxyContract = (
-  signer: SignerProvider = getSignerOrProvider()
-): Contract => {
-  return NativeNftSale__factory.connect(NATIVE_NFT_SALE_PROXY, signer);
+  return new providers.JsonRpcProvider(CHAIN_URI);
 };
 
 export const buyNft = async (account: string, character: Characters) => {
   const signer = getSignerOrProvider(account);
-  const nativeNftSaleProxyContract = NativeNftSaleProxyContract(signer);
+  const nativeNftSaleProxyContract = NativeNftSale__factory.connect(NATIVE_NFT_SALE_PROXY, signer);
   const tokenPrice = await nativeNftSaleProxyContract.nftPrice();
 
   const provider = getSignerOrProvider();
@@ -48,4 +32,13 @@ export const buyNft = async (account: string, character: Characters) => {
   });
 
   return tx;
+};
+
+export const getNftPrice = async (account: string) => {
+  const signer = getSignerOrProvider(account);
+  const nativeNftSaleProxyContract = NativeNftSale__factory.connect(NATIVE_NFT_SALE_PROXY, signer);
+  const tokenPrice = await nativeNftSaleProxyContract.nftPrice();
+  const divisor = BigNumber.from(Math.pow(10, CHAIN_CURRENCY_DECIMALS).toString());
+
+  return tokenPrice.div(divisor).toString();
 };
