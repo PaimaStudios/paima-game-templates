@@ -13,12 +13,9 @@ export default defineConfig({
   plugins: [react(), EnvironmentPlugin('all')],
   define: {
     global: 'globalThis',
-    // "exports": {},
-    // "require": (par) => { console.log("Require attempted with:", par); }
   },
   optimizeDeps: {
     exclude: ['pg-native'],
-    // include : ["paima-utils"],
     esbuildOptions: {
       // Node.js global to browser globalThis
       define: {
