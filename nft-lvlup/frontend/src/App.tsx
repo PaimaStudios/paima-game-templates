@@ -7,8 +7,8 @@ function App() {
   const [characters, setCharacters] = useState<IGetUserCharactersResult[]>([]);
   const [wallet, setWallet] = useState('');
 
-  const refreshCharacters = async () => {
-    const response = await mw.getOwnedCharacters(wallet);
+  const fetchCharacters = async (userWallet: string) => {
+    const response = await mw.getOwnedCharacters(userWallet);
     if (!response.success) {
       console.log('Failed to fetch your NFT characters');
     } else {
@@ -26,7 +26,7 @@ function App() {
       setCharacters(newCharacters);
     } else {
       console.log('Failed to level up character:', response.errorMessage, response.errorCode);
-      refreshCharacters();
+      fetchCharacters(wallet);
     }
   };
 
@@ -35,9 +35,10 @@ function App() {
     if (!response.success) {
       console.log('Error while logging in address:', response.errorMessage, response.errorCode);
     } else {
-      console.log('Successfully logged in address:', response.result.walletAddress);
-      setWallet(response.result.walletAddress);
-      refreshCharacters();
+      const { walletAddress } = response.result;
+      console.log('Successfully logged in address:', walletAddress);
+      setWallet(walletAddress);
+      fetchCharacters(walletAddress);
     }
   }
 
@@ -53,7 +54,7 @@ function App() {
           {wallet ? <p>Wallet: {wallet}</p> : <p>Wallet: No wallet connected</p>}
           <div className="button-group">
             <button onClick={userWalletLogin}>User Wallet Login</button>
-            <button onClick={refreshCharacters}>Refresh</button>
+            <button onClick={() => fetchCharacters(wallet)}>Refresh</button>
           </div>
         </div>
         {hasCharacters ? (
