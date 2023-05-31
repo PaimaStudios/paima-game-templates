@@ -12,18 +12,17 @@ import { characters } from '../services/utils';
 interface Props {
   imageModal: string;
   nftPrice: string;
-  nftSupply: string;
   onNftBuy: (character: Characters) => void;
 }
 
-const Purchase = ({ imageModal, nftPrice, nftSupply, onNftBuy }: Props) => {
+const Purchase = ({ imageModal, nftPrice, onNftBuy }: Props) => {
   const [character, setCharacter] = useState<Characters>(characters[0]);
   const { connected, network, chainId, switchChain } = useWeb3Context();
 
   return (
     <div className="flex flex-col gap-8">
       <AddressInfo network={network} address={NFT} />
-      <NFTImage image={imageModal} status={`MAX:${nftSupply}`} />
+      <NFTImage image={imageModal} />
       <div className="flex">
         <h3 className="text-left font-bold text-black font-base flex-1">{nftPrice} milkTADA</h3>
         <select

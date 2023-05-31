@@ -7,17 +7,16 @@ import AddressInfo from './AddressInfo';
 interface Props {
   image: string;
   nftPrice: string;
-  nftSupply: string;
   explorerURL: string;
 }
 
-const PurchasePending = ({ image, nftPrice, nftSupply, explorerURL }: Props) => {
+const PurchasePending = ({ image, nftPrice, explorerURL }: Props) => {
   const { network, currentAccount } = useWeb3Context();
 
   return (
     <div className="flex flex-col gap-8">
       <AddressInfo network={network} address={currentAccount} />
-      <NFTImage image={image} status={`MAX:${nftSupply}`} />
+      <NFTImage image={image} />
       <div className="flex items-center justify-between">
         <h3 className="text-center font-bold text-black font-base">{nftPrice} milkTADA</h3>
         <p>Pending...</p>

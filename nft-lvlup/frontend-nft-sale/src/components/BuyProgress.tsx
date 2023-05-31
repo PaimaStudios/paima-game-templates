@@ -1,24 +1,31 @@
-import React, { useState } from 'react';
-import { EXPLORER_URL } from '../services/constants';
+import React, { useEffect, useState } from 'react';
+import { CHAIN_EXPLORER_URI } from '../services/constants';
 import Purchase from './Purchase';
 import PurchaseSuccessful from './PurchaseSuccessful';
 import PurchasePending from './PurchasePending';
 import { useWeb3Context } from '../hooks/useWeb3Context';
-import { buyNft } from '../services/contract';
+import { buyNft, getNftPrice } from '../services/contract';
 import type { Characters } from '../services/utils';
 
 interface Props {
   image: string;
-  nftPrice: string;
-  nftSupply: string;
 }
 
-const BuyProgress = ({ image, nftPrice, nftSupply }: Props) => {
+const BuyProgress = ({ image }: Props) => {
   const { connected, currentAccount } = useWeb3Context();
 
   const [isPending, setIsPending] = useState<boolean>(false);
   const [buySuccessful, setBuySuccessful] = useState<boolean>(false);
   const [txHash, setTxHash] = useState<string>('');
+  const [nftPrice, setNftPrice] = useState('');
+
+  useEffect(() => {
+    const getPrice = async (account: string) => {
+      const price = await getNftPrice(account);
+      setNftPrice(price);
+    };
+    getPrice(currentAccount);
+  }, [currentAccount]);
 
   const handleNftBuy = async (character: Characters) => {
     if (!connected) return;
@@ -40,8 +47,7 @@ const BuyProgress = ({ image, nftPrice, nftSupply }: Props) => {
       <PurchasePending
         image={image}
         nftPrice={nftPrice}
-        nftSupply={nftSupply}
-        explorerURL={`${EXPLORER_URL}/${txHash}`}
+        explorerURL={`${CHAIN_EXPLORER_URI}/${txHash}`}
       />
     );
   }
@@ -50,14 +56,7 @@ const BuyProgress = ({ image, nftPrice, nftSupply }: Props) => {
     return <PurchaseSuccessful />;
   }
 
-  return (
-    <Purchase
-      imageModal={image}
-      nftPrice={nftPrice}
-      nftSupply={nftSupply}
-      onNftBuy={handleNftBuy}
-    />
-  );
+  return <Purchase imageModal={image} nftPrice={nftPrice} onNftBuy={handleNftBuy} />;
 };
 
 export default BuyProgress;

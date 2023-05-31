@@ -9,8 +9,7 @@ import EnvironmentPlugin from 'vite-plugin-environment';
 export default defineConfig({
   // in combination with the EnvironmentPlugin makes process.env available and loads everything from .env file in root folder into it
   // additionally loads .env.development or .env.production automatically
-  // TODO: set to root
-  envDir: '.',
+  envDir: '../..',
   plugins: [react(), EnvironmentPlugin('all')],
   define: {
     global: 'globalThis',

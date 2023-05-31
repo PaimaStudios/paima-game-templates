@@ -1,7 +1,7 @@
 import type { Signer } from '@ethersproject/abstract-signer';
-import { providers } from 'ethers';
+import { BigNumber, providers } from 'ethers';
 import { NativeNftSale__factory } from '../typechain';
-import { NATIVE_NFT_SALE_PROXY, RPC_URL } from './constants';
+import { NATIVE_NFT_SALE_PROXY, CHAIN_URI, CHAIN_CURRENCY_DECIMALS } from './constants';
 import type { Characters } from './utils';
 import { characterToNumberMap } from './utils';
 
@@ -13,7 +13,7 @@ export const getSignerOrProvider = (account?: string): SignerProvider => {
     return provider.getSigner();
   }
 
-  return new providers.JsonRpcProvider(RPC_URL);
+  return new providers.JsonRpcProvider(CHAIN_URI);
 };
 
 export const buyNft = async (account: string, character: Characters) => {
@@ -32,4 +32,13 @@ export const buyNft = async (account: string, character: Characters) => {
   });
 
   return tx;
+};
+
+export const getNftPrice = async (account: string) => {
+  const signer = getSignerOrProvider(account);
+  const nativeNftSaleProxyContract = NativeNftSale__factory.connect(NATIVE_NFT_SALE_PROXY, signer);
+  const tokenPrice = await nativeNftSaleProxyContract.nftPrice();
+  const divisor = BigNumber.from(Math.pow(10, CHAIN_CURRENCY_DECIMALS).toString());
+
+  return tokenPrice.div(divisor).toString();
 };
