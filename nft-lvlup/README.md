@@ -38,11 +38,9 @@ this-template
 
 ## Environment Setup
 
-Place the `.env.development` or `.env.production` file in the parent folder. The file should be named as follows:
+Config file `.env.development` is created during `npm run initialize` in the parent folder, based on `.env.example` in this project. This is an empty file that you need to fill in with your specific values, before running Paima Engine.
 
-```
-../.env.name
-```
+Feel free to use examples written in the file for initial testing.
 
 ## Development
 
