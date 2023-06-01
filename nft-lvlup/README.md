@@ -20,6 +20,14 @@ Additionally to other templates it does one more thing
 
 - copies `extensions.yml` example to the parent folder
 
+### MacOS specific
+
+If you're using Mac and run into installation issues you can add `--target=esbuild-darwin-arm64` as a workaround to `npm install`. This installs the correct version of a problematic package. For example:
+
+```
+npm install --save-dev esbuild@latest --target=esbuild-darwin-arm64
+```
+
 ## Building
 
 To compile the Game Node into `endpoints` and `gameCode` entrypoints used by Paima Engine, use the following command:
