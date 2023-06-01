@@ -10,6 +10,16 @@ To install dependencies and perform initial setup, run the following command:
 npm run initialize
 ```
 
+This does the following:
+
+- installs dependencies of `paima-sdk`
+- install dependencies of this template
+- copies `.env.example` as `.env.development` to the parent folder
+
+Additionally to other templates it does one more thing
+
+- copies `extensions.yml` example to the parent folder
+
 ## Building
 
 To compile the Game Node into `endpoints` and `gameCode` entrypoints used by Paima Engine, use the following command:
@@ -33,7 +43,7 @@ this-template
 ../paima-sdk
 ../paima-engine-linux
 ../.env
-../.extensions.yml
+../extensions.yml
 ```
 
 ## Environment Setup
