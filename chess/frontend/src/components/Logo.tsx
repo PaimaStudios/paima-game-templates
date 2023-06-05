@@ -1,5 +1,5 @@
 import * as React from "react";
-import logo from "@assets/images/chess_logo.png";
+import logo from "@assets/images/favicon.png";
 import "./Logo.scss";
 import clsx from "clsx";
 
