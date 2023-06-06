@@ -104,3 +104,13 @@ You can set the `NODE_ENV` variable if you want to load a custom config for your
 ```
 NODE_ENV=devnet ./paima-engine-linux run
 ```
+
+## Documentation
+
+If you've got this far you're probably already familiar with our documentation. But if you need to refresh your knowledge you can copy the documentation files to your file system by using the standalone CLI command:
+
+```
+./paima-engine-linux docs
+```
+
+Or you can visit our [Paima Documentation Website](docs.paimastudios.com) at any time.
