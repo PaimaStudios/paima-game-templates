@@ -15,7 +15,6 @@ const CreateLobby: React.FC = () => {
   const [roundLength, setRoundLength] = useState("100");
   const [playersTime, setPlayersTime] = useState("100");
   const [isHidden, setIsHidden] = useState(false);
-  const [isPractice, setIsPractice] = useState(false);
 
   const handleCreateLobby = async () => {
     const numberOfRoundsNum = parseInt(numberOfRounds);
@@ -27,7 +26,7 @@ const CreateLobby: React.FC = () => {
       roundLengthNum,
       playersTimeNum,
       isHidden,
-      isPractice
+      false
     );
   };
 
@@ -54,16 +53,6 @@ const CreateLobby: React.FC = () => {
             />
           </Box>
           <Box sx={{ display: "flex", paddingTop: "24px" }}>
-            <FormControlLabel
-              sx={{ flex: "1" }}
-              control={
-                <Checkbox
-                  checked={isPractice}
-                  onChange={(event) => setIsPractice(event.target.checked)}
-                />
-              }
-              label="Is Practice?"
-            />
             <FormControlLabel
               sx={{ flex: "1" }}
               control={
