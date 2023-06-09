@@ -1,35 +1,54 @@
-import * as React from "react";
+import React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import { IconButton } from "@mui/material";
-import BackIcon from "@mui/icons-material/ArrowBack";
+import { IconButton, styled } from "@mui/material";
+import BackIcon from "@mui/icons-material/ArrowBackIos";
 import { useNavigate } from "react-router-dom";
 import Logo from "./Logo";
-interface NavbarProps {
-  children?: React.ReactNode;
-}
+import Card from "./Card";
+import { Container as ContainerBase } from "@mui/material";
 
-const Navbar: React.FC<NavbarProps> = ({ children }) => {
+const ChessBar = styled(AppBar)(({ theme }) => ({
+  borderBottom: `1px solid ${theme.palette.primary.main}`,
+  backgroundColor: theme.palette.primary.dark,
+}));
+
+const Container = styled(ContainerBase)(() => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+}));
+
+const IconCard = styled(Card)(() => ({
+  display: "inline-flex",
+  width: "40px",
+  alignItems: "center",
+  justifyContent: "center",
+}));
+
+const Navbar: React.FC = () => {
   const navigate = useNavigate();
+
   return (
-    <Box sx={{ flexGrow: 1, paddingBottom: "32px" }}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="back"
-            sx={{ mr: 2 }}
-            onClick={() => navigate(-1)}
-          >
-            <BackIcon />
-          </IconButton>
+    <Box sx={{ pb: "32px" }}>
+      <ChessBar position="static">
+        <Container maxWidth="lg">
+          <Box sx={{ flex: 2, textAlign: "left" }}>
+            <IconCard>
+              <IconButton
+                edge="end"
+                color="inherit"
+                aria-label="back"
+                onClick={() => navigate(-1)}
+              >
+                <BackIcon sx={{ textAlign: "center" }} />
+              </IconButton>
+            </IconCard>
+          </Box>
           <Logo height={64} />
-          {children}
-        </Toolbar>
-      </AppBar>
+          <Box sx={{ flex: 2 }} />
+        </Container>
+      </ChessBar>
     </Box>
   );
 };

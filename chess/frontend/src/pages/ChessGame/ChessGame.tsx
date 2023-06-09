@@ -1,48 +1,54 @@
 import React, { useContext, useEffect, useState } from "react";
-import "./ChessGame.scss";
-import { Box, CircularProgress, Typography } from "@mui/material";
-import { LobbyState, TickEvent } from "../../paima/types.d";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import type { LobbyState } from "../../paima/types";
 import { ChessLogic, ChessService } from "./GameLogic";
 
 import { Chessboard } from "react-chessboard";
 import * as ChessJS from "chess.js";
-import Navbar from "@src/components/Navbar";
-import MainController from "@src/MainController";
+import type MainController from "@src/MainController";
 import { AppContext } from "@src/main";
-import Wrapper from "@src/components/Wrapper";
-import Button from "@src/components/Button";
+import Layout from "@src/layouts/Layout";
+import { delay, isTickEvent } from "@src/utils";
+import Card from "@src/components/Card";
+import { useSearchParams } from "react-router-dom";
+import { Timer } from "@src/components/Timer";
+import { chessPieces } from "./pieces";
 
-interface ChessGameProps {
-  lobby: LobbyState;
-  address: string;
+interface Props {
+  lobby: LobbyState | null;
 }
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+const ChessGame: React.FC<Props> = ({ lobby }) => {
+  const [params] = useSearchParams();
+  const lobbyID = params.get("lobby") || "";
 
-function isTickEvent(event: any): event is TickEvent {
-  return (event as TickEvent).pgn_move !== undefined;
-}
-
-const ChessGame: React.FC<ChessGameProps> = ({ lobby, address }) => {
   const mainController: MainController = useContext(AppContext);
+  const chessLogic = new ChessLogic(mainController.userAddress);
 
-  const [game, setGame] = useState(new ChessJS.Chess());
-  const [showMore, setShowMore] = useState(false);
   const [waitingConfirmation, setWaitingConfirmation] = useState(false);
   const [replayInProgress, setReplayInProgress] = useState(false);
+  const [game, setGame] = useState(new ChessJS.Chess());
   const [lobbyState, setLobbyState] = useState<LobbyState>(lobby);
-  const chessLogic = new ChessLogic(address);
 
   useEffect(() => {
-    setGame(new ChessJS.Chess(lobby.latest_match_state));
-  }, []);
+    const fetchLobby = async () => {
+      const lobbyState = await ChessService.getLobbyState(lobbyID);
+      if (lobbyState == null) return;
+      setLobbyState(lobbyState);
+      setGame(new ChessJS.Chess(lobbyState.latest_match_state));
+    };
+
+    if (!lobby) {
+      fetchLobby();
+    } else {
+      setGame(new ChessJS.Chess(lobby.latest_match_state));
+    }
+  }, [lobby, lobbyID]);
 
   useEffect(() => {
     const fetchLobbyData = async () => {
       if (waitingConfirmation || replayInProgress) return;
-      const lobbyState = await ChessService.getLobbyState(lobby.lobby_id);
+      const lobbyState = await ChessService.getLobbyState(lobbyID);
       if (lobbyState == null) return;
       setLobbyState(lobbyState);
       setGame(new ChessJS.Chess(lobbyState.latest_match_state));
@@ -55,13 +61,12 @@ const ChessGame: React.FC<ChessGameProps> = ({ lobby, address }) => {
     return () => {
       clearInterval(intervalIdLobby);
     };
-  }, [waitingConfirmation, replayInProgress, lobbyState]);
-  //TODO: add eslint react hooks
+  }, [waitingConfirmation, replayInProgress, lobbyID]);
 
   async function handleMove(move: string): Promise<void> {
     setWaitingConfirmation(true);
     await chessLogic.handleMove(lobbyState, move);
-    const response = await ChessService.getLobbyState(lobby.lobby_id);
+    const response = await ChessService.getLobbyState(lobbyID);
     if (response == null) return;
     setLobbyState(response);
     setGame(new ChessJS.Chess(response.latest_match_state));
@@ -86,7 +91,7 @@ const ChessGame: React.FC<ChessGameProps> = ({ lobby, address }) => {
 
   const handleReplay = async () => {
     setReplayInProgress(true);
-    const matchExecutor = await mainController.getMatchExecutor(lobby.lobby_id);
+    const matchExecutor = await mainController.getMatchExecutor(lobbyID);
     const localGame = new ChessJS.Chess(matchExecutor.currentState.fenBoard);
     setGame(localGame);
     let events = matchExecutor.tick();
@@ -104,6 +109,9 @@ const ChessGame: React.FC<ChessGameProps> = ({ lobby, address }) => {
     setReplayInProgress(false);
   };
 
+  // TODO: graceful loader
+  if (!lobbyState) return null;
+
   const interactionEnabled =
     lobbyState.lobby_state === "active" &&
     !waitingConfirmation &&
@@ -111,49 +119,58 @@ const ChessGame: React.FC<ChessGameProps> = ({ lobby, address }) => {
     chessLogic.isThisPlayersTurn(lobbyState, game);
 
   return (
-    <>
-      <Navbar />
-      <Wrapper small blurred={false}>
-        <Typography variant="h1">Chess Board {lobbyState.lobby_id}</Typography>
-        {/*  Hide board if there isn't a defined lobbyState */}
-        {lobbyState && (
-          <div className="game">
-            <p className="game-info">
+    <Layout>
+      <Box sx={{ display: "flex", justifyContent: "center", gap: "24px" }}>
+        <Box sx={{ alignSelf: "flex-end" }}>
+          <Timer
+            value={25 * 60}
+            isRunning={
+              interactionEnabled &&
+              chessLogic.thisPlayerColor(lobbyState) === "w"
+            }
+            player={lobbyState.player_two}
+          />
+        </Box>
+        <Card layout>
+          <Box>
+            <Typography variant="h2">
+              Chess Board {lobbyState.lobby_id}
+            </Typography>
+            <Typography>
               {chessLogic.gameStateText(lobbyState, waitingConfirmation)}
               {waitingConfirmation && (
                 <CircularProgress size={20} sx={{ ml: 2 }} />
               )}
-            </p>
-            <div className="game-board">
-              <Chessboard
-                position={game.fen()}
-                onPieceDrop={onDrop}
-                arePiecesDraggable={interactionEnabled}
-              />
-            </div>
-          </div>
-        )}
-        {lobbyState.lobby_state === "finished" && (
-          <Button onClick={handleReplay}>Replay</Button>
-        )}
-        <Box>
-          <Button
-            onClick={() => setShowMore((prev) => !prev)}
-            variant="text"
-            disableRipple
-          >
-            {showMore ? "Hide" : "Show More Information"}
-          </Button>
-          {showMore && (
-            <Typography>
-              {!lobby.lobby_id
-                ? "No current lobby"
-                : JSON.stringify(lobbyState, null, 2)}
             </Typography>
+          </Box>
+          <Box sx={{ width: "450px", height: "450px" }}>
+            <Chessboard
+              customLightSquareStyle={{ backgroundColor: "#D8E9EB" }}
+              customDarkSquareStyle={{ backgroundColor: "#907B90" }}
+              customPieces={chessPieces}
+              position={game.fen()}
+              onPieceDrop={onDrop}
+              arePiecesDraggable={interactionEnabled}
+            />
+          </Box>
+          {lobbyState.lobby_state === "finished" && (
+            <Button onClick={handleReplay} fullWidth>
+              Replay
+            </Button>
           )}
+        </Card>
+        <Box sx={{ alignSelf: "flex-start" }}>
+          <Timer
+            value={24 * 60 * 60}
+            isRunning={
+              interactionEnabled &&
+              chessLogic.thisPlayerColor(lobbyState) === "b"
+            }
+            player={lobbyState.lobby_creator}
+          />
         </Box>
-      </Wrapper>
-    </>
+      </Box>
+    </Layout>
   );
 };
 

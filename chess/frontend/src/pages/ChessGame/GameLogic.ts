@@ -1,4 +1,4 @@
-import { OldResult, LobbyState } from "../../paima/types.d";
+import type { OldResult, LobbyState } from "../../paima/types";
 import * as Paima from "../../paima/middleware.js";
 import * as ChessJS from "chess.js";
 
@@ -36,10 +36,6 @@ export class ChessLogic {
   }
 
   async handleMove(lobbyState: LobbyState, move: string): Promise<void> {
-    if (lobbyState == null) {
-      throw new Error("Lobby state is null");
-    }
-
     if (this.isThisPlayersTurnRaw(lobbyState) == false) {
       console.log("It's the other player's turn");
       return;
@@ -51,7 +47,7 @@ export class ChessLogic {
       move
     );
     console.log("Move result: ", moveResult);
-    if (moveResult.success === false) {
+    if (!moveResult.success) {
       console.log("Move failed");
       return;
     }

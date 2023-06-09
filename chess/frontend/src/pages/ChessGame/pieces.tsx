@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React from "react";
 
 import whitePawn from "@assets/images/pieces/whitePawn.svg";
 import whiteRook from "@assets/images/pieces/whiteRook.svg";
@@ -16,7 +16,7 @@ import blackKing from "@assets/images/pieces/blackKing.svg";
 
 // Inspired by https://commons.wikimedia.org/wiki/Category:SVG_chess_pieces
 
-export const chessPieces: Record<string, () => ReactNode> = {
+export const chessPieces: Record<string, () => React.ReactNode> = {
   wP: () => <img src={whitePawn} />,
   wR: () => <img src={whiteRook} />,
   wN: () => <img src={whiteKnight} />,

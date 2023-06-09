@@ -1,12 +1,16 @@
 import React, { useContext, useState } from "react";
-import "./CreateLobby.scss";
-import { Box, Checkbox, FormControlLabel } from "@mui/material";
-import MainController from "@src/MainController";
-import Navbar from "@src/components/Navbar";
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Typography,
+} from "@mui/material";
+import type MainController from "@src/MainController";
 import { AppContext } from "@src/main";
-import Wrapper from "@src/components/Wrapper";
-import Button from "@src/components/Button";
+import Layout from "@src/layouts/Layout";
 import NumericField from "@src/components/NumericField";
+import Card from "@src/components/Card";
 
 const CreateLobby: React.FC = () => {
   const mainController: MainController = useContext(AppContext);
@@ -32,9 +36,9 @@ const CreateLobby: React.FC = () => {
   };
 
   return (
-    <>
-      <Navbar />
-      <Wrapper small>
+    <Layout small>
+      <Card layout blurred>
+        <Typography variant="h2">Create</Typography>
         <Box>
           <Box sx={{ display: "flex", flexFlow: "column", gap: "2rem" }}>
             <NumericField
@@ -76,10 +80,9 @@ const CreateLobby: React.FC = () => {
             />
           </Box>
         </Box>
-
         <Button onClick={handleCreateLobby}>Create</Button>
-      </Wrapper>
-    </>
+      </Card>
+    </Layout>
   );
 };
 

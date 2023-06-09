@@ -108,7 +108,11 @@ export const submittedMoves = async (
   if (lobby.practice) {
     // This is an example implementation of AI/Practice mode
     // Chess does not have a practice mode implemented.
-    if (1) throw new Error('Practice AI : NYI');
+    // TODO: revisit this
+    if (1) {
+      console.error('Practice AI : NYI');
+      return [];
+    }
     const practiceAI = new PracticeAI(lobby.latest_match_state, input.pgnMove, randomnessGenerator);
     const practiceMove = practiceAI.getNextMove();
     if (practiceMove) {

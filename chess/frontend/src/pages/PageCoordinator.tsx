@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useContext } from "react";
-import MainController, { Page } from "@src/MainController";
-import LandingPage from "./Landing";
+import type MainController from "@src/MainController";
+import { Page } from "@src/MainController";
+import Login from "./Login";
 import MainMenu from "./MainMenu";
 import OpenLobbies from "./OpenLobbies";
 import MyGames from "./MyGames";
 import ChessGame from "./ChessGame/ChessGame";
 import CreateLobby from "./CreateLobby";
-import { CircularProgress } from "@mui/material";
+import { Box } from "@mui/material";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { LobbyState } from "../paima/types.d";
-import "./PageCoordinator.scss";
+import type { LobbyState } from "../paima/types";
 import { AppContext } from "@src/main";
+import Loader from "@src/components/Loader";
 
 const PageCoordinator: React.FC = () => {
   const mainController: MainController = useContext(AppContext);
@@ -18,11 +19,6 @@ const PageCoordinator: React.FC = () => {
 
   const [lobby, setLobby] = useState<LobbyState>(null);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const page = mainController.initialState();
-    navigate(page);
-  }, []);
 
   useEffect(() => {
     mainController.callback = (
@@ -34,38 +30,26 @@ const PageCoordinator: React.FC = () => {
       setLoading(isLoading);
       if (newPage === Page.Game) {
         setLobby(extraData);
-      }
-      if (newPage) {
+        navigate(`${newPage}?lobby=${extraData.lobby_id}`);
+      } else if (newPage) {
         navigate(newPage);
       }
     };
   }, []);
 
   return (
-    <div className="chess-app">
-      {loading && (
-        <div className="overlay">
-          <CircularProgress sx={{ ml: 2 }} />
-        </div>
-      )}
+    <Box>
+      {loading && <Loader />}
       <Routes>
+        <Route path={Page.Login} element={<Login />} />
         <Route path={Page.MainMenu} element={<MainMenu />} />
-        <Route path={Page.OpenLobbies} element={<OpenLobbies />} />
-        <Route
-          path={Page.MyGames}
-          element={<MyGames myAddress={mainController.userAddress} />}
-        />
-        <Route
-          path={Page.Game}
-          element={
-            <ChessGame lobby={lobby} address={mainController.userAddress} />
-          }
-        />
         <Route path={Page.CreateLobby} element={<CreateLobby />} />
-        <Route path={Page.Landing} element={<LandingPage />} />
+        <Route path={Page.OpenLobbies} element={<OpenLobbies />} />
+        <Route path={Page.MyGames} element={<MyGames />} />
+        <Route path={Page.Game} element={<ChessGame lobby={lobby} />} />
         <Route element={<div>There was something wrong...</div>} />
       </Routes>
-    </div>
+    </Box>
   );
 };
 

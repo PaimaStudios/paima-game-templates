@@ -3,55 +3,42 @@ import { createTheme } from "@mui/material";
 export const theme = createTheme({
   palette: {
     primary: {
-      main: "#F2CEAD",
-      light: "#FFE6CA",
+      main: "#25515B",
+      light: "#57E7FB",
+      dark: "#000000",
     },
     secondary: {
-      main: "#4B230C",
+      main: "#000000",
+    },
+    background: {
+      default: "#ffffff",
     },
   },
   typography: {
     fontFamily: ["Inter", "Arial", "sans-serif"].join(","),
-    h1: {
-      fontSize: 32,
-      color: "#FFE6CA",
-      fontWeight: 800,
-    },
-    button: {
+    h2: {
       fontStyle: "normal",
-      fontWeight: 700,
-      fontSize: 18,
-      color: "#4B230C",
-      textTransform: "none",
+      fontWeight: 500,
+      fontSize: 20,
+      color: "white",
+      letterSpacing: "0.08em",
+      textTransform: "uppercase",
+    },
+    subtitle1: {
+      fontStyle: "normal",
+      fontWeight: 500,
+      fontSize: "14px",
+      color: "#898989",
+    },
+    body1: {
+      fontStyle: "normal",
+      fontWeight: 500,
+      fontSize: "16px",
+      textAlign: "center",
+      color: "white",
     },
   },
   components: {
-    MuiTableCell: {
-      styleOverrides: {
-        head: {
-          backgroundColor: "transparent",
-          fontWeight: 700,
-          fontSize: "14px",
-          color: "white",
-          opacity: 0.6,
-        },
-        body: {
-          fontWeight: 700,
-          fontSize: "16px",
-          color: "white",
-        },
-      },
-    },
-    MuiTablePagination: {
-      styleOverrides: {
-        toolbar: {
-          fontWeight: 500,
-          fontSize: "16px",
-          color: "white",
-        },
-        select: { fontWeight: 700 },
-      },
-    },
     MuiSelect: {
       styleOverrides: {
         icon: { color: "white" },
@@ -84,6 +71,26 @@ export const theme = createTheme({
         label: {
           fontWeight: 700,
           fontSize: "14px",
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          background: "linear-gradient(90deg, #57E7FB 0%, #FCA2F9 100%)",
+          borderRadius: "4px",
+          color: "black",
+          fontWeight: 600,
+          fontSize: "16px",
+        },
+      },
+    },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          "&.Mui-checked": {
+            color: "#57E7FB",
+          },
         },
       },
     },

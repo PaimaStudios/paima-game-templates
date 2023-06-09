@@ -1,5 +1,5 @@
 import * as Paima from "./paima/middleware.js";
-import {
+import type {
   LobbyState,
   MatchExecutor,
   MatchState,
@@ -13,7 +13,7 @@ import {
 
 // create string enum called AppState
 export enum Page {
-  Landing = "/login",
+  Login = "/login",
   MainMenu = "/",
   CreateLobby = "/create_lobby",
   OpenLobbies = "/open_lobbies",
@@ -34,14 +34,14 @@ class MainController {
 
   private checkCallback() {
     if (this.callback == null) {
-      throw new Error("Callback is not set");
+      console.error("Callback is not set");
     }
   }
 
   private async enforceWalletConnected() {
     this.checkCallback();
     if (!this.isWalletConnected()) {
-      this.callback(Page.Landing, false, null);
+      this.callback(Page.Login, false, null);
     }
     if (!this.userAddress) {
       await this.silentConnectWallet();
@@ -60,15 +60,15 @@ class MainController {
     }
   }
 
-  async connectWallet() {
-    this.callback(Page.Landing, true, null);
-    const response = await Paima.default.userWalletLogin("metamask");
+  async connectWallet(wallet: string) {
+    this.callback(Page.Login, true, null);
+    const response = await Paima.default.userWalletLogin(wallet);
     console.log("connect wallet response: ", response);
     if (response.success === true) {
       this.userAddress = response.result.walletAddress;
       this.callback(Page.MainMenu, false, null);
     } else {
-      this.callback(Page.Landing, false, null);
+      this.callback(Page.Login, false, null);
     }
   }
 
@@ -224,11 +224,6 @@ class MainController {
       throw new Error("Could not get match executor");
     }
     return response.result;
-  }
-
-  initialState(): Page {
-    this.silentConnectWallet();
-    return this.isWalletConnected() ? Page.MainMenu : Page.Landing;
   }
 }
 

@@ -1,10 +1,10 @@
 .chess-logo {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1;
+  border: 1px solid rgba(#57e7fb, 0.5);
+  border-radius: 16px;
+
+  margin: 8px 0;
 
   &--main {
-    top: 32px;
+    margin-top: 24px;
   }
 }
