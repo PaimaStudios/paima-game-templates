@@ -24,3 +24,9 @@ export function isTickEvent(event: any): event is TickEvent {
 export function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+export const formatPlayer = (address: string): string => {
+  if (!address) return "WAITING...";
+  if (address.length < 10) return address;
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+};

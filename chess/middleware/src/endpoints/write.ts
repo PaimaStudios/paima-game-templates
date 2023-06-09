@@ -3,9 +3,9 @@ import { builder } from 'paima-sdk/paima-concise';
 import type { EndpointErrorFxn, FailedResult, OldResult, Result } from 'paima-sdk/paima-mw-core';
 import {
   awaitBlock,
-  postConciselyEncodedData,
   getActiveAddress,
   PaimaMiddlewareErrorCode,
+  postConciseData,
 } from 'paima-sdk/paima-mw-core';
 
 import { buildEndpointErrorFxn, MiddlewareErrorCode } from '../errors';
@@ -54,25 +54,10 @@ async function createLobby(
     { value: playerOneIsWhite ? 'T' : '' },
   ]);
 
-  let currentBlockVar: number;
-  try {
-    const result = await postConciselyEncodedData(conciseBuilder.build());
-    if (!result.success) {
-      return errorFxn(PaimaMiddlewareErrorCode.ERROR_POSTING_TO_CHAIN, result.errorMessage);
-    }
-    currentBlockVar = result.result;
+  const response = await postConciseData(conciseBuilder.build(), errorFxn);
+  if (!response.success) return response;
 
-    if (currentBlockVar < 0) {
-      return errorFxn(
-        PaimaMiddlewareErrorCode.ERROR_POSTING_TO_CHAIN,
-        `Received block height: ${currentBlockVar}`
-      );
-    }
-  } catch (err) {
-    return errorFxn(PaimaMiddlewareErrorCode.ERROR_POSTING_TO_CHAIN, err);
-  }
-  const currentBlock = currentBlockVar;
-
+  const currentBlock = response.blockHeight;
   try {
     await awaitBlock(currentBlock);
     const newLobbies = await retryPromise(
@@ -86,13 +71,12 @@ async function createLobby(
       newLobbies.lobbies.length === 0
     ) {
       return errorFxn(MiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CREATION);
-    } else {
-      return {
-        success: true,
-        lobbyID: newLobbies.lobbies[0].lobby_id,
-        lobbyStatus: 'open',
-      };
     }
+    return {
+      success: true,
+      lobbyID: newLobbies.lobbies[0].lobby_id,
+      lobbyStatus: 'open',
+    };
   } catch (err) {
     return errorFxn(MiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CREATION, err);
   }
@@ -109,25 +93,10 @@ async function joinLobby(lobbyID: string): Promise<OldResult> {
   conciseBuilder.setPrefix('j');
   conciseBuilder.addValue({ value: lobbyID, isStateIdentifier: true });
 
-  let currentBlockVar: number;
-  try {
-    const result = await postConciselyEncodedData(conciseBuilder.build());
-    if (!result.success) {
-      return errorFxn(PaimaMiddlewareErrorCode.ERROR_POSTING_TO_CHAIN, result.errorMessage);
-    }
-    currentBlockVar = result.result;
+  const response = await postConciseData(conciseBuilder.build(), errorFxn);
+  if (!response.success) return response;
 
-    if (currentBlockVar < 0) {
-      return errorFxn(
-        PaimaMiddlewareErrorCode.ERROR_POSTING_TO_CHAIN,
-        `Received block height: ${currentBlockVar}`
-      );
-    }
-  } catch (err) {
-    return errorFxn(PaimaMiddlewareErrorCode.ERROR_POSTING_TO_CHAIN, err);
-  }
-  const currentBlock = currentBlockVar;
-
+  const currentBlock = response.blockHeight;
   try {
     await awaitBlock(currentBlock);
     const lobbyState = await retryPromise(
@@ -136,17 +105,14 @@ async function joinLobby(lobbyID: string): Promise<OldResult> {
       RETRIES_COUNT
     );
     if (userJoinedLobby(userWalletAddress, lobbyState)) {
-      return {
-        success: true,
-        message: '',
-      };
-    } else if (userCreatedLobby(userWalletAddress, lobbyState)) {
-      return errorFxn(MiddlewareErrorCode.CANNOT_JOIN_OWN_LOBBY);
-    } else {
-      return errorFxn(MiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_JOIN);
+      return { success: true, message: '' };
     }
-  } catch (err) {
+    if (userCreatedLobby(userWalletAddress, lobbyState)) {
+      return errorFxn(MiddlewareErrorCode.CANNOT_JOIN_OWN_LOBBY);
+    }
     return errorFxn(MiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_JOIN);
+  } catch (err) {
+    return errorFxn(MiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_JOIN, err);
   }
 }
 
@@ -161,25 +127,10 @@ async function closeLobby(lobbyID: string): Promise<OldResult> {
   conciseBuilder.setPrefix('cs');
   conciseBuilder.addValue({ value: lobbyID, isStateIdentifier: true });
 
-  let currentBlockVar: number;
-  try {
-    const result = await postConciselyEncodedData(conciseBuilder.build());
-    if (!result.success) {
-      return errorFxn(PaimaMiddlewareErrorCode.ERROR_POSTING_TO_CHAIN, result.errorMessage);
-    }
-    currentBlockVar = result.result;
+  const response = await postConciseData(conciseBuilder.build(), errorFxn);
+  if (!response.success) return response;
 
-    if (currentBlockVar < 0) {
-      return errorFxn(
-        PaimaMiddlewareErrorCode.ERROR_POSTING_TO_CHAIN,
-        `Received block height: ${currentBlockVar}`
-      );
-    }
-  } catch (err) {
-    return errorFxn(PaimaMiddlewareErrorCode.ERROR_POSTING_TO_CHAIN, err);
-  }
-  const currentBlock = currentBlockVar;
-
+  const currentBlock = response.blockHeight;
   try {
     await awaitBlock(currentBlock);
     const lobbyState = await retryPromise(
@@ -189,13 +140,13 @@ async function closeLobby(lobbyID: string): Promise<OldResult> {
     );
     if (lobbyWasClosed(lobbyState)) {
       return { success: true, message: '' };
-    } else if (!userCreatedLobby(userWalletAddress, lobbyState)) {
-      return errorFxn(MiddlewareErrorCode.CANNOT_CLOSE_SOMEONES_LOBBY);
-    } else {
-      return errorFxn(MiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CLOSE);
     }
-  } catch (err) {
+    if (!userCreatedLobby(userWalletAddress, lobbyState)) {
+      return errorFxn(MiddlewareErrorCode.CANNOT_CLOSE_SOMEONES_LOBBY);
+    }
     return errorFxn(MiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CLOSE);
+  } catch (err) {
+    return errorFxn(MiddlewareErrorCode.FAILURE_VERIFYING_LOBBY_CLOSE, err);
   }
 }
 
@@ -208,28 +159,21 @@ async function submitMoves(
 
   const query = getUserWallet(errorFxn);
   if (!query.success) return query;
-  const userWalletAddress = query.result;
 
   const conciseBuilder = builder.initialize();
   conciseBuilder.setPrefix('s');
   conciseBuilder.addValue({ value: lobbyID, isStateIdentifier: true });
   conciseBuilder.addValue({ value: roundNumber.toString(10) });
-  try {
-    conciseBuilder.addValue({ value: move });
-  } catch (err) {
-    return errorFxn(MiddlewareErrorCode.SUBMIT_MOVES_INVALID_MOVES, err);
-  }
+  conciseBuilder.addValue({ value: move });
 
-  try {
-    const result = await postConciselyEncodedData(conciseBuilder.build());
-    if (result.success) {
-      return { success: true, message: '' };
-    } else {
-      return errorFxn(PaimaMiddlewareErrorCode.ERROR_POSTING_TO_CHAIN);
-    }
-  } catch (err) {
-    return errorFxn(PaimaMiddlewareErrorCode.ERROR_POSTING_TO_CHAIN, err);
-  }
+  const response = await postConciseData(conciseBuilder.build(), errorFxn);
+  if (!response.success) return response;
+
+  const currentBlock = response.blockHeight;
+  // TODO: test this function
+  await awaitBlock(currentBlock);
+  // TODO: return new board state
+  return { success: true, message: '' };
 }
 
 export const writeEndpoints = {

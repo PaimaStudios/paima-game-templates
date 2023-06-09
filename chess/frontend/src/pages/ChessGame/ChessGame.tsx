@@ -112,23 +112,33 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
   // TODO: graceful loader
   if (!lobbyState) return null;
 
+  const isActiveGame = lobbyState.lobby_state === "active" && !replayInProgress;
   const interactionEnabled =
-    lobbyState.lobby_state === "active" &&
+    isActiveGame &&
     !waitingConfirmation &&
-    !replayInProgress &&
     chessLogic.isThisPlayersTurn(lobbyState, game);
+
+  const blackTimerRunning =
+    isActiveGame &&
+    ((game.turn() === "b" && !waitingConfirmation) ||
+      (game.turn() === "w" && waitingConfirmation));
+  const whiteTimerRunning =
+    isActiveGame &&
+    ((game.turn() === "w" && !waitingConfirmation) ||
+      (game.turn() === "b" && waitingConfirmation));
 
   return (
     <Layout>
       <Box sx={{ display: "flex", justifyContent: "center", gap: "24px" }}>
         <Box sx={{ alignSelf: "flex-end" }}>
           <Timer
-            value={25 * 60}
-            isRunning={
-              interactionEnabled &&
-              chessLogic.thisPlayerColor(lobbyState) === "w"
+            value={lobbyState.play_time_per_player}
+            isRunning={whiteTimerRunning}
+            player={
+              lobbyState.player_one_iswhite
+                ? lobbyState.lobby_creator
+                : lobbyState.player_two
             }
-            player={lobbyState.player_two}
           />
         </Box>
         <Card layout>
@@ -161,12 +171,13 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
         </Card>
         <Box sx={{ alignSelf: "flex-start" }}>
           <Timer
-            value={24 * 60 * 60}
-            isRunning={
-              interactionEnabled &&
-              chessLogic.thisPlayerColor(lobbyState) === "b"
+            value={lobbyState.play_time_per_player}
+            isRunning={blackTimerRunning}
+            player={
+              lobbyState.player_one_iswhite
+                ? lobbyState.player_two
+                : lobbyState.lobby_creator
             }
-            player={lobbyState.lobby_creator}
           />
         </Box>
       </Box>

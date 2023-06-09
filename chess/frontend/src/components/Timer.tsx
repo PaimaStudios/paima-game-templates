@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
 import Card from "./Card";
-import { formatTime } from "@src/utils";
+import { formatPlayer, formatTime } from "@src/utils";
 
 interface Props {
   // TODO: readable name from MW
@@ -22,7 +22,14 @@ export const Timer: React.FC<Props> = ({ value, isRunning, player }) => {
   useEffect(() => {
     if (!isRunning) return;
 
-    const interval = setInterval(() => setTime((time) => (time -= 1)), 1000);
+    const interval = setInterval(
+      () =>
+        setTime((time) => {
+          if (time <= 0) return 0;
+          return time - 1;
+        }),
+      1000
+    );
 
     return () => {
       clearInterval(interval);
@@ -30,9 +37,17 @@ export const Timer: React.FC<Props> = ({ value, isRunning, player }) => {
   }, [value, isRunning]);
 
   return (
-    <Card layout sx={{ maxWidth: "150px", overflow: "hidden" }}>
-      <Typography variant="h2">{player}</Typography>
-      <Typography>{formatTime(time)}</Typography>
+    <Card layout>
+      <Typography variant="h2">{formatPlayer(player)}</Typography>
+      <Typography
+        sx={{
+          fontWeight: "bold",
+          fontSize: "2rem",
+          fontFamily: "monospace",
+        }}
+      >
+        {formatTime(time)}
+      </Typography>
     </Card>
   );
 };
