@@ -1,4 +1,4 @@
-import type { OldResult, LobbyState } from "../../paima/types";
+import type { LobbyState, FailedResult } from "../../paima/types";
 import * as Paima from "../../paima/middleware.js";
 import * as ChessJS from "chess.js";
 
@@ -21,7 +21,13 @@ export class ChessService {
     lobbyId: string,
     roundNumber: number,
     move: string
-  ): Promise<OldResult> {
+  ): Promise<
+    | FailedResult
+    | {
+        success: true;
+        lobby: LobbyState;
+      }
+  > {
     const result = await Paima.default.submitMoves(lobbyId, roundNumber, move);
     console.log("Submit move result: ", result);
     return result;
@@ -35,7 +41,7 @@ export class ChessLogic {
     this.userAddress = userAddress;
   }
 
-  async handleMove(lobbyState: LobbyState, move: string): Promise<void> {
+  async handleMove(lobbyState: LobbyState, move: string): Promise<LobbyState> {
     if (this.isThisPlayersTurnRaw(lobbyState) == false) {
       console.log("It's the other player's turn");
       return;
@@ -51,6 +57,7 @@ export class ChessLogic {
       console.log("Move failed");
       return;
     }
+    return moveResult.lobby;
   }
 
   isThisPlayersTurnRaw(lobbyState: LobbyState): boolean {

@@ -12,7 +12,7 @@ import { buildEndpointErrorFxn, MiddlewareErrorCode } from '../errors';
 import { getLobbyStateWithUser, getNonemptyNewLobbies } from '../helpers/auxiliary-queries';
 import { lobbyWasClosed, userCreatedLobby, userJoinedLobby } from '../helpers/utility-functions';
 import type { MatchMove } from '@chess/game-logic';
-import type { CreateLobbySuccessfulResponse } from '../types';
+import type { CreateLobbySuccessfulResponse, PackedLobbyState } from '../types';
 
 const RETRY_PERIOD = 1000;
 const RETRIES_COUNT = 8;
@@ -154,11 +154,12 @@ async function submitMoves(
   lobbyID: string,
   roundNumber: number,
   move: MatchMove
-): Promise<OldResult> {
+): Promise<FailedResult | PackedLobbyState> {
   const errorFxn = buildEndpointErrorFxn('submitMoves');
 
   const query = getUserWallet(errorFxn);
   if (!query.success) return query;
+  const userWalletAddress = query.result;
 
   const conciseBuilder = builder.initialize();
   conciseBuilder.setPrefix('s');
@@ -170,10 +171,20 @@ async function submitMoves(
   if (!response.success) return response;
 
   const currentBlock = response.blockHeight;
-  // TODO: test this function
-  await awaitBlock(currentBlock);
-  // TODO: return new board state
-  return { success: true, message: '' };
+  try {
+    await awaitBlock(currentBlock);
+    const lobbyState = await retryPromise(
+      () => getLobbyStateWithUser(lobbyID, userWalletAddress),
+      RETRY_PERIOD,
+      RETRIES_COUNT
+    );
+    if (lobbyState.success) {
+      return lobbyState;
+    }
+    return errorFxn(MiddlewareErrorCode.FAILURE_VERIFYING_MOVE_SUBMISSION);
+  } catch (err) {
+    return errorFxn(MiddlewareErrorCode.FAILURE_VERIFYING_MOVE_SUBMISSION, err);
+  }
 }
 
 export const writeEndpoints = {

@@ -47,9 +47,9 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
 
   useEffect(() => {
     const fetchLobbyData = async () => {
-      if (waitingConfirmation || replayInProgress) return;
       const lobbyState = await ChessService.getLobbyState(lobbyID);
       if (lobbyState == null) return;
+      if (waitingConfirmation || replayInProgress) return;
       setLobbyState(lobbyState);
       setGame(new ChessJS.Chess(lobbyState.latest_match_state));
     };
@@ -65,12 +65,18 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
 
   async function handleMove(move: string): Promise<void> {
     setWaitingConfirmation(true);
-    await chessLogic.handleMove(lobbyState, move);
-    const response = await ChessService.getLobbyState(lobbyID);
-    if (response == null) return;
-    setLobbyState(response);
-    setGame(new ChessJS.Chess(response.latest_match_state));
-    setWaitingConfirmation(false);
+    const newLobbyState = await chessLogic.handleMove(lobbyState, move);
+    if (newLobbyState != null) {
+      setLobbyState(newLobbyState);
+      setGame(new ChessJS.Chess(newLobbyState.latest_match_state));
+      setWaitingConfirmation(false);
+    } else {
+      const response = await ChessService.getLobbyState(lobbyID);
+      setWaitingConfirmation(false);
+      if (response == null) return;
+      setLobbyState(response);
+      setGame(new ChessJS.Chess(response.latest_match_state));
+    }
   }
 
   function onDrop(sourceSquare: ChessJS.Square, targetSquare: ChessJS.Square) {
