@@ -11,8 +11,6 @@ interface Props {
   isRunning: boolean;
 }
 
-// TODO: update value during replay?
-
 export const Timer: React.FC<Props> = ({ value, isRunning, player }) => {
   const [time, setTime] = useState<number>(value);
 

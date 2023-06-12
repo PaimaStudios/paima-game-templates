@@ -136,21 +136,23 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
   return (
     <Layout>
       <Box sx={{ display: "flex", justifyContent: "center", gap: "24px" }}>
-        <Box sx={{ alignSelf: "flex-end" }}>
-          <Timer
-            value={blocksToSeconds(
-              lobbyState.player_one_iswhite
-                ? lobbyState.remaining_blocks.player_one
-                : lobbyState.remaining_blocks.player_two
-            )}
-            isRunning={whiteTimerRunning}
-            player={
-              lobbyState.player_one_iswhite
-                ? lobbyState.lobby_creator
-                : lobbyState.player_two
-            }
-          />
-        </Box>
+        {lobbyState.lobby_state !== "finished" && (
+          <Box sx={{ alignSelf: "flex-end" }}>
+            <Timer
+              value={blocksToSeconds(
+                lobbyState.player_one_iswhite
+                  ? lobbyState.remaining_blocks.player_one
+                  : lobbyState.remaining_blocks.player_two
+              )}
+              isRunning={whiteTimerRunning}
+              player={
+                lobbyState.player_one_iswhite
+                  ? lobbyState.lobby_creator
+                  : lobbyState.player_two
+              }
+            />
+          </Box>
+        )}
         <Card layout>
           <Box>
             <Typography variant="h2">
@@ -179,21 +181,23 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
             </Button>
           )}
         </Card>
-        <Box sx={{ alignSelf: "flex-start" }}>
-          <Timer
-            value={blocksToSeconds(
-              lobbyState.player_one_iswhite
-                ? lobbyState.remaining_blocks.player_two
-                : lobbyState.remaining_blocks.player_one
-            )}
-            isRunning={blackTimerRunning}
-            player={
-              lobbyState.player_one_iswhite
-                ? lobbyState.player_two
-                : lobbyState.lobby_creator
-            }
-          />
-        </Box>
+        {lobbyState.lobby_state !== "finished" && (
+          <Box sx={{ alignSelf: "flex-start" }}>
+            <Timer
+              value={blocksToSeconds(
+                lobbyState.player_one_iswhite
+                  ? lobbyState.remaining_blocks.player_two
+                  : lobbyState.remaining_blocks.player_one
+              )}
+              isRunning={blackTimerRunning}
+              player={
+                lobbyState.player_one_iswhite
+                  ? lobbyState.player_two
+                  : lobbyState.lobby_creator
+              }
+            />
+          </Box>
+        )}
       </Box>
     </Layout>
   );
