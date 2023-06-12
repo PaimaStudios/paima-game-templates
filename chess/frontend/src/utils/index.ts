@@ -1,5 +1,6 @@
 import type { TickEvent } from "@src/paima";
 import { format } from "date-fns";
+import { BLOCK_TIME } from "./constants";
 
 export const formatDate = (dateISO: string | Date): string => {
   const date = new Date(dateISO);
@@ -30,3 +31,20 @@ export const formatPlayer = (address: string): string => {
   if (address.length < 10) return address;
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 };
+
+/**
+ * @returns human readable time from blocks in format "1h 30m" (either component ommitted if 0)
+ */
+export const blocksToTime = (blocks: number): string => {
+  const seconds = blocks * BLOCK_TIME;
+  const minutes = Math.floor(seconds / 60) % 60;
+  const hours = Math.floor(seconds / 3600);
+
+  if (hours === 0) return `${minutes}m`;
+
+  if (minutes === 0) return `${hours}h`;
+
+  return `${hours}h ${minutes}m`;
+};
+
+export const blocksToSeconds = (blocks: number): number => blocks * BLOCK_TIME;

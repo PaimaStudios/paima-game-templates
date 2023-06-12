@@ -8,7 +8,7 @@ import * as ChessJS from "chess.js";
 import type MainController from "@src/MainController";
 import { AppContext } from "@src/main";
 import Layout from "@src/layouts/Layout";
-import { delay, isTickEvent } from "@src/utils";
+import { blocksToSeconds, delay, isTickEvent } from "@src/utils";
 import Card from "@src/components/Card";
 import { useSearchParams } from "react-router-dom";
 import { Timer } from "@src/components/Timer";
@@ -138,7 +138,11 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
       <Box sx={{ display: "flex", justifyContent: "center", gap: "24px" }}>
         <Box sx={{ alignSelf: "flex-end" }}>
           <Timer
-            value={lobbyState.play_time_per_player}
+            value={blocksToSeconds(
+              lobbyState.player_one_iswhite
+                ? lobbyState.remaining_blocks.player_one
+                : lobbyState.remaining_blocks.player_two
+            )}
             isRunning={whiteTimerRunning}
             player={
               lobbyState.player_one_iswhite
@@ -177,7 +181,11 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
         </Card>
         <Box sx={{ alignSelf: "flex-start" }}>
           <Timer
-            value={lobbyState.play_time_per_player}
+            value={blocksToSeconds(
+              lobbyState.player_one_iswhite
+                ? lobbyState.remaining_blocks.player_two
+                : lobbyState.remaining_blocks.player_one
+            )}
             isRunning={blackTimerRunning}
             player={
               lobbyState.player_one_iswhite

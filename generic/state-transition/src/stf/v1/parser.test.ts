@@ -1,5 +1,6 @@
 import parse from './parser';
 
+// TODO: update
 describe('Input parsing', () => {
   test('parses gainedExperience', () => {
     const parsed = parse('xp|*s4da84aw8ead4f86e|3');

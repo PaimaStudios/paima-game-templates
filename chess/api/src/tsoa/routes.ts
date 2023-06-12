@@ -55,6 +55,7 @@ const models: TsoaRoute.Models = {
             "practice": {"dataType":"boolean","required":true},
             "round_length": {"dataType":"double","required":true},
             "round_start_height": {"dataType":"double","required":true},
+            "remaining_blocks": {"dataType":"nestedObjectLiteral","nestedProperties":{"player_two":{"dataType":"double","required":true},"player_one":{"dataType":"double","required":true}},"required":true},
         },
         "additionalProperties": false,
     },

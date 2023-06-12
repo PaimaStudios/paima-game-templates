@@ -851,3 +851,36 @@ const getFinalStateIR: any = {"usedParamSet":{"lobby_id":true},"params":[{"name"
 export const getFinalState = new PreparedQuery<IGetFinalStateParams,IGetFinalStateResult>(getFinalStateIR);
 
 
+/** 'GetLobbyRounds' parameters type */
+export interface IGetLobbyRoundsParams {
+  lobby_id: string | null | void;
+}
+
+/** 'GetLobbyRounds' return type */
+export interface IGetLobbyRoundsResult {
+  execution_block_height: number | null;
+  id: number;
+  lobby_id: string;
+  match_state: string;
+  round_within_match: number;
+  starting_block_height: number;
+}
+
+/** 'GetLobbyRounds' query type */
+export interface IGetLobbyRoundsQuery {
+  params: IGetLobbyRoundsParams;
+  result: IGetLobbyRoundsResult;
+}
+
+const getLobbyRoundsIR: any = {"usedParamSet":{"lobby_id":true},"params":[{"name":"lobby_id","required":false,"transform":{"type":"scalar"},"locs":[{"a":38,"b":46}]}],"statement":"SELECT * FROM rounds\nWHERE lobby_id = :lobby_id"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * SELECT * FROM rounds
+ * WHERE lobby_id = :lobby_id
+ * ```
+ */
+export const getLobbyRounds = new PreparedQuery<IGetLobbyRoundsParams,IGetLobbyRoundsResult>(getLobbyRoundsIR);
+
+

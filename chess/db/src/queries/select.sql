@@ -179,3 +179,8 @@ WHERE rounds.lobby_id = :lobby_id;
 /* @name getFinalState */
 SELECT * FROM final_match_state
 WHERE lobby_id = :lobby_id;
+
+
+/* @name getLobbyRounds */
+SELECT * FROM rounds
+WHERE lobby_id = :lobby_id;

@@ -6,6 +6,7 @@ import { formatPlayer, formatTime } from "@src/utils";
 interface Props {
   // TODO: readable name from MW
   player: string;
+  // remaining time in seconds
   value: number;
   isRunning: boolean;
 }
@@ -19,6 +20,7 @@ export const Timer: React.FC<Props> = ({ value, isRunning, player }) => {
     setTime(value);
   }, [value]);
 
+  // TODO: in blocks?
   useEffect(() => {
     if (!isRunning) return;
 

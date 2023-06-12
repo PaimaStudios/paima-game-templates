@@ -112,6 +112,10 @@ export interface LobbyState extends LobbyStateQuery {
 }
 export interface LobbyStateQuery extends IGetLobbyByIdResult {
   round_start_height: number;
+  remaining_blocks: {
+    player_one: number;
+    player_two: number;
+  };
 }
 export interface UserLobby extends IGetPaginatedUserLobbiesResult {
   myTurn?: boolean;
