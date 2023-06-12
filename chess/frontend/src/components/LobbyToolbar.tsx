@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 import SearchBar from "./SearchBar";
 
 interface Props {
@@ -20,6 +20,7 @@ const LobbyToolbar: React.FC<Props> = ({
   onSearch,
   value,
 }) => {
+  const theme = useTheme();
   return (
     <Box
       sx={{
@@ -31,16 +32,18 @@ const LobbyToolbar: React.FC<Props> = ({
       <Box sx={{ flex: 2 }}>
         <Typography variant="h2" textAlign="left">
           {title}{" "}
-          <Box color="#898989" component="span">
+          <Box color={theme.palette.primary.contrastText} component="span">
             ({lobbyCount})
           </Box>
         </Typography>
       </Box>
       <SearchBar value={value} onSearch={onSearch} />
       <Box sx={{ flex: 2 }}>
-        <Typography textAlign="right">
-          {currentPage + 1} of {totalPages}
-        </Typography>
+        {lobbyCount !== 0 && (
+          <Typography textAlign="right">
+            {currentPage + 1} of {totalPages}
+          </Typography>
+        )}
       </Box>
     </Box>
   );

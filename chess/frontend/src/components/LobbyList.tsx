@@ -3,7 +3,13 @@ import type { LobbyStatus, UserLobby } from "../paima/types";
 import { formatDate } from "@src/utils";
 import LobbyCard from "@src/components/LobbyCard";
 import LobbyToolbar from "@src/components/LobbyToolbar";
-import { Box, Button, IconButton } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
@@ -22,6 +28,10 @@ const LobbyList: React.FC<Props> = ({
   onLobbySelect,
   onLobbySearch,
 }) => {
+  const theme = useTheme();
+  const isTablet = useMediaQuery(theme.breakpoints.up("md"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
+
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(0);
 
@@ -43,39 +53,34 @@ const LobbyList: React.FC<Props> = ({
     onLobbySearch?.(query);
   };
 
-  // TODO based on resolution
-  const lobbiesPerPage = 4;
+  const lobbiesPerPage = isDesktop ? 4 : isTablet ? 3 : 2;
   const totalPages = Math.ceil(filteredLobbies.length / lobbiesPerPage);
 
   return (
-    <>
-      <LobbyToolbar
-        onSearch={handleSearch}
-        value={searchQuery}
-        title={title}
-        lobbyCount={filteredLobbies.length}
-        currentPage={page}
-        totalPages={totalPages}
-      />
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+      }}
+    >
+      <IconButton
+        onClick={() => setPage((page) => (page -= 1))}
+        disabled={page === 0}
+        color="inherit"
+        aria-label="previous"
       >
-        <Box sx={{ flex: 2 }}>
-          {page > 0 && (
-            <IconButton
-              onClick={() => setPage((page) => (page -= 1))}
-              color="inherit"
-              aria-label="previous"
-            >
-              <ArrowBackIosIcon fontSize="large" />
-            </IconButton>
-          )}
-        </Box>
+        <ArrowBackIosIcon fontSize="large" />
+      </IconButton>
+      <Box sx={{ width: "100%" }}>
+        <LobbyToolbar
+          onSearch={handleSearch}
+          value={searchQuery}
+          title={title}
+          lobbyCount={filteredLobbies.length}
+          currentPage={page}
+          totalPages={totalPages}
+        />
         <Box
           sx={{
             display: "flex",
@@ -112,19 +117,16 @@ const LobbyList: React.FC<Props> = ({
               );
             })}
         </Box>
-        <Box sx={{ flex: 2 }}>
-          {page + 1 < totalPages && (
-            <IconButton
-              onClick={() => setPage((page) => (page += 1))}
-              aria-label="next"
-              color="inherit"
-            >
-              <ArrowForwardIosIcon fontSize="large" />
-            </IconButton>
-          )}
-        </Box>
       </Box>
-    </>
+      <IconButton
+        onClick={() => setPage((page) => (page += 1))}
+        disabled={totalPages === 0 || page + 1 === totalPages}
+        aria-label="next"
+        color="inherit"
+      >
+        <ArrowForwardIosIcon fontSize="large" />
+      </IconButton>
+    </Box>
   );
 };
 
