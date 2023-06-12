@@ -1,5 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import type { LobbyState } from "../../paima/types";
 import { ChessLogic, ChessService } from "./GameLogic";
 
@@ -19,6 +25,7 @@ interface Props {
 }
 
 const ChessGame: React.FC<Props> = ({ lobby }) => {
+  const palette = useTheme().palette.secondary;
   const [params] = useSearchParams();
   const lobbyID = params.get("lobby") || "";
 
@@ -167,8 +174,8 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
           </Box>
           <Box sx={{ width: "450px", height: "450px" }}>
             <Chessboard
-              customLightSquareStyle={{ backgroundColor: "#D8E9EB" }}
-              customDarkSquareStyle={{ backgroundColor: "#907B90" }}
+              customLightSquareStyle={{ backgroundColor: palette.light }}
+              customDarkSquareStyle={{ backgroundColor: palette.dark }}
               customPieces={chessPieces}
               position={game.fen()}
               onPieceDrop={onDrop}

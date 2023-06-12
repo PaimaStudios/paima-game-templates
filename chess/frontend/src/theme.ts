@@ -1,5 +1,10 @@
 import { createTheme } from "@mui/material";
 
+const gray = "#898989";
+const darkBlue = "#25515B";
+const lightBlue = "#57E7FB";
+const pink = "#FCA2F9";
+
 export const theme = createTheme({
   breakpoints: {
     values: {
@@ -12,10 +17,15 @@ export const theme = createTheme({
   },
   palette: {
     primary: {
-      main: "#25515B",
-      light: "#57E7FB",
+      main: darkBlue,
+      light: lightBlue,
       dark: "#000000",
-      contrastText: "#898989",
+      contrastText: gray,
+    },
+    secondary: {
+      main: "#D8E9EB",
+      light: "#D8E9EB",
+      dark: "#907B90",
     },
     background: {
       default: "#ffffff",
@@ -35,7 +45,7 @@ export const theme = createTheme({
       fontStyle: "normal",
       fontWeight: 500,
       fontSize: "14px",
-      color: "#898989",
+      color: gray,
     },
     body1: {
       fontStyle: "normal",
@@ -84,7 +94,7 @@ export const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          background: "linear-gradient(90deg, #57E7FB 0%, #FCA2F9 100%)",
+          background: `linear-gradient(90deg, ${lightBlue} 0%, ${pink} 100%)`,
           borderRadius: "4px",
           color: "black",
           fontWeight: 600,
@@ -96,7 +106,7 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           "&.Mui-checked": {
-            color: "#57E7FB",
+            color: lightBlue,
           },
         },
       },

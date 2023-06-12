@@ -1,7 +1,6 @@
 import React from "react";
-import logo from "@assets/images/favicon.png";
-import "./Logo.scss";
-import clsx from "clsx";
+import logo from "@assets/images/chess_logo.png";
+import { Box } from "@mui/material";
 
 interface LogoProps {
   mainMenu?: boolean;
@@ -10,12 +9,9 @@ interface LogoProps {
 
 const Logo: React.FC<LogoProps> = ({ height, mainMenu = false }) => {
   return (
-    <img
-      className={clsx("chess-logo", mainMenu && "chess-logo--main")}
-      src={logo}
-      alt="Paima Chess"
-      height={height}
-    />
+    <Box sx={{ margin: mainMenu ? "24px 0 8px 0" : "8px 0" }}>
+      <img src={logo} alt="Paima Chess" height={height} />
+    </Box>
   );
 };
 

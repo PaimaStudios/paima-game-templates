@@ -45,7 +45,7 @@ const Navbar: React.FC = () => {
               </IconButton>
             </IconCard>
           </Box>
-          <Logo height={64} />
+          <Logo height={88} />
           <Box sx={{ flex: 2 }} />
         </Container>
       </ChessBar>
