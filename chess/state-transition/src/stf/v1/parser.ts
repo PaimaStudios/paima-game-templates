@@ -22,7 +22,7 @@ userScheduledData   = u|*user|result
 const createdLobby: ParserRecord<CreatedLobbyInput> = {
   numOfRounds: PaimaParser.NumberParser(3, 1000),
   roundLength: PaimaParser.DefaultRoundLength(),
-  playTimePerPlayer: PaimaParser.NumberParser(1, 10000),
+  playTimePerPlayer: PaimaParser.NumberParser(1, 100000),
   isHidden: PaimaParser.TrueFalseParser(false),
   isPractice: PaimaParser.TrueFalseParser(false),
   playerOneIsWhite: PaimaParser.TrueFalseParser(true),
@@ -36,7 +36,9 @@ const closedLobby: ParserRecord<ClosedLobbyInput> = {
 const submittedMoves: ParserRecord<SubmittedMovesInput> = {
   lobbyID: PaimaParser.NCharsParser(12, 12),
   roundNumber: PaimaParser.NumberParser(1, 10000),
-  pgnMove: PaimaParser.RegexParser(/^[a-zA-Z0-9 ]+$/),
+  // PGN http://www.saremba.de/chessgml/standards/pgn/pgn-complete.htm
+  // move validity checked by external library, out of scope for this parser.
+  pgnMove: PaimaParser.NCharsParser(2, 255),
 };
 const zombieScheduledData: ParserRecord<ZombieRound> = {
   renameCommand: 'scheduledData',
