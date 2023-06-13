@@ -23,7 +23,7 @@ const LobbyCard: React.FC<Props> = ({
   myTurn,
 }) => {
   return (
-    <Card className="lobby-card">
+    <Card blurred className="lobby-card">
       <img className="lobby-card__image" src={background} alt="Lobby" />
       <div className="lobby-card__content">
         <div className="lobby-card__cta-button">{ctaButton}</div>

@@ -56,30 +56,35 @@ export const theme = createTheme({
     },
   },
   components: {
+    MuiList: {
+      styleOverrides: {
+        root: {
+          backgroundColor: darkBlue,
+        },
+      },
+    },
     MuiSelect: {
       styleOverrides: {
+        select: {
+          textAlign: "left",
+        },
         icon: { color: "white" },
       },
     },
     MuiOutlinedInput: {
       styleOverrides: {
+        root: {
+          ":hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: lightBlue,
+          },
+        },
         input: {
           color: "white",
           fontWeight: 700,
           fontSize: "18px",
         },
         notchedOutline: {
-          borderColor: "white",
-          padding: "0 10px",
-        },
-      },
-    },
-    MuiInputLabel: {
-      styleOverrides: {
-        root: {
-          color: "white",
-          opacity: 0.6,
-          fontWeight: 700,
+          borderColor: darkBlue,
         },
       },
     },

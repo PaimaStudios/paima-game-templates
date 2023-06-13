@@ -15,6 +15,7 @@ import NumericField from "@src/components/NumericField";
 import Card from "@src/components/Card";
 import { BLOCK_TIME } from "@src/utils/constants";
 import { blocksToTime } from "@src/utils";
+import SelectField from "@src/components/SelectField";
 
 // 10m, 15m, 30m, 1h, 24h
 const gameLengths = [
@@ -53,17 +54,13 @@ const CreateLobby: React.FC = () => {
         <Typography variant="h2">Create</Typography>
         <Box>
           <Box sx={{ display: "flex", flexFlow: "column", gap: "2rem" }}>
-            <Select
-              value={playersTime}
+            <SelectField
               label="Player's Time"
+              items={gameLengths}
+              value={playersTime}
               onChange={(event) => setPlayersTime(event.target.value as number)}
-            >
-              {gameLengths.map((length) => (
-                <MenuItem key={length} value={length}>
-                  {blocksToTime(length)}
-                </MenuItem>
-              ))}
-            </Select>
+              displayTransform={blocksToTime}
+            />
             <NumericField
               label="Round Length (in blocks)"
               value={roundLength}

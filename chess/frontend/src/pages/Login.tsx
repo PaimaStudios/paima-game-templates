@@ -1,10 +1,32 @@
 import React, { useContext, useState } from "react";
-import { Button, MenuItem, Select, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { AppContext } from "@src/main";
 import type MainController from "@src/MainController";
 
 import Card from "@src/components/Card";
 import Layout from "@src/layouts/Layout";
+import SelectField from "@src/components/SelectField";
+
+const wallets = [
+  "metamask",
+  "flint",
+  "evm-flint",
+  "nufi",
+  "nami",
+  "eternl",
+] as const;
+
+type WalletType = typeof wallets[number];
+const walletsRecord: Record<WalletType, string> = {
+  "evm-flint": "EVM Flint",
+  nufi: "NuFi",
+  nami: "Nami",
+  eternl: "Eternl",
+  flint: "Flint",
+  metamask: "Metamask",
+};
+
+const walletNaming = (wallet: WalletType) => walletsRecord[wallet];
 
 const Login: React.FC = () => {
   const mainController: MainController = useContext(AppContext);
@@ -13,25 +35,15 @@ const Login: React.FC = () => {
 
   return (
     <Layout small navbar={false}>
-      <Card layout>
+      <Card blurred layout>
         <Typography variant="h2">Login</Typography>
-        <Typography>Please, select your wallet</Typography>
-        {/* //TODO: styling */}
-        <Select
-          variant="outlined"
-          color="primary"
-          fullWidth
+        <SelectField
+          label="Please, select your wallet"
+          items={wallets}
           value={selectedWallet}
-          label="Wallet"
           onChange={(event) => setSelectedWallet(event.target.value as string)}
-        >
-          <MenuItem value="metamask">Metamask</MenuItem>
-          <MenuItem value="flint">Flint</MenuItem>
-          <MenuItem value="evm-flint">Flint - EVM</MenuItem>
-          <MenuItem value="nufi">NuFi</MenuItem>
-          <MenuItem value="nami">Nami</MenuItem>
-          <MenuItem value="eternl">Eternl</MenuItem>
-        </Select>
+          displayTransform={walletNaming}
+        />
         <Button
           disabled={!selectedWallet}
           onClick={() => mainController.connectWallet(selectedWallet)}

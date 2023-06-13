@@ -1,20 +1,30 @@
 import React from "react";
 
 import type { BaseTextFieldProps } from "@mui/material";
-import { TextField } from "@mui/material";
+import { Box, TextField, Typography } from "@mui/material";
 
 interface NumericFieldProps extends BaseTextFieldProps {
   onChange: (value: string) => void;
 }
 
-const NumericField: React.FC<NumericFieldProps> = ({ onChange, ...props }) => {
+const NumericField: React.FC<NumericFieldProps> = ({
+  onChange,
+  label,
+  ...props
+}) => {
   return (
-    <TextField
-      type="number"
-      variant="outlined"
-      onChange={(event) => onChange(event.target.value)}
-      {...props}
-    />
+    <Box>
+      <Typography variant="subtitle1" textAlign="left">
+        {label}
+      </Typography>
+      <TextField
+        type="number"
+        fullWidth
+        variant="outlined"
+        onChange={(event) => onChange(event.target.value)}
+        {...props}
+      />
+    </Box>
   );
 };
 
