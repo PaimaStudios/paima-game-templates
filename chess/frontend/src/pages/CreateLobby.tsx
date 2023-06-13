@@ -4,8 +4,6 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
-  MenuItem,
-  Select,
   Typography,
 } from "@mui/material";
 import type MainController from "@src/MainController";

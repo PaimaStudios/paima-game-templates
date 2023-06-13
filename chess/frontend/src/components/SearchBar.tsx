@@ -2,6 +2,8 @@ import React from "react";
 import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { IconButton } from "@mui/material";
 
 // TODO: use styled components across the app
 // inspired by https://mui.com/material-ui/react-app-bar/#app-bar-with-search-field
@@ -13,9 +15,10 @@ const Search = styled("div")(({ theme }) => ({
   position: "relative",
   width: "527px",
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  border: `1px solid ${theme.palette.primary.main}`,
+  backgroundColor: alpha(theme.palette.primary.main, 0.3),
   "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
+    backgroundColor: alpha(theme.palette.primary.main, 0.4),
   },
   marginLeft: 0,
 }));
@@ -29,13 +32,17 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   justifyContent: "center",
 }));
 
+const RefreshIconWrapper = styled(IconButton)(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  color: theme.palette.background.default,
+  height: "100%",
+}));
+
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   flex: 1,
   "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    padding: theme.spacing(1, 1, 1, 1),
     width: "100%",
   },
 }));
@@ -43,11 +50,19 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 interface SearchAppBarProps {
   value: string;
   onSearch: (query: string) => void;
+  onRefresh: () => void;
 }
 
-const SearchBar: React.FC<SearchAppBarProps> = ({ value, onSearch }) => {
+const SearchBar: React.FC<SearchAppBarProps> = ({
+  value,
+  onSearch,
+  onRefresh,
+}) => {
   return (
     <Search>
+      <RefreshIconWrapper onClick={onRefresh}>
+        <RefreshIcon />
+      </RefreshIconWrapper>
       <StyledInputBase
         value={value}
         // TODO: this searches in all values, AFAIK

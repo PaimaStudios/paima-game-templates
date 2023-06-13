@@ -24,6 +24,8 @@ interface Props {
   lobby: LobbyState | null;
 }
 
+const LOBBY_REFRESH_INTERVAL = 5 * 1000;
+
 const ChessGame: React.FC<Props> = ({ lobby }) => {
   const palette = useTheme().palette.secondary;
   const [params] = useSearchParams();
@@ -61,12 +63,9 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
       setGame(new ChessJS.Chess(lobbyState.latest_match_state));
     };
 
-    // Fetch data every 5 seconds
-    const intervalIdLobby = setInterval(fetchLobbyData, 5 * 1000);
-
-    // Clean up the interval when component unmounts
+    const timer = setInterval(fetchLobbyData, LOBBY_REFRESH_INTERVAL);
     return () => {
-      clearInterval(intervalIdLobby);
+      clearInterval(timer);
     };
   }, [waitingConfirmation, replayInProgress, lobbyID]);
 
@@ -163,14 +162,25 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
         <Card layout>
           <Box>
             <Typography variant="h2">
-              Chess Board {lobbyState.lobby_id}
+              Chess Board{" "}
+              <Box textTransform="none" component="span">
+                {lobbyState.lobby_id}
+              </Box>
             </Typography>
-            <Typography>
-              {chessLogic.gameStateText(lobbyState, waitingConfirmation)}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Typography>
+                {chessLogic.gameStateText(lobbyState, waitingConfirmation)}
+              </Typography>
               {waitingConfirmation && (
                 <CircularProgress size={20} sx={{ ml: 2 }} />
               )}
-            </Typography>
+            </Box>
           </Box>
           <Box sx={{ width: "450px", height: "450px" }}>
             <Chessboard

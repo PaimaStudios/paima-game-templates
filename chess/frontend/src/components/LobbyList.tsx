@@ -19,6 +19,7 @@ interface Props {
   actionMap: Partial<Record<LobbyStatus, string>>;
   onLobbySelect: (lobby: UserLobby) => void;
   onLobbySearch?: (query: string) => void;
+  onLobbyRefresh: () => void;
 }
 
 const LobbyList: React.FC<Props> = ({
@@ -27,6 +28,7 @@ const LobbyList: React.FC<Props> = ({
   actionMap,
   onLobbySelect,
   onLobbySearch,
+  onLobbyRefresh,
 }) => {
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.up("md"));
@@ -53,6 +55,12 @@ const LobbyList: React.FC<Props> = ({
     onLobbySearch?.(query);
   };
 
+  const handleRefresh = () => {
+    setPage(0);
+    setSearchQuery("");
+    onLobbyRefresh();
+  };
+
   const lobbiesPerPage = isDesktop ? 4 : isTablet ? 3 : 2;
   const totalPages = Math.ceil(filteredLobbies.length / lobbiesPerPage);
 
@@ -75,6 +83,7 @@ const LobbyList: React.FC<Props> = ({
       <Box sx={{ width: "100%" }}>
         <LobbyToolbar
           onSearch={handleSearch}
+          onRefresh={handleRefresh}
           value={searchQuery}
           title={title}
           lobbyCount={filteredLobbies.length}

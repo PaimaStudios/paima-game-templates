@@ -16,6 +16,11 @@ const MyGames: React.FC = () => {
     });
   }, []);
 
+  const handleLobbyRefresh = async () => {
+    const lobbies = await mainController.getMyGames();
+    setLobbies(lobbies);
+  };
+
   const handleLobbyAction = ({ lobby_id, lobby_state }: UserLobby) => {
     if (lobby_state === "open") {
       mainController.closeLobby(lobby_id);
@@ -30,6 +35,7 @@ const MyGames: React.FC = () => {
         title="My Games"
         lobbies={lobbies}
         onLobbySelect={handleLobbyAction}
+        onLobbyRefresh={handleLobbyRefresh}
         actionMap={{
           open: "Close",
           active: "Continue",

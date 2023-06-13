@@ -9,6 +9,7 @@ interface Props {
   currentPage: number;
   totalPages: number;
   onSearch: (query: string) => void;
+  onRefresh: () => void;
   value?: string;
 }
 
@@ -18,6 +19,7 @@ const LobbyToolbar: React.FC<Props> = ({
   currentPage,
   totalPages,
   onSearch,
+  onRefresh,
   value,
 }) => {
   const theme = useTheme();
@@ -37,7 +39,7 @@ const LobbyToolbar: React.FC<Props> = ({
           </Box>
         </Typography>
       </Box>
-      <SearchBar value={value} onSearch={onSearch} />
+      <SearchBar value={value} onSearch={onSearch} onRefresh={onRefresh} />
       <Box sx={{ flex: 2 }}>
         {lobbyCount !== 0 && (
           <Typography textAlign="right">

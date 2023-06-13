@@ -110,6 +110,7 @@ export const theme = createTheme({
     MuiCheckbox: {
       styleOverrides: {
         root: {
+          color: darkBlue,
           "&.Mui-checked": {
             color: lightBlue,
           },

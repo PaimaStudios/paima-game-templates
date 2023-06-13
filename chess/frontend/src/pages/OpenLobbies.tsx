@@ -16,6 +16,11 @@ const OpenLobbies: React.FC = () => {
     });
   }, []);
 
+  const handleLobbyRefresh = async () => {
+    const lobbies = await mainController.getOpenLobbies();
+    setLobbies(lobbies);
+  };
+
   const searchForHiddenLobby = async (query: string) => {
     const results = await mainController.searchLobby(query, 0);
     if (results == null || results.length === 0) return;
@@ -30,6 +35,7 @@ const OpenLobbies: React.FC = () => {
       <LobbyList
         title="Lobbies"
         lobbies={lobbies}
+        onLobbyRefresh={handleLobbyRefresh}
         onLobbySelect={(lobby) => mainController.joinLobby(lobby.lobby_id)}
         onLobbySearch={searchForHiddenLobby}
         actionMap={{
