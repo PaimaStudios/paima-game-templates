@@ -73,11 +73,12 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
       setGame(new ChessJS.Chess(lobbyState.latest_match_state));
     };
 
+    if (lobbyState?.lobby_state === "finished") return;
     const timer = setInterval(fetchLobbyData, LOBBY_REFRESH_INTERVAL);
     return () => {
       clearInterval(timer);
     };
-  }, [waitingConfirmation, replayInProgress, lobbyID]);
+  }, [waitingConfirmation, replayInProgress, lobbyID, lobbyState?.lobby_state]);
 
   async function handleMove(move: string): Promise<void> {
     setWaitingConfirmation(true);
