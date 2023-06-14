@@ -19,6 +19,7 @@ import Card from "@src/components/Card";
 import { useSearchParams } from "react-router-dom";
 import { Timer } from "@src/components/Timer";
 import { chessPieces } from "./pieces";
+import PromotionList from "@src/components/PromotionList";
 
 interface Props {
   lobby: LobbyState | null;
@@ -37,6 +38,7 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
   const [waitingConfirmation, setWaitingConfirmation] = useState(false);
   const [replayInProgress, setReplayInProgress] = useState(false);
   const [game, setGame] = useState(new ChessJS.Chess());
+  const [promotionPreference, setPromotionPreference] = useState("q");
   const [lobbyState, setLobbyState] = useState<LobbyState>(lobby);
 
   useEffect(() => {
@@ -98,7 +100,7 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
       const move = game.move({
         from: sourceSquare,
         to: targetSquare,
-        promotion: "q", // always promote to a queen for example simplicity
+        promotion: promotionPreference,
       });
       handleMove(move.san);
       return true;
@@ -200,6 +202,13 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
               arePiecesDraggable={interactionEnabled}
             />
           </Box>
+          {isActiveGame && (
+            <PromotionList
+              onValueChange={setPromotionPreference}
+              value={promotionPreference}
+              color={chessLogic.thisPlayerColor(lobbyState)}
+            />
+          )}
           {lobbyState.lobby_state === "finished" && (
             <Button onClick={handleReplay} fullWidth>
               Replay

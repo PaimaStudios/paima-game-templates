@@ -5,6 +5,9 @@ const darkBlue = "#25515B";
 const lightBlue = "#57E7FB";
 const pink = "#FCA2F9";
 
+const squareLight = "#D8E9EB";
+const squareDark = "#907B90";
+
 export const theme = createTheme({
   breakpoints: {
     values: {
@@ -23,9 +26,9 @@ export const theme = createTheme({
       contrastText: gray,
     },
     secondary: {
-      main: "#D8E9EB",
-      light: "#D8E9EB",
-      dark: "#907B90",
+      main: squareLight,
+      light: squareLight,
+      dark: squareDark,
     },
     background: {
       default: "#ffffff",
@@ -104,6 +107,14 @@ export const theme = createTheme({
           color: "black",
           fontWeight: 600,
           fontSize: "16px",
+        },
+      },
+    },
+    MuiToggleButton: {
+      styleOverrides: {
+        root: {
+          borderColor: squareDark,
+          backgroundColor: squareLight,
         },
       },
     },

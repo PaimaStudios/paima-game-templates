@@ -16,18 +16,28 @@ import blackKing from "@assets/images/pieces/blackKing.svg";
 
 // Inspired by https://commons.wikimedia.org/wiki/Category:SVG_chess_pieces
 
-export const chessPieces: Record<string, () => React.ReactNode> = {
-  wP: () => <img src={whitePawn} />,
-  wR: () => <img src={whiteRook} />,
-  wN: () => <img src={whiteKnight} />,
-  wB: () => <img src={whiteBishop} />,
-  wQ: () => <img src={whiteQueen} />,
-  wK: () => <img src={whiteKing} />,
+export const chessPieces: Record<string, (height: number) => React.ReactNode> =
+  {
+    wP: (height: number) => <img src={whitePawn} height={height} />,
+    wR: (height: number) => <img src={whiteRook} height={height} />,
+    wN: (height: number) => <img src={whiteKnight} height={height} />,
+    wB: (height: number) => <img src={whiteBishop} height={height} />,
+    wQ: (height: number) => <img src={whiteQueen} height={height} />,
+    wK: (height: number) => <img src={whiteKing} height={height} />,
 
-  bP: () => <img src={blackPawn} />,
-  bR: () => <img src={blackRook} />,
-  bN: () => <img src={blackKnight} />,
-  bB: () => <img src={blackBishop} />,
-  bQ: () => <img src={blackQueen} />,
-  bK: () => <img src={blackKing} />,
-};
+    bP: (height: number) => <img src={blackPawn} height={height} />,
+    bR: (height: number) => <img src={blackRook} height={height} />,
+    bN: (height: number) => <img src={blackKnight} height={height} />,
+    bB: (height: number) => <img src={blackBishop} height={height} />,
+    bQ: (height: number) => <img src={blackQueen} height={height} />,
+    bK: (height: number) => <img src={blackKing} height={height} />,
+  };
+
+export enum ChessPiece {
+  PAWN = "p",
+  ROOK = "r",
+  KNIGHT = "n",
+  BISHOP = "b",
+  QUEEN = "q",
+  KING = "k",
+}
