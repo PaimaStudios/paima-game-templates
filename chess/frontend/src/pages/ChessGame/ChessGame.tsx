@@ -41,10 +41,18 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
 
   useEffect(() => {
     const fetchLobby = async () => {
-      const lobbyState = await ChessService.getLobbyState(lobbyID);
+      const lobbyState = await mainController.loadLobbyState(lobbyID);
       if (lobbyState == null) return;
-      setLobbyState(lobbyState);
-      setGame(new ChessJS.Chess(lobbyState.latest_match_state));
+
+      const isJoinable =
+        lobbyState.lobby_state === "open" &&
+        lobbyState.lobby_creator !== mainController.userAddress;
+      if (isJoinable) {
+        await mainController.joinLobby(lobbyID);
+      } else {
+        setLobbyState(lobbyState);
+        setGame(new ChessJS.Chess(lobbyState.latest_match_state));
+      }
     };
 
     if (!lobby) {
