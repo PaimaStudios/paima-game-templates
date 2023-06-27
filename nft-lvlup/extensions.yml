@@ -3,4 +3,4 @@ extensions:
     type: erc721
     contractAddress: "0xb1D0c3142Ef25d7A693bD60b6892a0Eea27eFAf0"
     startBlockHeight: 13393575
-    initializationPrefix: "nftmint"
+    scheduledPrefix: "nftmint"

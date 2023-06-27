@@ -1,8 +1,8 @@
 {
   "files": [],
   "references": [
-    { "path": "./utils" },
     { "path": "./db" },
+    { "path": "./utils" },
     { "path": "./game-logic" },
     { "path": "./api" },
     { "path": "./state-transition" },
