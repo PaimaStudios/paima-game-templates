@@ -1,8 +1,6 @@
 import { ExternalLinkIcon } from '@heroicons/react/outline';
 
 import NFTImage from './NFTImage';
-import { useWeb3Context } from '../hooks/useWeb3Context';
-import AddressInfo from './AddressInfo';
 
 interface Props {
   image: string;
@@ -11,11 +9,8 @@ interface Props {
 }
 
 const PurchasePending = ({ image, nftPrice, explorerURL }: Props) => {
-  const { network, currentAccount } = useWeb3Context();
-
   return (
-    <div className="flex flex-col gap-8">
-      <AddressInfo network={network} address={currentAccount} />
+    <>
       <NFTImage image={image} />
       <div className="flex items-center justify-between">
         <h3 className="text-center font-bold text-black font-base">{nftPrice} milkTADA</h3>
@@ -27,7 +22,7 @@ const PurchasePending = ({ image, nftPrice, explorerURL }: Props) => {
           <ExternalLinkIcon className="h-4 w-4" aria-hidden="true" />
         </a>
       </div>
-    </div>
+    </>
   );
 };
 

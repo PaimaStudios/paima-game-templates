@@ -1,10 +1,9 @@
 import { ExternalLinkIcon } from '@heroicons/react/outline';
 
 import { useWeb3Context } from '../hooks/useWeb3Context';
-import { CHAIN_ID, NFT } from '../services/constants';
+import { CHAIN_ID } from '../services/constants';
 import NFTImage from './NFTImage';
 import Button from './Buttons';
-import AddressInfo from './AddressInfo';
 import { useState } from 'react';
 import type { Characters } from '../services/utils';
 import { characters } from '../services/utils';
@@ -17,11 +16,10 @@ interface Props {
 
 const Purchase = ({ imageModal, nftPrice, onNftBuy }: Props) => {
   const [character, setCharacter] = useState<Characters>(characters[0]);
-  const { connected, network, chainId, switchChain } = useWeb3Context();
+  const { connected, chainId, switchChain } = useWeb3Context();
 
   return (
-    <div className="flex flex-col gap-8">
-      <AddressInfo network={network} address={NFT} />
+    <>
       <NFTImage image={imageModal} />
       <div className="flex">
         <h3 className="text-left font-bold text-black font-base flex-1">{nftPrice} milkTADA</h3>
@@ -56,7 +54,7 @@ const Purchase = ({ imageModal, nftPrice, onNftBuy }: Props) => {
           Buy NFT
         </Button>
       )}
-    </div>
+    </>
   );
 };
 
