@@ -48,7 +48,7 @@ const NFTSale = () => {
         <PurchasePending
           image={image}
           nftPrice={nftPrice}
-          explorerURL={`${CHAIN_EXPLORER_URI}/${txHash}`}
+          explorerURL={`${CHAIN_EXPLORER_URI}/tx/${txHash}`}
         />
       </PurchaseWrapper>
     );
