@@ -28,35 +28,52 @@ const UpdateNftContract: React.FC<Props> = ({
 
   const handleSubmit: FormEventHandler = async e => {
     e.preventDefault();
-
-    const tx = await contractFunction(currentAccount, value);
-    setIsPending(true);
-    setTxHash(tx.hash);
-    await tx.wait(3);
-    setIsPending(false);
-    setIsSuccessful(true);
+    try {
+      setIsSuccessful(false);
+      const tx = await contractFunction(currentAccount, value);
+      setIsPending(true);
+      setTxHash(tx.hash);
+      await tx.wait(3);
+      setIsSuccessful(true);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
     <div>
-      <h1>{title}</h1>
-      {isSuccessful && (
+      <h1 className="text-xl font-medium mb-12 text-center">{title}</h1>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-8 w-96">
         <div>
-          <p>Executed successfully!</p>
-          <Link to={`${CHAIN_EXPLORER_URI}/tx/${txHash}`}>View transaction</Link>
-        </div>
-      )}
-      {isPending && <p>Transaction pending...</p>}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-        <label>
-          {label}
+          <label htmlFor="new_value" className="block mb-2 text-sm font-medium text-gray-900">
+            {label}
+          </label>
           <input
+            id="new_value"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg outline-none focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5"
+            required
+            autoComplete="off"
             value={value}
             onChange={event => setNewValue(event.target.value)}
-            type={numberValue ? 'number' : undefined}
+            type={numberValue ? 'number' : 'text'}
           />
-        </label>
+        </div>
         <Button type="submit">Update</Button>
+        {isSuccessful && (
+          <div>
+            <span>Success! </span>
+            <Link
+              to={`${CHAIN_EXPLORER_URI}/tx/${txHash}`}
+              className="text-emerald-500 hover:text-emerald-700"
+            >
+              View transaction.
+            </Link>
+          </div>
+        )}
+        {isPending && <p>Transaction pending...</p>}
       </form>
     </div>
   );
