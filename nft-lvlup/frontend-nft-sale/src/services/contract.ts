@@ -1,7 +1,13 @@
 import type { Signer } from '@ethersproject/abstract-signer';
 import { BigNumber, providers } from 'ethers';
-import { NativeNftSale__factory, NFT__factory } from '../typechain';
-import { NATIVE_NFT_SALE_PROXY, CHAIN_URI, CHAIN_CURRENCY_DECIMALS, NFT } from './constants';
+import { NativeNftSale__factory, NftSale__factory, NFT__factory } from '../typechain';
+import {
+  NATIVE_NFT_SALE_PROXY,
+  CHAIN_URI,
+  CHAIN_CURRENCY_DECIMALS,
+  NFT,
+  NFT_SALE_PROXY,
+} from './constants';
 import type { Characters } from './utils';
 import { characterToNumberMap } from './utils';
 
@@ -59,6 +65,18 @@ const getNativeNftSaleProxyContract = (account: string) => {
   return contract;
 };
 
+const getNftSaleProxyContract = (account: string) => {
+  if (!NFT_SALE_PROXY) {
+    throw new Error(
+      'NFT_SALE_PROXY not set. Please fill in your .env file based on your contract deployment.'
+    );
+  }
+
+  const signer = getSignerOrProvider(account);
+  const contract = NftSale__factory.connect(NFT_SALE_PROXY, signer);
+  return contract;
+};
+
 export const getNftPrice = async (account: string) => {
   const nativeNftSaleProxyContract = getNativeNftSaleProxyContract(account);
   const tokenPrice = await nativeNftSaleProxyContract.nftPrice();
@@ -103,5 +121,18 @@ export const addMinter = async (account: string, newMinter: string) => {
 export const transferOwnership = async (account: string, newOwner: string) => {
   const nftContract = getNftContract(account);
   const tx = await nftContract.transferOwnership(newOwner);
+  return tx;
+};
+
+export const transferErc20NftSaleOwnership = async (account: string, newOwner: string) => {
+  const nftContract = getNftSaleProxyContract(account);
+  const tx = await nftContract.transferOwnership(newOwner);
+  return tx;
+};
+
+export const updateErc20NftPrice = async (account: string, newPrice: string) => {
+  const nftContract = getNftSaleProxyContract(account);
+  const convertedPrice = BigNumber.from(newPrice).mul(DECIMALS);
+  const tx = await nftContract.updatePrice(convertedPrice);
   return tx;
 };

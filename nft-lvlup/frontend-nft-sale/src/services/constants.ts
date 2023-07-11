@@ -9,4 +9,5 @@ export const CHAIN_CURRENCY_DECIMALS: number = parseInt(
 );
 
 export const NATIVE_NFT_SALE_PROXY: string = process.env.NATIVE_NFT_SALE_PROXY ?? '';
+export const NFT_SALE_PROXY: string = process.env.NFT_SALE_PROXY ?? '';
 export const NFT: string = process.env.NFT ?? '';
