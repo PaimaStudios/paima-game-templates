@@ -12,8 +12,6 @@ import {
   updateNftPrice,
 } from '../../services/contract';
 import { AdminAction } from './AdminPage';
-import UpdateErc20NftSaleContract from './UpdateErc20NftSaleContract';
-import UpdateNativeNftSaleContract from './UpdateNativeNftSaleContract';
 import UpdateNftContract from './UpdateNftContract';
 
 const FormRouter: React.FC = () => {
@@ -32,7 +30,7 @@ const FormRouter: React.FC = () => {
       <Route
         path={AdminAction.TransferNativeNftSaleContract}
         element={
-          <UpdateNativeNftSaleContract
+          <UpdateNftContract
             contractFunction={transferNativeNftSaleOwnership}
             title="Transfer NativeNftSale contract ownership"
             label="New Owner"
@@ -42,7 +40,7 @@ const FormRouter: React.FC = () => {
       <Route
         path={AdminAction.TransferErc20NftSaleContract}
         element={
-          <UpdateErc20NftSaleContract
+          <UpdateNftContract
             contractFunction={transferErc20NftSaleOwnership}
             title="Transfer Erc20NftSale contract ownership"
             label="New Owner"
@@ -83,7 +81,7 @@ const FormRouter: React.FC = () => {
       <Route
         path={AdminAction.UpdateNftPriceNativeNftSale}
         element={
-          <UpdateNativeNftSaleContract
+          <UpdateNftContract
             contractFunction={updateNftPrice}
             title="Update NFT price in the NativeNftSale contract"
             label="New price"
@@ -94,7 +92,7 @@ const FormRouter: React.FC = () => {
       <Route
         path={AdminAction.UpdateNftPriceErc20NftSale}
         element={
-          <UpdateErc20NftSaleContract
+          <UpdateNftContract
             contractFunction={updateErc20NftPrice}
             title="Update NFT price in the Erc20NftSale contract"
             label="New price"
