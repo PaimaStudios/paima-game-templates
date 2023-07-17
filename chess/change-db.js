@@ -38,6 +38,7 @@ const updateEnvFile = async file => {
     `START_BLOCKHEIGHT="${START_BLOCKHEIGHT}"`
   );
   await fs.promises.writeFile(file, ndataEnv, 'utf8');
+  console.log(`ENV file changed: START_BLOCKHEIGHT="${START_BLOCKHEIGHT}"`);
 };
 
 // Update docker compose volume with unique new name.
