@@ -3,7 +3,7 @@ import type Prando from 'paima-sdk/paima-prando';
 import type { SubmittedChainData } from 'paima-sdk/paima-utils';
 import type { SQLUpdate } from 'paima-sdk/paima-db';
 import type { Pool } from 'pg';
-import { gainExperience } from './transition.js';
+import { changeName, gainExperience } from './transition.js';
 
 export default async function (
   inputData: SubmittedChainData,
@@ -13,16 +13,20 @@ export default async function (
 ): Promise<SQLUpdate[]> {
   console.log(inputData, 'parsing input data');
   console.log(`Processing input string: ${inputData.inputData}`);
-  const expanded = parse(inputData.inputData);
-  if (isInvalid(expanded)) {
+  const parsed = parse(inputData.inputData);
+  if (isInvalid(parsed)) {
     console.log(`Invalid input string`);
     return [];
   }
-  console.log(`Input string parsed as: ${expanded.input}`);
+  console.log(`Input string parsed as: ${parsed.input}`);
 
-  switch (expanded.input) {
+  const postingUser = inputData.userAddress.toLowerCase();
+  switch (parsed.input) {
     case 'gainedExperience':
-      gainExperience(expanded, dbConn);
+      return gainExperience(postingUser, parsed, dbConn);
+    case 'changedName':
+      // parsed.address in input used only for safe parallelism. could be removed if user state would be connected to another ID
+      return changeName(postingUser, parsed.name, dbConn);
     default:
       return [];
   }

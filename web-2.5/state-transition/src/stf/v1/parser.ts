@@ -2,12 +2,19 @@ import type { InvalidInput } from '@game/utils';
 import { PaimaParser } from 'paima-sdk/paima-utils-backend';
 import type { ParsedSubmittedInput } from './types';
 
-const myGrammar = `gainedExperience = xp|*address|experience`;
+const myGrammar = `
+changedName = r|*address|name
+gainedExperience = xp|*address|experience
+`;
 
 const parserCommands = {
   gainedExperience: {
     address: PaimaParser.WalletAddress(),
-    experience: PaimaParser.NumberParser(1, 5),
+    experience: PaimaParser.NumberParser(1, 999),
+  },
+  changedName: {
+    address: PaimaParser.WalletAddress(),
+    name: PaimaParser.NCharsParser(1, 50),
   },
 };
 

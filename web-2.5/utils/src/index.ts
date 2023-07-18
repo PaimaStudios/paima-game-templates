@@ -1,3 +1,5 @@
+import { ENV } from 'paima-sdk/paima-utils';
+
 type VersionString = `${number}.${number}.${number}`;
 const VERSION_MAJOR = 1;
 const VERSION_MINOR = 1;
@@ -7,3 +9,10 @@ export const GAME_NAME = 'Generic Game';
 export const PRACTICE_BOT_ADDRESS = '0x0101';
 
 export * from './types.js';
+
+// CONFIG VALUES
+export class GameENV extends ENV {
+  static get BATCHER_WALLET(): string {
+    return process.env.BATCHER_WALLET || '';
+  }
+}
