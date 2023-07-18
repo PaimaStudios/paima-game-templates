@@ -12,6 +12,7 @@ export class UserStateController extends Controller {
     if (!stats) {
       return {
         experience: 0,
+        name: null,
         wallet,
       };
     }

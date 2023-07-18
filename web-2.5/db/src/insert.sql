@@ -1,9 +1,9 @@
 /* 
   @name upsertUser
-  @param stats -> (wallet!, experience!)
 */
-INSERT INTO users
-VALUES :stats
+INSERT INTO users(wallet, name, experience)
+VALUES (:wallet!, :name, :experience!)
 ON CONFLICT (wallet)
 DO UPDATE SET
-experience = EXCLUDED.experience;
+experience = EXCLUDED.experience,
+name = EXCLUDED.name;

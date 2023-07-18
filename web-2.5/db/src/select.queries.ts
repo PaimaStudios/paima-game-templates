@@ -9,6 +9,7 @@ export interface IGetUserParams {
 /** 'GetUser' return type */
 export interface IGetUserResult {
   experience: number;
+  name: string | null;
   wallet: string;
 }
 

@@ -3,10 +3,9 @@ import { PreparedQuery } from '@pgtyped/query';
 
 /** 'UpsertUser' parameters type */
 export interface IUpsertUserParams {
-  stats: {
-    wallet: string,
-    experience: number
-  };
+  experience: number;
+  name: string | null | void;
+  wallet: string;
 }
 
 /** 'UpsertUser' return type */
@@ -18,16 +17,17 @@ export interface IUpsertUserQuery {
   result: IUpsertUserResult;
 }
 
-const upsertUserIR: any = {"usedParamSet":{"stats":true},"params":[{"name":"stats","required":false,"transform":{"type":"pick_tuple","keys":[{"name":"wallet","required":true},{"name":"experience","required":true}]},"locs":[{"a":25,"b":30}]}],"statement":"INSERT INTO users\nVALUES :stats\nON CONFLICT (wallet)\nDO UPDATE SET\nexperience = EXCLUDED.experience"};
+const upsertUserIR: any = {"usedParamSet":{"wallet":true,"name":true,"experience":true},"params":[{"name":"wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":52,"b":59}]},{"name":"name","required":false,"transform":{"type":"scalar"},"locs":[{"a":62,"b":66}]},{"name":"experience","required":true,"transform":{"type":"scalar"},"locs":[{"a":69,"b":80}]}],"statement":"INSERT INTO users(wallet, name, experience)\nVALUES (:wallet!, :name, :experience!)\nON CONFLICT (wallet)\nDO UPDATE SET\nexperience = EXCLUDED.experience,\nname = EXCLUDED.name"};
 
 /**
  * Query generated from SQL:
  * ```
- * INSERT INTO users
- * VALUES :stats
+ * INSERT INTO users(wallet, name, experience)
+ * VALUES (:wallet!, :name, :experience!)
  * ON CONFLICT (wallet)
  * DO UPDATE SET
- * experience = EXCLUDED.experience
+ * experience = EXCLUDED.experience,
+ * name = EXCLUDED.name
  * ```
  */
 export const upsertUser = new PreparedQuery<IUpsertUserParams,IUpsertUserResult>(upsertUserIR);
