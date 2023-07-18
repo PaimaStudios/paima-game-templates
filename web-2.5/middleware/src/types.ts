@@ -10,5 +10,6 @@ interface BaseResult {
 
 export interface UserState {
   experience: number;
+  name: string;
   wallet: Wallet;
 }
