@@ -5,6 +5,7 @@
 /smart-contract
 /snapshots
 /contracts
+/batcher
 
 # Config files for CDE
 /*.yml
