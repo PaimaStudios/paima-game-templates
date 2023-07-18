@@ -77,6 +77,12 @@ npm run database:reset
 
 This modifies your `.env.development` and `docker-compose.yml` files.
 
+```
+npm run post -- <wallet> <xpGain>
+```
+
+This showcases a way to communicate with the batcher's self signing endpoint. This should be utilized for admin-like inputs originating from your server, not from players. These inputs are not validated and you should discard them in your state transition function if they are not posted by the batcher's wallet.
+
 ## Production
 
 To start the database, run the command:
