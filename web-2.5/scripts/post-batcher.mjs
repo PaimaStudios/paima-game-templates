@@ -1,7 +1,11 @@
 import { builder } from "paima-sdk/paima-concise";
 
-const BATCHER_URI = process.env.BATCHER_URI;
-const BATCHER_API_KEY = process.env.BATCHER_API_KEY;
+// These are not listed in the central config file since they shouldn't be accessible by the frontend or the middleware
+// # Note: This is the URL which your own game server will use to post inputs to the batcher
+// # Example: "http://localhost:3340"
+const BATCHER_URI = "";
+// # Note: API key used by the batcher as SELF_SIGNING_API_KEY
+const BATCHER_API_KEY = "";
 
 async function submitToBatcher(input) {
   const data = {
@@ -31,16 +35,8 @@ async function submitToBatcher(input) {
 // Check that environment variables are set
 if (!BATCHER_URI || !BATCHER_API_KEY) {
   console.error(
-    "BATCHER_URI and BATCHER_API_KEY environment variables must be set."
+    "BATCHER_URI and BATCHER_API_KEY variables must be set. Please modify this example before running it again."
   );
-  console.log(
-    "Make sure to fill in these values. The default config file is at `../.env.development`"
-  );
-  console.log(
-    "If you wish to use a custom config, set NODE_ENV variable beforehand."
-  );
-  console.log("Config .env.${NODE_ENV:-development} will then be used.");
-
   process.exit(1);
 }
 
