@@ -2,6 +2,8 @@
 
 This documentation provides a basic overview of the template. Each module has its own `README` file with more detailed information.
 
+Full functionality of this template (namely `npm run post` mentioned below) is dependant on the `batcher` that was copied to your system during the template creation process. Please, look at the instructions in that folder first to get it running.
+
 ## Installation
 
 To install dependencies and perform initial setup, run the following command:
@@ -49,6 +51,8 @@ this-template
 ../.env
 ```
 
+We're also using `batcher` that has it's own configuration and should be deployed as a separate service.
+
 ## Environment Setup
 
 Config file `.env.development` is created during `npm run initialize` in the parent folder, based on `.env.example` in this project. This is an empty file that you need to fill in with your specific values, before running Paima Engine.
@@ -69,19 +73,21 @@ If there are any changes to the DB schema or queries, start the `pgtyped` watche
 npm run compile:db
 ```
 
-To speed up the development cycle you can at any time completely reset the database and start syncing from the latest blockheight with:
+To speed up the development cycle you can at any time completely reset the database and start syncing from the latest blockheight. Run this command, that will modify your `.env.development` and `docker-compose.yml` files:
 
 ```
 npm run database:reset
 ```
 
-This modifies your `.env.development` and `docker-compose.yml` files.
+To utilize the batcher self signing endpoint you can send appropriate data through this command:
 
 ```
 npm run post -- <wallet> <xpGain>
 ```
 
-This showcases a way to communicate with the batcher's self signing endpoint. This should be utilized for admin-like inputs originating from your server, not from players. These inputs are not validated and you should discard them in your state transition function if they are not posted by the batcher's wallet.
+This should be utilized for admin-like inputs originating from your server, not from players. These inputs are not validated and you should discard them in your state transition function if they are not posted by the batcher's wallet.
+
+The command is just a shortcut to well formed `POST` request. For testing purposes you can achieve the same goal with a tool you're used to such as `Postman` for example.
 
 ## Production
 
