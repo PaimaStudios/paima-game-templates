@@ -1,4 +1,4 @@
-import { retryPromise } from 'paima-sdk/paima-utils';
+import { ENV, retryPromise } from 'paima-sdk/paima-utils';
 import { builder } from 'paima-sdk/paima-concise';
 import type { EndpointErrorFxn, FailedResult, OldResult, Result } from 'paima-sdk/paima-mw-core';
 import {
@@ -43,7 +43,7 @@ async function createLobby(
   if (!query.success) return query;
   const userWalletAddress = query.result;
 
-  const conciseBuilder = builder.initialize();
+  const conciseBuilder = builder.initialize(undefined, ENV.CONCISE_GAME_NAME);
   conciseBuilder.setPrefix('c');
   conciseBuilder.addValues([
     { value: numberOfRounds.toString(10) },
@@ -105,7 +105,7 @@ async function joinLobby(lobbyID: string): Promise<OldResult> {
   if (!query.success) return query;
   const userWalletAddress = query.result;
 
-  const conciseBuilder = builder.initialize();
+  const conciseBuilder = builder.initialize(undefined, ENV.CONCISE_GAME_NAME);
   conciseBuilder.setPrefix('j');
   conciseBuilder.addValue({ value: lobbyID, isStateIdentifier: true });
 
@@ -157,7 +157,7 @@ async function closeLobby(lobbyID: string): Promise<OldResult> {
   if (!query.success) return query;
   const userWalletAddress = query.result;
 
-  const conciseBuilder = builder.initialize();
+  const conciseBuilder = builder.initialize(undefined, ENV.CONCISE_GAME_NAME);
   conciseBuilder.setPrefix('cs');
   conciseBuilder.addValue({ value: lobbyID, isStateIdentifier: true });
 
@@ -210,7 +210,7 @@ async function submitMoves(
   if (!query.success) return query;
   const userWalletAddress = query.result;
 
-  const conciseBuilder = builder.initialize();
+  const conciseBuilder = builder.initialize(undefined, ENV.CONCISE_GAME_NAME);
   conciseBuilder.setPrefix('s');
   conciseBuilder.addValue({ value: lobbyID, isStateIdentifier: true });
   conciseBuilder.addValue({ value: roundNumber.toString(10) });

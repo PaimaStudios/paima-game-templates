@@ -7,6 +7,7 @@ import {
 } from 'paima-sdk/paima-mw-core';
 
 import { buildEndpointErrorFxn } from '../errors';
+import { ENV } from 'paima-sdk/paima-utils';
 
 const getUserWallet = (errorFxn: EndpointErrorFxn): Result<string> => {
   try {
@@ -27,7 +28,7 @@ async function submitMoves(x: number, y: number): Promise<OldResult> {
   if (!query.success) return query;
   const userWalletAddress = query.result;
 
-  const conciseBuilder = builder.initialize();
+  const conciseBuilder = builder.initialize(undefined, ENV.CONCISE_GAME_NAME);
   conciseBuilder.setPrefix('m', true); // @m||x|y
   conciseBuilder.addValue({ value: String(x) });
   conciseBuilder.addValue({ value: String(y) });
@@ -51,7 +52,7 @@ async function submitIncrement(x: number, y: number): Promise<OldResult> {
   if (!query.success) return query;
   // const userWalletAddress = query.result;
 
-  const conciseBuilder = builder.initialize();
+  const conciseBuilder = builder.initialize(undefined, ENV.CONCISE_GAME_NAME);
   conciseBuilder.setPrefix('i');
   conciseBuilder.addValue({ value: String(x), isStateIdentifier: true });
   conciseBuilder.addValue({ value: String(y), isStateIdentifier: true });
@@ -74,7 +75,7 @@ async function joinWorld(): Promise<OldResult> {
   const query = getUserWallet(errorFxn);
   if (!query.success) return query;
 
-  const conciseBuilder = builder.initialize();
+  const conciseBuilder = builder.initialize(undefined, ENV.CONCISE_GAME_NAME);
   conciseBuilder.setPrefix('j');
   try {
     const result = await postConciselyEncodedData(conciseBuilder.build());
