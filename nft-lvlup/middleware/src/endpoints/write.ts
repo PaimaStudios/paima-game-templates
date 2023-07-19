@@ -6,6 +6,7 @@ import { MiddlewareErrorCode, buildEndpointErrorFxn } from '../errors';
 import type { WalletAddress } from 'paima-sdk/paima-utils';
 import { getOwnedCharacters } from './queries';
 import { getUserWallet } from '../helpers/utility-functions';
+import { ENV } from 'paima-sdk/paima-utils';
 
 async function levelUp(
   contractAddress: WalletAddress,
@@ -17,7 +18,7 @@ async function levelUp(
   if (!query.success) return query;
   const userWalletAddress = query.result;
 
-  const conciseBuilder = builder.initialize();
+  const conciseBuilder = builder.initialize(undefined, ENV.CONCISE_GAME_NAME);
   conciseBuilder.setPrefix('l');
   conciseBuilder.addValue({ value: contractAddress });
   conciseBuilder.addValue({ value: nftId, isStateIdentifier: true });
