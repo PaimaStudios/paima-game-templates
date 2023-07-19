@@ -13,7 +13,7 @@ async function submitToBatcher(input) {
     timestamp: new Date().getTime().toString(10),
     api_key: BATCHER_API_KEY,
   };
-  const url = `${process.env.BATCHER_URI}/submit_self_signed_input`;
+  const url = `${BATCHER_URI}/submit_self_signed_input`;
   const res = await fetch(url, {
     method: "POST",
     headers: {
