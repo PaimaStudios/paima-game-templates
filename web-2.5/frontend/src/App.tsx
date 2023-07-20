@@ -67,7 +67,8 @@ function App() {
         <ul>
           <li>
             Admin functionality (experience gain) - can be modified and stored on chain only from
-            the traditional game server
+            the traditional game server. Look for a well formed request example in{' '}
+            <code>post-batcher.mjs</code>.
           </li>
           <li>
             Standard functionality (character rename) - can be modified and stored on chain directly
@@ -96,6 +97,15 @@ function App() {
             </div>
             <button type="submit">Rename</button>
           </form>
+        )}
+        {name && (
+          <>
+            <p>
+              Now that you've named your player, try giving him some experience through this
+              command:
+            </p>
+            <code>{`npm run post -- ${wallet} ${Math.floor(Math.random() * 100)}`}</code>
+          </>
         )}
       </main>
     </div>
