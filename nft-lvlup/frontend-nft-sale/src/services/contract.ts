@@ -17,7 +17,7 @@ const DECIMALS = BigNumber.from(10).pow(CHAIN_CURRENCY_DECIMALS);
 
 export const getSignerOrProvider = (account?: string): SignerProvider => {
   if (account) {
-    const provider = new providers.Web3Provider(window.ethereum);
+    const provider = new providers.Web3Provider((window as any).ethereum);
     return provider.getSigner();
   }
 
