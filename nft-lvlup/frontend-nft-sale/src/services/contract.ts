@@ -86,6 +86,12 @@ export const getNftPrice = async (account: string) => {
 
 // ## admin functions section
 
+export const withdrawNativeNftSaleFunds = async (account: string, recipientAddress: string) => {
+  const nativeNftSaleProxyContract = getNativeNftSaleProxyContract(account);
+  const tx = await nativeNftSaleProxyContract.withdraw(recipientAddress);
+  return tx;
+};
+
 export const updateNftPrice = async (account: string, newPrice: string) => {
   const nativeNftSaleProxyContract = getNativeNftSaleProxyContract(account);
   const convertedPrice = BigNumber.from(newPrice).mul(DECIMALS);
@@ -134,5 +140,11 @@ export const updateErc20NftPrice = async (account: string, newPrice: string) => 
   const nftContract = getNftSaleProxyContract(account);
   const convertedPrice = BigNumber.from(newPrice).mul(DECIMALS);
   const tx = await nftContract.updatePrice(convertedPrice);
+  return tx;
+};
+
+export const withdrawErc20NftSaleFunds = async (account: string, recipientAddress: string) => {
+  const nftContract = getNftSaleProxyContract(account);
+  const tx = await nftContract.withdraw(recipientAddress);
   return tx;
 };
