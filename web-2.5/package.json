@@ -18,7 +18,7 @@
     "test:watch": "npm test -- --watch",
     "database:up": "cd db/docker && docker compose up",
     "database:reset": "node change-db.js",
-    "post": "node --experimental-specifier-resolution=node --no-warnings post-batcher.mjs",
+    "post": "DOTENV_CONFIG_PATH=../.env.${NODE_ENV:-development} node --experimental-specifier-resolution=node --no-warnings -r dotenv/config post-batcher.mjs",
     "compile:api": "npm run compile -w api/",
     "compile:db": "npm run compile -w db/"
   },
