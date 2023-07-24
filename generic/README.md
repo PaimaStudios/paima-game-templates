@@ -69,13 +69,11 @@ If there are any changes to the DB schema or queries, start the `pgtyped` watche
 npm run compile:db
 ```
 
-To speed up the development cycle you can at any time completely reset the database and start syncing from the latest blockheight with:
+To speed up the development cycle you can at any time completely reset the database and start syncing from the latest blockheight. Run this command, that will modify your `.env.development` and `docker-compose.yml` files:
 
 ```
 npm run database:reset
 ```
-
-This modifies your `.env.development` and `docker-compose.yml` files.
 
 ## Production
 

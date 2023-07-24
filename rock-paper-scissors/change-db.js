@@ -38,12 +38,16 @@ const updateEnvFile = async file => {
     `START_BLOCKHEIGHT="${START_BLOCKHEIGHT}"`
   );
   await fs.promises.writeFile(file, ndataEnv, 'utf8');
+  console.log(`ENV file changed: START_BLOCKHEIGHT="${START_BLOCKHEIGHT}"`);
 };
 
 // Update docker compose volume with unique new name.
 const updateDockerFile = async file => {
   const data = await fs.promises.readFile(__dirname + '/' + file, 'utf8');
-  const ndata = data.replace(/rockpaperscissors-.+?-db/g, 'rockpaperscissors-' + new Date().getTime() + '-db');
+  const ndata = data.replace(
+    /rockpaperscissors-.+?-db/g,
+    'rockpaperscissors-' + new Date().getTime() + '-db'
+  );
   await fs.promises.writeFile(file, ndata, 'utf8');
 };
 
