@@ -1,4 +1,4 @@
-import { PaimaParser } from 'paima-sdk/paima-utils-backend';
+import { PaimaParser } from 'paima-sdk/paima-concise';
 import type { ParsedSubmittedInput } from './types';
 
 const myGrammar = `

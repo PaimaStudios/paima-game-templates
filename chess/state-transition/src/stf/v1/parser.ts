@@ -1,5 +1,5 @@
-import type { ParserRecord } from 'paima-sdk/paima-utils-backend';
-import { PaimaParser } from 'paima-sdk/paima-utils-backend';
+import type { ParserRecord } from 'paima-sdk/paima-concise';
+import { PaimaParser } from 'paima-sdk/paima-concise';
 import type {
   ClosedLobbyInput,
   CreatedLobbyInput,
@@ -9,6 +9,7 @@ import type {
   UserStats,
   ZombieRound,
 } from './types';
+import { ENV } from 'paima-sdk/paima-utils';
 
 const myGrammar = `
 createdLobby        = c|numOfRounds|roundLength|playTimePerPlayer|isHidden?|isPractice?|playerOneIsWhite?
@@ -21,7 +22,7 @@ userScheduledData   = u|*user|result
 
 const createdLobby: ParserRecord<CreatedLobbyInput> = {
   numOfRounds: PaimaParser.NumberParser(3, 1000),
-  roundLength: PaimaParser.DefaultRoundLength(),
+  roundLength: PaimaParser.DefaultRoundLength(ENV.BLOCK_TIME),
   playTimePerPlayer: PaimaParser.NumberParser(1, 10000),
   isHidden: PaimaParser.TrueFalseParser(false),
   isPractice: PaimaParser.TrueFalseParser(false),
