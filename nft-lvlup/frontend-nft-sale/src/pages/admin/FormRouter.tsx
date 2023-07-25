@@ -10,6 +10,8 @@ import {
   updateErc20NftPrice,
   updateMaxSupply,
   updateNftPrice,
+  withdrawErc20NftSaleFunds,
+  withdrawNativeNftSaleFunds,
 } from '../../services/contract';
 import { AdminAction } from './AdminPage';
 import UpdateNftContract from './UpdateNftContract';
@@ -97,6 +99,26 @@ const FormRouter: React.FC = () => {
             title="Update NFT price in the Erc20NftSale contract"
             label="New price"
             numberValue
+          />
+        }
+      />
+      <Route
+        path={AdminAction.WithdrawNativeNftSaleContractFunds}
+        element={
+          <UpdateNftContract
+            contractFunction={withdrawNativeNftSaleFunds}
+            title="Withdraw funds from the NativeNftSale contract"
+            label="Transfer to address"
+          />
+        }
+      />
+      <Route
+        path={AdminAction.WithdrawErc20NftSaleContractFunds}
+        element={
+          <UpdateNftContract
+            contractFunction={withdrawErc20NftSaleFunds}
+            title="Withdraw funds from the Erc20NftSale contract"
+            label="Transfer to address"
           />
         }
       />

@@ -61,7 +61,7 @@ const UpdateNftContract: React.FC<Props> = ({
             type={numberValue ? 'number' : 'text'}
           />
         </div>
-        <Button type="submit">Update</Button>
+        <Button type="submit">Submit</Button>
         {isSuccessful && (
           <div>
             <span>Success! </span>

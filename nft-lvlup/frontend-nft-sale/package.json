@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "npm run gen-abi-types && vite",
-    "build": "tsc && npm run gen-abi-types && vite build",
+    "build": "npm run gen-abi-types && tsc && vite build",
     "gen-abi-types": "rimraf ./src/typechain && typechain --target ethers-v5 './src/abis/*.json' --out-dir ./src/typechain --always-generate-overloads",
     "preview": "vite preview"
   },
