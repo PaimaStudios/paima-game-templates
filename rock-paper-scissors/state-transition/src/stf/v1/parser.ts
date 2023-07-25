@@ -1,5 +1,6 @@
-import { PaimaParser } from 'paima-sdk/paima-utils-backend';
+import { PaimaParser } from 'paima-sdk/paima-concise';
 import type { ParsedSubmittedInput } from './types';
+import { ENV } from 'paima-sdk/paima-utils';
 
 const myGrammar = `
 createdLobby        = c|numOfRounds|roundLength|isHidden?|isPractice?
@@ -13,7 +14,7 @@ userScheduledData   = u|*user|result
 const parserCommands = {
   createdLobby: {
     numOfRounds: PaimaParser.NumberParser(3, 1000),
-    roundLength: PaimaParser.DefaultRoundLength(),
+    roundLength: PaimaParser.DefaultRoundLength(ENV.BLOCK_TIME),
     isHidden: PaimaParser.TrueFalseParser(false),
     isPractice: PaimaParser.TrueFalseParser(false),
   },
