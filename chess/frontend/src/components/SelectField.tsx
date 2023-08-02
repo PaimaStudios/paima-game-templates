@@ -4,7 +4,7 @@ import type { SelectProps } from "@mui/material";
 import { Box, MenuItem, Select, Typography } from "@mui/material";
 
 interface Props extends SelectProps {
-  displayTransform: (value: string | number) => string;
+  displayTransform?: (value: string | number) => string;
   items: readonly (string | number)[];
 }
 
@@ -22,7 +22,7 @@ const SelectField: React.FC<Props> = ({
       <Select fullWidth {...props}>
         {items.map((item, index) => (
           <MenuItem key={index} value={item}>
-            {displayTransform(item)}
+            {displayTransform?.(item) || item}
           </MenuItem>
         ))}
       </Select>

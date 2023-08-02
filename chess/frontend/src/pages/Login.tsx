@@ -8,30 +8,35 @@ import Layout from "@src/layouts/Layout";
 import SelectField from "@src/components/SelectField";
 
 const wallets = [
-  "metamask",
-  "flint",
-  "evm-flint",
-  "nufi",
-  "nami",
-  "eternl",
+  "Metamask",
+  "EVM",
+  "Algorand",
+  "Flint",
+  "Flint - EVM",
+  "Astar",
+  "NuFi",
+  "Nami",
+  "Eternl",
 ] as const;
 
 type WalletType = typeof wallets[number];
-const walletsRecord: Record<WalletType, string> = {
-  "evm-flint": "EVM Flint",
-  nufi: "NuFi",
-  nami: "Nami",
-  eternl: "Eternl",
-  flint: "Flint",
-  metamask: "Metamask",
-};
 
-const walletNaming = (wallet: WalletType) => walletsRecord[wallet];
+const walletMapping: Record<WalletType, string> = {
+  Metamask: "metamask",
+  EVM: "metamask",
+  Flint: "flint",
+  "Flint - EVM": "evm-flint",
+  NuFi: "nufi",
+  Nami: "nami",
+  Eternl: "eternl",
+  Astar: "polkadot",
+  Algorand: "pera",
+};
 
 const Login: React.FC = () => {
   const mainController: MainController = useContext(AppContext);
 
-  const [selectedWallet, setSelectedWallet] = useState("metamask");
+  const [selectedWallet, setSelectedWallet] = useState<WalletType>("Metamask");
 
   return (
     <Layout small navbar={false}>
@@ -41,12 +46,15 @@ const Login: React.FC = () => {
           label="Please, select your wallet"
           items={wallets}
           value={selectedWallet}
-          onChange={(event) => setSelectedWallet(event.target.value as string)}
-          displayTransform={walletNaming}
+          onChange={(event) =>
+            setSelectedWallet(event.target.value as WalletType)
+          }
         />
         <Button
           disabled={!selectedWallet}
-          onClick={() => mainController.connectWallet(selectedWallet)}
+          onClick={() =>
+            mainController.connectWallet(walletMapping[selectedWallet])
+          }
         >
           Connect
         </Button>
