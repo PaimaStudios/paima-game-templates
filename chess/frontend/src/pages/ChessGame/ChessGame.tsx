@@ -1,93 +1,121 @@
 import React, { useContext, useEffect, useState } from "react";
-import "./ChessGame.scss";
-import { Box, CircularProgress, Typography } from "@mui/material";
-import { LobbyState, TickEvent } from "../../paima/types.d";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import type { LobbyState } from "../../paima/types";
 import { ChessLogic, ChessService } from "./GameLogic";
 
-import { Chessboard } from "react-chessboard";
-import * as ChessJS from "chess.js";
-import Navbar from "@src/components/Navbar";
-import MainController from "@src/MainController";
+import type MainController from "@src/MainController";
 import { AppContext } from "@src/main";
-import Wrapper from "@src/components/Wrapper";
-import Button from "@src/components/Button";
+import Layout from "@src/layouts/Layout";
+import { blocksToSeconds, delay, isTickEvent } from "@src/utils";
+import Card from "@src/components/Card";
+import { useSearchParams } from "react-router-dom";
+import { Timer } from "@src/components/Timer";
+import PromotionList from "@src/components/PromotionList";
+import ChessBoard from "./ChessBoard";
+import type { Color } from "chess.js";
+import { BLACK, Chess, WHITE } from "chess.js";
 
-interface ChessGameProps {
-  lobby: LobbyState;
-  address: string;
+interface Props {
+  lobby: LobbyState | null;
 }
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+const LOBBY_REFRESH_INTERVAL = 5 * 1000;
 
-function isTickEvent(event: any): event is TickEvent {
-  return (event as TickEvent).pgn_move !== undefined;
-}
+const getTimer = (color: Color, lobbyState: LobbyState) => {
+  const whiteStarts = lobbyState.player_one_iswhite;
 
-const ChessGame: React.FC<ChessGameProps> = ({ lobby, address }) => {
+  if (color === WHITE) {
+    return {
+      player: whiteStarts ? lobbyState.lobby_creator : lobbyState.player_two,
+      value: blocksToSeconds(lobbyState.remaining_blocks.w),
+    };
+  }
+
+  if (color === BLACK) {
+    return {
+      player: whiteStarts ? lobbyState.player_two : lobbyState.lobby_creator,
+      value: blocksToSeconds(lobbyState.remaining_blocks.b),
+    };
+  }
+};
+
+const ChessGame: React.FC<Props> = ({ lobby }) => {
+  const [params] = useSearchParams();
+  const lobbyID = params.get("lobby") || "";
+
   const mainController: MainController = useContext(AppContext);
+  const chessLogic = new ChessLogic(mainController.userAddress);
 
-  const [game, setGame] = useState(new ChessJS.Chess());
-  const [showMore, setShowMore] = useState(false);
   const [waitingConfirmation, setWaitingConfirmation] = useState(false);
   const [replayInProgress, setReplayInProgress] = useState(false);
+  // TODO: this should be internal variable in ChessBoard and not utilizing useState since it's mutable. once lobbyState?.latest_match_state is the source of truth
+  const [game, setGame] = useState(new Chess());
+  const [promotionPreference, setPromotionPreference] = useState("q");
   const [lobbyState, setLobbyState] = useState<LobbyState>(lobby);
-  const chessLogic = new ChessLogic(address);
 
   useEffect(() => {
-    setGame(new ChessJS.Chess(lobby.latest_match_state));
-  }, []);
+    const board = lobbyState?.latest_match_state;
+    if (!board) return;
+    setGame(new Chess(board));
+  }, [lobbyState?.latest_match_state]);
+
+  useEffect(() => {
+    const fetchLobby = async () => {
+      const lobbyState = await mainController.loadLobbyState(lobbyID);
+      if (lobbyState == null) return;
+
+      const isJoinable =
+        lobbyState.lobby_state === "open" &&
+        lobbyState.lobby_creator !== mainController.userAddress;
+      if (isJoinable) {
+        await mainController.joinLobby(lobbyID);
+      } else {
+        setLobbyState(lobbyState);
+      }
+    };
+
+    if (!lobby) {
+      fetchLobby();
+    } else {
+      setGame(new Chess(lobby.latest_match_state));
+    }
+  }, [lobby, lobbyID]);
 
   useEffect(() => {
     const fetchLobbyData = async () => {
       if (waitingConfirmation || replayInProgress) return;
-      const lobbyState = await ChessService.getLobbyState(lobby.lobby_id);
+      const lobbyState = await ChessService.getLobbyState(lobbyID);
       if (lobbyState == null) return;
-      setLobbyState(lobbyState);
-      setGame(new ChessJS.Chess(lobbyState.latest_match_state));
+      setLobbyState((old) => {
+        return old && old.current_round > lobbyState.current_round
+          ? old
+          : lobbyState;
+      });
     };
 
-    // Fetch data every 5 seconds
-    const intervalIdLobby = setInterval(fetchLobbyData, 5 * 1000);
-
-    // Clean up the interval when component unmounts
+    if (lobbyState?.lobby_state === "finished") return;
+    const timer = setInterval(fetchLobbyData, LOBBY_REFRESH_INTERVAL);
     return () => {
-      clearInterval(intervalIdLobby);
+      clearInterval(timer);
     };
-  }, [waitingConfirmation, replayInProgress, lobbyState]);
-  //TODO: add eslint react hooks
+  }, [waitingConfirmation, replayInProgress, lobbyID, lobbyState?.lobby_state]);
 
   async function handleMove(move: string): Promise<void> {
     setWaitingConfirmation(true);
-    await chessLogic.handleMove(lobbyState, move);
-    const response = await ChessService.getLobbyState(lobby.lobby_id);
-    if (response == null) return;
-    setLobbyState(response);
-    setGame(new ChessJS.Chess(response.latest_match_state));
-    setWaitingConfirmation(false);
-  }
-
-  function onDrop(sourceSquare: ChessJS.Square, targetSquare: ChessJS.Square) {
-    try {
-      const move = game.move({
-        from: sourceSquare,
-        to: targetSquare,
-        promotion: "q", // always promote to a queen for example simplicity
-      });
-      handleMove(move.san);
-      return true;
-    } catch (e) {
-      console.log("Illegal move: " + e);
-      // illegal move
-      return false;
+    game.move(move);
+    const newLobbyState = await chessLogic.handleMove(lobbyState, move);
+    if (newLobbyState != null) {
+      setLobbyState(newLobbyState);
+    } else {
+      game.undo();
     }
+    setWaitingConfirmation(false);
   }
 
   const handleReplay = async () => {
     setReplayInProgress(true);
-    const matchExecutor = await mainController.getMatchExecutor(lobby.lobby_id);
-    const localGame = new ChessJS.Chess(matchExecutor.currentState.fenBoard);
+    const matchExecutor = await mainController.getMatchExecutor(lobbyID);
+    const localGame = new Chess(matchExecutor.currentState.fenBoard);
     setGame(localGame);
     let events = matchExecutor.tick();
     while (events != null) {
@@ -97,63 +125,96 @@ const ChessGame: React.FC<ChessGameProps> = ({ lobby, address }) => {
       if (isTickEvent(event)) {
         await delay(1000);
         localGame.move(event.pgn_move);
-        setGame(new ChessJS.Chess(localGame.fen()));
+        setGame(new Chess(localGame.fen()));
       }
       events = matchExecutor.tick();
     }
     setReplayInProgress(false);
   };
 
+  // TODO: graceful loader
+  if (!lobbyState) return null;
+
+  const isActiveGame = lobbyState.lobby_state === "active" && !replayInProgress;
   const interactionEnabled =
-    lobbyState.lobby_state === "active" &&
+    isActiveGame &&
     !waitingConfirmation &&
-    !replayInProgress &&
     chessLogic.isThisPlayersTurn(lobbyState, game);
 
+  const blackTimerRunning =
+    isActiveGame &&
+    ((game.turn() === "b" && !waitingConfirmation) ||
+      (game.turn() === "w" && waitingConfirmation));
+  const whiteTimerRunning =
+    isActiveGame &&
+    ((game.turn() === "w" && !waitingConfirmation) ||
+      (game.turn() === "b" && waitingConfirmation));
+
   return (
-    <>
-      <Navbar />
-      <Wrapper small blurred={false}>
-        <Typography variant="h1">Chess Board {lobbyState.lobby_id}</Typography>
-        {/*  Hide board if there isn't a defined lobbyState */}
-        {lobbyState && (
-          <div className="game">
-            <p className="game-info">
-              {chessLogic.gameStateText(lobbyState, waitingConfirmation)}
-              {waitingConfirmation && (
-                <CircularProgress size={20} sx={{ ml: 2 }} />
-              )}
-            </p>
-            <div className="game-board">
-              <Chessboard
-                position={game.fen()}
-                onPieceDrop={onDrop}
-                arePiecesDraggable={interactionEnabled}
-              />
-            </div>
-          </div>
+    <Layout>
+      <Box sx={{ display: "flex", justifyContent: "center", gap: "24px" }}>
+        {lobbyState.lobby_state !== "finished" && (
+          <Box sx={{ alignSelf: "flex-end" }}>
+            <Timer
+              isRunning={whiteTimerRunning}
+              {...getTimer("w", lobbyState)}
+            />
+          </Box>
         )}
-        {lobbyState.lobby_state === "finished" && (
-          <Button onClick={handleReplay}>Replay</Button>
-        )}
-        <Box>
-          <Button
-            onClick={() => setShowMore((prev) => !prev)}
-            variant="text"
-            disableRipple
-          >
-            {showMore ? "Hide" : "Show More Information"}
-          </Button>
-          {showMore && (
-            <Typography>
-              {!lobby.lobby_id
-                ? "No current lobby"
-                : JSON.stringify(lobbyState, null, 2)}
+        <Card layout>
+          <Box>
+            <Typography variant="h2">
+              Chess Board{" "}
+              <Box textTransform="none" component="span">
+                {lobbyState.lobby_id}
+              </Box>
             </Typography>
+            {waitingConfirmation ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Typography>Waiting for confirmation</Typography>
+                <CircularProgress size={20} sx={{ ml: 2 }} />
+              </Box>
+            ) : (
+              <Typography>
+                {chessLogic.gameStateText(lobbyState, game)}
+              </Typography>
+            )}
+          </Box>
+          <ChessBoard
+            arePiecesDraggable={interactionEnabled}
+            board={game.fen()}
+            promotion={promotionPreference}
+            handleMove={handleMove}
+          />
+          {isActiveGame && (
+            <PromotionList
+              onValueChange={setPromotionPreference}
+              value={promotionPreference}
+              color={chessLogic.thisPlayerColor(lobbyState)}
+            />
           )}
-        </Box>
-      </Wrapper>
-    </>
+          {lobbyState.lobby_state === "finished" && (
+            <Button onClick={handleReplay} fullWidth>
+              Replay
+            </Button>
+          )}
+        </Card>
+        {lobbyState.lobby_state !== "finished" && (
+          <Box sx={{ alignSelf: "flex-start" }}>
+            <Timer
+              isRunning={blackTimerRunning}
+              {...getTimer("b", lobbyState)}
+            />
+          </Box>
+        )}
+      </Box>
+    </Layout>
   );
 };
 

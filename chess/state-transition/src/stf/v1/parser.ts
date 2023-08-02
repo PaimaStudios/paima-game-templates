@@ -1,6 +1,7 @@
 import type { ParserRecord } from 'paima-sdk/paima-concise';
 import { PaimaParser } from 'paima-sdk/paima-concise';
 import type {
+  BotMove,
   ClosedLobbyInput,
   CreatedLobbyInput,
   JoinedLobbyInput,
@@ -12,20 +13,22 @@ import type {
 import { ENV } from 'paima-sdk/paima-utils';
 
 const myGrammar = `
-createdLobby        = c|numOfRounds|roundLength|playTimePerPlayer|isHidden?|isPractice?|playerOneIsWhite?
+createdLobby        = c|numOfRounds|roundLength|playTimePerPlayer|isHidden?|isPractice?|botDifficulty|playerOneIsWhite?
 joinedLobby         = j|*lobbyID
 closedLobby         = cs|*lobbyID
 submittedMoves      = s|*lobbyID|roundNumber|pgnMove
 zombieScheduledData = z|*lobbyID
-userScheduledData   = u|*user|result
+userScheduledData   = u|*user|result|ratingChange
+scheduledBotMove   = sb|*lobbyID|roundNumber
 `;
 
 const createdLobby: ParserRecord<CreatedLobbyInput> = {
   numOfRounds: PaimaParser.NumberParser(3, 1000),
   roundLength: PaimaParser.DefaultRoundLength(ENV.BLOCK_TIME),
-  playTimePerPlayer: PaimaParser.NumberParser(1, 10000),
+  playTimePerPlayer: PaimaParser.NumberParser(1, 100000),
   isHidden: PaimaParser.TrueFalseParser(false),
   isPractice: PaimaParser.TrueFalseParser(false),
+  botDifficulty: PaimaParser.NumberParser(0, 3),
   playerOneIsWhite: PaimaParser.TrueFalseParser(true),
 };
 const joinedLobby: ParserRecord<JoinedLobbyInput> = {
@@ -37,7 +40,9 @@ const closedLobby: ParserRecord<ClosedLobbyInput> = {
 const submittedMoves: ParserRecord<SubmittedMovesInput> = {
   lobbyID: PaimaParser.NCharsParser(12, 12),
   roundNumber: PaimaParser.NumberParser(1, 10000),
-  pgnMove: PaimaParser.RegexParser(/^[a-zA-Z0-9 ]+$/),
+  // PGN http://www.saremba.de/chessgml/standards/pgn/pgn-complete.htm
+  // move validity checked by external library, out of scope for this parser.
+  pgnMove: PaimaParser.NCharsParser(2, 255),
 };
 const zombieScheduledData: ParserRecord<ZombieRound> = {
   renameCommand: 'scheduledData',
@@ -49,6 +54,13 @@ const userScheduledData: ParserRecord<UserStats> = {
   effect: 'stats',
   user: PaimaParser.WalletAddress(),
   result: PaimaParser.RegexParser(/^[w|t|l]$/),
+  ratingChange: PaimaParser.NumberParser(),
+};
+const scheduledBotMove: ParserRecord<BotMove> = {
+  renameCommand: 'scheduledData',
+  effect: 'move',
+  lobbyID: PaimaParser.NCharsParser(12, 12),
+  roundNumber: PaimaParser.NumberParser(1, 10000),
 };
 
 const parserCommands: Record<string, ParserRecord<ParsedSubmittedInput>> = {
@@ -58,6 +70,7 @@ const parserCommands: Record<string, ParserRecord<ParsedSubmittedInput>> = {
   submittedMoves,
   zombieScheduledData,
   userScheduledData,
+  scheduledBotMove,
 };
 
 const myParser = new PaimaParser(myGrammar, parserCommands);

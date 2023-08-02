@@ -6,18 +6,5 @@
     "outDir": "build"
   },
   "include": ["src/**/*"],
-  "references": [
-    {
-      "path": "../utils"
-    },
-    {
-      "path": "../game-logic"
-    },
-    {
-      "path": "../api"
-    },
-    {
-      "path": "../db"
-    }
-  ]
+  "references": [{ "path": "../utils" }, { "path": "../game-logic" }, { "path": "../db" }]
 }

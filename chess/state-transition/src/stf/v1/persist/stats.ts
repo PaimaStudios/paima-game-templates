@@ -4,6 +4,7 @@ import type { SQLUpdate } from 'paima-sdk/paima-db';
 import { createScheduledData } from 'paima-sdk/paima-db';
 import type { WalletAddress } from 'paima-sdk/paima-utils';
 import type { ConciseResult } from '@chess/utils';
+import type { UserStats } from '../types';
 
 // Generate blank/empty user stats
 export function blankStats(wallet: string): SQLUpdate {
@@ -13,23 +14,22 @@ export function blankStats(wallet: string): SQLUpdate {
       wins: 0,
       ties: 0,
       losses: 0,
+      rating: 0,
     },
   };
   return [newStats, params];
 }
 
 // Persist updating user stats in DB
-export function persistStatsUpdate(
-  user: WalletAddress,
-  result: ConciseResult,
-  stats: IGetUserStatsResult
-): SQLUpdate {
+export function persistStatsUpdate(newStats: UserStats, oldStats: IGetUserStatsResult): SQLUpdate {
+  const { user, result, ratingChange } = newStats;
   const userParams: IUpdateStatsParams = {
     stats: {
       wallet: user,
-      wins: result === 'w' ? stats.wins + 1 : stats.wins,
-      losses: result === 'l' ? stats.losses + 1 : stats.losses,
-      ties: result === 't' ? stats.ties + 1 : stats.ties,
+      wins: result === 'w' ? oldStats.wins + 1 : oldStats.wins,
+      losses: result === 'l' ? oldStats.losses + 1 : oldStats.losses,
+      ties: result === 't' ? oldStats.ties + 1 : oldStats.ties,
+      rating: oldStats.rating + ratingChange,
     },
   };
   return [updateStats, userParams];
@@ -39,12 +39,17 @@ export function persistStatsUpdate(
 export function scheduleStatsUpdate(
   wallet: WalletAddress,
   result: ConciseResult,
+  ratingChange: number,
   block_height: number
 ): SQLUpdate {
-  return createScheduledData(createStatsUpdateInput(wallet, result), block_height);
+  return createScheduledData(createStatsUpdateInput(wallet, result, ratingChange), block_height);
 }
 
 // Create stats update input
-function createStatsUpdateInput(wallet: WalletAddress, result: ConciseResult): string {
-  return `u|*${wallet}|${result}`;
+function createStatsUpdateInput(
+  wallet: WalletAddress,
+  result: ConciseResult,
+  ratingChange: number
+): string {
+  return `u|*${wallet}|${result}|${ratingChange}`;
 }

@@ -2,13 +2,14 @@ import type { Pool } from 'pg';
 import type Prando from 'paima-sdk/paima-prando';
 import type { WalletAddress } from 'paima-sdk/paima-utils';
 import type { IGetLobbyByIdResult, IGetRoundDataResult, IGetRoundMovesResult } from '@chess/db';
-import { getCachedMoves, getLobbyById, getRoundData, getUserStats, endMatch } from '@chess/db';
+import { getLobbyById, getRoundData, getUserStats, endMatch } from '@chess/db';
 import type { MatchState } from '@chess/game-logic';
 import {
   gameOver,
   initRoundExecutor,
   extractMatchEnvironment,
   matchResults,
+  calculateRatingChange,
 } from '@chess/game-logic';
 import {
   persistUpdateMatchState,
@@ -22,19 +23,23 @@ import {
   persistExecutedRound,
   persistMatchResults,
   schedulePracticeMove,
+  generateZombieMove,
 } from './persist';
 import { isValidMove } from '@chess/game-logic';
 import type {
+  BotMove,
   ClosedLobbyInput,
   CreatedLobbyInput,
   JoinedLobbyInput,
   ScheduledDataInput,
   SubmittedMovesInput,
+  UserStats,
 } from './types.js';
-import { isUserStats, isZombieRound } from './types.js';
-import type { ConciseResult } from '@chess/utils';
+import { isBotMove, isUserStats, isZombieRound } from './types.js';
+import type { Timer } from '@chess/utils';
+import { updateTimer, PRACTICE_BOT_ADDRESS, currentPlayer } from '@chess/utils';
 import type { SQLUpdate } from 'paima-sdk/paima-db';
-import { PracticeAI } from './persist/practice-ai';
+import { calculateBestMove } from './persist/ai';
 
 // State transition when a create lobby input is processed
 export const createdLobby = async (
@@ -79,7 +84,7 @@ export const submittedMoves = async (
   blockHeight: number,
   input: SubmittedMovesInput,
   dbConn: Pool,
-  randomnessGenerator: Prando
+  prando: Prando
 ): Promise<SQLUpdate[]> => {
   // Perform DB read queries to get needed data
   const [lobby] = await getLobbyById.run({ lobby_id: input.lobbyID }, dbConn);
@@ -89,44 +94,81 @@ export const submittedMoves = async (
     dbConn
   );
   // If the submitted moves are usable/all validation passes, continue
-  if (!validateSubmittedMoves(lobby, round, input, player)) return [];
+  if (!validateSubmittedMove(lobby, round, input, player)) return [];
   // Generate update to persist the moves
   const persistMoveTuple = persistMoveSubmission(player, input, lobby);
   // We generated an SQL update for persisting the moves.
   // Now we capture the params (the moves typed as we need) and pass it to the round executor.
   const newMove: IGetRoundMovesResult = persistMoveTuple[1].new_move;
   // Execute the round and collect persist SQL updates
-  const roundExecutionTuples = executeRound(
+  const roundExecutionTuples = await executeRound(
     blockHeight,
     lobby,
     [newMove],
     round,
-    randomnessGenerator
+    dbConn,
+    prando
   );
 
-  // In practice mode we will submit a move for the AI
+  // In practice mode we will submit a move for the AI after user's input
   if (lobby.practice) {
-    // This is an example implementation of AI/Practice mode
-    // Chess does not have a practice mode implemented.
-    if (1) throw new Error('Practice AI : NYI');
-    const practiceAI = new PracticeAI(lobby.latest_match_state, input.pgnMove, randomnessGenerator);
-    const practiceMove = practiceAI.getNextMove();
-    if (practiceMove) {
-      const practiceMoveSchedule = schedulePracticeMove(
-        lobby.lobby_id,
-        lobby.current_round,
-        practiceMove,
-        blockHeight + 1
-      );
-      return [persistMoveTuple, ...roundExecutionTuples, practiceMoveSchedule];
-    }
+    const nextRound = lobby.current_round + 1;
+    const practiceMove = schedulePracticeMove(lobby.lobby_id, nextRound, blockHeight + 1);
+    return [persistMoveTuple, ...roundExecutionTuples, practiceMove];
   }
 
   return [persistMoveTuple, ...roundExecutionTuples];
 };
 
+/**
+ * State transition for a bot to generate&persist move. Done separately in order to track game's time correctly
+ * WARN: higher difficulties might take non-trivial amount of time to process
+ */
+export const submittedBotMove = async (
+  blockHeight: number,
+  input: BotMove,
+  dbConn: Pool,
+  prando: Prando
+): Promise<SQLUpdate[]> => {
+  const [lobby] = await getLobbyById.run({ lobby_id: input.lobbyID }, dbConn);
+  if (!lobby || !lobby.practice) return [];
+  const [round] = await getRoundData.run(
+    { lobby_id: lobby.lobby_id, round_number: input.roundNumber },
+    dbConn
+  );
+
+  const practiceMove = calculateBestMove(lobby.latest_match_state, lobby.bot_difficulty);
+  if (!practiceMove) return [];
+
+  const botMove: SubmittedMovesInput = {
+    input: 'submittedMoves',
+    lobbyID: input.lobbyID,
+    roundNumber: input.roundNumber,
+    pgnMove: practiceMove,
+  };
+  // If the submitted moves are usable/all validation passes, continue
+  if (!validateSubmittedMove(lobby, round, botMove, PRACTICE_BOT_ADDRESS)) return [];
+  // Generate update to persist the moves
+  const persistMoveTuple = persistMoveSubmission(PRACTICE_BOT_ADDRESS, botMove, lobby);
+  // We generated an SQL update for persisting the moves.
+  // Now we capture the params (the moves typed as we need) and pass it to the round executor.
+  const newMove: IGetRoundMovesResult = persistMoveTuple[1].new_move;
+
+  // Execute the round and collect persist SQL updates
+  const roundExecutionTuples = await executeRound(
+    blockHeight,
+    lobby,
+    [newMove],
+    round,
+    dbConn,
+    prando
+  );
+
+  return [persistMoveTuple, ...roundExecutionTuples];
+};
+
 // Validate submitted moves in relation to player/lobby/round state
-function validateSubmittedMoves(
+function validateSubmittedMove(
   lobby: IGetLobbyByIdResult,
   round: IGetRoundDataResult,
   input: SubmittedMovesInput,
@@ -164,7 +206,10 @@ export const scheduledData = async (
   }
   // Update the users stats
   if (isUserStats(input)) {
-    return updateStats(input.user, input.result, dbConn);
+    return updateStats(input, dbConn);
+  }
+  if (isBotMove(input)) {
+    return submittedBotMove(blockHeight, input, dbConn, randomnessGenerator);
   }
   return [];
 };
@@ -174,48 +219,70 @@ export const zombieRound = async (
   blockHeight: number,
   lobbyId: string,
   dbConn: Pool,
-  randomnessGenerator: Prando
+  prando: Prando
 ): Promise<SQLUpdate[]> => {
   const [lobby] = await getLobbyById.run({ lobby_id: lobbyId }, dbConn);
   if (!lobby) return [];
+  if (!lobby.player_two) {
+    console.error(`Lobby ${lobby.lobby_id} is missing a player two. Skipping zombie round.`);
+    return [];
+  }
+
   const [round] = await getRoundData.run(
     { lobby_id: lobby.lobby_id, round_number: lobby.current_round },
     dbConn
   );
-  const cachedMoves = await getCachedMoves.run({ lobby_id: lobbyId }, dbConn);
+  if (!round) return [];
 
   console.log(`Executing zombie round (#${lobby.current_round}) for lobby ${lobby.lobby_id}`);
 
-  // We call the execute round function passing the unexecuted moves from the database, if any.
-  // In practice for chess, there will be no cached moves as only one player goes per turn
-  // and the round is instantly executed. As such this will simply proceed to the next round.
-  return executeRound(blockHeight, lobby, cachedMoves, round, randomnessGenerator);
+  // we generate a bot move with difficulty=0 in order to proceed (you can't skip turn in chess)
+  const move = generateZombieMove(lobby);
+  if (!move) {
+    return await executeRound(blockHeight, lobby, [], round, dbConn, prando);
+  }
+  const player = currentPlayer(round.round_within_match, lobby);
+  const persistMoveTuple = persistMoveSubmission(player, move, lobby);
+  const newMove: IGetRoundMovesResult = persistMoveTuple[1].new_move;
+  const roundExecutionTuples = await executeRound(
+    blockHeight,
+    lobby,
+    [newMove],
+    round,
+    dbConn,
+    prando
+  );
+
+  if (lobby.practice) {
+    const nextRound = lobby.current_round + 1;
+    const practiceMove = schedulePracticeMove(lobby.lobby_id, nextRound, blockHeight + 1);
+    return [persistMoveTuple, ...roundExecutionTuples, practiceMove];
+  }
+
+  return [persistMoveTuple, ...roundExecutionTuples];
 };
 
 // State transition when an update stats input is processed
-export const updateStats = async (
-  player: WalletAddress,
-  result: ConciseResult,
-  dbConn: Pool
-): Promise<SQLUpdate[]> => {
-  const [stats] = await getUserStats.run({ wallet: player }, dbConn);
+export const updateStats = async (newStats: UserStats, dbConn: Pool): Promise<SQLUpdate[]> => {
+  const [stats] = await getUserStats.run({ wallet: newStats.user }, dbConn);
   // Verify coherency that the user has existing stats which can be updated
   if (stats) {
-    const query = persistStatsUpdate(player, result, stats);
-    console.log(query[1], `Updating stats of ${player}`);
+    const query = persistStatsUpdate(newStats, stats);
+    console.log(query[1], `Updating stats of ${newStats.user}`);
     return [query];
   }
   return [];
 };
 
 // Runs the round executor and produces the necessary SQL updates as a result
-export function executeRound(
+export async function executeRound(
   blockHeight: number,
   lobby: IGetLobbyByIdResult,
   moves: IGetRoundMovesResult[],
   roundData: IGetRoundDataResult,
+  dbConn: Pool,
   randomnessGenerator: Prando
-): SQLUpdate[] {
+): Promise<SQLUpdate[]> {
   // We initialize the round executor object and run it/get the new match state via `.endState()`
   const executor = initRoundExecutor(
     lobby,
@@ -232,11 +299,13 @@ export function executeRound(
   // We generate updates for the executed round
   const executedRoundUpdate = persistExecutedRound(roundData, lobby, blockHeight);
 
+  const timer = updateTimer(roundData, blockHeight, lobby.player_one_iswhite);
+  const hasTimeout = timer.player_one_blocks_left === 0 || timer.player_two_blocks_left === 0;
   // Finalize match if game is over or we have reached the final round
   let roundResultUpdate: SQLUpdate[];
-  if (gameOver(newState.fenBoard) || isFinalRound(lobby)) {
+  if (gameOver(newState.fenBoard) || isFinalRound(lobby) || hasTimeout) {
     console.log(lobby.lobby_id, 'match ended, finalizing');
-    roundResultUpdate = finalizeMatch(blockHeight, lobby, newState);
+    roundResultUpdate = await finalizeMatch(blockHeight, lobby, timer, newState, dbConn);
   }
   // Else create a new round
   else {
@@ -244,6 +313,7 @@ export function executeRound(
       lobby.lobby_id,
       lobby.current_round,
       newState.fenBoard,
+      timer,
       lobby.round_length,
       blockHeight
     );
@@ -255,11 +325,13 @@ export function executeRound(
 }
 
 // Finalizes the match and updates user statistics according to final score of the match
-function finalizeMatch(
+async function finalizeMatch(
   blockHeight: number,
   lobby: IGetLobbyByIdResult,
-  newState: MatchState
-): SQLUpdate[] {
+  timer: Timer,
+  newState: MatchState,
+  pool: Pool
+): Promise<SQLUpdate[]> {
   const matchEnvironment = extractMatchEnvironment(lobby);
 
   // Create update which sets lobby state to 'finished'
@@ -272,19 +344,36 @@ function finalizeMatch(
   }
 
   // Save the final results in the final states table
-  const results = matchResults(newState, matchEnvironment);
-  const resultsUpdate = persistMatchResults(lobby.lobby_id, results, matchEnvironment, newState);
+  const results = matchResults(newState, matchEnvironment, timer);
+  const elapsedBlocks = [
+    lobby.play_time_per_player - timer.player_one_blocks_left,
+    lobby.play_time_per_player - timer.player_two_blocks_left,
+  ];
+  const resultsUpdate = persistMatchResults(
+    lobby.lobby_id,
+    results,
+    matchEnvironment,
+    elapsedBlocks,
+    newState
+  );
 
+  const [[user1Stats], [user2Stats]] = await Promise.all([
+    getUserStats.run({ wallet: matchEnvironment.user1.wallet }, pool),
+    getUserStats.run({ wallet: matchEnvironment.user2.wallet }, pool),
+  ]);
+  const ratingChange = calculateRatingChange(user1Stats.rating, user2Stats.rating, results[0]);
   // Create the new scheduled data for updating user stats.
   // Stats are updated with scheduled data to support parallelism safely.
   const statsUpdate1 = scheduleStatsUpdate(
     matchEnvironment.user1.wallet,
     results[0],
+    ratingChange,
     blockHeight + 1
   );
   const statsUpdate2 = scheduleStatsUpdate(
     matchEnvironment.user2.wallet,
     results[1],
+    -ratingChange,
     blockHeight + 1
   );
   return [endMatchTuple, resultsUpdate, statsUpdate1, statsUpdate2];

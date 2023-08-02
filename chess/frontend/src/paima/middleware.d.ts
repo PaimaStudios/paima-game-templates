@@ -1,8 +1,8 @@
 declare const endpoints: {
-        createLobby: (numberOfRounds: number, roundLength: number, playTimePerPlayer: number, isHidden?: boolean, isPractice?: boolean, playerOneIsWhite = boolean) => Promise<import("types").CreateLobbyResponse>;
+        createLobby: (numberOfRounds: number, roundLength: number, playTimePerPlayer: number, botDifficulty: number, isHidden?: boolean, isPractice?: boolean, playerOneIsWhite = boolean) => Promise<import("types").CreateLobbyResponse>;
         joinLobby: (lobbyID: string) => Promise<import("types").OldResult>;
         closeLobby: (lobbyID: string) => Promise<import("types").OldResult>;
-        submitMoves: (lobbyID: string, roundNumber: number, move: string) => Promise<import("types").OldResult>;
+        submitMoves: (lobbyID: string, roundNumber: number, move: string) => Promise<import("types").PackedLobbyState>;
         setNft: (nftAddress: string, nftId: number) => Promise<import("types").OldResult>;
         getUserStats: (walletAddress: string) => Promise<import("types").FailedResult | import("types").PackedUserStats>;
         getLobbyState: (lobbyID: string) => Promise<import("types").FailedResult | import("types").PackedLobbyState>;

@@ -11,6 +11,7 @@ INSERT INTO lobbies(
    created_at,
    hidden,
    practice,
+   bot_difficulty,
    lobby_creator,
    player_one_iswhite,
    lobby_state,
@@ -26,6 +27,7 @@ VALUES(
  :created_at!,
  :hidden!,
  :practice!,
+ :bot_difficulty!,
  :lobby_creator!,
  :player_one_iswhite!,
  :lobby_state!,
@@ -36,8 +38,22 @@ VALUES(
 /* 
   @name newRound
 */
-INSERT INTO rounds(lobby_id, round_within_match, match_state, starting_block_height, execution_block_height)
-VALUES (:lobby_id!, :round_within_match!, :match_state!, :starting_block_height!, :execution_block_height)
+INSERT INTO rounds(
+  lobby_id, 
+  round_within_match, 
+  match_state, 
+  player_one_blocks_left, 
+  player_two_blocks_left, 
+  starting_block_height, 
+  execution_block_height)
+VALUES (
+  :lobby_id!, 
+  :round_within_match!, 
+  :match_state!, 
+  :player_one_blocks_left!, 
+  :player_two_blocks_left!, 
+  :starting_block_height!, 
+  :execution_block_height)
 RETURNING *;
 
 /* 
@@ -54,7 +70,7 @@ INSERT INTO final_match_state(lobby_id, player_one_iswhite, player_one_wallet, p
 VALUES :final_state;
 
 /* @name newStats
-  @param stats -> (wallet!, wins!, losses!, ties!)
+  @param stats -> (wallet!, wins!, losses!, ties!, rating!)
 */
 INSERT INTO global_user_state
 VALUES :stats
@@ -63,7 +79,7 @@ DO NOTHING;
 
 /* 
   @name updateStats
-  @param stats -> (wallet!, wins!, losses!, ties!)
+  @param stats -> (wallet!, wins!, losses!, ties!, rating!)
 */
 INSERT INTO global_user_state
 VALUES :stats
@@ -71,4 +87,5 @@ ON CONFLICT (wallet)
 DO UPDATE SET
 wins = EXCLUDED.wins,
 losses = EXCLUDED.losses,
-ties = EXCLUDED.ties;
+ties = EXCLUDED.ties,
+rating = EXCLUDED.rating;

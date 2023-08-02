@@ -34,6 +34,7 @@ export interface IGetMovesByLobbyResult {
 
 export interface IGetUserStatsResult {
   losses: number;
+  rating: number;
   ties: number;
   wallet: string;
   wins: number;
@@ -43,7 +44,7 @@ export interface IGetNewLobbiesByUserAndBlockHeightResult {
   lobby_id: string;
 }
 
-export interface IGetPaginatedUserLobbiesResult {
+export interface IGetAllPaginatedUserLobbiesResult {
   created_at: Date;
   creation_block_height: number;
   current_round: number;
@@ -104,7 +105,10 @@ export interface RoundStatusData extends BaseRoundStatus {
   roundStarted: number;
   roundLength: number;
 }
-export type UserStats = IGetUserStatsResult;
+export type UserStats = {
+  stats: IGetUserStatsResult;
+  rank: string;
+};
 export type NewLobby = IGetNewLobbiesByUserAndBlockHeightResult;
 export interface LobbyState extends LobbyStateQuery {
   round_ends_in_blocks: number;
@@ -112,9 +116,14 @@ export interface LobbyState extends LobbyStateQuery {
 }
 export interface LobbyStateQuery extends IGetLobbyByIdResult {
   round_start_height: number;
+  remaining_blocks: {
+    b: number;
+    w: number;
+  };
 }
-export interface UserLobby extends IGetPaginatedUserLobbiesResult {
+export interface UserLobby extends IGetAllPaginatedUserLobbiesResult {
   myTurn?: boolean;
+  rating?: number;
 }
 
 export type MatchExecutor<MatchState = any, TickEvent = any> = {

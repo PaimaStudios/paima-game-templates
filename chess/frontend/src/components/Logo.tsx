@@ -1,23 +1,16 @@
-import * as React from "react";
+import React from "react";
 import logo from "@assets/images/chess_logo.png";
-import "./Logo.scss";
-import clsx from "clsx";
+import { Box } from "@mui/material";
 
 interface LogoProps {
-  mainMenu?: boolean;
-  width?: number;
   height?: number;
 }
 
-const Logo: React.FC<LogoProps> = ({ width, height, mainMenu = false }) => {
+const Logo: React.FC<LogoProps> = ({ height }) => {
   return (
-    <img
-      className={clsx("chess-logo", mainMenu && "chess-logo--main")}
-      src={logo}
-      alt="Paima Chess"
-      width={width}
-      height={height}
-    />
+    <Box sx={{ margin: "8px 0" }}>
+      <img src={logo} alt="Paima Chess" height={height} />
+    </Box>
   );
 };
 

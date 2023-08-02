@@ -20,6 +20,7 @@ export interface CreatedLobbyInput {
   playTimePerPlayer: number;
   isHidden: boolean;
   isPractice: boolean;
+  botDifficulty: number;
   playerOneIsWhite: boolean;
 }
 
@@ -53,6 +54,13 @@ export interface UserStats extends ScheduledDataInput {
   effect: 'stats';
   user: WalletAddress;
   result: ConciseResult;
+  ratingChange: number;
+}
+
+export interface BotMove extends ScheduledDataInput {
+  effect: 'move';
+  lobbyID: string;
+  roundNumber: number;
 }
 
 export function isZombieRound(input: ScheduledDataInput): input is ZombieRound {
@@ -61,4 +69,8 @@ export function isZombieRound(input: ScheduledDataInput): input is ZombieRound {
 
 export function isUserStats(input: ScheduledDataInput): input is UserStats {
   return (input as UserStats).effect === 'stats';
+}
+
+export function isBotMove(input: ScheduledDataInput): input is BotMove {
+  return (input as BotMove).effect === 'move';
 }

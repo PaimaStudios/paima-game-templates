@@ -1,5 +1,8 @@
 import type { SQLUpdate } from 'paima-sdk/paima-db';
 import { createScheduledData, deleteScheduledData } from 'paima-sdk/paima-db';
+import { calculateBestMove } from './ai';
+import type { IGetLobbyByIdResult } from '@chess/db';
+import type { SubmittedMovesInput } from '../types';
 
 // Schedule a zombie round to be executed in the future
 export function scheduleZombieRound(lobbyId: string, block_height: number): SQLUpdate {
@@ -15,3 +18,16 @@ export function deleteZombieRound(lobbyId: string, block_height: number): SQLUpd
 function createZombieInput(lobbyId: string): string {
   return `z|*${lobbyId}`;
 }
+
+export const generateZombieMove = (lobby: IGetLobbyByIdResult): SubmittedMovesInput | null => {
+  const pgnMove = calculateBestMove(lobby.latest_match_state, 0);
+  if (!pgnMove) return null;
+
+  const move: SubmittedMovesInput = {
+    input: 'submittedMoves',
+    lobbyID: lobby.lobby_id,
+    roundNumber: lobby.current_round,
+    pgnMove,
+  };
+  return move;
+};
