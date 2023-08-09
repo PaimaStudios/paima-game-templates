@@ -18,7 +18,7 @@ async function levelUp(
   if (!query.success) return query;
   const userWalletAddress = query.result;
 
-  const conciseBuilder = builder.initialize(undefined, ENV.CONCISE_GAME_NAME);
+  const conciseBuilder = builder.initialize(undefined);
   conciseBuilder.setPrefix('l');
   conciseBuilder.addValue({ value: contractAddress });
   conciseBuilder.addValue({ value: nftId, isStateIdentifier: true });

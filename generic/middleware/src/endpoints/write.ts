@@ -6,7 +6,7 @@ import { ENV } from 'paima-sdk/paima-utils';
 async function gainExperience(count: number): Promise<ActionResult> {
   const userWalletAddress = getActiveAddress();
 
-  const conciseBuilder = builder.initialize(undefined, ENV.CONCISE_GAME_NAME);
+  const conciseBuilder = builder.initialize(undefined);
   conciseBuilder.setPrefix('xp');
   conciseBuilder.addValue({ value: userWalletAddress, isStateIdentifier: true });
   conciseBuilder.addValue({ value: count.toString() });
