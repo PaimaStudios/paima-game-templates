@@ -20,10 +20,9 @@
     "web3-utils": "^1.7.3"
   },
   "devDependencies": {
-    "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
-    "@esbuild-plugins/node-modules-polyfill": "^0.1.4",
     "dotenv": "^16.0.3",
     "esbuild": "^0.15.15",
-    "esbuild-plugin-d.ts": "^1.1.0"
+    "esbuild-plugin-d.ts": "^1.1.0",
+    "esbuild-plugin-polyfill-node": "^0.3.0"
   }
 }
