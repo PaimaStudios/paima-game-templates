@@ -44,7 +44,7 @@ async function createLobby(
   if (!query.success) return query;
   const userWalletAddress = query.result;
 
-  const conciseBuilder = builder.initialize(undefined, ENV.CONCISE_GAME_NAME);
+  const conciseBuilder = builder.initialize(undefined);
   conciseBuilder.setPrefix('c');
   conciseBuilder.addValues([
     { value: numberOfRounds.toString(10) },
@@ -91,7 +91,7 @@ async function joinLobby(lobbyID: string): Promise<OldResult> {
   if (!query.success) return query;
   const userWalletAddress = query.result;
 
-  const conciseBuilder = builder.initialize(undefined, ENV.CONCISE_GAME_NAME);
+  const conciseBuilder = builder.initialize(undefined);
   conciseBuilder.setPrefix('j');
   conciseBuilder.addValue({ value: lobbyID, isStateIdentifier: true });
 
@@ -125,7 +125,7 @@ async function closeLobby(lobbyID: string): Promise<OldResult> {
   if (!query.success) return query;
   const userWalletAddress = query.result;
 
-  const conciseBuilder = builder.initialize(undefined, ENV.CONCISE_GAME_NAME);
+  const conciseBuilder = builder.initialize(undefined);
   conciseBuilder.setPrefix('cs');
   conciseBuilder.addValue({ value: lobbyID, isStateIdentifier: true });
 
@@ -163,7 +163,7 @@ async function submitMoves(
   if (!query.success) return query;
   const userWalletAddress = query.result;
 
-  const conciseBuilder = builder.initialize(undefined, ENV.CONCISE_GAME_NAME);
+  const conciseBuilder = builder.initialize(undefined);
   conciseBuilder.setPrefix('s');
   conciseBuilder.addValue({ value: lobbyID, isStateIdentifier: true });
   conciseBuilder.addValue({ value: roundNumber.toString(10) });

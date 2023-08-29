@@ -59,10 +59,7 @@ if (!wallet || !xpGain) {
  * Example of submitting a gain experience input.
  * This would be constructed on your server after verifying that user met the necessary conditions.
  */
-const conciseBuilder = builder.initialize(
-  undefined,
-  process.env.CONCISE_GAME_NAME
-);
+const conciseBuilder = builder.initialize(undefined);
 conciseBuilder.setPrefix("xp");
 conciseBuilder.addValues([
   { value: wallet, isStateIdentifier: true },
