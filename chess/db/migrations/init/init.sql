@@ -17,6 +17,7 @@ CREATE TABLE lobbies (
   creation_block_height INTEGER NOT NULL,
   hidden BOOLEAN NOT NULL DEFAULT false,
   practice BOOLEAN NOT NULL DEFAULT false,
+  bot_difficulty INTEGER NOT NULL DEFAULT 0,
   lobby_creator TEXT NOT NULL,
   player_one_iswhite BOOLEAN NOT NULL,
   player_two TEXT,
@@ -29,6 +30,8 @@ CREATE TABLE rounds(
   lobby_id TEXT NOT NULL references lobbies(lobby_id),
   round_within_match INTEGER NOT NULL,
   match_state TEXT NOT NULL,
+  player_one_blocks_left INTEGER NOT NULL,
+  player_two_blocks_left INTEGER NOT NULL,
   starting_block_height INTEGER NOT NULL references block_heights(block_height),
   execution_block_Height INTEGER references block_heights(block_height)
 );
@@ -58,8 +61,11 @@ CREATE TABLE global_user_state (
   wallet TEXT NOT NULL PRIMARY KEY,
   wins INTEGER NOT NULL DEFAULT 0,
   losses INTEGER NOT NULL DEFAULT 0,
-  ties INTEGER NOT NULL DEFAULT 0
+  ties INTEGER NOT NULL DEFAULT 0,
+  rating INTEGER NOT NULL DEFAULT 0
 );
+CREATE INDEX rating_index
+ON global_user_state (rating);
 
 
 CREATE FUNCTION update_lobby_round() RETURNS TRIGGER AS $$

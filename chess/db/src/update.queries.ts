@@ -11,6 +11,7 @@ export interface IStartMatchParams {
 
 /** 'StartMatch' return type */
 export interface IStartMatchResult {
+  bot_difficulty: number;
   created_at: Date;
   creation_block_height: number;
   current_round: number;
@@ -77,34 +78,6 @@ const closeLobbyIR: any = {"usedParamSet":{"lobby_id":true},"params":[{"name":"l
  * ```
  */
 export const closeLobby = new PreparedQuery<ICloseLobbyParams,ICloseLobbyResult>(closeLobbyIR);
-
-
-/** 'UpdateRound' parameters type */
-export interface IUpdateRoundParams {
-  lobby_id: string;
-  round: number;
-}
-
-/** 'UpdateRound' return type */
-export type IUpdateRoundResult = void;
-
-/** 'UpdateRound' query type */
-export interface IUpdateRoundQuery {
-  params: IUpdateRoundParams;
-  result: IUpdateRoundResult;
-}
-
-const updateRoundIR: any = {"usedParamSet":{"round":true,"lobby_id":true},"params":[{"name":"round","required":true,"transform":{"type":"scalar"},"locs":[{"a":35,"b":41}]},{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":60,"b":69}]}],"statement":"UPDATE lobbies\nSET current_round = :round!\nWHERE lobby_id = :lobby_id!"};
-
-/**
- * Query generated from SQL:
- * ```
- * UPDATE lobbies
- * SET current_round = :round!
- * WHERE lobby_id = :lobby_id!
- * ```
- */
-export const updateRound = new PreparedQuery<IUpdateRoundParams,IUpdateRoundResult>(updateRoundIR);
 
 
 /** 'UpdateLatestMatchState' parameters type */
@@ -190,89 +163,5 @@ const executedRoundIR: any = {"usedParamSet":{"execution_block_height":true,"lob
  * ```
  */
 export const executedRound = new PreparedQuery<IExecutedRoundParams,IExecutedRoundResult>(executedRoundIR);
-
-
-/** 'AddWin' parameters type */
-export interface IAddWinParams {
-  wallet: string | null | void;
-}
-
-/** 'AddWin' return type */
-export type IAddWinResult = void;
-
-/** 'AddWin' query type */
-export interface IAddWinQuery {
-  params: IAddWinParams;
-  result: IAddWinResult;
-}
-
-const addWinIR: any = {"usedParamSet":{"wallet":true},"params":[{"name":"wallet","required":false,"transform":{"type":"scalar"},"locs":[{"a":60,"b":66}]}],"statement":"UPDATE global_user_state\nSET\nwins = wins + 1\nWHERE wallet = :wallet"};
-
-/**
- * Query generated from SQL:
- * ```
- * UPDATE global_user_state
- * SET
- * wins = wins + 1
- * WHERE wallet = :wallet
- * ```
- */
-export const addWin = new PreparedQuery<IAddWinParams,IAddWinResult>(addWinIR);
-
-
-/** 'AddLoss' parameters type */
-export interface IAddLossParams {
-  wallet: string | null | void;
-}
-
-/** 'AddLoss' return type */
-export type IAddLossResult = void;
-
-/** 'AddLoss' query type */
-export interface IAddLossQuery {
-  params: IAddLossParams;
-  result: IAddLossResult;
-}
-
-const addLossIR: any = {"usedParamSet":{"wallet":true},"params":[{"name":"wallet","required":false,"transform":{"type":"scalar"},"locs":[{"a":64,"b":70}]}],"statement":"UPDATE global_user_state\nSET\nlosses = losses + 1\nWHERE wallet = :wallet"};
-
-/**
- * Query generated from SQL:
- * ```
- * UPDATE global_user_state
- * SET
- * losses = losses + 1
- * WHERE wallet = :wallet
- * ```
- */
-export const addLoss = new PreparedQuery<IAddLossParams,IAddLossResult>(addLossIR);
-
-
-/** 'AddTie' parameters type */
-export interface IAddTieParams {
-  wallet: string | null | void;
-}
-
-/** 'AddTie' return type */
-export type IAddTieResult = void;
-
-/** 'AddTie' query type */
-export interface IAddTieQuery {
-  params: IAddTieParams;
-  result: IAddTieResult;
-}
-
-const addTieIR: any = {"usedParamSet":{"wallet":true},"params":[{"name":"wallet","required":false,"transform":{"type":"scalar"},"locs":[{"a":60,"b":66}]}],"statement":"UPDATE global_user_state\nSET\nties = ties + 1\nWHERE wallet = :wallet"};
-
-/**
- * Query generated from SQL:
- * ```
- * UPDATE global_user_state
- * SET
- * ties = ties + 1
- * WHERE wallet = :wallet
- * ```
- */
-export const addTie = new PreparedQuery<IAddTieParams,IAddTieResult>(addTieIR);
 
 

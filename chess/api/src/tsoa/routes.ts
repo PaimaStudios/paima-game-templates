@@ -40,6 +40,7 @@ const models: TsoaRoute.Models = {
     "LobbyStateQuery": {
         "dataType": "refObject",
         "properties": {
+            "bot_difficulty": {"dataType":"double","required":true},
             "created_at": {"dataType":"datetime","required":true},
             "creation_block_height": {"dataType":"double","required":true},
             "current_round": {"dataType":"double","required":true},
@@ -55,6 +56,7 @@ const models: TsoaRoute.Models = {
             "practice": {"dataType":"boolean","required":true},
             "round_length": {"dataType":"double","required":true},
             "round_start_height": {"dataType":"double","required":true},
+            "remaining_blocks": {"dataType":"nestedObjectLiteral","nestedProperties":{"b":{"dataType":"double","required":true},"w":{"dataType":"double","required":true}},"required":true},
         },
         "additionalProperties": false,
     },
@@ -95,6 +97,7 @@ const models: TsoaRoute.Models = {
             "num_of_rounds": {"dataType":"double","required":true},
             "play_time_per_player": {"dataType":"double","required":true},
             "player_one_iswhite": {"dataType":"boolean","required":true},
+            "rating": {"dataType":"double","required":true},
             "round_length": {"dataType":"double","required":true},
         },
         "additionalProperties": false,
@@ -111,6 +114,7 @@ const models: TsoaRoute.Models = {
     "IGetRandomActiveLobbyResult": {
         "dataType": "refObject",
         "properties": {
+            "bot_difficulty": {"dataType":"double","required":true},
             "created_at": {"dataType":"datetime","required":true},
             "creation_block_height": {"dataType":"double","required":true},
             "current_round": {"dataType":"double","required":true},

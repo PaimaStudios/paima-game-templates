@@ -1,35 +1,48 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { Page } from "@src/MainController";
 import { useNavigate } from "react-router-dom";
-import Button from "@src/components/Button";
-import Wrapper from "@src/components/Wrapper";
-import Logo from "@src/components/Logo";
+import Layout from "@src/layouts/Layout";
+import MenuCard from "@src/components/MenuCard";
+
+import createBackground from "@assets/images/create-background.png";
+import lobbiesBackground from "@assets/images/lobbies-background.png";
+import gamesBackground from "@assets/images/games-background.png";
+import UserStats from "./UserStats";
 
 const MainMenu = () => {
   const navigate = useNavigate();
 
   return (
-    <>
-      <Logo height={160} mainMenu />
-      <Box paddingTop="96px" />
-      <Wrapper small>
-        <Typography variant="h1" marginTop="96px">
-          Running on Paima Engine
-        </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            flexFlow: "column",
-            gap: "24px",
-          }}
-        >
-          <Button onClick={() => navigate(Page.CreateLobby)}>Create</Button>
-          <Button onClick={() => navigate(Page.OpenLobbies)}>Lobbies</Button>
-          <Button onClick={() => navigate(Page.MyGames)}>My Games</Button>
-        </Box>
-      </Wrapper>
-    </>
+    <Layout navbar={false}>
+      <Box sx={{ margin: 2 }}>
+        <UserStats />
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          gap: "24px",
+          flexWrap: "wrap",
+          justifyContent: "center",
+        }}
+      >
+        <MenuCard
+          onClick={() => navigate(Page.CreateLobby)}
+          title="Create"
+          background={createBackground}
+        />
+        <MenuCard
+          onClick={() => navigate(Page.OpenLobbies)}
+          title="Lobbies"
+          background={lobbiesBackground}
+        />
+        <MenuCard
+          onClick={() => navigate(Page.MyGames)}
+          title="My Games"
+          background={gamesBackground}
+        />
+      </Box>
+    </Layout>
   );
 };
 

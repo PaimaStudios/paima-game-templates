@@ -22,10 +22,10 @@
     "compile:db": "npm run compile -w db/"
   },
   "workspaces": [
+    "./db",
     "./utils",
     "./game-logic",
     "./api",
-    "./db",
     "./state-transition",
     "./middleware"
   ],

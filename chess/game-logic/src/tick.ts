@@ -2,13 +2,13 @@ import type Prando from 'paima-sdk/paima-prando';
 import { Chess } from 'chess.js';
 import { gameOverFromChess, updateBoard } from './chess-logic';
 import type { MatchState, MatchEnvironment, TickEvent } from './types';
-import type { IGetCachedMovesResult } from '@chess/db';
+import type { IGetRoundMovesResult } from '@chess/db';
 
 // Executes a round executor tick and generates a tick event as a result
 export function processTick(
   matchEnvironment: MatchEnvironment,
   matchState: MatchState,
-  moves: IGetCachedMovesResult[],
+  moves: IGetRoundMovesResult[],
   currentTick: number,
   __: Prando
 ): TickEvent[] | null {

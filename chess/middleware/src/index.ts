@@ -10,7 +10,6 @@ import {
   userWalletLoginWithoutChecks,
   updateBackendUri,
   getRemoteBackendVersion,
-  postConciselyEncodedData,
 } from 'paima-sdk/paima-mw-core';
 
 import { gameBackendVersion, GAME_NAME } from '@chess/utils';
@@ -37,7 +36,6 @@ export {
   switchToAutomaticMode,
   updateBackendUri,
   getRemoteBackendVersion,
-  postConciselyEncodedData,
 };
 
 export default endpoints;

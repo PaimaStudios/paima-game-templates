@@ -1,27 +1,30 @@
-import * as React from "react";
-import UpIcon from "@mui/icons-material/KeyboardArrowUp";
-import DownIcon from "@mui/icons-material/KeyboardArrowDown";
+import React from "react";
 
-import {
-  TextField,
-  BaseTextFieldProps,
-  OutlinedInputProps,
-  InputAdornment,
-  IconButton,
-} from "@mui/material";
+import type { BaseTextFieldProps } from "@mui/material";
+import { Box, TextField, Typography } from "@mui/material";
 
 interface NumericFieldProps extends BaseTextFieldProps {
   onChange: (value: string) => void;
 }
 
-const NumericField: React.FC<NumericFieldProps> = ({ onChange, ...props }) => {
+const NumericField: React.FC<NumericFieldProps> = ({
+  onChange,
+  label,
+  ...props
+}) => {
   return (
-    <TextField
-      type="number"
-      variant="outlined"
-      onChange={(event) => onChange(event.target.value)}
-      {...props}
-    />
+    <Box>
+      <Typography variant="subtitle1" textAlign="left">
+        {label}
+      </Typography>
+      <TextField
+        type="number"
+        fullWidth
+        variant="outlined"
+        onChange={(event) => onChange(event.target.value)}
+        {...props}
+      />
+    </Box>
   );
 };
 

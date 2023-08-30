@@ -15,8 +15,8 @@ import {
   executedRound,
 } from '@chess/db';
 import type { MatchEnvironment, MatchState } from '@chess/game-logic';
-import type { WalletAddress } from 'paima-sdk/paima-utils';
-import type { ConciseResult, ExpandedResult, MatchResult } from '@chess/utils';
+import { ENV, type WalletAddress } from 'paima-sdk/paima-utils';
+import type { ConciseResult, ExpandedResult, MatchResult, Timer } from '@chess/utils';
 import { scheduleZombieRound, deleteZombieRound } from './zombie.js';
 import type { INewFinalStateParams } from '@chess/db/src/insert.queries.js';
 import type { SQLUpdate } from 'paima-sdk/paima-db';
@@ -27,21 +27,28 @@ export function persistNewRound(
   lobbyId: string,
   currentRound: number,
   currentMatchState: string,
+  timeLeft: Timer,
   roundLength: number,
   blockHeight: number
 ): SQLUpdate[] {
+  const nextRound = currentRound + 1;
   // Creation of the next round
   const nrParams: INewRoundParams = {
     lobby_id: lobbyId,
-    round_within_match: currentRound + 1,
+    round_within_match: nextRound,
     match_state: currentMatchState,
+    player_one_blocks_left: timeLeft.player_one_blocks_left,
+    player_two_blocks_left: timeLeft.player_two_blocks_left,
     starting_block_height: blockHeight,
     execution_block_height: null,
   };
   const newRoundTuple: SQLUpdate = [newRound, nrParams];
 
-  // Scheduling of the zombie round execution in the future
-  const zombie_block_height = blockHeight + roundLength;
+  // Scheduling of the zombie round execution in the future - use remaining time if shorter than round length
+  const playerTimeLeft =
+    nextRound % 2 === 1 ? timeLeft.player_one_blocks_left : timeLeft.player_two_blocks_left;
+  const roundTime = Math.min(roundLength, playerTimeLeft);
+  const zombie_block_height = blockHeight + roundTime;
   const zombieRoundUpdate: SQLUpdate = scheduleZombieRound(lobbyId, zombie_block_height);
 
   return [newRoundTuple, zombieRoundUpdate];
@@ -96,6 +103,7 @@ export function persistMatchResults(
   lobbyId: string,
   results: MatchResult,
   matchEnvironment: MatchEnvironment,
+  elapsedBlocks: number[],
   newState: MatchState
 ): SQLUpdate {
   const params: INewFinalStateParams = {
@@ -104,10 +112,10 @@ export function persistMatchResults(
       player_one_iswhite: matchEnvironment.user1.color === 'w',
       player_one_wallet: matchEnvironment.user1.wallet,
       player_one_result: expandResult(results[0]),
-      player_one_elapsed_time: 0, // Example TODO: for the developer to implement themselves
+      player_one_elapsed_time: elapsedBlocks[0] * ENV.BLOCK_TIME,
       player_two_wallet: matchEnvironment.user2.wallet,
       player_two_result: expandResult(results[1]),
-      player_two_elapsed_time: 0, // Example TODO
+      player_two_elapsed_time: elapsedBlocks[1] * ENV.BLOCK_TIME,
       positions: newState.fenBoard,
     },
   };

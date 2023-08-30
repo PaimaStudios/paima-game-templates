@@ -61,11 +61,11 @@ export async function getNonemptyNewLobbies(
   const newLobbies = await getRawNewLobbies(address, blockHeight);
   if (!newLobbies.success) {
     throw new Error('Failed to get new lobbies');
-  } else if (newLobbies.lobbies.length === 0) {
-    throw new Error('Received an empty list of new lobbies');
-  } else {
-    return newLobbies;
   }
+  if (newLobbies.lobbies.length === 0) {
+    throw new Error('Received an empty list of new lobbies');
+  }
+  return newLobbies;
 }
 
 export async function getLobbyStateWithUser(
@@ -75,9 +75,9 @@ export async function getLobbyStateWithUser(
   const lobbyState = await getRawLobbyState(lobbyID);
   if (!lobbyState.success) {
     throw new Error('Failed to get lobby state');
-  } else if (userJoinedLobby(address, lobbyState) || userCreatedLobby(address, lobbyState)) {
-    return lobbyState;
-  } else {
-    throw new Error('User is not in the lobby');
   }
+  if (userJoinedLobby(address, lobbyState) || userCreatedLobby(address, lobbyState)) {
+    return lobbyState;
+  }
+  throw new Error('User is not in the lobby');
 }

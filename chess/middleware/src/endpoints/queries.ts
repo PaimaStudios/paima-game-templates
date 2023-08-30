@@ -156,10 +156,11 @@ async function getUserStats(walletAddress: string): Promise<PackedUserStats | Fa
   }
 
   try {
-    const j = (await res.json()) as { stats: UserStats };
+    const j = (await res.json()) as { stats: UserStats; rank: number };
     return {
       success: true,
       stats: j.stats,
+      rank: j.rank,
     };
   } catch (err) {
     return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);

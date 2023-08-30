@@ -1,12 +1,9 @@
 import type Prando from 'paima-sdk/paima-prando';
 import type { MatchMove, MatchEnvironment, MatchState } from './types';
-import type { ConciseResult, MatchResult, UserLobby } from '@chess/utils';
+import type { MatchResult, UserLobby, Timer, ConciseResult } from '@chess/utils';
+import type { Color } from 'chess.js';
 import { Chess } from 'chess.js';
 import type { WalletAddress } from 'paima-sdk/paima-utils';
-
-export function detectWin(chess: Chess): boolean {
-  return chess.isCheckmate();
-}
 
 export function gameOverFromChess(chess: Chess): boolean {
   return chess.isGameOver();
@@ -18,19 +15,17 @@ export function gameOver(fenBoard: string): boolean {
   return gameOverFromChess(chess);
 }
 
-export function detectDraw(chess: Chess): boolean {
-  return chess.isDraw();
-}
-
-export function didPlayerWin(playerColor: string, fen: string): boolean {
+export function didPlayerWin(playerColor: Color, fen: string, opponentTimeLeft: number): boolean {
   const chess = new Chess();
   chess.load(fen);
 
-  if (chess.isCheckmate() && chess.turn() !== playerColor) {
+  const isProperWin = chess.isCheckmate() && chess.turn() !== playerColor;
+  const isTimeoutWin = !chess.isDraw() && opponentTimeLeft <= 0;
+  if (isProperWin || isTimeoutWin) {
     return true;
-  } else {
-    return false;
   }
+
+  return false;
 }
 
 export function isPlayersTurn(player: WalletAddress, lobby: UserLobby) {
@@ -44,27 +39,26 @@ export function isPlayersTurn(player: WalletAddress, lobby: UserLobby) {
 
 export function matchResults(
   matchState: MatchState,
-  matchEnvironment: MatchEnvironment
+  matchEnvironment: MatchEnvironment,
+  blocksLeft: Timer
 ): MatchResult {
-  // We compute the winner
-  const user1won = didPlayerWin(matchEnvironment.user1.color, matchState.fenBoard);
-  const user2won = didPlayerWin(matchEnvironment.user2.color, matchState.fenBoard);
-  // Assign the winner to a variable called winner. If no one won, winner is null
-  const winner = user1won
-    ? matchEnvironment.user1.wallet
-    : user2won
-    ? matchEnvironment.user2.wallet
-    : null;
+  const user1Color = matchEnvironment.user1.color;
+  const user2Color = matchEnvironment.user2.color;
 
-  console.log(`${winner} won match.`);
+  const user1won = didPlayerWin(user1Color, matchState.fenBoard, blocksLeft.player_two_blocks_left);
+  if (user1won) {
+    console.log(`${matchEnvironment.user1.wallet} won match.`);
+    return ['w', 'l'];
+  }
 
-  const results: [ConciseResult, ConciseResult] = !winner
-    ? ['t', 't']
-    : winner === matchEnvironment.user1.wallet
-    ? ['w', 'l']
-    : ['l', 'w'];
+  const user2won = didPlayerWin(user2Color, matchState.fenBoard, blocksLeft.player_one_blocks_left);
+  if (user2won) {
+    console.log(`${matchEnvironment.user2.wallet} won match.`);
+    return ['l', 'w'];
+  }
 
-  return results;
+  console.log(`Match ended in a draw.`);
+  return ['t', 't'];
 }
 
 // Updates the fenBoard string by applying a new move
@@ -93,3 +87,24 @@ export function generateRandomMove(positions: string, randomnessGenerator: Prand
   const possibleMoves = chess.moves();
   return possibleMoves[randomnessGenerator.next(0, possibleMoves.length)];
 }
+
+// K-factor determines the sensitivity of rating changes
+const K_FACTOR = 32;
+export const calculateRatingChange = (
+  playerRating: number,
+  opponentRating: number,
+  result: ConciseResult,
+  kFactor = K_FACTOR
+): number => {
+  // Result options: 1 for win, 0 for loss, 0.5 for draw
+  const resultScore = result === 'w' ? 1 : result === 'l' ? 0 : 0.5;
+  const expectedScore = calculateExpectedScore(playerRating, opponentRating);
+  const ratingChange = kFactor * (resultScore - expectedScore);
+  return Math.round(ratingChange);
+};
+
+const calculateExpectedScore = (playerRating: number, opponentRating: number): number => {
+  const exponent = (opponentRating - playerRating) / 400;
+  const expectedScore = 1 / (1 + Math.pow(10, exponent));
+  return expectedScore;
+};

@@ -1,10 +1,11 @@
 import * as Paima from "./paima/middleware.js";
-import {
+import type {
   LobbyState,
   MatchExecutor,
   MatchState,
   TickEvent,
   UserLobby,
+  UserStats,
 } from "./paima/types.d";
 
 // The MainController is a React component that will be used to control the state of the application
@@ -13,7 +14,7 @@ import {
 
 // create string enum called AppState
 export enum Page {
-  Landing = "/login",
+  Login = "/login",
   MainMenu = "/",
   CreateLobby = "/create_lobby",
   OpenLobbies = "/open_lobbies",
@@ -34,17 +35,14 @@ class MainController {
 
   private checkCallback() {
     if (this.callback == null) {
-      throw new Error("Callback is not set");
+      console.error("Callback is not set");
     }
   }
 
   private async enforceWalletConnected() {
     this.checkCallback();
-    if (!this.isWalletConnected()) {
-      this.callback(Page.Landing, false, null);
-    }
-    if (!this.userAddress) {
-      await this.silentConnectWallet();
+    if (!this.isWalletConnected() || !this.userAddress) {
+      this.callback(Page.Login, false, null);
     }
   }
 
@@ -52,23 +50,15 @@ class MainController {
     return typeof window.ethereum !== "undefined" ? true : false;
   };
 
-  async silentConnectWallet() {
-    const response = await Paima.default.userWalletLogin("metamask");
-
-    if (response.success === true) {
-      this.userAddress = response.result.walletAddress;
-    }
-  }
-
-  async connectWallet() {
-    this.callback(Page.Landing, true, null);
-    const response = await Paima.default.userWalletLogin("metamask");
+  async connectWallet(wallet: string) {
+    this.callback(Page.Login, true, null);
+    const response = await Paima.default.userWalletLogin(wallet);
     console.log("connect wallet response: ", response);
     if (response.success === true) {
       this.userAddress = response.result.walletAddress;
       this.callback(Page.MainMenu, false, null);
     } else {
-      this.callback(Page.Landing, false, null);
+      this.callback(Page.Login, false, null);
     }
   }
 
@@ -105,25 +95,18 @@ class MainController {
     numOfRounds: number,
     roundLength: number,
     timePerPlayer: number,
+    botDifficulty: number,
     isHidden = false,
     isPractice = false,
     isWhite = true
   ): Promise<void> {
     await this.enforceWalletConnected();
     this.callback(null, true, null);
-    console.log(
-      "create lobby: ",
-      numOfRounds,
-      roundLength,
-      timePerPlayer,
-      isHidden,
-      isPractice,
-      isWhite
-    );
     const response = await Paima.default.createLobby(
       numOfRounds,
       roundLength,
       timePerPlayer,
+      botDifficulty,
       isHidden,
       isPractice,
       isWhite
@@ -212,6 +195,18 @@ class MainController {
     return response.lobbies;
   }
 
+  async getStats(): Promise<UserStats> {
+    await this.enforceWalletConnected();
+    this.callback(null, true, null);
+    const response = await Paima.default.getUserStats(this.userAddress);
+    console.log("get stats response: ", response);
+    this.callback(null, false, null);
+    if (!response.success) {
+      throw new Error("Could not get user stats");
+    }
+    return response;
+  }
+
   async getMatchExecutor(
     lobbyId: string
   ): Promise<MatchExecutor<MatchState, TickEvent>> {
@@ -224,11 +219,6 @@ class MainController {
       throw new Error("Could not get match executor");
     }
     return response.result;
-  }
-
-  initialState(): Page {
-    this.silentConnectWallet();
-    return this.isWalletConnected() ? Page.MainMenu : Page.Landing;
   }
 }
 

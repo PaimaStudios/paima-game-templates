@@ -3,13 +3,14 @@ import type { IGetLobbyByIdResult, IStartMatchParams, ICloseLobbyParams } from '
 import { createLobby, startMatch, closeLobby, ICreateLobbyParams } from '@chess/db';
 import type Prando from 'paima-sdk/paima-prando';
 import type { WalletAddress } from 'paima-sdk/paima-utils';
-import type { LobbyStatus } from '@chess/utils';
+import type { LobbyStatus, Timer } from '@chess/utils';
 import { PRACTICE_BOT_ADDRESS } from '@chess/utils';
 import { Chess } from 'chess.js';
 import { blankStats } from './stats';
 import { persistNewRound } from './match.js';
 import type { SQLUpdate } from 'paima-sdk/paima-db';
 import { initialState } from '@chess/game-logic';
+import { schedulePracticeMove } from './practice.js';
 
 // Persist creation of a lobby
 export function persistLobbyCreation(
@@ -29,6 +30,7 @@ export function persistLobbyCreation(
     creation_block_height: blockHeight,
     hidden: inputData.isHidden,
     practice: inputData.isPractice,
+    bot_difficulty: inputData.botDifficulty,
     lobby_creator: player,
     player_one_iswhite: inputData.playerOneIsWhite,
     player_two: null,
@@ -41,16 +43,19 @@ export function persistLobbyCreation(
   const createLobbyTuple: SQLUpdate = [createLobby, params];
   // create user metadata if non existent
   const blankStatsTuple: SQLUpdate = blankStats(player);
-  // In case of a practice lobby join with a predetermined opponent right away
-  const practiceLobbyUpdates = inputData.isPractice
-    ? persistLobbyJoin(
-        blockHeight,
-        PRACTICE_BOT_ADDRESS,
-        { input: 'joinedLobby', lobbyID: lobby_id },
-        params
-      )
-    : [];
-  return [createLobbyTuple, blankStatsTuple, ...practiceLobbyUpdates];
+  // In case of a practice lobby join with a predetermined opponent right away & schedule bot move
+  if (inputData.isPractice) {
+    const joinLobbyUpdates = persistLobbyJoin(
+      blockHeight,
+      PRACTICE_BOT_ADDRESS,
+      { input: 'joinedLobby', lobbyID: lobby_id },
+      params
+    );
+    const botStarts = !inputData.playerOneIsWhite;
+    const practiceMove = botStarts ? [schedulePracticeMove(lobby_id, 1, blockHeight + 1)] : [];
+    return [createLobbyTuple, blankStatsTuple, ...joinLobbyUpdates, ...practiceMove];
+  }
+  return [createLobbyTuple, blankStatsTuple];
 }
 
 // Persist joining a lobby
@@ -105,10 +110,15 @@ function persistActivateLobby(
 
 // Create initial match state, used when a player joins a lobby to init the match.
 function persistInitialMatchState(lobby: IGetLobbyByIdResult, blockHeight: number): SQLUpdate[] {
+  const initialTimeLeft: Timer = {
+    player_one_blocks_left: lobby.play_time_per_player,
+    player_two_blocks_left: lobby.play_time_per_player,
+  };
   const newRoundTuples = persistNewRound(
     lobby.lobby_id,
     0,
     initialState(),
+    initialTimeLeft,
     lobby.round_length,
     blockHeight
   );

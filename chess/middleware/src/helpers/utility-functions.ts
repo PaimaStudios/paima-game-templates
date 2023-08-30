@@ -1,7 +1,6 @@
 import { ENV } from 'paima-sdk/paima-utils';
 import { buildEndpointErrorFxn, MiddlewareErrorCode } from '../errors';
 import type { PackedLobbyState, RoundEnd } from '../types';
-import { PaimaMiddlewareErrorCode } from 'paima-sdk/paima-mw-core';
 
 export function userJoinedLobby(address: String, lobby: PackedLobbyState): boolean {
   if (!lobby.hasOwnProperty('lobby')) {
@@ -55,19 +54,10 @@ export function calculateRoundEnd(
     roundEnd = current;
   }
 
-  try {
-    const blocksToEnd = roundEnd - current;
-    const secsPerBlock = ENV.BLOCK_TIME;
-    const secondsToEnd = blocksToEnd * secsPerBlock;
-    return {
-      blocks: blocksToEnd,
-      seconds: secondsToEnd,
-    };
-  } catch (err) {
-    errorFxn(PaimaMiddlewareErrorCode.INTERNAL_INVALID_DEPLOYMENT, err);
-    return {
-      blocks: 0,
-      seconds: 0,
-    };
-  }
+  const blocksToEnd = roundEnd - current;
+  const secondsToEnd = blocksToEnd * ENV.BLOCK_TIME;
+  return {
+    blocks: blocksToEnd,
+    seconds: secondsToEnd,
+  };
 }

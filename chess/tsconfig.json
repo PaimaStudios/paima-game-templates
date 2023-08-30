@@ -7,12 +7,7 @@
     "documentation",
     "integration-testing",
     "**/*.test.ts",
-    "utils/build",
-    "middleware/build",
-    "game-logic/build",
-    "db/build",
-    "state-transition/build",
-    "api/build",
+    "**/build",
     "middleware/packaged",
     "jest.config.js",
     "middleware/esbuildconfig.cjs"

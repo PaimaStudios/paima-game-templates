@@ -3,7 +3,7 @@ import type {
   IGetMovesByLobbyResult,
   IGetUserStatsResult,
   IGetNewLobbiesByUserAndBlockHeightResult,
-  IGetPaginatedUserLobbiesResult,
+  IGetAllPaginatedUserLobbiesResult,
 } from '@chess/db';
 import type { WalletAddress } from 'paima-sdk/paima-utils';
 import type { IGetBlockHeightResult } from 'paima-sdk/paima-db';
@@ -58,8 +58,17 @@ export interface LobbyState extends LobbyStateQuery {
 
 export interface LobbyStateQuery extends IGetLobbyByIdResult {
   round_start_height: number;
+  remaining_blocks: {
+    w: number;
+    b: number;
+  };
 }
 
-export interface UserLobby extends IGetPaginatedUserLobbiesResult {
+export interface UserLobby extends IGetAllPaginatedUserLobbiesResult {
   myTurn?: boolean;
+}
+
+export interface Timer {
+  player_one_blocks_left: number;
+  player_two_blocks_left: number;
 }

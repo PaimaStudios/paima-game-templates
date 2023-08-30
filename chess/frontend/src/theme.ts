@@ -1,81 +1,93 @@
 import { createTheme } from "@mui/material";
 
+const gray = "#898989";
+const darkBlue = "#25515B";
+const lightBlue = "#57E7FB";
+const pink = "#FCA2F9";
+
+const squareLight = "#D8E9EB";
+const squareDark = "#907B90";
+
 export const theme = createTheme({
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 992,
+      lg: 1268,
+      xl: 1536,
+    },
+  },
   palette: {
     primary: {
-      main: "#F2CEAD",
-      light: "#FFE6CA",
+      main: darkBlue,
+      light: lightBlue,
+      dark: "#000000",
+      contrastText: gray,
     },
     secondary: {
-      main: "#4B230C",
+      main: squareLight,
+      light: squareLight,
+      dark: squareDark,
+    },
+    background: {
+      default: "#ffffff",
     },
   },
   typography: {
     fontFamily: ["Inter", "Arial", "sans-serif"].join(","),
-    h1: {
-      fontSize: 32,
-      color: "#FFE6CA",
-      fontWeight: 800,
-    },
-    button: {
+    h2: {
       fontStyle: "normal",
-      fontWeight: 700,
-      fontSize: 18,
-      color: "#4B230C",
-      textTransform: "none",
+      fontWeight: 500,
+      fontSize: 20,
+      color: "white",
+      letterSpacing: "0.08em",
+      textTransform: "uppercase",
+    },
+    subtitle1: {
+      fontStyle: "normal",
+      fontWeight: 500,
+      fontSize: "14px",
+      color: gray,
+    },
+    body1: {
+      fontStyle: "normal",
+      fontWeight: 500,
+      fontSize: "16px",
+      textAlign: "center",
+      color: "white",
     },
   },
   components: {
-    MuiTableCell: {
+    MuiList: {
       styleOverrides: {
-        head: {
-          backgroundColor: "transparent",
-          fontWeight: 700,
-          fontSize: "14px",
-          color: "white",
-          opacity: 0.6,
+        root: {
+          backgroundColor: darkBlue,
         },
-        body: {
-          fontWeight: 700,
-          fontSize: "16px",
-          color: "white",
-        },
-      },
-    },
-    MuiTablePagination: {
-      styleOverrides: {
-        toolbar: {
-          fontWeight: 500,
-          fontSize: "16px",
-          color: "white",
-        },
-        select: { fontWeight: 700 },
       },
     },
     MuiSelect: {
       styleOverrides: {
+        select: {
+          textAlign: "left",
+        },
         icon: { color: "white" },
       },
     },
     MuiOutlinedInput: {
       styleOverrides: {
+        root: {
+          ":hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: lightBlue,
+          },
+        },
         input: {
           color: "white",
           fontWeight: 700,
           fontSize: "18px",
         },
         notchedOutline: {
-          borderColor: "white",
-          padding: "0 10px",
-        },
-      },
-    },
-    MuiInputLabel: {
-      styleOverrides: {
-        root: {
-          color: "white",
-          opacity: 0.6,
-          fontWeight: 700,
+          borderColor: darkBlue,
         },
       },
     },
@@ -84,6 +96,35 @@ export const theme = createTheme({
         label: {
           fontWeight: 700,
           fontSize: "14px",
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          background: `linear-gradient(90deg, ${lightBlue} 0%, ${pink} 100%)`,
+          borderRadius: "4px",
+          color: "black",
+          fontWeight: 600,
+          fontSize: "16px",
+        },
+      },
+    },
+    MuiToggleButton: {
+      styleOverrides: {
+        root: {
+          borderColor: squareDark,
+          backgroundColor: squareLight,
+        },
+      },
+    },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          color: darkBlue,
+          "&.Mui-checked": {
+            color: lightBlue,
+          },
         },
       },
     },

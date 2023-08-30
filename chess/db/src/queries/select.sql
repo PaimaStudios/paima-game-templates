@@ -11,8 +11,10 @@ lobbies.hidden,
 lobbies.lobby_creator,
 lobbies.player_one_iswhite,
 lobbies.lobby_state,
-lobbies.latest_match_state
+lobbies.latest_match_state,
+global_user_state.rating
 FROM lobbies
+JOIN global_user_state ON lobbies.lobby_creator = global_user_state.wallet
 WHERE lobbies.lobby_state = 'open' AND lobbies.hidden IS FALSE AND lobbies.lobby_creator != :wallet
 ORDER BY created_at DESC
 LIMIT :count
@@ -80,24 +82,6 @@ WHERE random() < 0.1
 AND lobbies.lobby_state = 'active'
 LIMIT 1;
 
-/* @name getUserLobbies */
-SELECT * FROM lobbies
-WHERE lobbies.lobby_state != 'finished'
-AND lobbies.lobby_state != 'closed'
-AND (lobbies.lobby_creator = :wallet
-OR lobbies.player_two = :wallet)
-ORDER BY created_at DESC;
-
-/* @name getPaginatedUserLobbies */
-SELECT * FROM lobbies
-WHERE lobbies.lobby_state != 'finished'
-AND lobbies.lobby_state != 'closed'
-AND (lobbies.lobby_creator = :wallet
-OR lobbies.player_two = :wallet)
-ORDER BY created_at DESC
-LIMIT :count
-OFFSET :page;
-
 /* @name getAllPaginatedUserLobbies */
 SELECT * FROM lobbies
 WHERE (lobbies.lobby_creator = :wallet
@@ -109,10 +93,6 @@ ORDER BY lobby_state = 'active' DESC,
 LIMIT :count
 OFFSET :page;
 
-/* @name getActiveLobbies */
-SELECT * FROM lobbies
-WHERE lobbies.lobby_state = 'active';
-
 /* @name getLobbyById */
 SELECT * FROM lobbies
 WHERE lobby_id = :lobby_id;
@@ -121,44 +101,20 @@ WHERE lobby_id = :lobby_id;
 SELECT * FROM global_user_state
 WHERE wallet = :wallet;
 
-/* @name getBothUserStats */
-SELECT global_user_state.wallet, wins, losses, ties
+/* @name getUserRatingPosition */
+SELECT count(*)+1 as rank
 FROM global_user_state
-WHERE global_user_state.wallet = :wallet
-OR global_user_state.wallet = :wallet2;
-
-
-/* @name getMatchUserStats */
-SELECT * FROM global_user_state
-INNER JOIN lobbies
-ON lobbies.lobby_creator = global_user_state.wallet
-OR lobbies.player_two = global_user_state.wallet
-WHERE global_user_state.wallet = :wallet1;
+WHERE rating > :rating!;
 
 /* @name getRoundMoves */
 SELECT * FROM match_moves
 WHERE lobby_id = :lobby_id!
 AND   round = :round!;
 
-/* @name getCachedMoves */
-SELECT
-match_moves.id,
-match_moves.lobby_id,
-match_moves.wallet,
-match_moves.move_pgn,
-match_moves.round
-FROM match_moves
-INNER JOIN rounds
-ON match_moves.lobby_id = rounds.lobby_id
-AND match_moves.round = rounds.round_within_match
-WHERE rounds.execution_block_height IS NULL
-AND match_moves.lobby_id = :lobby_id;
-
 /* @name getMovesByLobby */
 SELECT *
 FROM match_moves
 WHERE match_moves.lobby_id = :lobby_id;
-
 
 /* @name getNewLobbiesByUserAndBlockHeight */
 SELECT lobby_id FROM lobbies
@@ -178,4 +134,8 @@ WHERE rounds.lobby_id = :lobby_id;
 
 /* @name getFinalState */
 SELECT * FROM final_match_state
+WHERE lobby_id = :lobby_id;
+
+/* @name getLobbyRounds */
+SELECT * FROM rounds
 WHERE lobby_id = :lobby_id;

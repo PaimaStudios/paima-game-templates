@@ -54,4 +54,5 @@ export interface PackedUserLobbies {
 export interface PackedUserStats {
   success: true;
   stats: UserStats;
+  rank: number;
 }
