@@ -3,7 +3,7 @@ import { requirePool, getLobbyById, getRoundData, getRoundMoves } from '@chess/d
 import { isLeft } from 'fp-ts/Either';
 import { psqlNum } from '../validation.js';
 import type { RoundExecutorData } from '@chess/utils';
-import { getBlockHeight } from 'paima-sdk/paima-db';
+import { getBlockHeights } from 'paima-sdk/paima-db';
 
 type Response = RoundExecutorData | Error;
 
@@ -31,8 +31,9 @@ export class RoundExecutorController extends Controller {
       return { error: 'round not found' };
     }
 
-    const [block_height] = await getBlockHeight.run(
-      { block_height: round_data.execution_block_height },
+    const [block_height] = await getBlockHeights.run(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      { block_heights: [round_data.execution_block_height!] },
       pool
     );
     const moves = await getRoundMoves.run({ lobby_id: lobbyID, round: round }, pool);
