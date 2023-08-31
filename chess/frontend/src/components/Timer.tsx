@@ -13,20 +13,24 @@ interface Props {
 
 export const Timer: React.FC<Props> = ({ value, isRunning, player }) => {
   const [time, setTime] = useState<number>(value);
+  const [realTime, setRealTime] = useState<number>(value);
 
   useEffect(() => {
     setTime(value);
+    if (realTime > value) setRealTime(value); 
   }, [value]);
 
   useEffect(() => {
     if (!isRunning) return;
 
     const interval = setInterval(
-      () =>
+      () => {
         setTime((time) => {
-          if (time <= 0) return 0;
-          return time - 1;
-        }),
+          let t = (time <= 0) ? 0 : time - 1;
+          if (realTime > t) setRealTime(t);
+          return t;
+        });
+      },
       1000
     );
 
@@ -45,7 +49,7 @@ export const Timer: React.FC<Props> = ({ value, isRunning, player }) => {
           fontFamily: "monospace",
         }}
       >
-        {formatTime(time)}
+        {formatTime(realTime)}
       </Typography>
     </Card>
   );
