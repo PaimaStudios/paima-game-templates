@@ -21,4 +21,4 @@ head -n $(( $(grep -n '^export {' packaged/middleware.js | head -1 | cut -d: -f1
 
 cp packaged/middleware.js ../frontend/src/paima/middleware.js
 
-echo "Frontend-ready Middleware (Without Exports) Prepared In: packaged/paimaMiddleware.jsand copied to frontend/src/paima/middleware.js"
+echo "Frontend-ready Middleware (Without Exports) Prepared In: packaged/paimaMiddleware.js and copied to frontend/src/paima/middleware.js"
