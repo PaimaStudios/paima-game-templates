@@ -48,8 +48,8 @@ export const difficultyName = (value: number): string => {
 const CreateLobby: React.FC = () => {
   const mainController: MainController = useContext(AppContext);
 
-  const [roundLength, setRoundLength] = useState(roundLengths[0]);
-  const [playersTime, setPlayersTime] = useState(gameLengths[0]);
+  const [roundLength, setRoundLength] = useState(roundLengths[3]);
+  const [playersTime, setPlayersTime] = useState(gameLengths[2]);
   const [creatorIsWhite, setCreatorIsWhite] = useState(true);
   const [isHidden, setIsHidden] = useState(false);
   const [isPractice, setIsPractice] = useState(false);
@@ -101,7 +101,7 @@ const CreateLobby: React.FC = () => {
                     }
                   />
                 }
-                label="Go first"
+                label="Play as white"
               />
               <FormControlLabel
                 sx={{ flex: "1" }}
