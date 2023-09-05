@@ -19,7 +19,7 @@ declare const endpoints: {
         getNftStats: (nftContract: string, tokenId: number) => Promise<import("types").FailedResult | import("types").SuccessfulResult<import("types").NftScore>>;
         getRoundExecutor: (lobbyId: string, roundNumber: number) => Promise<import("types").FailedResult | import("types").SuccessfulResult<any>>;
         getMatchExecutor: (lobbyId: string) => Promise<import("types").FailedResult | import("types").SuccessfulResult<any>>;
-        userWalletLogin: (loginType: string) => Promise<import("types").FailedResult | import("types").Wallet>;
+        userWalletLogin: (loginType: string, preferBatchedMode: boolean) => Promise<import("types").FailedResult | import("types").Wallet>;
         checkWalletStatus: () => Promise<import("types").OldResult>;
         verifyWalletChain: () => Promise<boolean>;
     };
