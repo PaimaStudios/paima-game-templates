@@ -17,6 +17,7 @@ const wallets = [
   "NuFi",
   "Nami",
   "Eternl",
+  // "Cardano"
 ] as const;
 
 type WalletType = typeof wallets[number];
@@ -26,11 +27,25 @@ const walletMapping: Record<WalletType, string> = {
   EVM: "metamask",
   Flint: "flint",
   "Flint - EVM": "evm-flint",
+  // Cardaro: 'cardano',
   NuFi: "nufi",
   Nami: "nami",
   Eternl: "eternl",
   Astar: "polkadot",
   Algorand: "pera",
+};
+
+const preferBatchedModeMapping: Record<WalletType, boolean> = {
+  Metamask: false,
+  EVM: false,
+  Flint: false,
+  "Flint - EVM": false,
+  // Cardaro: false,
+  NuFi: false,
+  Nami: false,
+  Eternl: false,
+  Astar: false,
+  Algorand: false,
 };
 
 const Login: React.FC = () => {
@@ -53,7 +68,7 @@ const Login: React.FC = () => {
         <Button
           disabled={!selectedWallet}
           onClick={() =>
-            mainController.connectWallet(walletMapping[selectedWallet])
+            mainController.connectWallet(walletMapping[selectedWallet], preferBatchedModeMapping[selectedWallet])
           }
         >
           Connect
