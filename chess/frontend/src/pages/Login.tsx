@@ -36,7 +36,7 @@ const walletMapping: Record<WalletType, string> = {
 };
 
 const preferBatchedModeMapping: Record<WalletType, boolean> = {
-  Metamask: false,
+  Metamask: true,
   "EVM Self-sequence": false,
   Flint: false,
   "Flint - EVM": false,
