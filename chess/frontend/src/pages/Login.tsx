@@ -9,7 +9,7 @@ import SelectField from "@src/components/SelectField";
 
 const wallets = [
   "Metamask",
-  "EVM",
+  "EVM Self-sequence",
   "Algorand",
   "Flint - EVM",
   "Polkadot",
@@ -20,7 +20,7 @@ type WalletType = typeof wallets[number];
 
 const walletMapping: Record<WalletType, string> = {
   Metamask: "metamask",
-  EVM: "metamask",
+  "EVM Self-sequence": "metamask",
   "Flint - EVM": "evm-flint",
   Cardano: 'cardano',
   Polkadot: "polkadot",
@@ -29,7 +29,7 @@ const walletMapping: Record<WalletType, string> = {
 
 const preferBatchedModeMapping: Record<WalletType, boolean> = {
   Metamask: true,
-  EVM: false,
+  "EVM Self-sequence": false,
   "Flint - EVM": false,
   Cardano: false,
   Polkadot: false,
