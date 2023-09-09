@@ -31,6 +31,7 @@ const Card: React.FC<Props> = ({
             padding: "32px",
             display: "flex",
             justifyContent: "center",
+            alignItems: "center",
             flexFlow: "column",
             gap: "32px",
           }}

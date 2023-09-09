@@ -28,7 +28,7 @@ const PromotionList: React.FC<Props> = ({ onValueChange, color, value }) => {
         >
           {promotionOptions.map((piece) => (
             <ToggleButton key={piece} value={piece}>
-              {chessPieces[`${color}${piece.toUpperCase()}`](32)}
+              {chessPieces[`${color}${piece.toUpperCase()}`]({ squareWidth: 32, isDragging: false })}
             </ToggleButton>
           ))}
         </ToggleButtonGroup>

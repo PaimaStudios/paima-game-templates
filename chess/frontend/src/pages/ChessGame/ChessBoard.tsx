@@ -1,11 +1,12 @@
 import React from "react";
-import { Box, useTheme } from "@mui/material";
+import { useTheme } from "@mui/material";
 import { Chessboard } from "react-chessboard";
 import { chessPieces } from "./pieces";
 import { Chess, type Square } from "chess.js";
 
 interface Props {
   board: string;
+  playerColor: "white" | "black",
   arePiecesDraggable: boolean;
   handleMove: (move: string) => void;
   promotion: string;
@@ -17,14 +18,29 @@ let highlightedSquares: HTMLElement[] = [];
 const whiteHighlight = "#ADBABC";
 const blackHighlight = "#736273";
 
+const MAX_BOARD_WIDTH = 450;
+const PADDING = 64; // 2x "32px" which is the padding from Card.tsx
+
 const ChessBoard: React.FC<Props> = ({
   board,
+  playerColor,
   arePiecesDraggable,
   handleMove,
   promotion,
 }) => {
   const palette = useTheme().palette.secondary;
   const game = new Chess(board);
+  const [boardWidth, setBoardWidth] = React.useState<number>(MAX_BOARD_WIDTH);
+  React.useEffect(() => {
+    const handleResize = () => {
+      setBoardWidth(Math.min(MAX_BOARD_WIDTH, window.innerWidth - PADDING));
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+        window.removeEventListener('resize', handleResize);
+    };
+}, []);
 
   const onMouseoverSquare = (square: Square) => {
     if (!arePiecesDraggable) return;
@@ -76,18 +92,18 @@ const ChessBoard: React.FC<Props> = ({
   };
 
   return (
-    <Box sx={{ width: "450px", height: "450px" }}>
-      <Chessboard
-        customLightSquareStyle={{ backgroundColor: palette.light }}
-        customDarkSquareStyle={{ backgroundColor: palette.dark }}
-        onMouseOverSquare={onMouseoverSquare}
-        onMouseOutSquare={removeHighlightedSquares}
-        customPieces={chessPieces}
-        position={board}
-        onPieceDrop={onDrop}
-        arePiecesDraggable={arePiecesDraggable}
-      />
-    </Box>
+    <Chessboard
+      customLightSquareStyle={{ backgroundColor: palette.light }}
+      customDarkSquareStyle={{ backgroundColor: palette.dark }}
+      onMouseOverSquare={onMouseoverSquare}
+      onMouseOutSquare={removeHighlightedSquares}
+      customPieces={chessPieces}
+      position={board}
+      onPieceDrop={onDrop}
+      arePiecesDraggable={arePiecesDraggable}
+      boardWidth={boardWidth}
+      boardOrientation={playerColor}
+    />
   );
 };
 

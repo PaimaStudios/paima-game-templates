@@ -13,24 +13,25 @@ import blackKnight from "@assets/images/pieces/blackKnight.svg";
 import blackBishop from "@assets/images/pieces/blackBishop.svg";
 import blackQueen from "@assets/images/pieces/blackQueen.svg";
 import blackKing from "@assets/images/pieces/blackKing.svg";
+import type { CustomPieceFn } from "react-chessboard/dist/chessboard/types";
 
 // Inspired by https://commons.wikimedia.org/wiki/Category:SVG_chess_pieces
 
-export const chessPieces: Record<string, (height: number) => React.ReactNode> =
+export const chessPieces: Record<string, CustomPieceFn> =
   {
-    wP: (height: number) => <img src={whitePawn} height={height} />,
-    wR: (height: number) => <img src={whiteRook} height={height} />,
-    wN: (height: number) => <img src={whiteKnight} height={height} />,
-    wB: (height: number) => <img src={whiteBishop} height={height} />,
-    wQ: (height: number) => <img src={whiteQueen} height={height} />,
-    wK: (height: number) => <img src={whiteKing} height={height} />,
+    wP: ({ squareWidth }) => <img src={whitePawn} height={squareWidth} />,
+    wR: ({ squareWidth }) => <img src={whiteRook} height={squareWidth} />,
+    wN: ({ squareWidth }) => <img src={whiteKnight} height={squareWidth} />,
+    wB: ({ squareWidth }) => <img src={whiteBishop} height={squareWidth} />,
+    wQ: ({ squareWidth }) => <img src={whiteQueen} height={squareWidth} />,
+    wK: ({ squareWidth }) => <img src={whiteKing} height={squareWidth} />,
 
-    bP: (height: number) => <img src={blackPawn} height={height} />,
-    bR: (height: number) => <img src={blackRook} height={height} />,
-    bN: (height: number) => <img src={blackKnight} height={height} />,
-    bB: (height: number) => <img src={blackBishop} height={height} />,
-    bQ: (height: number) => <img src={blackQueen} height={height} />,
-    bK: (height: number) => <img src={blackKing} height={height} />,
+    bP: ({ squareWidth }) => <img src={blackPawn} height={squareWidth} />,
+    bR: ({ squareWidth }) => <img src={blackRook} height={squareWidth} />,
+    bN: ({ squareWidth }) => <img src={blackKnight} height={squareWidth} />,
+    bB: ({ squareWidth }) => <img src={blackBishop} height={squareWidth} />,
+    bQ: ({ squareWidth }) => <img src={blackQueen} height={squareWidth} />,
+    bK: ({ squareWidth }) => <img src={blackKing} height={squareWidth} />,
   };
 
 export enum ChessPiece {

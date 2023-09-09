@@ -52,7 +52,10 @@ class MainController {
 
   async connectWallet(wallet: string, preferBatchedMode: boolean) {
     this.callback(Page.Login, true, null);
-    const response = await Paima.default.userWalletLogin(wallet, preferBatchedMode);
+    const response = await Paima.default.userWalletLogin(
+      wallet,
+      preferBatchedMode
+    );
     console.log("connect wallet response: ", response);
     if (response.success === true) {
       this.userAddress = response.result.walletAddress;

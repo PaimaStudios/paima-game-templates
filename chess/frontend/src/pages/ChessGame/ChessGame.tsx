@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Typography, useMediaQuery, useTheme } from "@mui/material";
 import type { LobbyState } from "../../paima/types";
 import { ChessLogic, ChessService } from "./GameLogic";
 
@@ -53,6 +53,8 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
   const [promotionPreference, setPromotionPreference] = useState("q");
   const [lobbyState, setLobbyState] = useState<LobbyState>(lobby);
 
+  const theme = useTheme();
+  const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
   useEffect(() => {
     const board = lobbyState?.latest_match_state;
     if (!board) return;
@@ -152,9 +154,9 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
 
   return (
     <Layout>
-      <Box sx={{ display: "flex", justifyContent: "center", gap: "24px" }}>
+      <Box sx={{ display: "flex", justifyContent: "center", gap: "24px", flexDirection: isMediumScreen ? 'column' : 'row' }}>
         {lobbyState.lobby_state !== "finished" && (
-          <Box sx={{ alignSelf: "flex-end" }}>
+          <Box sx={{ alignSelf: isMediumScreen ? 'initial' : "flex-end" }}>
             <Timer
               isRunning={whiteTimerRunning}
               {...getTimer("w", lobbyState)}
@@ -189,6 +191,7 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
           <ChessBoard
             arePiecesDraggable={interactionEnabled}
             board={game.fen()}
+            playerColor={chessLogic.thisPlayerColor(lobbyState) === 'b' ? 'black' : 'white'}
             promotion={promotionPreference}
             handleMove={handleMove}
           />
@@ -206,7 +209,7 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
           )}
         </Card>
         {lobbyState.lobby_state !== "finished" && (
-          <Box sx={{ alignSelf: "flex-start" }}>
+          <Box sx={{ alignSelf: isMediumScreen ? 'initial' : "flex-start" }}>
             <Timer
               isRunning={blackTimerRunning}
               {...getTimer("b", lobbyState)}
