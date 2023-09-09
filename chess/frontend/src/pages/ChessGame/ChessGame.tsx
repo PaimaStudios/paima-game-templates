@@ -152,15 +152,20 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
     ((game.turn() === "w" && !waitingConfirmation) ||
       (game.turn() === "b" && waitingConfirmation));
 
+  const WhiteTimer = <Timer
+    isRunning={whiteTimerRunning}
+    {...getTimer("w", lobbyState)}
+  />;
+  const BlackTimer = <Timer
+    isRunning={blackTimerRunning}
+    {...getTimer("b", lobbyState)}
+  />;
   return (
     <Layout>
       <Box sx={{ display: "flex", justifyContent: "center", gap: "24px", flexDirection: isMediumScreen ? 'column' : 'row' }}>
         {lobbyState.lobby_state !== "finished" && (
           <Box sx={{ alignSelf: isMediumScreen ? 'initial' : "flex-end" }}>
-            <Timer
-              isRunning={whiteTimerRunning}
-              {...getTimer("w", lobbyState)}
-            />
+            {chessLogic.thisPlayerColor(lobbyState) === 'b' ? WhiteTimer : BlackTimer}
           </Box>
         )}
         <Card layout>
@@ -210,10 +215,7 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
         </Card>
         {lobbyState.lobby_state !== "finished" && (
           <Box sx={{ alignSelf: isMediumScreen ? 'initial' : "flex-start" }}>
-            <Timer
-              isRunning={blackTimerRunning}
-              {...getTimer("b", lobbyState)}
-            />
+            {chessLogic.thisPlayerColor(lobbyState) === 'b' ? BlackTimer : WhiteTimer}
           </Box>
         )}
       </Box>
