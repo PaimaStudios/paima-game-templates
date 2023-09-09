@@ -208,7 +208,7 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
             />
           )}
           {lobbyState.lobby_state === "finished" && (
-            <Button onClick={handleReplay} fullWidth>
+            <Button disabled={replayInProgress} onClick={handleReplay} fullWidth>
               Replay
             </Button>
           )}
