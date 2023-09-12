@@ -122,7 +122,7 @@ const CreateLobby: React.FC = () => {
                   onChange={(event) => setIsPractice(event.target.checked)}
                 />
               }
-              label="Single player"
+              label="Single player (vs AI)"
             />
           </Box>
 
