@@ -235,31 +235,48 @@ export const zombieRound = async (
   if (!round) return [];
 
   console.log(`Executing zombie round (#${lobby.current_round}) for lobby ${lobby.lobby_id}`);
+  let move: SubmittedMovesInput | null = null;
+  let player: WalletAddress | null = null;
+  let newMove: IGetRoundMovesResult | null = null;
+  try {
+    // we generate a bot move with difficulty=0 in order to proceed (you can't skip turn in chess)
+    move = generateZombieMove(lobby);
+    if (!move) {
+      return await executeRound(blockHeight, lobby, [], round, dbConn, prando);
+    }
+    player = currentPlayer(round.round_within_match, lobby);
+    const persistMoveTuple = persistMoveSubmission(player, move, lobby);
+    newMove = persistMoveTuple[1].new_move as IGetRoundMovesResult;
+    const roundExecutionTuples = await executeRound(
+      blockHeight,
+      lobby,
+      [newMove],
+      round,
+      dbConn,
+      prando
+    );
 
-  // we generate a bot move with difficulty=0 in order to proceed (you can't skip turn in chess)
-  const move = generateZombieMove(lobby);
-  if (!move) {
-    return await executeRound(blockHeight, lobby, [], round, dbConn, prando);
+    if (lobby.practice) {
+      const nextRound = lobby.current_round + 1;
+      const practiceMove = schedulePracticeMove(lobby.lobby_id, nextRound, blockHeight + 1);
+      return [persistMoveTuple, ...roundExecutionTuples, practiceMove];
+    }
+
+    return [persistMoveTuple, ...roundExecutionTuples];
+  } catch (e) {
+    console.log(`CRITICAL ERROR. zombieRound was not processed.`, {
+      blockHeight,
+      lobbyId,
+      prando: prando.seed,
+      lobby,
+      round,
+      move,
+      player,
+      newMove,
+    });
+    console.log(e);
+    return [];
   }
-  const player = currentPlayer(round.round_within_match, lobby);
-  const persistMoveTuple = persistMoveSubmission(player, move, lobby);
-  const newMove: IGetRoundMovesResult = persistMoveTuple[1].new_move;
-  const roundExecutionTuples = await executeRound(
-    blockHeight,
-    lobby,
-    [newMove],
-    round,
-    dbConn,
-    prando
-  );
-
-  if (lobby.practice) {
-    const nextRound = lobby.current_round + 1;
-    const practiceMove = schedulePracticeMove(lobby.lobby_id, nextRound, blockHeight + 1);
-    return [persistMoveTuple, ...roundExecutionTuples, practiceMove];
-  }
-
-  return [persistMoveTuple, ...roundExecutionTuples];
 };
 
 // State transition when an update stats input is processed
