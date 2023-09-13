@@ -1,0 +1,27 @@
+# FROM node:20-alpine
+# M1 error: qemu-x86_64: Could not open '/lib64/ld-linux-x86-64.so.2': No such file or directory
+FROM --platform=linux/amd64 node:20 as builder
+
+WORKDIR /game
+COPY ./chess ./chess
+COPY ./paima-engine-linux ./
+COPY ./chess/quick-start/.env.docker ./.env.development
+
+RUN chmod +x ./paima-engine-linux
+RUN ./paima-engine-linux init sdk
+RUN cd paima-sdk && npm ci && cd ..
+
+## Up to this point shared with dockerfile.frontend
+
+## TODO why v20 is not compatible with .npmrc?
+RUN cd chess && rm -f .npmrc && npm ci && npm run build && npm run pack 
+
+# FROM alpine:3.18 
+# M1 error: qemu-x86_64: Could not open '/lib64/ld-linux-x86-64.so.2': No such file or directory
+FROM --platform=linux/amd64 ubuntu:22.04
+WORKDIR  /app
+COPY --from=builder /game/packaged ./packaged
+COPY paima-engine-linux ./
+COPY ./chess/quick-start/.env.docker ./.env.development
+
+ENTRYPOINT ["/app/paima-engine-linux", "run"]
