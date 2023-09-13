@@ -30,10 +30,16 @@ const ChessBoard: React.FC<Props> = ({
 }) => {
   const palette = useTheme().palette.secondary;
   const game = new Chess(board);
-  const [boardWidth, setBoardWidth] = React.useState<number>(MAX_BOARD_WIDTH);
+  const getWidth = () => {
+    const responsiveSize = document.documentElement.clientWidth - PADDING;
+    return Math.max(100, Math.min(MAX_BOARD_WIDTH, responsiveSize));
+  }
+
+  const [boardWidth, setBoardWidth] = React.useState<number>(getWidth());
+
   React.useEffect(() => {
     const handleResize = () => {
-      setBoardWidth(Math.min(MAX_BOARD_WIDTH, window.innerWidth - PADDING));
+      setBoardWidth(getWidth());
     }
 
     window.addEventListener('resize', handleResize);
