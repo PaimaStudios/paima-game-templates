@@ -21,7 +21,8 @@ RUN cd chess && rm -f .npmrc && npm ci && npm run build && npm run pack
 FROM --platform=linux/amd64 ubuntu:22.04
 WORKDIR  /app
 COPY --from=builder /game/packaged ./packaged
-COPY paima-engine-linux ./
+COPY ./paima-engine-linux ./
 COPY ./chess/quick-start/.env.docker ./.env.development
+RUN chmod +x ./paima-engine-linux
 
-ENTRYPOINT ["/app/paima-engine-linux", "run"]
+ENTRYPOINT ["./paima-engine-linux", "run"]
