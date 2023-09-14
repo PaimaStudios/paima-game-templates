@@ -20,7 +20,7 @@
     "database:reset": "node change-db.js",
     "compile:api": "npm run compile -w api/",
     "compile:db": "npm run compile -w db/",
-    "start": "./quick-start.sh"
+    "start": "sh ./quick-start.sh"
   },
   "workspaces": [
     "./db",
