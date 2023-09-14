@@ -9,10 +9,6 @@ services:
           - 9000:9000 # frontend
           - 3340:3340 # paima-batcher
       restart: always
-      depends_on:
-        - paima-engine
-        - frontend
-        - batcher
   postgres:
     image: postgres:14
     container_name: chess-2-postgres
@@ -21,7 +17,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-      - chess-vol-db:/var/lib/postgresql/data
+      # - chess-vol-db:/var/lib/postgresql/data
       - ./db/migrations/init/init.sql:/docker-entrypoint-initdb.d/init.sql
 
     healthcheck:
@@ -31,6 +27,7 @@ services:
       retries: 5
   
   paima-batcher-db:
+    profiles: ["batcher"]
     image: postgres:14
     container_name: paima-batcher-db
     environment:
@@ -38,7 +35,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     volumes:
-      - batcher-vol-db:/var/lib/postgresql/data
+      # - batcher-vol-db:/var/lib/postgresql/data
       - ./quick-start/batcher.up.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres -p 5432" ]
@@ -60,12 +57,15 @@ services:
       dockerfile: ./chess/quick-start/Dockerfile.frontend
 
   batcher:
+    profiles: ["batcher"]
     build:
       context: ../
       dockerfile: ./chess/quick-start/Dockerfile.batcher
     depends_on:
       - paima-batcher-db
 
-volumes:
-  chess-vol-db:
-  batcher-vol-db:
+## Do not persist volumes for quick-start.
+## Each launch will rebuild the images. 
+# volumes:
+#   chess-vol-db:
+#   batcher-vol-db:

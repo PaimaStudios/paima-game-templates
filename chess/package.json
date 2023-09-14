@@ -19,7 +19,8 @@
     "database:up": "cd db/docker && docker compose up",
     "database:reset": "node change-db.js",
     "compile:api": "npm run compile -w api/",
-    "compile:db": "npm run compile -w db/"
+    "compile:db": "npm run compile -w db/",
+    "start": "./quick-start.sh"
   },
   "workspaces": [
     "./db",
