@@ -25,5 +25,5 @@ WORKDIR  /app
 COPY --from=builder /game/packaged ./packaged
 COPY paima-engine-linux ./
 COPY ./chess/quick-start/.env.docker ./.env.development
-
-ENTRYPOINT ["/app/paima-engine-linux", "run"]
+RUN chmod +x ./paima-batcher-linux
+ENTRYPOINT ["./paima-engine-linux", "run"]
