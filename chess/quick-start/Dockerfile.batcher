@@ -1,0 +1,18 @@
+FROM --platform=linux/amd64 node:20 as builder
+
+WORKDIR /game
+COPY ./chess ./chess
+COPY ./paima-engine-linux ./
+
+RUN chmod +x ./paima-engine-linux
+RUN ./paima-engine-linux batcher
+
+FROM --platform=linux/amd64 node:20 as batcher
+
+COPY --from=builder /game/batcher/paima-batcher-linux ./
+COPY ./chess/quick-start/.env.docker ./.env.development
+COPY ./chess/quick-start/private.key ./
+RUN echo "BATCHER_PRIVATE_KEY=\"`cat private.key`\"" >> env.development
+RUN chmod +x ./paima-batcher-linux
+
+ENTRYPOINT ["./paima-batcher-linux"]

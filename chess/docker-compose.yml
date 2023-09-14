@@ -5,28 +5,47 @@ services:
         context: ./quick-start
         dockerfile: ./Dockerfile.reverseproxy
       ports:
-          - 3333:3333
-          - 9000:9000
+          - 3333:3333 # paima-engine / backend
+          - 9000:9000 # frontend
+          - 3340:3340 # paima-batcher
       restart: always
       depends_on:
         - paima-engine
         - frontend
+        - batcher
   postgres:
     image: postgres:14
     container_name: chess-2-postgres
     environment:
+      POSTGRES_DATABASE: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-      - chess-2-db:/var/lib/postgresql/data
+      - chess-vol-db:/var/lib/postgresql/data
       - ./db/migrations/init/init.sql:/docker-entrypoint-initdb.d/init.sql
+
     healthcheck:
-      # Use pg_isready to check postgres is running. Substitute different
-      # user `postgres` if you've setup differently to config/pgpass-mainnet
       test: ["CMD-SHELL", "pg_isready -U postgres -p 5432"]
       interval: 20s
       timeout: 5s
       retries: 5
+  
+  paima-batcher-db:
+    image: postgres:14
+    container_name: paima-batcher-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - batcher-vol-db:/var/lib/postgresql/data
+      - ../batcher/db/migrations/up.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -p 5432" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   paima-engine:
     depends_on:
       - postgres
@@ -34,10 +53,19 @@ services:
       context: ../
       dockerfile: ./chess/quick-start/Dockerfile.engine
     restart: always
+
   frontend:
     build:
       context: ../
       dockerfile: ./chess/quick-start/Dockerfile.frontend
 
+  batcher:
+    build:
+      context: ../
+      dockerfile: ./chess/quick-start/Dockerfile.batcher
+    depends_on:
+      - paima-batcher-db
+
 volumes:
-  chess-2-db:
+  chess-vol-db:
+  batcher-vol-db:
