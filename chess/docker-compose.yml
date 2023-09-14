@@ -39,7 +39,7 @@ services:
       POSTGRES_DB: postgres
     volumes:
       - batcher-vol-db:/var/lib/postgresql/data
-      - ../batcher/db/migrations/up.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./quick-start/batcher.up.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres -p 5432" ]
       interval: 5s
