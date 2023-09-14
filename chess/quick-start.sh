@@ -27,6 +27,7 @@ printf '1. Do you want to build & deploy the game in testnet with default settin
 read answer
 
 if ! [ "$answer" != "${answer#[Nn]}" ]; then 
+    cp ./quick-start/.env.docker.template ./quick-start/.env.docker
     node ./quick-start/patch.blockheight.js;
     echo "Launching default settings.";
     echo "It will take a few minutes to build the docker images.";
@@ -62,7 +63,40 @@ if [ "$answer" != "${answer#[Yy]}" ]; then
     fi
 fi
 
+echo "3. Do you want to deploy your own smart contract? [y/N] ";
+echo "You will be required to paste a private-key of a wallet with funds to pay for transaction fees for the target chain.";
+echo "More info at  https://docs.paimastudios.com/home/setup/deploying-l2-smart-contract";
+read answer
+
+if [ "$answer" != "${answer#[Yy]}" ]; then
+    echo "";
+    echo "Required field to publish the smart contract:"
+    echo "3.a Paste your wallet address (e.g., 0xeEacBe169AD0EB650E8130fc918e2FDE0d8548b3)" ;
+    read wallet
+    echo "3.b RPC URL (e.g., https://rpc-devnet-cardano-evm.c1.milkomeda.com):" ;
+    read rpc_url
+    echo "3.c Chain ID (e.g., 200101):" ;
+    read chain_id
+    echo "3.d Paste your private key (this field will be visible):" ;
+    read private_key
+    echo "";
+    tag=`echo $RANDOM | md5sum | head -c 20; echo`
+    docker build -f quick-start/Dockerfile.contract \
+                --build-arg="PRIVATE_KEY=$private_key" \
+                --build-arg="CHAIN_ID=$chain_id" \
+                --build-arg="RPC_URL=$rpc_url" \
+                --build-arg="WALLET=$wallet" \
+                --tag="l2-contract:1.0.0" ..c25bdb8eb771aece0005af6aa79fec05097e35689f20678025267fc7d572ac53/
+
+    docker run l2-contract:1.0.0
+    echo "";
+    echo "3.e Please paste \"contract address\" from the above output (e.g., 0xD351Cce7170E0dA60f0ed081658E428Ef0fc7687)";
+    read contract_address
+    echo "";
+fi
+
 if $BATCHER; then
+    cp ./quick-start/.env.docker.template ./quick-start/.env.docker
     node ./quick-start/patch.blockheight.js;
     echo "Launching batcher mode.";
     echo "It will take a few minutes to build the docker images.";
@@ -77,18 +111,19 @@ if $BATCHER; then
     echo "";
     exit;
 else
-    docker compose up -d 
+    cp ./quick-start/.env.docker.template ./quick-start/.env.docker
+    node ./quick-start/patch.blockheight.js;
+    echo "Launching with custom settings.";
+    echo "It will take a few minutes to build the docker images.";
+    echo "";
+    docker compose up -d --build --force-recreate
+    echo "";
+    echo "Open http://localhost:9000 to play the game";
+    echo "IMPORTANT: In-game \"metamask\" option will not work in this mode. (batcher is required)";
+    echo "";
+    echo "run \"docker compose down\" to stop the game";
+    echo "run \"docker compose logs -f\" to view the logs";
+    echo "run \"docker compose up -d\" to restart without rebuilding"; 
+    echo "";
+    exit;
 fi
-
-
-# echo "3. Do you want to deploy your own smart contract? [y/N] ";
-# echo "You will be required to paste a private-key of a wallet with funds to pay for transaction fees for the target chain.";
-# echo "More info at  https://docs.paimastudios.com/home/setup/deploying-l2-smart-contract";
-# read answer
-
-# if [ "$answer" != "${answer#[Yy]}" ]; then 
-#     ../paima-engine-linux contract # or macos
-#     // cd
-#     // npm i
-#     // npm run ?ll
-# fi
