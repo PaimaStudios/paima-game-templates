@@ -1,3 +1,2 @@
 FROM nginx:alpine
 COPY nginx.reverseproxy.conf /etc/nginx/nginx.conf
-# RUN apk update && apk add bash
