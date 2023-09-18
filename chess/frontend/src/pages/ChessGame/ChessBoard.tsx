@@ -30,10 +30,22 @@ const ChessBoard: React.FC<Props> = ({
 }) => {
   const palette = useTheme().palette.secondary;
   const game = new Chess(board);
-  const [boardWidth, setBoardWidth] = React.useState<number>(MAX_BOARD_WIDTH);
+  const getWidth = () => {
+    // document.documentElement.clientWidth works better than window.innerWidth, generally, in mobile.
+    // if both available, use the smaller one.
+    // window.screen.width doesn't account for rotation, so just use as final backup.
+    const width = window.innerWidth && document.documentElement.clientWidth ? 
+        Math.min(window.innerWidth, document.documentElement.clientWidth) : 
+        document.documentElement.clientWidth || window.innerWidth || window.screen.width;
+    const responsiveSize = width - PADDING;
+    return Math.max(100, Math.min(MAX_BOARD_WIDTH, responsiveSize));
+  }
+
+  const [boardWidth, setBoardWidth] = React.useState<number>(getWidth());
+
   React.useEffect(() => {
     const handleResize = () => {
-      setBoardWidth(Math.min(MAX_BOARD_WIDTH, window.innerWidth - PADDING));
+      setBoardWidth(getWidth());
     }
 
     window.addEventListener('resize', handleResize);
