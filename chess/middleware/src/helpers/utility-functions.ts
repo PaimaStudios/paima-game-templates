@@ -1,4 +1,4 @@
-import { ENV } from 'paima-sdk/paima-utils';
+import { ENV } from '@paima/sdk/utils';
 import { buildEndpointErrorFxn, MiddlewareErrorCode } from '../errors';
 import type { PackedLobbyState, RoundEnd } from '../types';
 

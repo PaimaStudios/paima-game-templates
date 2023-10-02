@@ -15,11 +15,11 @@ import {
   executedRound,
 } from '@chess/db';
 import type { MatchEnvironment, MatchState } from '@chess/game-logic';
-import { ENV, type WalletAddress } from 'paima-sdk/paima-utils';
+import { ENV, type WalletAddress } from '@paima/sdk/utils';
 import type { ConciseResult, ExpandedResult, MatchResult, Timer } from '@chess/utils';
 import { scheduleZombieRound, deleteZombieRound } from './zombie.js';
 import type { INewFinalStateParams } from '@chess/db/src/insert.queries.js';
-import type { SQLUpdate } from 'paima-sdk/paima-db';
+import type { SQLUpdate } from '@paima/sdk/db';
 
 // This function inserts a new empty round in the database.
 // We also schedule a future zombie round execution.

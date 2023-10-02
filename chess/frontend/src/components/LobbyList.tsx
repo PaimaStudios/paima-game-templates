@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import type { LobbyStatus, UserLobby } from "../paima/types";
+import type { LobbyStatus, UserLobby } from "@chess/utils";
 import { formatDate } from "@src/utils";
 import LobbyCard from "@src/components/LobbyCard";
 import LobbyToolbar from "@src/components/LobbyToolbar";
@@ -112,7 +112,7 @@ const LobbyList: React.FC<Props> = ({
                   lobbyId={lobby.lobby_id}
                   createdAt={formatDate(lobby.created_at)}
                   myTurn={lobby.myTurn}
-                  hostRating={lobby.rating}
+                  hostRating={undefined /* TODO: add this info to the lobby type */}
                   ctaButton={
                     <Button
                       disabled={lobby.lobby_state === "closed"}

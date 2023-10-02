@@ -1,6 +1,8 @@
-import type { FailedResult, Result } from 'paima-sdk/paima-mw-core';
+import type { FailedResult, Result } from '@paima/sdk/mw-core';
+import type { MatchExecutor, RoundExecutor } from '@paima/sdk/executors';
 import type { MatchWinnerResponse } from '@chess/utils';
-import type { LobbyStates, MatchExecutor, NewLobbies, PackedLobbyState, PackedRoundExecutionState, PackedUserLobbies, PackedUserStats, RoundExecutor } from '../types';
+import type { LobbyStates, NewLobbies, PackedLobbyState, PackedRoundExecutionState, PackedUserLobbies, PackedUserStats } from '../types';
+import type { MatchState, TickEvent } from '@chess/game-logic';
 declare function getLobbyState(lobbyID: string): Promise<PackedLobbyState | FailedResult>;
 declare function getLobbySearch(wallet: string, searchQuery: string, page: number, count?: number): Promise<LobbyStates | FailedResult>;
 declare function getRoundExecutionState(lobbyID: string, round: number): Promise<PackedRoundExecutionState | FailedResult>;
@@ -10,8 +12,8 @@ declare function getUserLobbiesMatches(walletAddress: string, page: number, coun
 declare function getOpenLobbies(wallet: string, page: number, count?: number): Promise<LobbyStates | FailedResult>;
 declare function getRandomOpenLobby(): Promise<PackedLobbyState | FailedResult>;
 declare function getMatchWinner(lobbyId: string): Promise<Result<MatchWinnerResponse>>;
-declare function getRoundExecutor(lobbyId: string, roundNumber: number): Promise<Result<RoundExecutor>>;
-declare function getMatchExecutor(lobbyId: string): Promise<Result<MatchExecutor>>;
+declare function getRoundExecutor(lobbyId: string, roundNumber: number): Promise<Result<RoundExecutor<MatchState, TickEvent>>>;
+declare function getMatchExecutor(lobbyId: string): Promise<Result<MatchExecutor<MatchState, TickEvent>>>;
 export declare const queryEndpoints: {
     getUserStats: typeof getUserStats;
     getLobbyState: typeof getLobbyState;

@@ -1,4 +1,4 @@
-import type { TickEvent } from "@src/paima";
+import type { TickEvent } from "@chess/game-logic";
 import { format } from "date-fns";
 import { BLOCK_TIME } from "./constants";
 
@@ -14,7 +14,7 @@ export const formatTime = (time: number): string => {
 
   return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
     2,
-    "0"
+    "0",
   )}:${String(seconds).padStart(2, "0")}`;
 };
 
@@ -33,7 +33,7 @@ export const formatPlayer = (address: string): string => {
 };
 
 /**
- * @returns human readable time from blocks in format "1h 30m" (either component ommitted if 0)
+ * @returns human readable time from blocks in format "1h 30m" (either component omitted if 0)
  */
 export const blocksToTime = (blocks: number): string => {
   const seconds = blocks * BLOCK_TIME;

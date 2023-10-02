@@ -1,8 +1,8 @@
 import type { IGetUserStatsResult, INewStatsParams, IUpdateStatsParams } from '@chess/db';
 import { newStats, updateStats } from '@chess/db';
-import type { SQLUpdate } from 'paima-sdk/paima-db';
-import { createScheduledData } from 'paima-sdk/paima-db';
-import type { WalletAddress } from 'paima-sdk/paima-utils';
+import type { SQLUpdate } from '@paima/sdk/db';
+import { createScheduledData } from '@paima/sdk/db';
+import type { WalletAddress } from '@paima/sdk/utils';
 import type { ConciseResult } from '@chess/utils';
 import type { UserStats } from '../types';
 

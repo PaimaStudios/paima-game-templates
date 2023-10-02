@@ -1,4 +1,4 @@
-import type Prando from 'paima-sdk/paima-prando';
+import type Prando from '@paima/sdk/prando';
 import { Chess } from 'chess.js';
 import { gameOverFromChess, updateBoard } from './chess-logic';
 import type { MatchState, MatchEnvironment, TickEvent } from './types';

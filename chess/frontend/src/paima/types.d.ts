@@ -1,151 +1,40 @@
-import type { WalletAddress } from "paima-sdk/paima-utils";
-
-/* DB TYPES */
-export interface IGetBlockDataResult {
-  block_height: number;
-  done: boolean;
-  seed: string;
+import type { Hash } from '@paima/sdk/utils';
+import type { BaseRoundStatus, LobbyState, LobbyStateQuery, LobbyStatus, NewLobby, UserLobby, UserStats } from '@chess/utils';
+export interface RoundEnd {
+    blocks: number;
+    seconds: number;
 }
-
-export interface IGetLobbyByIdResult {
-  created_at: Date;
-  creation_block_height: number;
-  current_round: number;
-  hidden: boolean;
-  latest_match_state: string;
-  lobby_creator: string;
-  lobby_id: string;
-  lobby_state: LobbyStatus;
-  num_of_rounds: number;
-  play_time_per_player: number;
-  player_one_iswhite: boolean;
-  player_two: string | null;
-  practice: boolean;
-  round_length: number;
+export interface CreateLobbySuccessfulResponse {
+    success: true;
+    lobbyID: Hash;
+    lobbyStatus: LobbyStatus;
 }
-
-export interface IGetMovesByLobbyResult {
-  id: number;
-  lobby_id: string;
-  move_pgn: string;
-  round: number;
-  wallet: string;
+export interface NewLobbies {
+    success: true;
+    lobbies: NewLobby[];
 }
-
-export interface IGetUserStatsResult {
-  losses: number;
-  rating: number;
-  ties: number;
-  wallet: string;
-  wins: number;
+export interface PackedLobbyState {
+    success: true;
+    lobby: LobbyState;
 }
-
-export interface IGetNewLobbiesByUserAndBlockHeightResult {
-  lobby_id: string;
+export interface RoundExecutionState extends BaseRoundStatus {
+    roundEndsInBlocks: number;
+    roundEndsInSeconds: number;
 }
-
-export interface IGetAllPaginatedUserLobbiesResult {
-  created_at: Date;
-  creation_block_height: number;
-  current_round: number;
-  hidden: boolean;
-  latest_match_state: string;
-  lobby_creator: string;
-  lobby_id: string;
-  lobby_state: LobbyStatus;
-  num_of_rounds: number;
-  play_time_per_player: number;
-  player_one_iswhite: boolean;
-  player_two: string | null;
-  practice: boolean;
-  round_length: number;
+export interface PackedRoundExecutionState {
+    success: true;
+    round: RoundExecutionState;
 }
-/* DB TYPES */
-
-export interface FailedResult {
-  success: false;
-  errorMessage: string;
-  errorCode: number;
+export interface LobbyStates {
+    success: true;
+    lobbies: LobbyStateQuery[];
 }
-
-export interface SuccessfulResultMessage {
-  success: true;
-  message: string;
+export interface PackedUserLobbies {
+    success: true;
+    lobbies: UserLobby[];
 }
-export type OldResult = SuccessfulResultMessage | FailedResult;
-
-export type LobbyStatus = "open" | "active" | "finished" | "closed";
-export type ConciseResult = "w" | "t" | "l";
-export type ExpandedResult = "win" | "tie" | "loss";
-export type MatchResult = [ConciseResult, ConciseResult];
-export interface MatchWinnerResponse {
-  match_status?: LobbyStatus;
-  winner_address?: string;
+export interface PackedUserStats {
+    success: true;
+    stats: UserStats;
+    rank: number;
 }
-export interface RoundExecutorData {
-  lobby: IGetLobbyByIdResult;
-  moves: IGetMovesByLobbyResult[];
-  block_data: IGetBlockDataResult;
-}
-interface ExecutorDataSeed {
-  seed: string;
-  block_height: number;
-  round: number;
-}
-export interface MatchExecutorData {
-  lobby: IGetLobbyByIdResult;
-  moves: IGetMovesByLobbyResult[];
-  seeds: ExecutorDataSeed[];
-}
-export interface BaseRoundStatus {
-  executed: boolean;
-  usersWhoSubmittedMoves: WalletAddress[];
-}
-export interface RoundStatusData extends BaseRoundStatus {
-  roundStarted: number;
-  roundLength: number;
-}
-export type UserStats = {
-  stats: IGetUserStatsResult;
-  rank: string;
-};
-export type NewLobby = IGetNewLobbiesByUserAndBlockHeightResult;
-export interface LobbyState extends LobbyStateQuery {
-  round_ends_in_blocks: number;
-  round_ends_in_secs: number;
-}
-export interface LobbyStateQuery extends IGetLobbyByIdResult {
-  round_start_height: number;
-  remaining_blocks: {
-    b: number;
-    w: number;
-  };
-}
-export interface UserLobby extends IGetAllPaginatedUserLobbiesResult {
-  myTurn?: boolean;
-  rating?: number;
-}
-
-export type MatchExecutor<MatchState = any, TickEvent = any> = {
-  currentRound: number;
-  currentState: MatchState;
-  roundExecutor: null | {
-    currentTick: number;
-    currentState: MatchState;
-    tick: () => TickEvent[] | null;
-    endState: () => MatchState;
-  };
-  __nextRound: () => void;
-  tick: () => TickEvent[] | NewRoundEvent[] | null;
-};
-
-export interface MatchState {
-  fenBoard: string;
-}
-
-export interface TickEvent {
-  user: string;
-  pgn_move: string;
-}
-
-export {};

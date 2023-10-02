@@ -1,6 +1,6 @@
-import type { FailedResult, Result } from 'paima-sdk/paima-mw-core';
-import { PaimaMiddlewareErrorCode, getBlockNumber } from 'paima-sdk/paima-mw-core';
-import type { MatchExecutor, RoundExecutor } from 'paima-sdk/paima-executors';
+import type { FailedResult, Result } from '@paima/sdk/mw-core';
+import { PaimaMiddlewareErrorCode, getBlockNumber } from '@paima/sdk/mw-core';
+import type { MatchExecutor, RoundExecutor } from '@paima/sdk/executors';
 
 import type {
   MatchWinnerResponse,

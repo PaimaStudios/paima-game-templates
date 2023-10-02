@@ -1,4 +1,4 @@
-import type { WalletAddress } from 'paima-sdk/paima-utils';
+import type { WalletAddress } from '@paima/sdk/utils';
 export declare function backendQueryLobbyState(lobbyID: string): string;
 export declare function backendQuerySearchLobby(wallet: WalletAddress, searchQuery: string, page: number, count?: number): string;
 export declare function backendQueryUserLobbiesBlockheight(wallet: WalletAddress, blockHeight: number): string;

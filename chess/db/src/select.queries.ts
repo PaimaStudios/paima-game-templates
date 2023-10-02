@@ -1,5 +1,5 @@
 /** Types generated for queries found in "src/queries/select.sql" */
-import { PreparedQuery } from '@pgtyped/query';
+import { PreparedQuery } from '@pgtyped/runtime';
 
 export type lobby_status = 'active' | 'closed' | 'finished' | 'open';
 
