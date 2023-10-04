@@ -236,18 +236,18 @@ export const zombieRound = async (
 
   console.log(`Executing zombie round (#${lobby.current_round}) for lobby ${lobby.lobby_id}`);
 
-  const move: SubmittedMovesInput | null = null;
-  const player: WalletAddress | null = null;
-  const newMove: IGetRoundMovesResult | null = null;
+  let move: SubmittedMovesInput | null = null;
+  let player: WalletAddress | null = null;
+  let newMove: IGetRoundMovesResult | null = null;
   try {
     // we generate a bot move with difficulty=0 in order to proceed (you can't skip turn in chess)
-    const move = generateZombieMove(lobby);
+    move = generateZombieMove(lobby);
     if (!move) {
       return await executeRound(blockHeight, lobby, [], round, dbConn, prando);
     }
-    const player = currentPlayer(round.round_within_match, lobby);
+    player = currentPlayer(round.round_within_match, lobby);
     const persistMoveTuple = persistMoveSubmission(player, move, lobby);
-    const newMove: IGetRoundMovesResult = persistMoveTuple[1].new_move;
+    newMove = persistMoveTuple[1].new_move as IGetRoundMovesResult;
     const roundExecutionTuples = await executeRound(
       blockHeight,
       lobby,
