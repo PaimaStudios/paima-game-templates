@@ -1,5 +1,5 @@
 /** Types generated for queries found in "src/select.sql" */
-import { PreparedQuery } from '@pgtyped/query';
+import { PreparedQuery } from '@pgtyped/runtime';
 
 export type nft_type = 'air' | 'earth' | 'ether' | 'fire' | 'water';
 

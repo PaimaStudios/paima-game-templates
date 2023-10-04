@@ -1,5 +1,5 @@
-import type { EndpointErrorFxn, Result } from 'paima-sdk/paima-mw-core';
-import { getActiveAddress, PaimaMiddlewareErrorCode } from 'paima-sdk/paima-mw-core';
+import type { EndpointErrorFxn, Result } from '@paima/sdk/mw-core';
+import { getActiveAddress, PaimaMiddlewareErrorCode } from '@paima/sdk/mw-core';
 
 export const getUserWallet = (errorFxn: EndpointErrorFxn): Result<string> => {
   try {

@@ -12,7 +12,6 @@ npm run initialize
 
 This does the following:
 
-- installs dependencies of `paima-sdk`
 - install dependencies of this template
 - copies `.env.example` as `.env.development` to the parent folder
 
@@ -44,11 +43,10 @@ npm run pack:middleware
 
 ## Prerequisites
 
-Ensure that the `paima-sdk` and `paima-engine-{linux|mac}` executable is located in the parent directory of this project. The directory structure should be as follows:
+Ensure that the `paima-engine-{linux|mac}` executable is located in the parent directory of this project. The directory structure should be as follows:
 
 ```
 this-template
-../paima-sdk
 ../paima-engine-linux
 ../.env
 ../extensions.yml
