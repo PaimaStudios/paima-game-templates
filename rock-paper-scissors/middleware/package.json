@@ -7,8 +7,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "sh scripts/build.sh",
-    "build:devnet": "cross-env NODE_ENV=devnet sh scripts/build.sh",
-    "build:prod": "echo \"Error: no prod environment specified\" && exit 1",
     "lint": "prettier --write '**/*.ts'"
   },
   "keywords": [],
@@ -22,7 +20,6 @@
   "devDependencies": {
     "dotenv": "^16.0.3",
     "esbuild": "^0.15.15",
-    "esbuild-plugin-d.ts": "^1.1.0",
     "esbuild-plugin-polyfill-node": "^0.3.0"
   }
 }

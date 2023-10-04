@@ -1,4 +1,4 @@
-import type { Hash } from 'paima-sdk/paima-utils';
+import type { Hash } from '@paima/sdk/utils';
 
 import type {
   BaseRoundStatus,

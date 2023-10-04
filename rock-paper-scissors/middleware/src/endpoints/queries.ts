@@ -1,5 +1,5 @@
-import type { FailedResult, Result } from 'paima-sdk/paima-mw-core';
-import { PaimaMiddlewareErrorCode, getBlockNumber } from 'paima-sdk/paima-mw-core';
+import type { FailedResult, Result } from '@paima/sdk/mw-core';
+import { PaimaMiddlewareErrorCode, getBlockNumber } from '@paima/sdk/mw-core';
 
 import type {
   MatchWinnerResponse,
@@ -35,7 +35,7 @@ import type {
   PackedUserLobbies,
   PackedUserStats,
 } from '../types';
-import type { MatchExecutor, RoundExecutor } from 'paima-sdk/paima-executors';
+import type { MatchExecutor, RoundExecutor } from '@paima/sdk/executors';
 
 async function getLobbyState(lobbyID: string): Promise<PackedLobbyState | FailedResult> {
   const errorFxn = buildEndpointErrorFxn('getLobbyState');
