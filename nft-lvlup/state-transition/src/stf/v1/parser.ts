@@ -1,7 +1,7 @@
 import type { InvalidInput } from '@game/utils';
 import { characters } from '@game/utils';
-import type { ParserRecord } from 'paima-sdk/paima-concise';
-import { PaimaParser } from 'paima-sdk/paima-concise';
+import type { ParserRecord } from '@paima/sdk/concise';
+import { PaimaParser } from '@paima/sdk/concise';
 import type { LvlUpInput, NftMintInput, ParsedSubmittedInput } from './types';
 
 const myGrammar = `

@@ -1,6 +1,6 @@
-import type { RoundExecutor } from 'paima-sdk/paima-executors';
-import { roundExecutor } from 'paima-sdk/paima-executors';
-import type Prando from 'paima-sdk/paima-prando';
+import type { RoundExecutor } from '@paima/sdk/executors';
+import { roundExecutor } from '@paima/sdk/executors';
+import type Prando from '@paima/sdk/prando';
 import type { MatchState, MatchEnvironment, TickEvent } from './types';
 import { processTick } from './tick';
 

@@ -1,12 +1,12 @@
-import { ENV, retryPromise } from 'paima-sdk/paima-utils';
-import { builder } from 'paima-sdk/paima-concise';
+import { ENV, retryPromise } from '@paima/sdk/utils';
+import { builder } from '@paima/sdk/concise';
 import {
   PaimaMiddlewareErrorCode,
   awaitBlock,
   postConciselyEncodedData,
   getActiveAddress,
-} from 'paima-sdk/paima-mw-core';
-import type { EndpointErrorFxn, FailedResult, OldResult, Result } from 'paima-sdk/paima-mw-core';
+} from '@paima/sdk/mw-core';
+import type { EndpointErrorFxn, FailedResult, OldResult, Result } from '@paima/sdk/mw-core';
 
 import { buildEndpointErrorFxn, MiddlewareErrorCode } from '../errors';
 import { getLobbyStateWithUser, getNonemptyNewLobbies } from '../helpers/auxiliary-queries';

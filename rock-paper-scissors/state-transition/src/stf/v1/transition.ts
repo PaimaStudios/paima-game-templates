@@ -1,6 +1,6 @@
 import type { Pool } from 'pg';
-import type Prando from 'paima-sdk/paima-prando';
-import type { SQLUpdate } from 'paima-sdk/paima-db';
+import type Prando from '@paima/sdk/prando';
+import type { SQLUpdate } from '@paima/sdk/db';
 
 import type { IGetLobbyByIdResult, IGetRoundMovesResult, IGetRoundDataResult } from '@game/db';
 import { getCachedMoves, getLobbyById, getRoundData, getUserStats, endMatch } from '@game/db';
@@ -36,7 +36,7 @@ import {
   GameResult,
 } from '@game/game-logic';
 import { PracticeAI } from './persist/practice-ai';
-import type { WalletAddress } from 'paima-sdk/paima-utils';
+import type { WalletAddress } from '@paima/sdk/utils';
 
 // State transition when a create lobby input is processed
 export const createdLobby = async (

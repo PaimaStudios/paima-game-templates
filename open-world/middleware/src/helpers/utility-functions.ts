@@ -1,7 +1,7 @@
-import { ENV } from 'paima-sdk/paima-utils';
+import { ENV } from '@paima/sdk/utils';
 import { buildEndpointErrorFxn, MiddlewareErrorCode } from '../errors';
 import type { RoundEnd } from '../types';
-import { PaimaMiddlewareErrorCode } from 'paima-sdk/paima-mw-core';
+import { PaimaMiddlewareErrorCode } from '@paima/sdk/mw-core';
 
 export function calculateRoundEnd(
   roundStart: number,

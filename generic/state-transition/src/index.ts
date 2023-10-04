@@ -1,4 +1,4 @@
-import { ENV } from 'paima-sdk/paima-utils';
+import { ENV } from '@paima/sdk/utils';
 import gameStateTransitionV1 from './stf/v1';
 
 // This function allows you to route between different State Transition Functions

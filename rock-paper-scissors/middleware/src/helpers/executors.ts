@@ -1,5 +1,5 @@
-import type { RoundExecutor } from 'paima-sdk/paima-executors';
-import Prando from 'paima-sdk/paima-prando';
+import type { RoundExecutor } from '@paima/sdk/executors';
+import Prando from '@paima/sdk/prando';
 
 import { initRoundExecutor } from '@game/game-logic';
 import type { RoundExecutorData } from '@game/utils';

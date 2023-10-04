@@ -1,6 +1,6 @@
 import type { MatchResult, RPSActionsStates, RPSSummary } from './types';
 import { GameResult, RPSActions, RPSExtendedStates } from './types';
-import type Prando from 'paima-sdk/paima-prando';
+import type Prando from '@paima/sdk/prando';
 
 /*
  *  RockPaperScissors is a game that is played in rounds.

@@ -1,4 +1,4 @@
-import type { FailedResult, SuccessfulResult, Wallet } from 'paima-sdk/paima-mw-core';
+import type { FailedResult, SuccessfulResult, Wallet } from '@paima/sdk/mw-core';
 
 export type ActionResult = BaseResult | FailedResult;
 export type Result<T> = SuccessfulResult<T> | FailedResult;

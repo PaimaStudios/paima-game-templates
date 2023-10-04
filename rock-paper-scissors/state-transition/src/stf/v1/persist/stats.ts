@@ -1,9 +1,9 @@
 import type { IGetUserStatsResult, INewStatsParams, IUpdateStatsParams } from '@game/db';
 import { newStats, updateStats } from '@game/db';
 import { GameResult, ShortNotationGameResult } from '@game/game-logic';
-import type { SQLUpdate } from 'paima-sdk/paima-db';
-import { createScheduledData } from 'paima-sdk/paima-db';
-import type { WalletAddress } from 'paima-sdk/paima-utils';
+import type { SQLUpdate } from '@paima/sdk/db';
+import { createScheduledData } from '@paima/sdk/db';
+import type { WalletAddress } from '@paima/sdk/utils';
 
 // Generate blank/empty user stats
 export function blankStats(wallet: string): SQLUpdate {

@@ -1,6 +1,6 @@
 import type { IGetUserResult } from '@game/db';
 import { getUser } from '@game/db';
-import type { SQLUpdate } from 'paima-sdk/paima-db';
+import type { SQLUpdate } from '@paima/sdk/db';
 import type { Pool } from 'pg';
 import type { GainExperienceInput } from './types';
 import { persistUserUpdate } from './persist';

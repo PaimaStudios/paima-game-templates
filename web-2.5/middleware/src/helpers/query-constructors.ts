@@ -1,4 +1,4 @@
-import { buildBackendQuery } from 'paima-sdk/paima-mw-core';
+import { buildBackendQuery } from '@paima/sdk/mw-core';
 
 export function backendQueryUser(wallet: string): string {
   const endpoint = 'user_state';

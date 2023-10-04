@@ -1,9 +1,9 @@
 import type { Pool } from 'pg';
 
 import parse from './parser';
-import type Prando from 'paima-sdk/paima-prando';
-import type { SubmittedChainData } from 'paima-sdk/paima-utils';
-import type { SQLUpdate } from 'paima-sdk/paima-db';
+import type Prando from '@paima/sdk/prando';
+import type { SubmittedChainData } from '@paima/sdk/utils';
+import type { SQLUpdate } from '@paima/sdk/db';
 
 import {
   createdLobby,

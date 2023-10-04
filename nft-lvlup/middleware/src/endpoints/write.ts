@@ -1,12 +1,12 @@
 import type { LevelUpResponse } from '../types';
-import { builder } from 'paima-sdk/paima-concise';
-import type { Result } from 'paima-sdk/paima-mw-core';
-import { awaitBlock, postConciseData } from 'paima-sdk/paima-mw-core';
+import { builder } from '@paima/sdk/concise';
+import type { Result } from '@paima/sdk/mw-core';
+import { awaitBlock, postConciseData } from '@paima/sdk/mw-core';
 import { MiddlewareErrorCode, buildEndpointErrorFxn } from '../errors';
-import type { WalletAddress } from 'paima-sdk/paima-utils';
+import type { WalletAddress } from '@paima/sdk/utils';
 import { getOwnedCharacters } from './queries';
 import { getUserWallet } from '../helpers/utility-functions';
-import { ENV } from 'paima-sdk/paima-utils';
+import { ENV } from '@paima/sdk/utils';
 
 async function levelUp(
   contractAddress: WalletAddress,
