@@ -1,4 +1,4 @@
-import { builder } from "paima-sdk/paima-concise";
+import { builder } from "@paima/sdk/concise";
 
 // These are not listed in the central config file since they shouldn't be accessible by the frontend or the middleware
 // # Note: This is the URL which your own game server will use to post inputs to the batcher

@@ -1,9 +1,9 @@
 import type { IGetUserResult } from '@game/db';
 import { getUser } from '@game/db';
-import type { SQLUpdate } from 'paima-sdk/paima-db';
+import type { SQLUpdate } from '@paima/sdk/db';
 import type { Pool } from 'pg';
 import { persistNameUpdate, persistXpUpdate } from './persist';
-import type { WalletAddress } from 'paima-sdk/paima-utils';
+import type { WalletAddress } from '@paima/sdk/utils';
 import type { GainExperienceInput } from './types';
 import { GameENV } from '@game/utils';
 
