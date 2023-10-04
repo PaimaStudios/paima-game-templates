@@ -236,30 +236,48 @@ export const zombieRound = async (
 
   console.log(`Executing zombie round (#${lobby.current_round}) for lobby ${lobby.lobby_id}`);
 
-  // we generate a bot move with difficulty=0 in order to proceed (you can't skip turn in chess)
-  const move = generateZombieMove(lobby);
-  if (!move) {
-    return await executeRound(blockHeight, lobby, [], round, dbConn, prando);
-  }
-  const player = currentPlayer(round.round_within_match, lobby);
-  const persistMoveTuple = persistMoveSubmission(player, move, lobby);
-  const newMove: IGetRoundMovesResult = persistMoveTuple[1].new_move;
-  const roundExecutionTuples = await executeRound(
-    blockHeight,
-    lobby,
-    [newMove],
-    round,
-    dbConn,
-    prando
-  );
+  const move: SubmittedMovesInput | null = null;
+  const player: WalletAddress | null = null;
+  const newMove: IGetRoundMovesResult | null = null;
+  try {
+    // we generate a bot move with difficulty=0 in order to proceed (you can't skip turn in chess)
+    const move = generateZombieMove(lobby);
+    if (!move) {
+      return await executeRound(blockHeight, lobby, [], round, dbConn, prando);
+    }
+    const player = currentPlayer(round.round_within_match, lobby);
+    const persistMoveTuple = persistMoveSubmission(player, move, lobby);
+    const newMove: IGetRoundMovesResult = persistMoveTuple[1].new_move;
+    const roundExecutionTuples = await executeRound(
+      blockHeight,
+      lobby,
+      [newMove],
+      round,
+      dbConn,
+      prando
+    );
 
-  if (lobby.practice) {
-    const nextRound = lobby.current_round + 1;
-    const practiceMove = schedulePracticeMove(lobby.lobby_id, nextRound, blockHeight + 1);
-    return [persistMoveTuple, ...roundExecutionTuples, practiceMove];
-  }
+    if (lobby.practice) {
+      const nextRound = lobby.current_round + 1;
+      const practiceMove = schedulePracticeMove(lobby.lobby_id, nextRound, blockHeight + 1);
+      return [persistMoveTuple, ...roundExecutionTuples, practiceMove];
+    }
 
-  return [persistMoveTuple, ...roundExecutionTuples];
+    return [persistMoveTuple, ...roundExecutionTuples];
+  } catch (e) {
+    console.log(`CRITICAL ERROR. zombieRound was not processed.`, {
+      blockHeight,
+      lobbyId,
+      prando: prando.seed,
+      lobby,
+      round,
+      move,
+      player,
+      newMove,
+    });
+    console.log(e);
+    return [];
+  }
 };
 
 // State transition when an update stats input is processed
