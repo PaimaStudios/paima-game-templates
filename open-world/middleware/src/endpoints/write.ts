@@ -1,13 +1,13 @@
-import { builder } from 'paima-sdk/paima-concise';
-import type { EndpointErrorFxn, OldResult, Result } from 'paima-sdk/paima-mw-core';
+import { builder } from '@paima/sdk/concise';
+import type { EndpointErrorFxn, OldResult, Result } from '@paima/sdk/mw-core';
 import {
   PaimaMiddlewareErrorCode,
   postConciselyEncodedData,
   getActiveAddress,
-} from 'paima-sdk/paima-mw-core';
+} from '@paima/sdk/mw-core';
 
 import { buildEndpointErrorFxn } from '../errors';
-import { ENV } from 'paima-sdk/paima-utils';
+import { ENV } from '@paima/sdk/utils';
 
 const getUserWallet = (errorFxn: EndpointErrorFxn): Result<string> => {
   try {

@@ -1,4 +1,4 @@
-import type Prando from 'paima-sdk/paima-prando';
+import type Prando from '@paima/sdk/prando';
 
 //
 // PracticeAI generates a move based on the current game state and prando.
