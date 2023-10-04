@@ -1,4 +1,4 @@
-import type { FailedResult } from 'paima-sdk/paima-mw-core';
+import type { FailedResult } from '@paima/sdk/mw-core';
 import type { NewLobbies, PackedLobbyState } from '../types';
 export declare function getRawLobbyState(lobbyID: string): Promise<PackedLobbyState | FailedResult>;
 export declare function getRawNewLobbies(wallet: string, blockHeight: number): Promise<NewLobbies | FailedResult>;

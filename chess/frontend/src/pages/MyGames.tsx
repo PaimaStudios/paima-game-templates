@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import type MainController from "@src/MainController";
-import type { UserLobby } from "../paima/types";
+import type { UserLobby } from "@chess/utils";
 import { AppContext } from "@src/main";
 import Layout from "@src/layouts/Layout";
 import LobbyList from "@src/components/LobbyList";

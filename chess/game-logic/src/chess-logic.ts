@@ -1,9 +1,9 @@
-import type Prando from 'paima-sdk/paima-prando';
+import type Prando from '@paima/sdk/prando';
 import type { MatchMove, MatchEnvironment, MatchState } from './types';
 import type { MatchResult, UserLobby, Timer, ConciseResult } from '@chess/utils';
 import type { Color } from 'chess.js';
 import { Chess } from 'chess.js';
-import type { WalletAddress } from 'paima-sdk/paima-utils';
+import type { WalletAddress } from '@paima/sdk/utils';
 
 export function gameOverFromChess(chess: Chess): boolean {
   return chess.isGameOver();

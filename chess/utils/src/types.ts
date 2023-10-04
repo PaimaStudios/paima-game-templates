@@ -5,9 +5,12 @@ import type {
   IGetNewLobbiesByUserAndBlockHeightResult,
   IGetAllPaginatedUserLobbiesResult,
 } from '@chess/db';
-import type { WalletAddress } from 'paima-sdk/paima-utils';
-import type { IGetBlockHeightsResult } from 'paima-sdk/paima-db';
-
+import type { WalletAddress } from '@paima/sdk/utils';
+type IGetBlockHeightsResult = {
+  block_height: number;
+  done: boolean;
+  seed: string;
+};
 export type LobbyStatus = 'open' | 'active' | 'finished' | 'closed';
 export type ConciseResult = 'w' | 't' | 'l';
 export type ExpandedResult = 'win' | 'tie' | 'loss';

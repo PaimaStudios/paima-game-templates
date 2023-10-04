@@ -1,6 +1,6 @@
 import type { Pool } from 'pg';
-import type Prando from 'paima-sdk/paima-prando';
-import type { WalletAddress } from 'paima-sdk/paima-utils';
+import type Prando from '@paima/sdk/prando';
+import type { WalletAddress } from '@paima/sdk/utils';
 import type { IGetLobbyByIdResult, IGetRoundDataResult, IGetRoundMovesResult } from '@chess/db';
 import { getLobbyById, getRoundData, getUserStats, endMatch } from '@chess/db';
 import type { MatchState } from '@chess/game-logic';
@@ -38,7 +38,7 @@ import type {
 import { isBotMove, isUserStats, isZombieRound } from './types.js';
 import type { Timer } from '@chess/utils';
 import { updateTimer, PRACTICE_BOT_ADDRESS, currentPlayer } from '@chess/utils';
-import type { SQLUpdate } from 'paima-sdk/paima-db';
+import type { SQLUpdate } from '@paima/sdk/db';
 import { calculateBestMove } from './persist/ai';
 
 // State transition when a create lobby input is processed
@@ -235,6 +235,7 @@ export const zombieRound = async (
   if (!round) return [];
 
   console.log(`Executing zombie round (#${lobby.current_round}) for lobby ${lobby.lobby_id}`);
+
   let move: SubmittedMovesInput | null = null;
   let player: WalletAddress | null = null;
   let newMove: IGetRoundMovesResult | null = null;

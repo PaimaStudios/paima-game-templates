@@ -1,12 +1,8 @@
 import * as Paima from "./paima/middleware.js";
-import type {
-  LobbyState,
-  MatchExecutor,
-  MatchState,
-  TickEvent,
-  UserLobby,
-  UserStats,
-} from "./paima/types.d";
+import type { LobbyState, UserLobby, LobbyStateQuery } from "@chess/utils";
+import type { MatchState, TickEvent } from "@chess/game-logic";
+import type { MatchExecutor } from "@paima/sdk/executors";
+import type { PackedUserStats } from "./paima/middleware";
 
 // The MainController is a React component that will be used to control the state of the application
 // It will be used to check if the user has metamask installed and if they are connected to the correct network
@@ -77,7 +73,7 @@ class MainController {
     return response.lobby;
   }
 
-  async searchLobby(query: string, page: number): Promise<LobbyState[]> {
+  async searchLobby(query: string, page: number): Promise<LobbyStateQuery[]> {
     await this.enforceWalletConnected();
     this.callback(null, true, null);
     const response = await Paima.default.getLobbySearch(
@@ -164,7 +160,7 @@ class MainController {
     this.callback(Page.MainMenu, false, null);
   }
 
-  async getOpenLobbies(page = 0, limit = 100): Promise<LobbyState[]> {
+  async getOpenLobbies(page = 0, limit = 100): Promise<LobbyStateQuery[]> {
     await this.enforceWalletConnected();
     this.callback(null, true, null);
     const response = await Paima.default.getOpenLobbies(
@@ -198,7 +194,7 @@ class MainController {
     return response.lobbies;
   }
 
-  async getStats(): Promise<UserStats> {
+  async getStats(): Promise<PackedUserStats> {
     await this.enforceWalletConnected();
     this.callback(null, true, null);
     const response = await Paima.default.getUserStats(this.userAddress);

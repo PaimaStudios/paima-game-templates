@@ -1,4 +1,4 @@
-import { paimaEndpoints } from 'paima-sdk/paima-mw-core';
+import { paimaEndpoints } from '@paima/sdk/mw-core';
 import {
   initMiddlewareCore,
   cardanoWalletLoginEndpoint,
@@ -10,7 +10,7 @@ import {
   userWalletLoginWithoutChecks,
   updateBackendUri,
   getRemoteBackendVersion,
-} from 'paima-sdk/paima-mw-core';
+} from '@paima/sdk/mw-core';
 
 import { gameBackendVersion, GAME_NAME } from '@chess/utils';
 

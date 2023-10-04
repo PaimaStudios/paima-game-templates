@@ -1,8 +1,8 @@
 import type { Pool } from 'pg';
 
 import parse from './parser.js';
-import type Prando from 'paima-sdk/paima-prando';
-import type { SubmittedChainData } from 'paima-sdk/paima-utils';
+import type Prando from '@paima/sdk/prando';
+import type { SubmittedChainData } from '@paima/sdk/utils';
 import {
   createdLobby,
   joinedLobby,
@@ -10,7 +10,7 @@ import {
   submittedMoves,
   scheduledData,
 } from './transition';
-import type { SQLUpdate } from 'paima-sdk/paima-db';
+import type { SQLUpdate } from '@paima/sdk/db';
 
 export default async function (
   inputData: SubmittedChainData,

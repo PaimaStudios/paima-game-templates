@@ -1,5 +1,5 @@
 const esbuild = require("esbuild");
 const {
   config,
-} = require("paima-sdk/paima-build-utils/build/middleware-esbuildconfig.template.cjs");
+} = require("@paima/build-utils/middleware-esbuildconfig.template");
 esbuild.build(config);

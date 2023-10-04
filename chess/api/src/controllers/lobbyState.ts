@@ -3,14 +3,14 @@ import { getLobbyById, getRoundData, requirePool } from '@chess/db';
 import type { Timer } from '@chess/utils';
 import { updateTimer, type LobbyStateQuery } from '@chess/utils';
 import { getLobbyRounds } from '@chess/db/src/select.queries';
-import { getLatestProcessedBlockHeight } from 'paima-sdk/paima-db';
+import { getLatestProcessedBlockHeight } from '@paima/sdk/db';
 
 interface Response {
   lobby: LobbyStateQuery | null;
 }
 
 @Route('lobby_state')
-export class LobbyStatecontroller extends Controller {
+export class LobbyStateController extends Controller {
   @Get()
   public async get(@Query() lobbyID: string): Promise<Response> {
     const pool = requirePool();

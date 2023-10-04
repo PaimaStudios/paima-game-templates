@@ -15,7 +15,7 @@ const UserStats: React.FC = () => {
       setLoading(true);
       const response = await mainController.getStats();
       setRating(response.stats?.rating);
-      setRank(response.rank);
+      setRank(response.rank?.toString());
       setLoading(false);
     };
 

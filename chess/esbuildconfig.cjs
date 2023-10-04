@@ -1,7 +1,7 @@
 const esbuild = require("esbuild");
 const {
   generateConfig,
-} = require("paima-sdk/paima-build-utils/build/standalone-esbuildconfig.template.cjs");
+} = require("@paima/build-utils/standalone-esbuildconfig.template");
 
 const { config, outFiles, workspace } = generateConfig(
   "api",
