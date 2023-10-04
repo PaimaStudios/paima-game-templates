@@ -1,5 +1,5 @@
-import type { RoundExecutor, MatchExecutor } from 'paima-sdk/paima-executors';
-import type { Hash } from 'paima-sdk/paima-utils';
+import type { RoundExecutor, MatchExecutor } from '@paima/sdk/executors';
+import type { Hash } from '@paima/sdk/utils';
 
 import type {
   BaseRoundStatus,

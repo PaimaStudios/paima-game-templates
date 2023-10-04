@@ -13,8 +13,8 @@ import { newFinalState } from '@game/db';
 import { executedRound } from '@game/db';
 import { newMatchMove } from '@game/db';
 import type { MatchEnvironment, MatchResult, MatchState } from '@game/game-logic';
-import type { SQLUpdate } from 'paima-sdk/paima-db';
-import type { WalletAddress } from 'paima-sdk/paima-utils';
+import type { SQLUpdate } from '@paima/sdk/db';
+import type { WalletAddress } from '@paima/sdk/utils';
 import type { SubmittedMovesInput } from '../types';
 import { deleteZombieRound, scheduleZombieRound } from './zombie';
 

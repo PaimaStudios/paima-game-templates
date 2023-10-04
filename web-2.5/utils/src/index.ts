@@ -1,4 +1,4 @@
-import { ENV } from 'paima-sdk/paima-utils';
+import { ENV } from '@paima/sdk/utils';
 
 type VersionString = `${number}.${number}.${number}`;
 const VERSION_MAJOR = 1;

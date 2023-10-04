@@ -1,5 +1,5 @@
 /** Types generated for queries found in "src/queries/insert.sql" */
-import { PreparedQuery } from '@pgtyped/query';
+import { PreparedQuery } from '@pgtyped/runtime';
 
 /** 'CreateGlobalWorldState' parameters type */
 export interface ICreateGlobalWorldStateParams {

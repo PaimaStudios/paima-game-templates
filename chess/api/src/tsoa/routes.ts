@@ -3,7 +3,7 @@
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, HttpStatusCodeLiteral, TsoaResponse, fetchMiddlewares } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { LobbyStatecontroller } from './../controllers/lobbyState';
+import { LobbyStateController } from './../controllers/lobbyState';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { MatchExecutorController } from './../controllers/matchExecutor';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -225,10 +225,10 @@ export function RegisterRoutes(app: express.Router) {
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
         app.get('/lobby_state',
-            ...(fetchMiddlewares<RequestHandler>(LobbyStatecontroller)),
-            ...(fetchMiddlewares<RequestHandler>(LobbyStatecontroller.prototype.get)),
+            ...(fetchMiddlewares<RequestHandler>(LobbyStateController)),
+            ...(fetchMiddlewares<RequestHandler>(LobbyStateController.prototype.get)),
 
-            function LobbyStatecontroller_get(request: any, response: any, next: any) {
+            function LobbyStateController_get(request: any, response: any, next: any) {
             const args = {
                     lobbyID: {"in":"query","name":"lobbyID","required":true,"dataType":"string"},
             };
@@ -239,7 +239,7 @@ export function RegisterRoutes(app: express.Router) {
             try {
                 validatedArgs = getValidatedArgs(args, request, response);
 
-                const controller = new LobbyStatecontroller();
+                const controller = new LobbyStateController();
 
 
               const promise = controller.get.apply(controller, validatedArgs as any);

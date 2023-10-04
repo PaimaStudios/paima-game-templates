@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import type MainController from "@src/MainController";
-import type { LobbyState } from "../paima/types";
+import type { LobbyStateQuery } from "@chess/utils";
 import { AppContext } from "@src/main";
 import Layout from "@src/layouts/Layout";
 import LobbyList from "@src/components/LobbyList";
@@ -8,7 +8,7 @@ import LobbyList from "@src/components/LobbyList";
 const OpenLobbies: React.FC = () => {
   const mainController: MainController = useContext(AppContext);
 
-  const [lobbies, setLobbies] = useState<LobbyState[]>([]);
+  const [lobbies, setLobbies] = useState<LobbyStateQuery[]>([]);
 
   useEffect(() => {
     mainController.getOpenLobbies().then((lobbies) => {

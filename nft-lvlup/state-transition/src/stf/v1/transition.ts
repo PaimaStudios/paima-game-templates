@@ -1,10 +1,10 @@
-import type { SQLUpdate } from 'paima-sdk/paima-db';
+import type { SQLUpdate } from '@paima/sdk/db';
 import type { Pool } from 'pg';
 import type { LvlUpInput, NftMintInput, ScheduledDataInput } from './types';
 import { isNftMint } from './types';
 import { persistCreate, persistLvlUp } from './persist';
-import { isNftOwner } from 'paima-sdk/paima-utils-backend';
-import type { WalletAddress } from 'paima-sdk/paima-utils';
+import { isNftOwner } from '@paima/sdk/utils-backend';
+import type { WalletAddress } from '@paima/sdk/utils';
 import { CHARACTERS_CDE } from '@game/utils';
 
 export const lvlUp = async (

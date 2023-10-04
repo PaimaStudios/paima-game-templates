@@ -1,5 +1,5 @@
-import type { SQLUpdate } from 'paima-sdk/paima-db';
-import { createScheduledData, deleteScheduledData } from 'paima-sdk/paima-db';
+import type { SQLUpdate } from '@paima/sdk/db';
+import { createScheduledData, deleteScheduledData } from '@paima/sdk/db';
 import { calculateBestMove } from './ai';
 import type { IGetLobbyByIdResult } from '@chess/db';
 import type { SubmittedMovesInput } from '../types';

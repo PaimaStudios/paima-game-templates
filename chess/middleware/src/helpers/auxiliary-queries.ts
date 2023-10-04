@@ -1,5 +1,5 @@
-import type { FailedResult } from 'paima-sdk/paima-mw-core';
-import { PaimaMiddlewareErrorCode } from 'paima-sdk/paima-mw-core';
+import type { FailedResult } from '@paima/sdk/mw-core';
+import { PaimaMiddlewareErrorCode } from '@paima/sdk/mw-core';
 
 import { buildEndpointErrorFxn } from '../errors';
 import type { NewLobbies, PackedLobbyState } from '../types';

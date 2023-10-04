@@ -1,14 +1,14 @@
 import type { CreatedLobbyInput, JoinedLobbyInput } from '../types.js';
 import type { IGetLobbyByIdResult, IStartMatchParams, ICloseLobbyParams } from '@chess/db';
 import { createLobby, startMatch, closeLobby, ICreateLobbyParams } from '@chess/db';
-import type Prando from 'paima-sdk/paima-prando';
-import type { WalletAddress } from 'paima-sdk/paima-utils';
+import type Prando from '@paima/sdk/prando';
+import type { WalletAddress } from '@paima/sdk/utils';
 import type { LobbyStatus, Timer } from '@chess/utils';
 import { PRACTICE_BOT_ADDRESS } from '@chess/utils';
 import { Chess } from 'chess.js';
 import { blankStats } from './stats';
 import { persistNewRound } from './match.js';
-import type { SQLUpdate } from 'paima-sdk/paima-db';
+import type { SQLUpdate } from '@paima/sdk/db';
 import { initialState } from '@chess/game-logic';
 import { schedulePracticeMove } from './practice.js';
 

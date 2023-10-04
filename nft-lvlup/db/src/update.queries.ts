@@ -1,5 +1,5 @@
 /** Types generated for queries found in "src/update.sql" */
-import { PreparedQuery } from '@pgtyped/query';
+import { PreparedQuery } from '@pgtyped/runtime';
 
 /** 'LvlUpCharacter' parameters type */
 export interface ILvlUpCharacterParams {

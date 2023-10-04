@@ -1,5 +1,5 @@
 import type { CharacterType, InvalidInput } from '@game/utils';
-import type { WalletAddress } from 'paima-sdk/paima-utils';
+import type { WalletAddress } from '@paima/sdk/utils';
 
 export interface LvlUpInput {
   input: 'lvlUp';

@@ -1,7 +1,7 @@
 import parse, { isInvalid } from './parser.js';
-import type Prando from 'paima-sdk/paima-prando';
-import type { SubmittedChainData } from 'paima-sdk/paima-utils';
-import type { SQLUpdate } from 'paima-sdk/paima-db';
+import type Prando from '@paima/sdk/prando';
+import type { SubmittedChainData } from '@paima/sdk/utils';
+import type { SQLUpdate } from '@paima/sdk/db';
 import type { Pool } from 'pg';
 import { changeName, gainExperience } from './transition.js';
 

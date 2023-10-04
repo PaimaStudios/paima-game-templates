@@ -1,5 +1,5 @@
 /** Types generated for queries found in "src/queries/select.sql" */
-import { PreparedQuery } from '@pgtyped/query';
+import { PreparedQuery } from '@pgtyped/runtime';
 
 /** 'GetLatestBlockData' parameters type */
 export type IGetLatestBlockDataParams = void;

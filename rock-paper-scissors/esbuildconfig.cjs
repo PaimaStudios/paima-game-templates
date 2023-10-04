@@ -1,24 +1,14 @@
-const esbuild = require('esbuild');
-const fs = require('fs');
+const esbuild = require("esbuild");
+const {
+  generateConfig,
+} = require("@paima/build-utils/standalone-esbuildconfig.template");
 
-const workspace = process.env.BUNDLE_WORKSPACE;
-if (!workspace) throw new Error('BUNDLE_WORKSPACE variable not set.');
+const { config, outFiles, workspace } = generateConfig(
+  "api",
+  "state-transition",
+);
+esbuild.build(config);
 
-if (!fs.existsSync(workspace)) throw new Error(`Invalid workspace: ${workspace}.`);
-
-const outFile = {
-  api: 'endpoints.cjs',
-  'state-transition': 'gameCode.cjs',
-};
-
-// packaging config based on paima-standalone module
-esbuild.build({
-  platform: 'node',
-  entryPoints: [`${workspace}/src/index.ts`],
-  bundle: true,
-  format: 'cjs',
-  outfile: `packaged/${outFile[workspace]}`,
-  external: ['pg-native'],
-});
-
-console.log(`\x1b[32m${workspace}\x1b[0m bundled to packaged/${outFile[workspace]}`);
+console.log(
+  `\x1b[32m${workspace}\x1b[0m bundled to packaged/${outFiles[workspace]}`,
+);

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Box, Button, CircularProgress, Typography, useMediaQuery, useTheme } from "@mui/material";
-import type { LobbyState } from "../../paima/types";
+import type { LobbyState } from "@chess/utils";
 import { ChessLogic, ChessService } from "./GameLogic";
 
 import type MainController from "@src/MainController";

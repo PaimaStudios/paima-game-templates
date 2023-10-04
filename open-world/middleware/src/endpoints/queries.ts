@@ -1,5 +1,5 @@
-import type { FailedResult, Result } from 'paima-sdk/paima-mw-core';
-import { PaimaMiddlewareErrorCode } from 'paima-sdk/paima-mw-core';
+import type { FailedResult, Result } from '@paima/sdk/mw-core';
+import { PaimaMiddlewareErrorCode } from '@paima/sdk/mw-core';
 
 import type { MatchExecutorData, RoundExecutorData, UserStats } from '@game/utils';
 

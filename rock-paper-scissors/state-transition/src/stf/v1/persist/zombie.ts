@@ -1,5 +1,5 @@
-import type { SQLUpdate } from 'paima-sdk/paima-db';
-import { createScheduledData, deleteScheduledData } from 'paima-sdk/paima-db';
+import type { SQLUpdate } from '@paima/sdk/db';
+import { createScheduledData, deleteScheduledData } from '@paima/sdk/db';
 
 // Schedule a zombie round to be executed in the future
 export function scheduleZombieRound(lobbyId: string, block_height: number): SQLUpdate {

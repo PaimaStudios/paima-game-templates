@@ -9,7 +9,7 @@ import ChessGame from "./ChessGame/ChessGame";
 import CreateLobby from "./CreateLobby";
 import { Box } from "@mui/material";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import type { LobbyState } from "../paima/types";
+import type { LobbyState } from "@chess/utils";
 import { AppContext } from "@src/main";
 import Loader from "@src/components/Loader";
 import ProtectedRoute from "./ProtectedRoute";

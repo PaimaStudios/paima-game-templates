@@ -1,7 +1,7 @@
 import { GameENV } from '@game/utils';
 import type { ActionResult } from '../types';
-import { builder } from 'paima-sdk/paima-concise';
-import { getActiveAddress, postConciselyEncodedData } from 'paima-sdk/paima-mw-core';
+import { builder } from '@paima/sdk/concise';
+import { getActiveAddress, postConciselyEncodedData } from '@paima/sdk/mw-core';
 
 async function renamePlayer(name: string): Promise<ActionResult> {
   const userWalletAddress = getActiveAddress();

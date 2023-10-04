@@ -1,4 +1,4 @@
-import type Prando from 'paima-sdk/paima-prando';
+import type Prando from '@paima/sdk/prando';
 import type { IGetCachedMovesResult } from '@game/db';
 import type { MatchEnvironment, MatchState, RPSActions, TickEvent } from './types';
 import { GameResult, RPSExtendedStates, RPSSummary } from './types';

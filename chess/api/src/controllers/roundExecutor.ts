@@ -3,7 +3,7 @@ import { requirePool, getLobbyById, getRoundData, getRoundMoves } from '@chess/d
 import { isLeft } from 'fp-ts/Either';
 import { psqlNum } from '../validation.js';
 import type { RoundExecutorData } from '@chess/utils';
-import { getBlockHeights } from 'paima-sdk/paima-db';
+import { getBlockHeights } from '@paima/sdk/db';
 
 type Response = RoundExecutorData | Error;
 

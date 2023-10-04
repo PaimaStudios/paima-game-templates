@@ -1,4 +1,4 @@
-import { paimaEndpoints } from 'paima-sdk/paima-mw-core';
+import { paimaEndpoints } from '@paima/sdk/mw-core';
 import {
   initMiddlewareCore,
   cardanoWalletLoginEndpoint,
@@ -11,7 +11,7 @@ import {
   updateBackendUri,
   getRemoteBackendVersion,
   postConciselyEncodedData,
-} from 'paima-sdk/paima-mw-core';
+} from '@paima/sdk/mw-core';
 
 import { gameBackendVersion, GAME_NAME } from '@game/utils';
 

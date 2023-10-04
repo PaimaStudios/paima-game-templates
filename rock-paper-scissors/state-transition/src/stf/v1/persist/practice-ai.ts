@@ -1,6 +1,6 @@
 import type { RPSSummary } from '@game/game-logic';
 import { RockPaperScissors } from '@game/game-logic';
-import type Prando from 'paima-sdk/paima-prando';
+import type Prando from '@paima/sdk/prando';
 
 //
 // PracticeAI generates a move based on the current game state and prando.

@@ -1,5 +1,5 @@
 import type { IGetLobbyByIdResult, IGetRoundDataResult } from '@chess/db';
-import type { WalletAddress } from 'paima-sdk/paima-utils';
+import type { WalletAddress } from '@paima/sdk/utils';
 import type { Timer } from './types.js';
 
 type VersionString = `${number}.${number}.${number}`;
@@ -38,3 +38,4 @@ export const currentPlayer = (round: number, lobby: IGetLobbyByIdResult): Wallet
 };
 
 export * from './types.js';
+export type * from './types.js';

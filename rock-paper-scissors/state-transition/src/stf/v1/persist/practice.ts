@@ -1,6 +1,6 @@
 import type { RPSActions } from '@game/game-logic';
-import type { SQLUpdate } from 'paima-sdk/paima-db';
-import { createScheduledData } from 'paima-sdk/paima-db';
+import type { SQLUpdate } from '@paima/sdk/db';
+import { createScheduledData } from '@paima/sdk/db';
 
 // Schedule a practive move update to be executed in the future
 export function schedulePracticeMove(

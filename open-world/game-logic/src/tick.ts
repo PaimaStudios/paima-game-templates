@@ -1,4 +1,4 @@
-import type Prando from 'paima-sdk/paima-prando';
+import type Prando from '@paima/sdk/prando';
 import type { MatchState, MatchEnvironment, TickEvent } from './types';
 
 // Executes a round executor tick and generates a tick event as a result

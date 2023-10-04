@@ -1,6 +1,6 @@
-import type { WalletAddress } from 'paima-sdk/paima-utils';
-import type { QueryOptions } from 'paima-sdk/paima-mw-core';
-import { buildBackendQuery } from 'paima-sdk/paima-mw-core';
+import type { WalletAddress } from '@paima/sdk/utils';
+import type { QueryOptions } from '@paima/sdk/mw-core';
+import { buildBackendQuery } from '@paima/sdk/mw-core';
 
 export function backendQueryUserStats(wallet: WalletAddress): string {
   const endpoint = 'user_stats';

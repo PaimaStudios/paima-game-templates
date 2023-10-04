@@ -8,8 +8,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "sh scripts/build.sh",
-    "build:devnet": "cross-env NODE_ENV=devnet sh scripts/build.sh",
-    "build:mainnet": "cross-env NODE_ENV=mainnet sh scripts/build.sh",
     "lint": "prettier --write '**/*.ts'"
   },
   "keywords": [],
