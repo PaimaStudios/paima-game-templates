@@ -1,0 +1,5 @@
+/node_modules
+/site/bundle.js
+/build
+.DS_Store
+upload.sh

@@ -1,0 +1,12 @@
+import type { WalletAddress } from '@paima/sdk/utils';
+export declare function backendQueryLobbyState(lobbyID: string): string;
+export declare function backendQuerySearchLobby(wallet: WalletAddress, searchQuery: string, page: number, count?: number): string;
+export declare function backendQueryUserLobbiesBlockheight(wallet: WalletAddress, blockHeight: number): string;
+export declare function backendQueryRoundStatus(lobbyID: string, round: number): string;
+export declare function backendQueryUserStats(wallet: WalletAddress): string;
+export declare function backendQueryUserLobbies(wallet: WalletAddress, count?: number, page?: number): string;
+export declare function backendQueryOpenLobbies(wallet: WalletAddress, count?: number, page?: number): string;
+export declare function backendQueryRoundExecutor(lobbyID: string, round: number): string;
+export declare function backendQueryMatchExecutor(lobbyID: string): string;
+export declare function backendQueryRandomLobby(): string;
+export declare function backendQueryMatchWinner(lobbyID: string): string;

@@ -1,0 +1,24 @@
+{
+  "name": "@hexbattle/middleware",
+  "version": "1.0.0",
+  "description": "Middleware for Chess game, to be imported into any frontend",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "sh scripts/build.sh",
+    "lint": "prettier --write '**/*.ts'"
+  },
+  "keywords": [],
+  "author": "PaimaStudios",
+  "dependencies": {
+    "@hexbattle/game-logic": "1.0.0",
+    "@hexbattle/utils": "1.0.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.3",
+    "esbuild": "^0.15.15",
+    "esbuild-plugin-d.ts": "^1.1.0",
+    "esbuild-plugin-polyfill-node": "^0.3.0"
+  }
+}
