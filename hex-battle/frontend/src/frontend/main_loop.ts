@@ -11,7 +11,7 @@ import {ImageCache} from './load';
 import {Hex} from './hex';
 
 // TODO Loading Paima Middleware from pre-compiled js
-import * as mw from '../paima/middleware';
+// import * as mw from '../paima/middleware';
 
 /** GLOBAL UI GAME STATE */
 /** TODO MOVE INTO CLASS */
@@ -98,9 +98,9 @@ function clickOnItem(itemTile: Tile, game: Game) {
       itemNearbyTiles = game.getBuildingTiles(player);
     } else if (itemTile === itemTiles[ITEM.END_TURN]) {
       console.log('END TURN');
-      mw.default.submitMoves('123456789012', 0, ['test']).then(res => {
+      // mw.default.submitMoves('123456789012', 0, ['test']).then(res => {
         game.endTurn();
-      });
+      // });
     } else if (itemTile === itemTiles[ITEM.UNDO]) {
       console.log('UNDO');
       game.undo();

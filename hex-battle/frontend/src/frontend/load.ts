@@ -2,7 +2,8 @@
 import {Player, UnitType, BuildingType, Game} from '../engine';
 
 // TODO Loading Paima Middleware from pre-compiled js
-import * as mw from '../paima/middleware';
+// import * as mw from '../paima/middleware';
+import * as mw from '@paima/sdk/mw-core';
 
 export class ImageCache {
   constructor(private game: Game) {}
@@ -76,7 +77,8 @@ function loadFont() {
 // Preloads assets and shows loading screen
 export async function firstLoad(game: Game) {
   await loadFont();
-  await mw.default.userWalletLogin('metamask', false);
+  await mw.paimaEndpoints.userWalletLogin('metamask', false);
+  // await mw.default.userWalletLogin('metamask', false);
 
   const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
