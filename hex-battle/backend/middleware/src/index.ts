@@ -16,6 +16,8 @@ import { gameBackendVersion, GAME_NAME } from '@hexbattle/utils';
 
 import { queryEndpoints } from './endpoints/queries';
 import { writeEndpoints } from './endpoints/write';
+import prando from '@paima/sdk/prando';
+import { ENV } from '@paima/sdk/utils';
 
 initMiddlewareCore(GAME_NAME, gameBackendVersion);
 
@@ -25,7 +27,6 @@ const endpoints = {
   ...writeEndpoints,
 };
 
-export * from './types';
 export {
   userWalletLoginWithoutChecks,
   cardanoWalletLoginEndpoint,
@@ -36,6 +37,8 @@ export {
   switchToAutomaticMode,
   updateBackendUri,
   getRemoteBackendVersion,
+  prando,
+  ENV,
 };
 
 export default endpoints;

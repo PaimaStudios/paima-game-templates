@@ -3,3 +3,4 @@
 /build
 .DS_Store
 upload.sh
+/site/bundle*.js

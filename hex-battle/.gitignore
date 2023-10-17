@@ -42,3 +42,11 @@ engineCorePacked.js
 paima-engine
 paima-engine-mac
 paima-engine-linux
+
+production/
+contracts/
+frontend/site/bundle.js.LICENSE.txt
+frontend/patch.front.js
+frontend/stats.json
+upload.sh
+packaged/

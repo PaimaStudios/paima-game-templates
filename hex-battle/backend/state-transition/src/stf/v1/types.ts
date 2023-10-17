@@ -1,6 +1,3 @@
-// import type { ConciseResult } from '@hexbattle/utils';
-import type { WalletAddress } from '@paima/sdk/utils';
-
 export type ParsedSubmittedInput =
   | CreateLobbyInput
   | JoinLobbyInput
@@ -15,6 +12,14 @@ export interface InvalidInput {
 export interface CreateLobbyInput {
   input: 'createLobby';
   numOfPlayers: number;
+  units: string; // A, B, C, D
+  buildings: string; // b, F, T, t
+  gold: number;
+  initTiles: number;
+  map: string;
+  timeLimit: number;
+  roundLimit: number;
+
 }
 export interface JoinLobbyInput {
   input: 'joinLobby';
@@ -27,6 +32,7 @@ export interface SurrenderInput {
 export interface ZombieScheduledInput {
   input: 'zombieScheduledData';
   lobbyID: string;
+  roundNumber: number;
 }
 export interface SubmitMovesInput {
   input: 'submitMoves';
@@ -34,65 +40,3 @@ export interface SubmitMovesInput {
   roundNumber: number;
   move: string[]; // this is a complex object
 }
-
-// export interface CreatedLobbyInput {
-//   input: 'createdLobby';
-//   numOfRounds: number;
-//   roundLength: number;
-//   playTimePerPlayer: number;
-//   isHidden: boolean;
-//   isPractice: boolean;
-//   botDifficulty: number;
-//   playerOneIsWhite: boolean;
-// }
-
-// export interface JoinedLobbyInput {
-//   input: 'joinedLobby';
-//   lobbyID: string;
-// }
-
-// export interface ClosedLobbyInput {
-//   input: 'closedLobby';
-//   lobbyID: string;
-// }
-
-// export interface SubmittedMovesInput {
-//   input: 'submittedMoves';
-//   lobbyID: string;
-//   roundNumber: number;
-//   pgnMove: string;
-// }
-
-// export interface ScheduledDataInput {
-//   input: 'scheduledData';
-// }
-
-// export interface ZombieRound extends ScheduledDataInput {
-//   effect: 'zombie';
-//   lobbyID: string;
-// }
-
-// export interface UserStats extends ScheduledDataInput {
-//   effect: 'stats';
-//   user: WalletAddress;
-//   result: ConciseResult;
-//   ratingChange: number;
-// }
-
-// export interface BotMove extends ScheduledDataInput {
-//   effect: 'move';
-//   lobbyID: string;
-//   roundNumber: number;
-// }
-
-// export function isZombieRound(input: ScheduledDataInput): input is ZombieRound {
-//   return (input as ZombieRound).effect === 'zombie';
-// }
-
-// export function isUserStats(input: ScheduledDataInput): input is UserStats {
-//   return (input as UserStats).effect === 'stats';
-// }
-
-// export function isBotMove(input: ScheduledDataInput): input is BotMove {
-//   return (input as BotMove).effect === 'move';
-// }

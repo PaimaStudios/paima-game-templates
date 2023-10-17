@@ -6,22 +6,336 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"Response": {
+			"IGetMovesForRoundResult": {
+				"description": "'GetMovesForRound' return type",
 				"properties": {
-					"state": {
-						"properties": {
-							"wallet": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"wallet"
-						],
-						"type": "object"
+					"block_height": {
+						"type": "number",
+						"format": "double"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"lobby_id": {
+						"type": "string"
+					},
+					"move": {
+						"type": "string"
+					},
+					"round": {
+						"type": "number",
+						"format": "double"
+					},
+					"wallet": {
+						"type": "string"
 					}
 				},
 				"required": [
-					"state"
+					"block_height",
+					"id",
+					"lobby_id",
+					"move",
+					"round",
+					"wallet"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetOpenLobbiesResult": {
+				"description": "'GetOpenLobbies' return type",
+				"properties": {
+					"buildings": {
+						"type": "string",
+						"nullable": true
+					},
+					"gold": {
+						"type": "number",
+						"format": "double"
+					},
+					"init_tiles": {
+						"type": "number",
+						"format": "double"
+					},
+					"lobby_creator": {
+						"type": "string"
+					},
+					"lobby_id": {
+						"type": "string"
+					},
+					"lobby_state": {
+						"type": "string",
+						"nullable": true
+					},
+					"num_of_players": {
+						"type": "number",
+						"format": "double"
+					},
+					"round_limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"time_limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"units": {
+						"type": "string",
+						"nullable": true
+					}
+				},
+				"required": [
+					"buildings",
+					"gold",
+					"init_tiles",
+					"lobby_creator",
+					"lobby_id",
+					"lobby_state",
+					"num_of_players",
+					"round_limit",
+					"time_limit",
+					"units"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetMyActiveLobbiesResult": {
+				"description": "'GetMyActiveLobbies' return type",
+				"properties": {
+					"buildings": {
+						"type": "string",
+						"nullable": true
+					},
+					"current_round": {
+						"type": "number",
+						"format": "double"
+					},
+					"gold": {
+						"type": "number",
+						"format": "double"
+					},
+					"init_tiles": {
+						"type": "number",
+						"format": "double"
+					},
+					"lobby_creator": {
+						"type": "string"
+					},
+					"lobby_id": {
+						"type": "string"
+					},
+					"lobby_state": {
+						"type": "string",
+						"nullable": true
+					},
+					"num_of_players": {
+						"type": "number",
+						"format": "double"
+					},
+					"round_limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"time_limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"units": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"buildings",
+					"current_round",
+					"gold",
+					"init_tiles",
+					"lobby_creator",
+					"lobby_id",
+					"lobby_state",
+					"num_of_players",
+					"round_limit",
+					"time_limit",
+					"units"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetLobbyMapResult": {
+				"description": "'GetLobbyMap' return type",
+				"properties": {
+					"lobby_id": {
+						"type": "string"
+					},
+					"map": {
+						"type": "string",
+						"nullable": true
+					}
+				},
+				"required": [
+					"lobby_id",
+					"map"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetLobbyLeanResult": {
+				"description": "'GetLobbyLean' return type",
+				"properties": {
+					"buildings": {
+						"type": "string",
+						"nullable": true
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"current_round": {
+						"type": "number",
+						"format": "double"
+					},
+					"game_winner": {
+						"type": "string",
+						"nullable": true
+					},
+					"gold": {
+						"type": "number",
+						"format": "double"
+					},
+					"init_tiles": {
+						"type": "number",
+						"format": "double"
+					},
+					"lobby_creator": {
+						"type": "string"
+					},
+					"lobby_id": {
+						"type": "string"
+					},
+					"lobby_state": {
+						"type": "string",
+						"nullable": true
+					},
+					"num_of_players": {
+						"type": "number",
+						"format": "double"
+					},
+					"round_limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"time_limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"units": {
+						"type": "string",
+						"nullable": true
+					}
+				},
+				"required": [
+					"buildings",
+					"created_at",
+					"current_round",
+					"game_winner",
+					"gold",
+					"init_tiles",
+					"lobby_creator",
+					"lobby_id",
+					"lobby_state",
+					"num_of_players",
+					"round_limit",
+					"time_limit",
+					"units"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetLobbyPlayersResult": {
+				"description": "'GetLobbyPlayers' return type",
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"lobby_id": {
+						"type": "string"
+					},
+					"player_wallet": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"lobby_id",
+					"player_wallet"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetLobbyRoundsResult": {
+				"description": "'GetLobbyRounds' return type",
+				"properties": {
+					"block_height": {
+						"type": "number",
+						"format": "double"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"lobby_id": {
+						"type": "string"
+					},
+					"move": {
+						"type": "string"
+					},
+					"round": {
+						"type": "number",
+						"format": "double"
+					},
+					"wallet": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"block_height",
+					"id",
+					"lobby_id",
+					"move",
+					"round",
+					"wallet"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetLatestCreatedLobbyResult": {
+				"description": "'GetLatestCreatedLobby' return type",
+				"properties": {
+					"current_round": {
+						"type": "number",
+						"format": "double"
+					},
+					"lobby_creator": {
+						"type": "string"
+					},
+					"lobby_id": {
+						"type": "string"
+					},
+					"lobby_state": {
+						"type": "string",
+						"nullable": true
+					},
+					"num_of_players": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"current_round",
+					"lobby_creator",
+					"lobby_id",
+					"lobby_state",
+					"num_of_players"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -40,16 +354,233 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
-		"/user_state": {
+		"/game/move": {
 			"get": {
-				"operationId": "Get",
+				"operationId": "GetMoveForRound",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Response"
+									"properties": {
+										"move": {
+											"$ref": "#/components/schemas/IGetMovesForRoundResult"
+										}
+									},
+									"required": [
+										"move"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "lobby_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "round",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/lobby": {
+			"get": {
+				"operationId": "GetOpen",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"lobbies": {
+											"items": {
+												"$ref": "#/components/schemas/IGetOpenLobbiesResult"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"lobbies"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "wallet",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/lobby/my_games": {
+			"get": {
+				"operationId": "GetMyGames",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"lobbies": {
+											"items": {
+												"$ref": "#/components/schemas/IGetMyActiveLobbiesResult"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"lobbies"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "wallet",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/lobby/map": {
+			"get": {
+				"operationId": "GetLobbyMap",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"lobby": {
+											"$ref": "#/components/schemas/IGetLobbyMapResult"
+										}
+									},
+									"required": [
+										"lobby"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "lobby_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/lobby/id": {
+			"get": {
+				"operationId": "GetLobby",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"rounds": {
+											"items": {
+												"$ref": "#/components/schemas/IGetLobbyRoundsResult"
+											},
+											"type": "array"
+										},
+										"players": {
+											"items": {
+												"$ref": "#/components/schemas/IGetLobbyPlayersResult"
+											},
+											"type": "array"
+										},
+										"lobby": {
+											"$ref": "#/components/schemas/IGetLobbyLeanResult"
+										}
+									},
+									"required": [
+										"rounds",
+										"players",
+										"lobby"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "lobby_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/lobby/get_latest_created_lobby": {
+			"get": {
+				"operationId": "GetLatestCreatedLobby",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"lobby": {
+											"$ref": "#/components/schemas/IGetLatestCreatedLobbyResult"
+										}
+									},
+									"required": [
+										"lobby"
+									],
+									"type": "object"
 								}
 							}
 						}

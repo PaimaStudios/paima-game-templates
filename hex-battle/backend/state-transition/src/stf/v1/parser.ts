@@ -9,18 +9,51 @@ import type {
   SurrenderInput,
   ZombieScheduledInput,
 } from './types';
-// import { ENV } from '@paima/sdk/utils';
 
 const myGrammar = `
-  createLobby         = c|numOfPlayers
+  createLobby         = c|numOfPlayers|units|buildings|gold|initTiles|map|timeLimit|roundLimit
   joinLobby           = j|*lobbyID
   submitMoves         = m|*lobbyID|roundNumber|move
   surrender           = x|*lobbyID
-  zombieScheduledData = z|*lobbyID
+  zombieScheduledData = z|*lobbyID|roundNumber
 `;
 
 const createLobby: ParserRecord<CreateLobbyInput> = {
-  numOfPlayers: PaimaParser.NumberParser(2, 4),
+  numOfPlayers: PaimaParser.NumberParser(2, 5),
+  units: PaimaParser.RegexParser(/^[ABCD]*$/),
+  buildings: (_: string, input: string) => {
+    if (!input) throw new Error('Invalid buildings (I)');
+    if (!input.length) throw new Error('Invalid buildings (II)');
+    const buildings = input.split('');
+    const validBuildings = ['b', 'F', 'T', 't'];
+    let baseCount = 0;
+    buildings.forEach(b => {
+      if (!validBuildings.includes(b)) throw new Error('Invalid buildings (III)');
+      if (b === 'b') baseCount++;
+    });
+    if (baseCount !== 1) throw new Error('Invalid buildings (IV)');
+    return input;
+  },
+  gold: PaimaParser.NumberParser(0, 9999),
+  initTiles: PaimaParser.NumberParser(1, 100),
+  timeLimit: PaimaParser.NumberParser(10, 9999),
+  roundLimit: PaimaParser.NumberParser(10, 9999),
+  map: (_: string, input: string) => {
+    // map format q#r,q#r,q#r,...
+    if (!input) throw new Error('Invalid map');
+    const coords: { q: number; r: number; s: number }[] = input.split(',').map(part => {
+      const parts = part.split('#');
+      if (parts.length !== 2) throw new Error('Invalid coords');
+      const q = parseInt(parts[0], 10);
+      const r = parseInt(parts[1], 10);
+      if (String(q) !== parts[0]) throw new Error('Invalid value I ' + parts.join(' '));
+      if (String(r) !== parts[1]) throw new Error('Invalid value II ' + parts.join(' '));
+
+      return { q, r, s: -(q + r) };
+    });
+
+    return JSON.stringify(coords);
+  },
 };
 const joinLobby: ParserRecord<JoinLobbyInput> = {
   lobbyID: PaimaParser.NCharsParser(12, 12),
@@ -30,7 +63,7 @@ const surrender: ParserRecord<SurrenderInput> = {
 };
 const submitMoves: ParserRecord<SubmitMovesInput> = {
   lobbyID: PaimaParser.NCharsParser(12, 12),
-  roundNumber: PaimaParser.NumberParser(1, 10000),
+  roundNumber: PaimaParser.NumberParser(0, 9999),
   move: (_: string, input: string) => {
     const parts = input.split(',');
     // format1: [build_type][q_target]#[r_target]
@@ -46,13 +79,13 @@ const submitMoves: ParserRecord<SubmitMovesInput> = {
     //   Build Tower "t" | "T" {tower 1 or 2}
 
     return parts.map(part => {
-      const build = part.match(/^([ABCDFtT])(-?\d+)(-?\d+)$/);
+      const build = part.match(/^([ABCDFtT])(-?\d+)#(-?\d+)$/);
       if (build) {
         // is command to build unit or building at target
-        const targetQ = parseInt(build[1], 10);
-        const targetR = parseInt(build[2], 10);
+        const targetQ = parseInt(build[2], 10);
+        const targetR = parseInt(build[3], 10);
         const targetS = -(targetQ + targetR);
-        return JSON.stringify({ targetQ, targetR, targetS, build: build[0] });
+        return JSON.stringify({ targetQ, targetR, targetS, build: build[1] });
       }
 
       const move = part.match(/^(-?\d+)#(-?\d+)#(-?\d+)#(-?\d+)$/);
@@ -63,38 +96,17 @@ const submitMoves: ParserRecord<SubmitMovesInput> = {
         const originQ = parseInt(move[3], 10);
         const originR = parseInt(move[4], 10);
         const originS = -(originQ + originR);
-        JSON.stringify({ targetQ, targetR, targetS, originQ, originR, originS });
+        return JSON.stringify({ targetQ, targetR, targetS, originQ, originR, originS });
       }
       throw new Error(`Invalid move: ${part}`);
     });
   },
 };
-// const closedLobby: ParserRecord<ClosedLobbyInput> = {
-//   lobbyID: PaimaParser.NCharsParser(12, 12),
-// };
-// const submittedMoves: ParserRecord<SubmittedMovesInput> = {
-//   lobbyID: PaimaParser.NCharsParser(12, 12),
-//   roundNumber: PaimaParser.NumberParser(1, 10000),
-//   // PGN http://www.saremba.de/chessgml/standards/pgn/pgn-complete.htm
-//   // move validity checked by external library, out of scope for this parser.
-//   pgnMove: PaimaParser.NCharsParser(2, 255),
-// };
+
 const zombieScheduledData: ParserRecord<ZombieScheduledInput> = {
   lobbyID: PaimaParser.NCharsParser(12, 12),
+  roundNumber: PaimaParser.NumberParser(0, 9999),
 };
-// const userScheduledData: ParserRecord<UserStats> = {
-//   renameCommand: 'scheduledData',
-//   effect: 'stats',
-//   user: PaimaParser.WalletAddress(),
-//   result: PaimaParser.RegexParser(/^[w|t|l]$/),
-//   ratingChange: PaimaParser.NumberParser(),
-// };
-// const scheduledBotMove: ParserRecord<BotMove> = {
-//   renameCommand: 'scheduledData',
-//   effect: 'move',
-//   lobbyID: PaimaParser.NCharsParser(12, 12),
-//   roundNumber: PaimaParser.NumberParser(1, 10000),
-// };
 
 const parserCommands: Record<string, ParserRecord<ParsedSubmittedInput>> = {
   createLobby,

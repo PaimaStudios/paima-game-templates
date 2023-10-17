@@ -1,60 +1,13 @@
 import type { Pool } from 'pg';
-
 import parse from './parser.js';
 import type Prando from '@paima/sdk/prando';
 import type { SubmittedChainData } from '@paima/sdk/utils';
-
 import type { SQLUpdate } from '@paima/sdk/db';
 
-function createLobby(
-  user: string,
-  blockHeight: number,
-  parsed: any,
-  dbConn: Pool,
-  randomnessGenerator: Prando
-): SQLUpdate[] {
-  return [];
-}
-
-function joinLobby(
-  user: string,
-  blockHeight: number,
-  parsed: any,
-  dbConn: Pool,
-  randomnessGenerator: Prando
-): SQLUpdate[] {
-  return [];
-}
-
-function submitMoves(
-  user: string,
-  blockHeight: number,
-  parsed: any,
-  dbConn: Pool,
-  randomnessGenerator: Prando
-): SQLUpdate[] {
-  return [];
-}
-
-function surrender(
-  user: string,
-  blockHeight: number,
-  parsed: any,
-  dbConn: Pool,
-  randomnessGenerator: Prando
-): SQLUpdate[] {
-  return [];
-}
-
-function zombieScheduledData(
-  user: string,
-  blockHeight: number,
-  parsed: any,
-  dbConn: Pool,
-  randomnessGenerator: Prando
-): SQLUpdate[] {
-  return [];
-}
+import { submitMoves } from './submitMoves.js';
+import { createLobby } from './createLobby.js';
+import { joinLobby } from './joinLobby.js';
+import { zombieScheduledData } from './zombie.js';
 
 export default async function (
   inputData: SubmittedChainData,
@@ -70,19 +23,16 @@ export default async function (
 
   switch (parsed.input) {
     case 'createLobby':
-      return createLobby(user, blockHeight, parsed, dbConn, randomnessGenerator);
+      return await createLobby(user, blockHeight, parsed, dbConn, randomnessGenerator);
 
     case 'joinLobby':
-      return joinLobby(user, blockHeight, parsed, dbConn, randomnessGenerator);
+      return await joinLobby(user, blockHeight, parsed, dbConn, randomnessGenerator);
 
     case 'submitMoves':
-      return submitMoves(user, blockHeight, parsed, dbConn, randomnessGenerator);
-
-    case 'surrender':
-      return surrender(user, blockHeight, parsed, dbConn, randomnessGenerator);
+      return await submitMoves(user, blockHeight, parsed, dbConn, randomnessGenerator);
 
     case 'zombieScheduledData':
-      return zombieScheduledData(user, blockHeight, parsed, dbConn, randomnessGenerator);
+      return await zombieScheduledData(user, blockHeight, parsed, dbConn, randomnessGenerator);
 
     default:
       return [];

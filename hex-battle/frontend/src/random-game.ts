@@ -1,13 +1,19 @@
-import {AIPlayer} from './engine/player.ai';
-import {BuildingType, Building} from './engine/building';
-import {Game} from './engine/game';
-import {GameMap} from './engine/map';
-import {Player} from './engine/player.human';
-import {Tile} from './engine/tile';
-import {UnitType, Unit} from './engine/unit';
+import {
+  Game,
+  UnitType,
+  BuildingType,
+  GameMap,
+  Player,
+  AIPlayer,
+  Unit,
+  Building,
+  Tile,
+} from '@hexbattle/engine';
 
 export class RandomGame extends Game {
   constructor(
+    lobbyId: string,
+    localWallet: string,
     humanPlayers: number,
     AIPlayers: number,
     size: 'small' | 'medium' | 'large',
@@ -33,13 +39,13 @@ export class RandomGame extends Game {
       t.q += map.maxS;
       t.r -= map.maxS;
     });
-    map.updateLimits();
 
     mapB.tiles.forEach(t => {
       if (!map.tiles.find(x => x.same(t))) {
         map.tiles.push(t);
       }
     });
+    map.updateLimits();
 
     for (let i = map.tiles.length - 1; i >= 0; i -= 1) {
       if (Math.random() < glitch) {
@@ -53,7 +59,7 @@ export class RandomGame extends Game {
     const players = [
       ...new Array(humanPlayers)
         .fill(0)
-        .map((_, i) => new Player(playerIndex[i], initalGold)),
+        .map((_, i) => new Player(playerIndex[i], initalGold, playerIndex[i])),
       ...new Array(AIPlayers)
         .fill(0)
         .map((_, i) => new AIPlayer(playerIndex[humanPlayers + i], initalGold)),
@@ -102,13 +108,17 @@ export class RandomGame extends Game {
           const index = Math.floor(Math.random() * playerTiles.length);
           tile = playerTiles[index];
         }
-        const u = new Unit(player, type);
+        const u = new Unit(
+          player,
+          type,
+          Unit.generateUnitId(-1, tile.getCoordinates())
+        );
         u.canMove = true;
         tile.unit = u;
         units.push(u);
       }
     }
 
-    super(map, players);
+    super(lobbyId, map, players, localWallet, 0);
   }
 }

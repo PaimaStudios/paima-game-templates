@@ -1,33 +1,22 @@
-import {UnitType, BuildingType, AIPlayer} from './engine';
+import {loadFont} from './frontend/load_screen';
+import {LobbyScreen} from './frontend/lobby_screen';
+import {PreGameScreen} from './frontend/pregame_screen';
+import {StartupScreen} from './frontend/startup_screen';
 
-import {RandomGame} from './random-game';
-import {firstLoad} from './frontend/load';
-import {init, start} from './frontend/main_loop';
 (async () => {
-  // DEMO SETUP
-  const players = 1;
-  const AIPlayers = 4;
-  const initalNumberOfTitlesPerPlayer = 5;
-  const game = new RandomGame(
-    players,
-    AIPlayers,
-    'large',
-    [UnitType.UNIT_1, UnitType.UNIT_2],
-    [BuildingType.BASE, BuildingType.FARM],
-    initalNumberOfTitlesPerPlayer,
-    10,
-    0.24
-  );
+  console.log('Welcome to HexBattle!');
+  await loadFont();
 
-  // This shows loading screen and loads assets
-  await firstLoad(game);
-  await init(game);
-  await start(game);
-
-  if (game.turn === 0) {
-    const player = game.getCurrentPlayer();
-    if (player instanceof AIPlayer) {
-      setTimeout(() => player.randomMove(game), 1000);
-    }
+  // eslint-disable-next-line node/no-unsupported-features/node-builtins
+  const url = new URL(window.location.href);
+  if (url.searchParams.has('lobby')) {
+    const pregame_screen = new PreGameScreen(url.searchParams.get('lobby')!);
+    pregame_screen.start();
+  } else {
+    const startupScreen = new StartupScreen(() => {
+      const gameLobby = new LobbyScreen();
+      gameLobby.start();
+    });
+    startupScreen.start();
   }
 })();

@@ -1,363 +1,207 @@
-// import type { FailedResult, Result } from '@paima/sdk/mw-core';
-// import { PaimaMiddlewareErrorCode, getBlockNumber } from '@paima/sdk/mw-core';
-// import type { MatchExecutor, RoundExecutor } from '@paima/sdk/executors';
+import type { EndpointErrorFxn, FailedResult, Result } from '@paima/sdk/mw-core';
+import { PaimaMiddlewareErrorCode, getActiveAddress } from '@paima/sdk/mw-core';
+import { buildEndpointErrorFxn } from '../errors';
+import {
+  getLatestCreatedLobby as getLatestCreatedLobby_,
+  getLobby as getLobby_,
+  getMoves,
+  getMyGames as getMyGames_,
+  getOpenLobbies as getOpenLobbies_,
+  getLobbyMap as getLobbyMap_,
+} from '../helpers/query-constructors';
 
-// import type {
-//   MatchWinnerResponse,
-//   MatchExecutorData,
-//   RoundExecutorData,
-//   RoundStatusData,
-//   UserStats,
-//   LobbyState,
-//   LobbyStateQuery,
-//   UserLobby,
-// } from '@hexbattle/utils';
+const getUserWallet = (wallet: string | null, errorFxn: EndpointErrorFxn): Result<string> => {
+  if (wallet) return { success: true, result: wallet };
+  try {
+    const _wallet = getActiveAddress();
+    if (_wallet.length === 0) {
+      return errorFxn(PaimaMiddlewareErrorCode.WALLET_NOT_CONNECTED);
+    }
+    return { success: true, result: _wallet };
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.INTERNAL_INVALID_POSTING_MODE, err);
+  }
+};
 
-// import { buildEndpointErrorFxn, MiddlewareErrorCode } from '../errors';
-// import { getRawLobbyState, getRawNewLobbies } from '../helpers/auxiliary-queries';
-// import { calculateRoundEnd } from '../helpers/utility-functions';
-// import { buildMatchExecutor, buildRoundExecutor } from '../helpers/executors';
-// import {
-//   backendQueryMatchExecutor,
-//   backendQueryMatchWinner,
-//   backendQueryOpenLobbies,
-//   backendQueryRandomLobby,
-//   backendQueryRoundExecutor,
-//   backendQueryRoundStatus,
-//   backendQuerySearchLobby,
-//   backendQueryUserLobbies,
-//   backendQueryUserStats,
-// } from '../helpers/query-constructors';
-// import type {
-//   LobbyStates,
-//   NewLobbies,
-//   PackedLobbyState,
-//   PackedRoundExecutionState,
-//   PackedUserLobbies,
-//   PackedUserStats,
-// } from '../types';
-// import type { MatchState, TickEvent } from '@hexbattle/game-logic';
-// import { isPlayersTurn } from '@hexbattle/game-logic';
+export async function getLobby(
+  lobbyId: string
+): Promise<FailedResult | { success: true; data: Object }> {
+  const errorFxn = buildEndpointErrorFxn('get_lobby_by_id');
 
-// async function getLobbyState(lobbyID: string): Promise<PackedLobbyState | FailedResult> {
-//   const errorFxn = buildEndpointErrorFxn('getLobbyState');
+  const query = getUserWallet(null, errorFxn);
+  if (!query.success) return query;
+  const userWalletAddress = query.result;
 
-//   let packedLobbyState: PackedLobbyState | FailedResult;
-//   let latestBlockHeight: number;
+  let res: Response;
+  try {
+    const query = getLobby_(lobbyId);
+    res = await fetch(query);
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
+  }
 
-//   try {
-//     [packedLobbyState, latestBlockHeight] = await Promise.all([
-//       getRawLobbyState(lobbyID),
-//       getBlockNumber(),
-//     ]);
+  try {
+    const j = await res.json();
+    return {
+      success: true,
+      data: j, // lobby {}, players:[], rounds:[]
+    };
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
+  }
+}
 
-//     if (!packedLobbyState.success) {
-//       return errorFxn(packedLobbyState.errorMessage);
-//     }
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
-//   }
+export async function getLobbyMap(
+  lobbyId: string
+): Promise<FailedResult | { success: true; data: Object }> {
+  const errorFxn = buildEndpointErrorFxn('get_lobby_by_id');
 
-//   try {
-//     const { lobby } = packedLobbyState;
-//     let [start, length] = [0, 0];
+  const query = getUserWallet(null, errorFxn);
+  if (!query.success) return query;
+  const userWalletAddress = query.result;
 
-//     if (lobby.lobby_state === 'active') {
-//       start = lobby.round_start_height;
-//       length = lobby.round_length;
-//     }
+  let res: Response;
+  try {
+    const query = getLobbyMap_(lobbyId);
+    res = await fetch(query);
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
+  }
 
-//     const end = calculateRoundEnd(start, length, latestBlockHeight);
+  try {
+    const j = await res.json();
+    return {
+      success: true,
+      data: j, // lobby {}, players:[], rounds:[]
+    };
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
+  }
+}
 
-//     return {
-//       success: true,
-//       lobby: {
-//         ...lobby,
-//         round_ends_in_blocks: end.blocks,
-//         round_ends_in_secs: end.seconds,
-//       },
-//     };
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
-//   }
-// }
+export async function getLatestCreatedLobby(
+  wallet: string | null = null
+): Promise<FailedResult | { success: true; data: any }> {
+  const errorFxn = buildEndpointErrorFxn('get_latest_created_lobby');
 
-// async function getLobbySearch(
-//   wallet: string,
-//   searchQuery: string,
-//   page: number,
-//   count?: number
-// ): Promise<LobbyStates | FailedResult> {
-//   const errorFxn = buildEndpointErrorFxn('getLobbySearch');
+  const query = getUserWallet(wallet, errorFxn);
+  if (!query.success) return query;
+  const userWalletAddress = query.result;
 
-//   let response: Response;
-//   try {
-//     const query = backendQuerySearchLobby(wallet, searchQuery, page, count);
-//     response = await fetch(query);
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
-//   }
+  let res: Response;
+  try {
+    const query = getLatestCreatedLobby_(userWalletAddress);
+    res = await fetch(query);
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
+  }
 
-//   try {
-//     const j = (await response.json()) as { lobbies: LobbyStateQuery[] };
-//     return {
-//       success: true,
-//       lobbies: j.lobbies,
-//     };
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
-//   }
-// }
+  try {
+    const j = await res.json();
+    return {
+      success: true,
+      data: j.lobby,
+    };
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
+  }
+}
 
-// async function getRoundExecutionState(
-//   lobbyID: string,
-//   round: number
-// ): Promise<PackedRoundExecutionState | FailedResult> {
-//   const errorFxn = buildEndpointErrorFxn('getRoundExecutionState');
+export async function getMoveForRound(
+  lobby_id: string,
+  round: number
+): Promise<FailedResult | { success: true; data: any }> {
+  const errorFxn = buildEndpointErrorFxn('get_latest_created_lobby');
 
-//   let res: Response;
-//   let latestBlockHeight: number;
+  const query = getUserWallet(null, errorFxn);
+  if (!query.success) return query;
+  const userWalletAddress = query.result;
 
-//   try {
-//     const query = backendQueryRoundStatus(lobbyID, round);
-//     [res, latestBlockHeight] = await Promise.all([fetch(query), getBlockNumber()]);
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
-//   }
+  let res: Response;
+  try {
+    const query = getMoves(lobby_id, round);
+    res = await fetch(query);
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
+  }
 
-//   try {
-//     const roundStatus = (await res.json()) as RoundStatusData;
+  try {
+    const j = await res.json();
+    return {
+      success: true,
+      data: j.move,
+    };
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
+  }
+}
 
-//     const { roundStarted: start, roundLength: length } = roundStatus;
-//     const end = calculateRoundEnd(start, length, latestBlockHeight);
-//     return {
-//       success: true,
-//       round: {
-//         executed: roundStatus.executed,
-//         usersWhoSubmittedMoves: roundStatus.usersWhoSubmittedMoves,
-//         roundEndsInBlocks: end.blocks,
-//         roundEndsInSeconds: end.seconds,
-//       },
-//     };
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
-//   }
-// }
+export async function getOpenLobbies(
+  page: number = 1,
+  count: number = 100,
+  wallet: string | null = null
+): Promise<FailedResult | { success: true; data: any[] }> {
+  const errorFxn = buildEndpointErrorFxn('getOpenLobbies');
 
-// async function getUserStats(walletAddress: string): Promise<PackedUserStats | FailedResult> {
-//   const errorFxn = buildEndpointErrorFxn('getUserStats');
+  const query = getUserWallet(wallet, errorFxn);
+  if (!query.success) return query;
+  const userWalletAddress = query.result;
 
-//   let res: Response;
-//   try {
-//     const query = backendQueryUserStats(walletAddress);
-//     res = await fetch(query);
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
-//   }
+  let res: Response;
+  try {
+    const query = getOpenLobbies_(userWalletAddress, count, page);
+    res = await fetch(query);
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
+  }
 
-//   try {
-//     const j = (await res.json()) as { stats: UserStats; rank: number };
-//     return {
-//       success: true,
-//       stats: j.stats,
-//       rank: j.rank,
-//     };
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
-//   }
-// }
+  try {
+    const j = await res.json();
+    return {
+      success: true,
+      data: j.lobbies,
+    };
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
+  }
+}
 
-// async function getNewLobbies(
-//   wallet: string,
-//   blockHeight: number
-// ): Promise<NewLobbies | FailedResult> {
-//   const errorFxn = buildEndpointErrorFxn('getNewLobbies');
-//   try {
-//     return getRawNewLobbies(wallet, blockHeight);
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.UNKNOWN, err);
-//   }
-// }
+export async function getMyGames(
+  page: number = 1,
+  count: number = 100,
+  wallet: string | null = null
+): Promise<FailedResult | { success: true; data: any[] }> {
+  const errorFxn = buildEndpointErrorFxn('getOpenLobbies');
 
-// async function getUserLobbiesMatches(
-//   walletAddress: string,
-//   page: number,
-//   count?: number
-// ): Promise<PackedUserLobbies | FailedResult> {
-//   const errorFxn = buildEndpointErrorFxn('getUserLobbiesMatches');
+  const query = getUserWallet(wallet, errorFxn);
+  if (!query.success) return query;
+  const userWalletAddress = query.result;
 
-//   let res: Response;
-//   try {
-//     const query = backendQueryUserLobbies(walletAddress, count, page);
-//     res = await fetch(query);
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
-//   }
+  let res: Response;
+  try {
+    const query = getMyGames_(userWalletAddress, count, page);
+    res = await fetch(query);
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
+  }
 
-//   try {
-//     const j = (await res.json()) as { lobbies: UserLobby[] };
-//     return {
-//       success: true,
-//       lobbies: j.lobbies.map(lobby => ({
-//         ...lobby,
-//         myTurn: isPlayersTurn(walletAddress, lobby),
-//       })),
-//     };
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
-//   }
-// }
-
-// async function getOpenLobbies(
-//   wallet: string,
-//   page: number,
-//   count?: number
-// ): Promise<LobbyStates | FailedResult> {
-//   const errorFxn = buildEndpointErrorFxn('getOpenLobbies');
-
-//   let res: Response;
-//   try {
-//     const query = backendQueryOpenLobbies(wallet, count, page);
-//     res = await fetch(query);
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
-//   }
-
-//   try {
-//     const j = (await res.json()) as { lobbies: LobbyStateQuery[] };
-//     return {
-//       success: true,
-//       lobbies: j.lobbies,
-//     };
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
-//   }
-// }
-
-// async function getRandomOpenLobby(): Promise<PackedLobbyState | FailedResult> {
-//   const errorFxn = buildEndpointErrorFxn('getRandomOpenLobby');
-
-//   let res: Response;
-//   try {
-//     const query = backendQueryRandomLobby();
-//     res = await fetch(query);
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
-//   }
-
-//   try {
-//     const j = (await res.json()) as { lobby: LobbyState };
-//     if (j.lobby === null) {
-//       return errorFxn(MiddlewareErrorCode.NO_OPEN_LOBBIES);
-//     }
-//     return {
-//       success: true,
-//       lobby: j.lobby,
-//     };
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
-//   }
-// }
-
-// async function getMatchWinner(lobbyId: string): Promise<Result<MatchWinnerResponse>> {
-//   const errorFxn = buildEndpointErrorFxn('getMatchWinner');
-
-//   let res: Response;
-//   try {
-//     const query = backendQueryMatchWinner(lobbyId);
-//     res = await fetch(query);
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
-//   }
-
-//   try {
-//     const j = (await res.json()) as MatchWinnerResponse;
-//     return {
-//       success: true,
-//       result: j,
-//     };
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
-//   }
-// }
-
-// async function getRoundExecutor(
-//   lobbyId: string,
-//   roundNumber: number
-// ): Promise<Result<RoundExecutor<MatchState, TickEvent>>> {
-//   const errorFxn = buildEndpointErrorFxn('getRoundExecutor');
-
-//   // Retrieve data:
-//   let res: Response;
-//   try {
-//     const query = backendQueryRoundExecutor(lobbyId, roundNumber);
-//     res = await fetch(query);
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
-//   }
-
-//   let data: RoundExecutorData;
-//   try {
-//     data = (await res.json()) as RoundExecutorData;
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
-//   }
-
-//   // Process data:
-//   try {
-//     const executor = buildRoundExecutor(data, roundNumber);
-//     return {
-//       success: true,
-//       result: executor,
-//     };
-//   } catch (err) {
-//     return errorFxn(MiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR, err);
-//   }
-// }
-
-// async function getMatchExecutor(
-//   lobbyId: string
-// ): Promise<Result<MatchExecutor<MatchState, TickEvent>>> {
-//   const errorFxn = buildEndpointErrorFxn('getMatchExecutor');
-
-//   // Retrieve data:
-//   let res: Response;
-//   try {
-//     const query = backendQueryMatchExecutor(lobbyId);
-//     res = await fetch(query);
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
-//   }
-
-//   let data: MatchExecutorData;
-//   try {
-//     data = (await res.json()) as MatchExecutorData;
-//   } catch (err) {
-//     return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
-//   }
-
-//   // Process data:
-//   try {
-//     const executor = buildMatchExecutor(data);
-//     return {
-//       success: true,
-//       result: executor,
-//     };
-//   } catch (err) {
-//     return errorFxn(MiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR, err);
-//   }
-// }
+  try {
+    const j = await res.json();
+    return {
+      success: true,
+      data: j.lobbies,
+    };
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
+  }
+}
 
 export const queryEndpoints = {
-  // getUserStats,
-  // getLobbyState,
-  // getLobbySearch,
-  // getRoundExecutionState,
-  // getRandomOpenLobby,
-  // getOpenLobbies,
-  // getUserLobbiesMatches,
-  // getNewLobbies,
-  // getMatchWinner,
-  // getRoundExecutor,
-  // getMatchExecutor,
+  getLobby,
+  getLobbyMap,
+  getLatestCreatedLobby,
+  getOpenLobbies,
+  getMyGames,
+  getMoveForRound,
+  getUserWallet,
 };

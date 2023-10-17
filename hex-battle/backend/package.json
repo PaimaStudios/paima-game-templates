@@ -1,5 +1,5 @@
 {
-  "name": "@paima/chess",
+  "name": "@hexbattle/backend",
   "version": "1.0.0",
   "engines": {
     "node": ">=18.17"
