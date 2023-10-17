@@ -62,7 +62,10 @@ export class PreGameScreen extends BackgroundScreen {
   rounds: Round[] = [];
   map: QRSCoord[] = [];
 
-  constructor(private lobbyId: string) {
+  constructor(
+    private lobbyId: string,
+    private wallet: string | null
+  ) {
     super();
   }
 
@@ -285,7 +288,16 @@ export class PreGameScreen extends BackgroundScreen {
     // eslint-disable-next-line node/no-unsupported-features/node-builtins
     const url = new URL(window.location.href);
     if (!url.searchParams.has('lobby')) {
-      window.location.href = window.location.href + '?lobby=' + this.lobbyId;
+      window.location.href =
+        window.location.href +
+        '?lobby=' +
+        this.lobbyId +
+        '&wallet=' +
+        this.wallet;
+    }
+
+    if (this.wallet) {
+      await mw.default.userWalletLogin(this.wallet, false);
     }
 
     this.canvas.addEventListener('mousemove', this.mouse_hover_event);

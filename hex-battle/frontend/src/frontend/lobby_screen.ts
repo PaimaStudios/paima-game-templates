@@ -9,6 +9,7 @@ import {VERSION} from '../version';
 
 export class LobbyScreen extends BackgroundScreen {
   drawTimer: any = null;
+  wallet: string | null = null;
   private events: {
     coord: {x: number; y: number; width: number; height: number};
     cmd: string;
@@ -170,6 +171,7 @@ export class LobbyScreen extends BackgroundScreen {
     } catch (e) {
       (window as any).wallet_selection_show((options: {wallet: string}) => {
         mw.default.userWalletLogin(options.wallet, false).then(() => {
+          this.wallet = options.wallet;
           this.setToastMessage('Wallet Connected!');
         });
       });
@@ -197,7 +199,7 @@ export class LobbyScreen extends BackgroundScreen {
               // games.data = [{ lobby_id, lobby_state, current_round, num_of_players, lobby_creator }]
               (window as any).rejoin_lobby_show(games.data, (id: string) => {
                 this.stop();
-                new PreGameScreen(id).start();
+                new PreGameScreen(id, this.wallet).start();
               });
             })
             .finally(() => {
@@ -229,7 +231,7 @@ export class LobbyScreen extends BackgroundScreen {
                     .then(res => {
                       if (res.success) {
                         this.stop();
-                        new PreGameScreen(id).start();
+                        new PreGameScreen(id, this.wallet).start();
                       }
                     })
                     .finally(() => {
@@ -296,7 +298,8 @@ export class LobbyScreen extends BackgroundScreen {
                     if (response.success) {
                       this.stop();
                       new PreGameScreen(
-                        (response.data as any).lobby_id
+                        (response.data as any).lobby_id,
+                        this.wallet
                       ).start();
                     }
                   })

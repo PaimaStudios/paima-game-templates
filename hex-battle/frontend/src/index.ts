@@ -9,8 +9,11 @@ import {StartupScreen} from './frontend/startup_screen';
 
   // eslint-disable-next-line node/no-unsupported-features/node-builtins
   const url = new URL(window.location.href);
-  if (url.searchParams.has('lobby')) {
-    const pregame_screen = new PreGameScreen(url.searchParams.get('lobby')!);
+  if (url.searchParams.has('lobby') && url.searchParams.has('wallet')) {
+    const pregame_screen = new PreGameScreen(
+      url.searchParams.get('lobby')!,
+      url.searchParams.get('wallet')!
+    );
     pregame_screen.start();
   } else {
     const startupScreen = new StartupScreen(() => {
