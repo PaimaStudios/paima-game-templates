@@ -9,7 +9,8 @@ import {VERSION} from '../version';
 
 export class LobbyScreen extends BackgroundScreen {
   drawTimer: any = null;
-  wallet: string | null = null;
+  walletName: string | null = null;
+  walletAddress: string | null = null;
   private events: {
     coord: {x: number; y: number; width: number; height: number};
     cmd: string;
@@ -157,28 +158,193 @@ export class LobbyScreen extends BackgroundScreen {
     this.DrawLoading();
   }
 
-  getMyWallet() {
+  getMyWallet(callback: () => void) {
     try {
-      const myWalletData = mw.default.getUserWallet(null, () => {
-        this.setIsLoading(false);
+      const response = mw.default.getUserWallet(null, () => {
         throw new Error('User wallet not found');
       });
-      if (!myWalletData.success) {
-        this.setIsLoading(false);
-        throw new Error('Local wallet not found');
+      if (!response.success) {
+        throw new Error('Could not connect wallet.');
       }
-      return myWalletData.result;
+      this.walletAddress = response.result || response.data;
+      return callback();
     } catch (e) {
       (window as any).wallet_selection_show((options: {wallet: string}) => {
-        mw.default.userWalletLogin(options.wallet, false).then(() => {
-          this.wallet = options.wallet;
-          this.setToastMessage('Wallet Connected!');
-        });
+        if (options.wallet) {
+          mw.default
+            .userWalletLogin(options.wallet, false)
+            .then((x: any) => {
+              if (x.success) {
+                this.walletName = options.wallet;
+                this.walletAddress = x.result.walletAddress;
+                this.setToastMessage('Wallet Connected!');
+                return callback();
+              } else {
+                this.setToastMessage('Could not connect wallet.');
+              }
+            })
+            .catch(e => {
+              console.log(e);
+              this.setToastMessage('Could not connect wallet.');
+            });
+        }
       });
 
       return null;
     }
   }
+
+  cmd_rejoin = () => {
+    if (this.getIsLoading()) return;
+    this.setIsLoading(true);
+    mw.default
+      .getMyGames()
+      .then(games => {
+        if (!games.success) throw new Error('failed to get games');
+        // games.data = [{ lobby_id, lobby_state, current_round, num_of_players, lobby_creator }]
+        (window as any).rejoin_lobby_show(games.data, (id: string) => {
+          this.stop();
+          // go to pregame_screen
+          window.location.replace(`/?lobby=${id}&wallet=${this.walletName}`);
+        });
+      })
+      .finally(() => {
+        this.setIsLoading(false);
+      });
+  };
+
+  cmd_join = () => {
+    if (this.getIsLoading()) return;
+    this.setIsLoading(true);
+    mw.default
+      .getOpenLobbies()
+      .then(lobbies => {
+        if (!lobbies.success) throw new Error('failed to get lobbies');
+        const joinableLobbies = lobbies.data || [];
+        if (!joinableLobbies.length) console.log('No lobbies');
+
+        (window as any).join_lobby_show(
+          joinableLobbies.filter(
+            (j: {lobby_creator: any}) => j.lobby_creator !== this.walletAddress
+          ),
+          (id: string) => {
+            if (this.getIsLoading()) return;
+            this.setIsLoading(true);
+            mw.default
+              .joinLobby(id)
+              .then(res => {
+                if (res.success) {
+                  this.stop();
+                  // go to pregame_screen
+                  window.location.replace(
+                    `/?lobby=${id}&wallet=${this.walletName}`
+                  );
+                }
+              })
+              .finally(() => {
+                this.setIsLoading(false);
+              });
+          }
+        );
+      })
+      .finally(() => {
+        this.setIsLoading(false);
+      });
+  };
+
+  cmd_create = () => {
+    if (this.getIsLoading()) return;
+    (window as any).new_game_options_show(
+      (options: {
+        number_of_players: string;
+        units: string;
+        gold: string;
+        map_size: 'small' | 'medium' | 'large';
+      }) => {
+        // We will only keep the map from this.
+        const game = new RandomGame(
+          'DUMMY-GAME',
+          'DUMMY-WALLET',
+          parseInt(options.number_of_players, 10),
+          0,
+          options.map_size,
+          Array(parseInt(options.units, 10)).fill(UnitType.UNIT_1),
+          [BuildingType.BASE],
+          Math.min(parseInt(options.units, 10) + 2, 4),
+          parseInt(options.gold, 10),
+          0.24
+        );
+
+        // eslint-disable-next-line no-async-promise-executor
+        const mapCoords = game.map.tiles.map(t => t.getCoordinates());
+        const numOfPlayers = parseInt(options.number_of_players, 10);
+        const units = Array(parseInt(options.units, 10))
+          .fill(UnitType.UNIT_1)
+          .join('');
+        const buildings = [BuildingType.BASE].join('');
+        const gold = parseInt(options.gold, 10);
+        const initTiles = Math.min(parseInt(options.units, 10) + 2, 4);
+        const map = mapCoords.map(({q, r, s}) => `${q}#${r}`);
+
+        if (this.getIsLoading()) return;
+        this.setIsLoading(true);
+        mw.default
+          .createLobby(numOfPlayers, units, buildings, gold, initTiles, map)
+          .then(response => {
+            if (response.success) {
+              this.stop();
+              const lobby = (response.data as any).lobby_id;
+              // go to prescreen
+              window.location.replace(
+                `/?lobby=${lobby}&wallet=${this.walletName}`
+              );
+            }
+          })
+          .finally(() => {
+            this.setIsLoading(false);
+          });
+      }
+    );
+  };
+
+  cmd_practice = () => {
+    if (this.getIsLoading()) return;
+    (window as any).practice_options_show(
+      (options: {
+        number_of_players: string;
+        units: string;
+        gold: string;
+        map_size: 'small' | 'medium' | 'large';
+      }) => {
+        const game = new RandomGame(
+          'PRACTICE',
+          'OFFLINE',
+          1,
+          parseInt(options.number_of_players, 10),
+          options.map_size,
+          Array(parseInt(options.units, 10)).fill(UnitType.UNIT_1),
+          [BuildingType.BASE],
+          Math.min(parseInt(options.units, 10) + 2, 4),
+          parseInt(options.gold, 10),
+          0.24
+        );
+
+        this.stop();
+
+        new LoadScreen(game).start().then(_ => {
+          new GameScreen(game, false).start();
+
+          // Launch game if first turn is not human.
+          if (game.turn === 0) {
+            const player = game.getCurrentPlayer();
+            if (player instanceof AIPlayer) {
+              setTimeout(() => player.randomMove(game), 1000);
+            }
+          }
+        });
+      }
+    );
+  };
 
   mouse_click_event = (evt: Event) => {
     const mousePos = this.getMousePos(evt);
@@ -187,168 +353,20 @@ export class LobbyScreen extends BackgroundScreen {
     );
     if (trigger) {
       switch (trigger.cmd) {
-        case 'REJOIN': {
-          const myWallet = this.getMyWallet();
-          if (!myWallet) return;
-          if (this.getIsLoading()) return;
-          this.setIsLoading(true);
-          mw.default
-            .getMyGames()
-            .then(games => {
-              if (!games.success) throw new Error('failed to get games');
-              // games.data = [{ lobby_id, lobby_state, current_round, num_of_players, lobby_creator }]
-              (window as any).rejoin_lobby_show(games.data, (id: string) => {
-                this.stop();
-                new PreGameScreen(id, this.wallet).start();
-              });
-            })
-            .finally(() => {
-              this.setIsLoading(false);
-            });
+        case 'REJOIN':
+          this.getMyWallet(this.cmd_rejoin);
           break;
-        }
-        case 'JOIN': {
-          const myWallet = this.getMyWallet();
-          if (!myWallet) return;
-          if (this.getIsLoading()) return;
-          this.setIsLoading(true);
-          mw.default
-            .getOpenLobbies()
-            .then(lobbies => {
-              if (!lobbies.success) throw new Error('failed to get lobbies');
-              const joinableLobbies = lobbies.data || [];
-              if (!joinableLobbies.length) console.log('No lobbies');
 
-              (window as any).join_lobby_show(
-                joinableLobbies.filter(
-                  (j: {lobby_creator: any}) => j.lobby_creator !== myWallet
-                ),
-                (id: string) => {
-                  if (this.getIsLoading()) return;
-                  this.setIsLoading(true);
-                  mw.default
-                    .joinLobby(id)
-                    .then(res => {
-                      if (res.success) {
-                        this.stop();
-                        new PreGameScreen(id, this.wallet).start();
-                      }
-                    })
-                    .finally(() => {
-                      this.setIsLoading(false);
-                    });
-                }
-              );
-            })
-            .finally(() => {
-              this.setIsLoading(false);
-            });
-
+        case 'JOIN':
+          this.getMyWallet(this.cmd_join);
           break;
-        }
+
         case 'CREATE':
-          {
-            const myWallet = this.getMyWallet();
-            if (!myWallet) return;
-            if (this.getIsLoading()) return;
-            (window as any).new_game_options_show(
-              (options: {
-                number_of_players: string;
-                units: string;
-                gold: string;
-                map_size: 'small' | 'medium' | 'large';
-              }) => {
-                // We will only keep the map from this.
-                const game = new RandomGame(
-                  'DUMMY-GAME',
-                  'DUMMY-WALLET',
-                  parseInt(options.number_of_players, 10),
-                  0,
-                  options.map_size,
-                  Array(parseInt(options.units, 10)).fill(UnitType.UNIT_1),
-                  [BuildingType.BASE],
-                  Math.min(parseInt(options.units, 10) + 2, 4),
-                  parseInt(options.gold, 10),
-                  0.24
-                );
-
-                // eslint-disable-next-line no-async-promise-executor
-                const mapCoords = game.map.tiles.map(t => t.getCoordinates());
-                const numOfPlayers = parseInt(options.number_of_players, 10);
-                const units = Array(parseInt(options.units, 10))
-                  .fill(UnitType.UNIT_1)
-                  .join('');
-                const buildings = [BuildingType.BASE].join('');
-                const gold = parseInt(options.gold, 10);
-                const initTiles = Math.min(parseInt(options.units, 10) + 2, 4);
-                const map = mapCoords.map(({q, r, s}) => `${q}#${r}`);
-
-                if (this.getIsLoading()) return;
-                this.setIsLoading(true);
-                mw.default
-                  .createLobby(
-                    numOfPlayers,
-                    units,
-                    buildings,
-                    gold,
-                    initTiles,
-                    map
-                  )
-                  .then(response => {
-                    if (response.success) {
-                      this.stop();
-                      new PreGameScreen(
-                        (response.data as any).lobby_id,
-                        this.wallet
-                      ).start();
-                    }
-                  })
-                  .finally(() => {
-                    this.setIsLoading(false);
-                  });
-              }
-            );
-          }
+          this.getMyWallet(this.cmd_create);
           break;
 
         case 'PRACTICE': {
-          if (this.getIsLoading()) return;
-
-          (window as any).practice_options_show(
-            (options: {
-              number_of_players: string;
-              units: string;
-              gold: string;
-              map_size: 'small' | 'medium' | 'large';
-            }) => {
-              const game = new RandomGame(
-                'PRACTICE',
-                'OFFLINE',
-                1,
-                parseInt(options.number_of_players, 10),
-                options.map_size,
-                Array(parseInt(options.units, 10)).fill(UnitType.UNIT_1),
-                [BuildingType.BASE],
-                Math.min(parseInt(options.units, 10) + 2, 4),
-                parseInt(options.gold, 10),
-                0.24
-              );
-
-              this.stop();
-
-              new LoadScreen(game).start().then(_ => {
-                new GameScreen(game, false).start();
-
-                // Launch game if first turn is not human.
-                if (game.turn === 0) {
-                  const player = game.getCurrentPlayer();
-                  if (player instanceof AIPlayer) {
-                    setTimeout(() => player.randomMove(game), 1000);
-                  }
-                }
-              });
-            }
-          );
+          this.cmd_practice();
           break;
         }
       }

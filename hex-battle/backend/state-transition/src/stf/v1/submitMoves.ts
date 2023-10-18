@@ -62,35 +62,41 @@ export async function submitMoves(
     return [];
   }
 
-  const sql: SQLUpdate[] = [];
+  try {
+    const sql: SQLUpdate[] = [];
 
-  const roundParams: ICreateRoundParams = {
-    block_height: blockHeight,
-    lobby_id: parsed.lobbyID,
-    move: JSON.stringify(parsed.move),
-    round: parsed.roundNumber,
-    wallet: user,
-  };
-  sql.push([createRound, roundParams]);
-
-  const updateGameStateParams: IUpdateLobbyGameStateParams = {
-    lobby_id: parsed.lobbyID,
-    game_state: Game.export(game),
-    current_round: game.turn,
-  };
-  sql.push([updateLobbyGameState, updateGameStateParams]);
-
-  if (game.winner) {
-    const closedParams: IUpdateLobbyToClosedParams = {
+    const roundParams: ICreateRoundParams = {
+      block_height: blockHeight,
       lobby_id: parsed.lobbyID,
+      move: JSON.stringify(parsed.move),
+      round: parsed.roundNumber,
+      wallet: user,
     };
-    sql.push([updateLobbyToClosed, closedParams]);
-  } else {
-    sql.push(
-      createScheduledData(`z|*${lobby.lobby_id}|${game.turn}`, blockHeight + 120 / ENV.BLOCK_TIME)
-    );
+    sql.push([createRound, roundParams]);
+
+    const updateGameStateParams: IUpdateLobbyGameStateParams = {
+      lobby_id: parsed.lobbyID,
+      game_state: Game.export(game),
+      current_round: game.turn,
+    };
+    sql.push([updateLobbyGameState, updateGameStateParams]);
+
+    if (game.winner) {
+      const closedParams: IUpdateLobbyToClosedParams = {
+        lobby_id: parsed.lobbyID,
+      };
+      sql.push([updateLobbyToClosed, closedParams]);
+    } else {
+      sql.push(
+        createScheduledData(`z|*${lobby.lobby_id}|${game.turn}`, blockHeight + 120 / ENV.BLOCK_TIME)
+      );
+    }
+    return sql;
+  } catch (e) {
+    console.log('ERROR @ SUBMIT MOVES');
+    console.log(e);
+    return [];
   }
-  return sql;
 }
 
 const validateMovesAndApply = (

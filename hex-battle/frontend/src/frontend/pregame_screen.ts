@@ -64,7 +64,7 @@ export class PreGameScreen extends BackgroundScreen {
 
   constructor(
     private lobbyId: string,
-    private wallet: string | null
+    private walletName: string | null,
   ) {
     super();
   }
@@ -101,8 +101,9 @@ export class PreGameScreen extends BackgroundScreen {
       this.events.push({
         coord: {x: x_, y: y_, width: w, height: h},
         callback: () => {
-          navigator.clipboard.writeText(this.lobbyId);
-          this.setToastMessage('Lobby ID copied to clipboard');
+          const site = window.location.origin;
+          navigator.clipboard.writeText(`${site}?lobby=${this.lobbyId}`);
+          this.setToastMessage('Lobby URL copied to clipboard');
         },
       });
     }
@@ -225,6 +226,21 @@ export class PreGameScreen extends BackgroundScreen {
     }
   }
 
+  join() {
+    if (this.getIsLoading()) return;
+    this.setIsLoading(true);
+    mw.default
+      .joinLobby(this.lobbyId)
+      .then(res => {
+        if (res.success) {
+          location.reload();
+        }
+      })
+      .finally(() => {
+        this.setIsLoading(false);
+      });
+  }
+
   getMousePos(event: any) {
     const x = window.getComputedStyle(
       document.getElementsByClassName('container-zoom')[0]
@@ -287,17 +303,16 @@ export class PreGameScreen extends BackgroundScreen {
   async start() {
     // eslint-disable-next-line node/no-unsupported-features/node-builtins
     const url = new URL(window.location.href);
-    if (!url.searchParams.has('lobby')) {
-      window.location.href =
-        window.location.href +
-        '?lobby=' +
-        this.lobbyId +
-        '&wallet=' +
-        this.wallet;
+    const lobbyURL = url.searchParams.get('lobby') || '';
+    const walletName = url.searchParams.get('wallet') || '';
+    if (!lobbyURL) {
+      // this should never happen
+      window.location.replace('/');
     }
 
-    if (this.wallet) {
-      await mw.default.userWalletLogin(this.wallet, false);
+    if (walletName) {
+      const status = await mw.default.userWalletLogin(walletName, false);
+      console.log({ status });
     }
 
     this.canvas.addEventListener('mousemove', this.mouse_hover_event);
@@ -305,6 +320,21 @@ export class PreGameScreen extends BackgroundScreen {
     this.drawTimer = setInterval(() => this.DrawUI(), 33);
 
     await this.fetchLobby();
+
+    if (walletName) {
+      const localWallet = mw.default.getUserWallet(null, () => {
+        throw Error('No wallet');
+      });
+      const me = this.players.find(p => p.player_wallet === localWallet.result);
+      if (
+        !me &&
+        this.lobby &&
+        this.players.length < this.lobby.num_of_players
+      ) {
+        this.join();
+      }
+    }
+
     if (this.lobby?.lobby_state === 'active') {
       // do not start timer.
     } else {

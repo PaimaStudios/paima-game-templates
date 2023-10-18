@@ -56,74 +56,80 @@ export async function joinLobby(
 
   const returnSQL: SQLUpdate[] = [];
 
-  const addPlayerToLobbyParams: IAddPlayerToLobbyParams = {
-    lobby_id: parsed.lobbyID,
-    player_wallet: user,
-  };
-  const addPlayerToLobbySQL: SQLUpdate = [addPlayerToLobby, addPlayerToLobbyParams];
-  returnSQL.push(addPlayerToLobbySQL);
-
-  // last player joined
-  if (lobbyPlayers.length + 1 === lobby.num_of_players) {
-    // At first round create game.
-    /**
-     *  IMPORTANT
-     *  KEEP IN SYNC WITH pregame_screen.ts
-     */
-
-    // create new game
-    const initalGold = lobby!.gold;
-    const validIds = ['A', 'B', 'C', 'D', 'E'];
-    const tiles = JSON.parse(lobbyMap.map!)
-      .map((coord: { q: number; r: number; s: number }) => {
-        if (
-          coord.q !== parseInt(String(coord.q), 10) ||
-          coord.r !== parseInt(String(coord.r), 10) ||
-          coord.s !== parseInt(String(coord.s), 10)
-        ) {
-          console.log('WTF Invalid tile', coord);
-          return null;
-        }
-
-        return new Tile(coord.q, coord.r, coord.s);
-      })
-      .filter((x: Tile | null) => !!x);
-    const map = new GameMap(tiles);
-    map.updateLimits();
-    const players = [...lobbyPlayers, addPlayerToLobbyParams].map(
-      (p, i) => new Player(validIds[i], initalGold, p.player_wallet)
-    );
-
-    const game = new MapPlayerGame(
-      lobby.lobby_id,
-      user,
-      map,
-      players,
-      lobby.units!.split('') as UnitType[],
-      lobby.buildings!.split('') as BuildingType[],
-      lobby.init_tiles!,
-      blockHeight
-    );
-
-    const updateStateParams: IUpdateLobbyGameStateParams = {
-      current_round: 0,
-      game_state: Game.export(game) as any,
+  try {
+    const addPlayerToLobbyParams: IAddPlayerToLobbyParams = {
       lobby_id: parsed.lobbyID,
+      player_wallet: user,
     };
-    returnSQL.push([updateLobbyGameState, updateStateParams]);
+    const addPlayerToLobbySQL: SQLUpdate = [addPlayerToLobby, addPlayerToLobbyParams];
+    returnSQL.push(addPlayerToLobbySQL);
 
-    const update: IUpdateLobbyToActiveParams = {
-      lobby_id: parsed.lobbyID,
-      started_block_height: blockHeight,
-    };
-    returnSQL.push([updateLobbyToActive, update]);
+    // last player joined
+    if (lobbyPlayers.length + 1 === lobby.num_of_players) {
+      // At first round create game.
+      /**
+       *  IMPORTANT
+       *  KEEP IN SYNC WITH pregame_screen.ts
+       */
 
-    returnSQL.push(
-      createScheduledData(`z|*${lobby.lobby_id}|0`, blockHeight + 120 / ENV.BLOCK_TIME)
-    );
+      // create new game
+      const initalGold = lobby!.gold;
+      const validIds = ['A', 'B', 'C', 'D', 'E'];
+      const tiles = JSON.parse(lobbyMap.map!)
+        .map((coord: { q: number; r: number; s: number }) => {
+          if (
+            coord.q !== parseInt(String(coord.q), 10) ||
+            coord.r !== parseInt(String(coord.r), 10) ||
+            coord.s !== parseInt(String(coord.s), 10)
+          ) {
+            console.log('WTF Invalid tile', coord);
+            return null;
+          }
+
+          return new Tile(coord.q, coord.r, coord.s);
+        })
+        .filter((x: Tile | null) => !!x);
+      const map = new GameMap(tiles);
+      map.updateLimits();
+      const players = [...lobbyPlayers, addPlayerToLobbyParams].map(
+        (p, i) => new Player(validIds[i], initalGold, p.player_wallet)
+      );
+
+      const game = new MapPlayerGame(
+        lobby.lobby_id,
+        user,
+        map,
+        players,
+        lobby.units!.split('') as UnitType[],
+        lobby.buildings!.split('') as BuildingType[],
+        lobby.init_tiles!,
+        blockHeight
+      );
+
+      const updateStateParams: IUpdateLobbyGameStateParams = {
+        current_round: 0,
+        game_state: Game.export(game) as any,
+        lobby_id: parsed.lobbyID,
+      };
+      returnSQL.push([updateLobbyGameState, updateStateParams]);
+
+      const update: IUpdateLobbyToActiveParams = {
+        lobby_id: parsed.lobbyID,
+        started_block_height: blockHeight,
+      };
+      returnSQL.push([updateLobbyToActive, update]);
+
+      returnSQL.push(
+        createScheduledData(`z|*${lobby.lobby_id}|0`, blockHeight + 120 / ENV.BLOCK_TIME)
+      );
+    }
+
+    return returnSQL;
+  } catch (e) {
+    console.log('ERROR @ JOIN LOBBY');
+    console.log(e);
+    return [];
   }
-
-  return returnSQL;
 }
 
 class MapPlayerGame extends Game {
@@ -137,6 +143,7 @@ class MapPlayerGame extends Game {
     initalNumberOfTitlesPerPlayer: number,
     startBlockHeight: number
   ) {
+    let retries = 10000;
     const rand = new Prando(lobbyId);
     const players = _players
       .map(value => ({ value, sort: rand.nextInt(0, 10000) }))
@@ -149,6 +156,8 @@ class MapPlayerGame extends Game {
       let initialTile: Tile | undefined;
       while (!initialTile || initialTile.owner) {
         initialTile = map.tiles[rand.nextInt(0, map.tiles.length - 1)];
+        retries--;
+        if (retries < 0) throw new Error('Too many retries');
       }
       initialTile.owner = player;
 
@@ -161,6 +170,8 @@ class MapPlayerGame extends Game {
             playerTiles[rand.nextInt(0, playerTiles.length - 1)],
             rand.nextInt(0, 5)
           );
+          retries--;
+          if (retries < 0) throw new Error('Too many retries');
         }
         tile.owner = player;
         playerTiles.push(tile);
@@ -170,6 +181,8 @@ class MapPlayerGame extends Game {
         let tile: Tile | undefined;
         while (!tile || tile.building || tile.unit) {
           tile = playerTiles[rand.nextInt(0, playerTiles.length - 1)];
+          retries--;
+          if (retries < 0) throw new Error('Too many retries');
         }
         const b = new Building(player, type);
         tile.building = b;
@@ -180,6 +193,8 @@ class MapPlayerGame extends Game {
         let tile: Tile | undefined;
         while (!tile || tile.building || tile.unit) {
           tile = playerTiles[rand.nextInt(0, playerTiles.length - 1)];
+          retries--;
+          if (retries < 0) throw new Error('Too many retries');
         }
 
         const u = new Unit(player, type, Unit.generateUnitId(-1, tile.getCoordinates()));

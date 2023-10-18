@@ -4,3 +4,7 @@
 .DS_Store
 upload.sh
 /site/bundle*.js
+patch.front.js
+restore.front.js
+site/bundle.js.LICENSE.txt
+stats.json
