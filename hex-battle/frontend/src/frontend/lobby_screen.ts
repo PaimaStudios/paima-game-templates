@@ -6,6 +6,7 @@ import {GameScreen} from './game_screen';
 import {LoadScreen} from './load_screen';
 import {PreGameScreen} from './pregame_screen';
 import {VERSION} from '../version';
+import { RulesScreen } from './rules_screen';
 
 export class LobbyScreen extends BackgroundScreen {
   drawTimer: any = null;
@@ -145,6 +146,11 @@ export class LobbyScreen extends BackgroundScreen {
       this.canvas.width * 0.5,
       buttonTop + buttonMargin * 4
     );
+    const f = this.DrawButton(
+      'Tutorial',
+      this.canvas.width * 0.5,
+      buttonTop + buttonMargin * 5
+    );
 
     if (!this.events.length) {
       this.events.push({coord: a, cmd: 'JOIN'});
@@ -152,6 +158,7 @@ export class LobbyScreen extends BackgroundScreen {
       this.events.push({coord: c, cmd: 'PRACTICE'});
       this.events.push({coord: d, cmd: 'REJOIN'});
       this.events.push({coord: e, cmd: 'LEADERBOARD'});
+      this.events.push({coord: f, cmd: 'TUTORIAL'});
     }
   }
 
@@ -367,6 +374,15 @@ export class LobbyScreen extends BackgroundScreen {
       });
   };
 
+  cmd_tutorial = () => {
+    if (this.getIsLoading()) return;
+    const game = RulesScreen.Setup();
+    this.stop();
+    new LoadScreen(game).start().then(_ => {
+      new RulesScreen(game).start();
+    });
+  };
+
   mouse_click_event = (evt: Event) => {
     const mousePos = this.getMousePos(evt);
     const trigger = this.events.find(e =>
@@ -394,6 +410,10 @@ export class LobbyScreen extends BackgroundScreen {
         case 'LEADERBOARD': {
           this.getMyWallet(this.cmd_leaderboard);
           break;
+        }
+
+        case 'TUTORIAL': {
+          this.cmd_tutorial();
         }
       }
     }
