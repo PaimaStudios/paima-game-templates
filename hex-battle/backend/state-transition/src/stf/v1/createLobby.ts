@@ -1,5 +1,5 @@
-import type { ICreateLobbyParams, IAddPlayerToLobbyParams } from '@hexbattle/db';
-import { addPlayerToLobby } from '@hexbattle/db';
+import type { ICreateLobbyParams, IAddPlayerToLobbyParams, ICreatePlayerParams } from '@hexbattle/db';
+import { addPlayerToLobby, createPlayer, getPlayerByWallet } from '@hexbattle/db';
 import type { SQLUpdate } from '@paima/sdk/db';
 import type Prando from '@paima/sdk/prando';
 import type { WalletAddress } from '@paima/sdk/utils';
@@ -16,6 +16,8 @@ export async function createLobby(
 ): Promise<SQLUpdate[]> {
   const lobby_id = randomnessGenerator.nextString(12);
   const numOfPlayers = parsed.numOfPlayers;
+  const sql: SQLUpdate[] = [];
+
   const _createLobbyParams: ICreateLobbyParams = {
     created_at: new Date(),
     creation_block_height: blockHeight,
@@ -38,5 +40,19 @@ export async function createLobby(
 
   const createLobbySQL: SQLUpdate = [_createLobby, _createLobbyParams];
   const addPlayerToLobbySQL: SQLUpdate = [addPlayerToLobby, addPlayerToLobbyParams];
-  return [createLobbySQL, addPlayerToLobbySQL];
+  sql.push(createLobbySQL);
+  sql.push(addPlayerToLobbySQL);
+
+  // leaderboard
+  const [player] = await getPlayerByWallet.run({ wallet: user }, dbConn);
+  if (!player) {
+    const createPlayerParams: ICreatePlayerParams = {
+      block_height: blockHeight,
+      wallet: user,
+    };
+    const addPlayerToSQL: SQLUpdate = [createPlayer, createPlayerParams];
+    sql.push(addPlayerToSQL);
+  }
+
+  return sql;
 }

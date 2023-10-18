@@ -8,6 +8,10 @@ import {
   getMyGames as getMyGames_,
   getOpenLobbies as getOpenLobbies_,
   getLobbyMap as getLobbyMap_,
+  getLeaderboardByLatest,
+  getLeaderboardByWins,
+  getLeaderboardByPlayed,
+  isGameOver as isGameOver_,
 } from '../helpers/query-constructors';
 
 const getUserWallet = (wallet: string | null, errorFxn: EndpointErrorFxn): Result<string> => {
@@ -107,6 +111,35 @@ export async function getLatestCreatedLobby(
   }
 }
 
+export async function isGameOver(lobby_id: string) {
+  const errorFxn = buildEndpointErrorFxn('get_latest_created_lobby');
+
+  const query = getUserWallet(null, errorFxn);
+  if (!query.success) return query;
+  const userWalletAddress = query.result;
+
+  let res: Response;
+  try {
+    const query = isGameOver_(lobby_id);
+    res = await fetch(query);
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
+  }
+
+  try {
+    const j = await res.json();
+    return {
+      success: true,
+      data: {
+        isGameOver: j.isGameOver,
+        current_round: j.current_round,
+      },
+    };
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
+  }
+}
+
 export async function getMoveForRound(
   lobby_id: string,
   round: number
@@ -196,12 +229,48 @@ export async function getMyGames(
   }
 }
 
+export async function getLeaderBoard(
+  wallet: string | null = null,
+  type: 'latest' | 'wins' | 'played'
+): Promise<FailedResult | { success: true; data: any[] }> {
+  const errorFxn = buildEndpointErrorFxn('getOpenLobbies');
+
+  const query = getUserWallet(wallet, errorFxn);
+  if (!query.success) return query;
+  const userWalletAddress = query.result;
+
+  try {
+    let query_ = '';
+    switch (type) {
+      case 'latest':
+        query_ = getLeaderboardByLatest(userWalletAddress);
+        break;
+      case 'wins':
+        query_ = getLeaderboardByWins(userWalletAddress);
+        break;
+      case 'played':
+        query_ = getLeaderboardByPlayed(userWalletAddress);
+        break;
+    }
+    const res: Response = await fetch(query_);
+    const j = await res.json();
+    return {
+      success: true,
+      data: j.players,
+    };
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
+  }
+}
+
 export const queryEndpoints = {
   getLobby,
+  isGameOver,
   getLobbyMap,
   getLatestCreatedLobby,
   getOpenLobbies,
   getMyGames,
   getMoveForRound,
   getUserWallet,
+  getLeaderBoard,
 };

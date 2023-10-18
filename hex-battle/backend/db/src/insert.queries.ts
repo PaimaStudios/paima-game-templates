@@ -130,3 +130,30 @@ const createRoundIR: any = {"usedParamSet":{"lobby_id":true,"wallet":true,"move"
 export const createRound = new PreparedQuery<ICreateRoundParams,ICreateRoundResult>(createRoundIR);
 
 
+/** 'CreatePlayer' parameters type */
+export interface ICreatePlayerParams {
+  block_height: number;
+  wallet: string;
+}
+
+/** 'CreatePlayer' return type */
+export type ICreatePlayerResult = void;
+
+/** 'CreatePlayer' query type */
+export interface ICreatePlayerQuery {
+  params: ICreatePlayerParams;
+  result: ICreatePlayerResult;
+}
+
+const createPlayerIR: any = {"usedParamSet":{"wallet":true,"block_height":true},"params":[{"name":"wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":54,"b":61}]},{"name":"block_height","required":true,"transform":{"type":"scalar"},"locs":[{"a":64,"b":77}]}],"statement":"INSERT INTO player(wallet, last_block_height)\nVALUES (:wallet!, :block_height!)"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * INSERT INTO player(wallet, last_block_height)
+ * VALUES (:wallet!, :block_height!)
+ * ```
+ */
+export const createPlayer = new PreparedQuery<ICreatePlayerParams,ICreatePlayerResult>(createPlayerIR);
+
+

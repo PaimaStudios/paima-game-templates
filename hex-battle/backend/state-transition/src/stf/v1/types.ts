@@ -33,6 +33,7 @@ export interface ZombieScheduledInput {
   input: 'zombieScheduledData';
   lobbyID: string;
   roundNumber: number;
+  count: number;
 }
 export interface SubmitMovesInput {
   input: 'submitMoves';

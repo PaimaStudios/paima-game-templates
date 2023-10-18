@@ -1,6 +1,7 @@
 import type { Pool } from 'pg';
 import type {
   IAddPlayerToLobbyParams,
+  ICreatePlayerParams,
   IUpdateLobbyGameStateParams,
   IUpdateLobbyToActiveParams,
 } from '@hexbattle/db';
@@ -11,6 +12,8 @@ import {
   updateLobbyToActive,
   updateLobbyGameState,
   getLobbyMap,
+  createPlayer,
+  getPlayerByWallet,
 } from '@hexbattle/db';
 import { createScheduledData, type SQLUpdate } from '@paima/sdk/db';
 import Prando from '@paima/sdk/prando';
@@ -119,9 +122,24 @@ export async function joinLobby(
       };
       returnSQL.push([updateLobbyToActive, update]);
 
-      returnSQL.push(
-        createScheduledData(`z|*${lobby.lobby_id}|0`, blockHeight + 120 / ENV.BLOCK_TIME)
-      );
+      // Create next zombie scheduled data
+      const lobbyId = lobby.lobby_id;
+      const turn = 0;
+      const count = 0;
+      const time = blockHeight + 120 / ENV.BLOCK_TIME;
+
+      returnSQL.push(createScheduledData(`z|*${lobbyId}|${turn}|${count}`, time));
+    }
+
+    // leaderboard
+    const [player] = await getPlayerByWallet.run({ wallet: user }, dbConn);
+    if (!player) {
+      const createPlayerParams: ICreatePlayerParams = {
+        block_height: blockHeight,
+        wallet: user,
+      };
+      const addPlayerToSQL: SQLUpdate = [createPlayer, createPlayerParams];
+      returnSQL.push(addPlayerToSQL);
     }
 
     return returnSQL;

@@ -35,5 +35,16 @@ CREATE TABLE round (
     round INTEGER NOT NULL,
     block_height INTEGER NOT NULL,
     PRIMARY KEY (lobby_id, id)
-
 );
+
+CREATE TABLE player (
+    wallet TEXT NOT NULL PRIMARY KEY,
+    wins INTEGER NOT NULL DEFAULT 0,
+    losses INTEGER NOT NULL DEFAULT 0,
+    draws INTEGER NOT NULL DEFAULT 0,
+    played_games INTEGER NOT NULL DEFAULT 0,
+    last_block_height INTEGER NOT NULL
+);
+CREATE INDEX ON player (last_block_height);
+CREATE INDEX ON player (played_games);
+CREATE INDEX ON player (wins);

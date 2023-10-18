@@ -27,12 +27,14 @@ declare const endpoints: {
         };
     }>;
     getLobby: typeof import("./endpoints/queries").getLobby;
+    isGameOver: typeof import("./endpoints/queries").isGameOver;
     getLobbyMap: typeof import("./endpoints/queries").getLobbyMap;
     getLatestCreatedLobby: typeof import("./endpoints/queries").getLatestCreatedLobby;
     getOpenLobbies: typeof import("./endpoints/queries").getOpenLobbies;
     getMyGames: typeof import("./endpoints/queries").getMyGames;
     getMoveForRound: typeof import("./endpoints/queries").getMoveForRound;
     getUserWallet: (wallet: string | null, errorFxn: import("@paima/sdk/mw-core").EndpointErrorFxn) => import("@paima/sdk/mw-core").Result<string>;
+    getLeaderBoard: typeof import("./endpoints/queries").getLeaderBoard;
     exportLogs: () => string;
     pushLog: (message: any, ...optionalParams: any[]) => void;
     getLatestProcessedBlockHeight: () => Promise<import("@paima/sdk/mw-core").Result<number>>;

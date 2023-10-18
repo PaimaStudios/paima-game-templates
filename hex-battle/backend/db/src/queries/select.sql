@@ -20,6 +20,11 @@ AND (LL.lobby_state = 'active' OR LL.lobby_state = 'open')
 ORDER BY created_at DESC
 ;
 
+/* @name getGameState */
+SELECT lobby_state, current_round FROM lobby
+WHERE lobby_id = :lobby_id!
+;
+
 /* @name getOpenLobbies */
 SELECT 
     lobby_creator,
@@ -88,4 +93,30 @@ SELECT * FROM round
 WHERE lobby_id = :lobby_id!
 AND round = :round!
 LIMIT 1
+;
+
+/* @name getPlayerByWallet */
+SELECT * FROM player 
+WHERE wallet = :wallet!
+;
+
+/* @name getPlayersByGamesPlayed */
+SELECT * FROM player 
+ORDER BY played_games DESC
+LIMIT :limit!
+OFFSET :offset!
+;
+
+/* @name getPlayersByLatest */
+SELECT * FROM player 
+ORDER BY last_block_height DESC
+LIMIT :limit!
+OFFSET :offset!
+;
+
+/* @name getPlayersByWins */
+SELECT * FROM player
+ORDER BY wins DESC
+LIMIT :limit!
+OFFSET :offset!
 ;

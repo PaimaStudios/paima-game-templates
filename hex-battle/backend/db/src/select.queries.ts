@@ -1,6 +1,8 @@
 /** Types generated for queries found in "src/queries/select.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
+export type NumberOrString = number | string;
+
 /** 'GetMyActiveLobbies' parameters type */
 export interface IGetMyActiveLobbiesParams {
   player_wallet: string;
@@ -55,6 +57,35 @@ const getMyActiveLobbiesIR: any = {"usedParamSet":{"player_wallet":true},"params
  * ```
  */
 export const getMyActiveLobbies = new PreparedQuery<IGetMyActiveLobbiesParams,IGetMyActiveLobbiesResult>(getMyActiveLobbiesIR);
+
+
+/** 'GetGameState' parameters type */
+export interface IGetGameStateParams {
+  lobby_id: string;
+}
+
+/** 'GetGameState' return type */
+export interface IGetGameStateResult {
+  current_round: number;
+  lobby_state: string | null;
+}
+
+/** 'GetGameState' query type */
+export interface IGetGameStateQuery {
+  params: IGetGameStateParams;
+  result: IGetGameStateResult;
+}
+
+const getGameStateIR: any = {"usedParamSet":{"lobby_id":true},"params":[{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":62,"b":71}]}],"statement":"SELECT lobby_state, current_round FROM lobby\nWHERE lobby_id = :lobby_id!"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * SELECT lobby_state, current_round FROM lobby
+ * WHERE lobby_id = :lobby_id!
+ * ```
+ */
+export const getGameState = new PreparedQuery<IGetGameStateParams,IGetGameStateResult>(getGameStateIR);
 
 
 /** 'GetOpenLobbies' parameters type */
@@ -375,5 +406,146 @@ const getMovesForRoundIR: any = {"usedParamSet":{"lobby_id":true,"round":true},"
  * ```
  */
 export const getMovesForRound = new PreparedQuery<IGetMovesForRoundParams,IGetMovesForRoundResult>(getMovesForRoundIR);
+
+
+/** 'GetPlayerByWallet' parameters type */
+export interface IGetPlayerByWalletParams {
+  wallet: string;
+}
+
+/** 'GetPlayerByWallet' return type */
+export interface IGetPlayerByWalletResult {
+  draws: number;
+  last_block_height: number;
+  losses: number;
+  played_games: number;
+  wallet: string;
+  wins: number;
+}
+
+/** 'GetPlayerByWallet' query type */
+export interface IGetPlayerByWalletQuery {
+  params: IGetPlayerByWalletParams;
+  result: IGetPlayerByWalletResult;
+}
+
+const getPlayerByWalletIR: any = {"usedParamSet":{"wallet":true},"params":[{"name":"wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":37,"b":44}]}],"statement":"SELECT * FROM player \nWHERE wallet = :wallet!"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * SELECT * FROM player 
+ * WHERE wallet = :wallet!
+ * ```
+ */
+export const getPlayerByWallet = new PreparedQuery<IGetPlayerByWalletParams,IGetPlayerByWalletResult>(getPlayerByWalletIR);
+
+
+/** 'GetPlayersByGamesPlayed' parameters type */
+export interface IGetPlayersByGamesPlayedParams {
+  limit: NumberOrString;
+  offset: NumberOrString;
+}
+
+/** 'GetPlayersByGamesPlayed' return type */
+export interface IGetPlayersByGamesPlayedResult {
+  draws: number;
+  last_block_height: number;
+  losses: number;
+  played_games: number;
+  wallet: string;
+  wins: number;
+}
+
+/** 'GetPlayersByGamesPlayed' query type */
+export interface IGetPlayersByGamesPlayedQuery {
+  params: IGetPlayersByGamesPlayedParams;
+  result: IGetPlayersByGamesPlayedResult;
+}
+
+const getPlayersByGamesPlayedIR: any = {"usedParamSet":{"limit":true,"offset":true},"params":[{"name":"limit","required":true,"transform":{"type":"scalar"},"locs":[{"a":55,"b":61}]},{"name":"offset","required":true,"transform":{"type":"scalar"},"locs":[{"a":70,"b":77}]}],"statement":"SELECT * FROM player \nORDER BY played_games DESC\nLIMIT :limit!\nOFFSET :offset!"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * SELECT * FROM player 
+ * ORDER BY played_games DESC
+ * LIMIT :limit!
+ * OFFSET :offset!
+ * ```
+ */
+export const getPlayersByGamesPlayed = new PreparedQuery<IGetPlayersByGamesPlayedParams,IGetPlayersByGamesPlayedResult>(getPlayersByGamesPlayedIR);
+
+
+/** 'GetPlayersByLatest' parameters type */
+export interface IGetPlayersByLatestParams {
+  limit: NumberOrString;
+  offset: NumberOrString;
+}
+
+/** 'GetPlayersByLatest' return type */
+export interface IGetPlayersByLatestResult {
+  draws: number;
+  last_block_height: number;
+  losses: number;
+  played_games: number;
+  wallet: string;
+  wins: number;
+}
+
+/** 'GetPlayersByLatest' query type */
+export interface IGetPlayersByLatestQuery {
+  params: IGetPlayersByLatestParams;
+  result: IGetPlayersByLatestResult;
+}
+
+const getPlayersByLatestIR: any = {"usedParamSet":{"limit":true,"offset":true},"params":[{"name":"limit","required":true,"transform":{"type":"scalar"},"locs":[{"a":60,"b":66}]},{"name":"offset","required":true,"transform":{"type":"scalar"},"locs":[{"a":75,"b":82}]}],"statement":"SELECT * FROM player \nORDER BY last_block_height DESC\nLIMIT :limit!\nOFFSET :offset!"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * SELECT * FROM player 
+ * ORDER BY last_block_height DESC
+ * LIMIT :limit!
+ * OFFSET :offset!
+ * ```
+ */
+export const getPlayersByLatest = new PreparedQuery<IGetPlayersByLatestParams,IGetPlayersByLatestResult>(getPlayersByLatestIR);
+
+
+/** 'GetPlayersByWins' parameters type */
+export interface IGetPlayersByWinsParams {
+  limit: NumberOrString;
+  offset: NumberOrString;
+}
+
+/** 'GetPlayersByWins' return type */
+export interface IGetPlayersByWinsResult {
+  draws: number;
+  last_block_height: number;
+  losses: number;
+  played_games: number;
+  wallet: string;
+  wins: number;
+}
+
+/** 'GetPlayersByWins' query type */
+export interface IGetPlayersByWinsQuery {
+  params: IGetPlayersByWinsParams;
+  result: IGetPlayersByWinsResult;
+}
+
+const getPlayersByWinsIR: any = {"usedParamSet":{"limit":true,"offset":true},"params":[{"name":"limit","required":true,"transform":{"type":"scalar"},"locs":[{"a":46,"b":52}]},{"name":"offset","required":true,"transform":{"type":"scalar"},"locs":[{"a":61,"b":68}]}],"statement":"SELECT * FROM player\nORDER BY wins DESC\nLIMIT :limit!\nOFFSET :offset!"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * SELECT * FROM player
+ * ORDER BY wins DESC
+ * LIMIT :limit!
+ * OFFSET :offset!
+ * ```
+ */
+export const getPlayersByWins = new PreparedQuery<IGetPlayersByWinsParams,IGetPlayersByWinsResult>(getPlayersByWinsIR);
 
 

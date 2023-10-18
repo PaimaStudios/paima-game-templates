@@ -5,6 +5,8 @@ import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, H
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { GameController } from './../controllers/gameController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { LeaderboardController } from './../controllers/leaderboardController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { LobbyController } from './../controllers/lobbyController';
 import type { RequestHandler } from 'express';
 import * as express from 'express';
@@ -25,10 +27,50 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IGetPlayersByWinsResult": {
+        "dataType": "refObject",
+        "properties": {
+            "draws": {"dataType":"double","required":true},
+            "last_block_height": {"dataType":"double","required":true},
+            "losses": {"dataType":"double","required":true},
+            "played_games": {"dataType":"double","required":true},
+            "wallet": {"dataType":"string","required":true},
+            "wins": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IGetPlayersByGamesPlayedResult": {
+        "dataType": "refObject",
+        "properties": {
+            "draws": {"dataType":"double","required":true},
+            "last_block_height": {"dataType":"double","required":true},
+            "losses": {"dataType":"double","required":true},
+            "played_games": {"dataType":"double","required":true},
+            "wallet": {"dataType":"string","required":true},
+            "wins": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IGetPlayersByLatestResult": {
+        "dataType": "refObject",
+        "properties": {
+            "draws": {"dataType":"double","required":true},
+            "last_block_height": {"dataType":"double","required":true},
+            "losses": {"dataType":"double","required":true},
+            "played_games": {"dataType":"double","required":true},
+            "wallet": {"dataType":"string","required":true},
+            "wins": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IGetOpenLobbiesResult": {
         "dataType": "refObject",
         "properties": {
             "buildings": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "creation_block_height": {"dataType":"double","required":true},
             "gold": {"dataType":"double","required":true},
             "init_tiles": {"dataType":"double","required":true},
             "lobby_creator": {"dataType":"string","required":true},
@@ -54,6 +96,7 @@ const models: TsoaRoute.Models = {
             "lobby_state": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
             "num_of_players": {"dataType":"double","required":true},
             "round_limit": {"dataType":"double","required":true},
+            "started_block_height": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
             "time_limit": {"dataType":"double","required":true},
             "units": {"dataType":"string","required":true},
         },
@@ -83,6 +126,7 @@ const models: TsoaRoute.Models = {
             "lobby_state": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
             "num_of_players": {"dataType":"double","required":true},
             "round_limit": {"dataType":"double","required":true},
+            "started_block_height": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
             "time_limit": {"dataType":"double","required":true},
             "units": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
         },
@@ -154,6 +198,106 @@ export function RegisterRoutes(app: express.Router) {
 
 
               const promise = controller.getMoveForRound.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/game/is_game_over',
+            ...(fetchMiddlewares<RequestHandler>(GameController)),
+            ...(fetchMiddlewares<RequestHandler>(GameController.prototype.isGameOver)),
+
+            function GameController_isGameOver(request: any, response: any, next: any) {
+            const args = {
+                    lobby_id: {"in":"query","name":"lobby_id","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new GameController();
+
+
+              const promise = controller.isGameOver.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/leaderboard/wins',
+            ...(fetchMiddlewares<RequestHandler>(LeaderboardController)),
+            ...(fetchMiddlewares<RequestHandler>(LeaderboardController.prototype.getLeaderboardByWins)),
+
+            function LeaderboardController_getLeaderboardByWins(request: any, response: any, next: any) {
+            const args = {
+                    wallet: {"in":"query","name":"wallet","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new LeaderboardController();
+
+
+              const promise = controller.getLeaderboardByWins.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/leaderboard/played',
+            ...(fetchMiddlewares<RequestHandler>(LeaderboardController)),
+            ...(fetchMiddlewares<RequestHandler>(LeaderboardController.prototype.getLeaderboardByPlayed)),
+
+            function LeaderboardController_getLeaderboardByPlayed(request: any, response: any, next: any) {
+            const args = {
+                    wallet: {"in":"query","name":"wallet","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new LeaderboardController();
+
+
+              const promise = controller.getLeaderboardByPlayed.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/leaderboard/latest',
+            ...(fetchMiddlewares<RequestHandler>(LeaderboardController)),
+            ...(fetchMiddlewares<RequestHandler>(LeaderboardController.prototype.getLeaderboardByLatest)),
+
+            function LeaderboardController_getLeaderboardByLatest(request: any, response: any, next: any) {
+            const args = {
+                    wallet: {"in":"query","name":"wallet","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new LeaderboardController();
+
+
+              const promise = controller.getLeaderboardByLatest.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);

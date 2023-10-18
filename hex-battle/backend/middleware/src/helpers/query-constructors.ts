@@ -47,3 +47,32 @@ export function getMoves(lobby_id: string, round: number): string {
   };
   return buildBackendQuery(endpoint, options);
 }
+
+export function getLeaderboardByLatest(wallet: string): string {
+  const endpoint = 'leaderboard/latest';
+  const options = {
+    wallet,
+  };
+  return buildBackendQuery(endpoint, options);
+}
+export function getLeaderboardByWins(wallet: string): string {
+  const endpoint = 'leaderboard/wins';
+  const options = {
+    wallet,
+  };
+  return buildBackendQuery(endpoint, options);
+}
+export function getLeaderboardByPlayed(wallet: string): string {
+  const endpoint = 'leaderboard/played';
+  const options = {
+    wallet,
+  };
+  return buildBackendQuery(endpoint, options);
+}
+export function isGameOver(lobby_id: string) {
+  const endpoint = 'game/is_game_over';
+  const options = {
+    lobby_id,
+  };
+  return buildBackendQuery(endpoint, options);
+}

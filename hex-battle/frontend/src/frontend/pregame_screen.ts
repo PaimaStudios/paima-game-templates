@@ -64,7 +64,7 @@ export class PreGameScreen extends BackgroundScreen {
 
   constructor(
     private lobbyId: string,
-    private walletName: string | null,
+    private walletName: string | null
   ) {
     super();
   }
@@ -142,7 +142,7 @@ export class PreGameScreen extends BackgroundScreen {
     this.DrawToast();
   }
 
-  moveToGame() {
+  moveToGame(isGameOver: boolean) {
     console.log('moving to game');
     this.DrawUI();
     this.stop();
@@ -203,7 +203,11 @@ export class PreGameScreen extends BackgroundScreen {
     });
 
     new LoadScreen(game).start().then(_ => {
-      new GameScreen(game, true).start();
+      const gameScreen = new GameScreen(game, true);
+      if (isGameOver && !game.winner) {
+        gameScreen.endGameWithDraw = true;
+      }
+      gameScreen.start();
       console.log(game);
     });
   }
@@ -216,11 +220,14 @@ export class PreGameScreen extends BackgroundScreen {
       this.lobby = lobbyData.lobby;
       this.rounds = lobbyData.rounds;
 
-      if (this.lobby?.lobby_state === 'active') {
+      const isGameOver =
+        this.lobby?.lobby_state === 'finished' ||
+        this.lobby?.lobby_state === 'closed';
+      if (this.lobby?.lobby_state === 'active' || isGameOver) {
         const map = await mw.default.getLobbyMap(this.lobbyId);
         if (map.success) {
           this.map = JSON.parse((map.data as any).lobby.map);
-          this.moveToGame();
+          this.moveToGame(isGameOver);
         }
       }
     }
@@ -312,7 +319,7 @@ export class PreGameScreen extends BackgroundScreen {
 
     if (walletName) {
       const status = await mw.default.userWalletLogin(walletName, false);
-      console.log({ status });
+      console.log({status});
     }
 
     this.canvas.addEventListener('mousemove', this.mouse_hover_event);
@@ -335,7 +342,11 @@ export class PreGameScreen extends BackgroundScreen {
       }
     }
 
-    if (this.lobby?.lobby_state === 'active') {
+    if (
+      this.lobby?.lobby_state === 'active' ||
+      this.lobby?.lobby_state === 'finished' ||
+      this.lobby?.lobby_state === 'closed'
+    ) {
       // do not start timer.
     } else {
       this.fetchTimer = setInterval(() => this.fetchLobby(), 10000);

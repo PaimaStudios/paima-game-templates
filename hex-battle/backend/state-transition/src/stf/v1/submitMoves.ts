@@ -4,6 +4,10 @@ import type {
   IGetLobbyGameStateResult,
   IUpdateLobbyGameStateParams,
   IUpdateLobbyToClosedParams,
+  IUpdateLobbyWinnerParams,
+  IUpdatePlayerLossParams,
+  IUpdatePlayerWinParams,
+  IUpdatePlayerWinQuery,
 } from '@hexbattle/db';
 import {
   getLobbyLean,
@@ -13,6 +17,9 @@ import {
   updateLobbyGameState,
   getLobbyGameState,
   updateLobbyToClosed,
+  updateLobbyWinner,
+  updatePlayerWin,
+  updatePlayerLoss,
 } from '@hexbattle/db';
 import { createScheduledData, type SQLUpdate } from '@paima/sdk/db';
 import type { SubmitMovesInput } from './types';
@@ -86,10 +93,41 @@ export async function submitMoves(
         lobby_id: parsed.lobbyID,
       };
       sql.push([updateLobbyToClosed, closedParams]);
+
+      // Leaderboard
+      for (const player of game.players) {
+        if (player.wallet === game.winner.wallet) {
+          /* Update lobby with winner */
+          const lobbyWinParams: IUpdateLobbyWinnerParams = {
+            game_winner: game.winner.wallet,
+            lobby_id: parsed.lobbyID,
+          };
+          const lobbyWinnerQuery: SQLUpdate = [updateLobbyWinner, lobbyWinParams];
+          sql.push(lobbyWinnerQuery);
+
+          /* Update leaderboard with winner */
+          const winParams: IUpdatePlayerWinParams = {
+            last_block_height: blockHeight,
+            wallet: player.wallet,
+          };
+          const winQuery: SQLUpdate = [updatePlayerWin, winParams];
+          sql.push(winQuery);
+        } else {
+          const loseParams: IUpdatePlayerLossParams = {
+            last_block_height: blockHeight,
+            wallet: player.wallet,
+          };
+          const loseQuery: SQLUpdate = [updatePlayerLoss, loseParams];
+          sql.push(loseQuery);
+        }
+      }
     } else {
-      sql.push(
-        createScheduledData(`z|*${lobby.lobby_id}|${game.turn}`, blockHeight + 120 / ENV.BLOCK_TIME)
-      );
+      // Create next zombie scheduled data
+      const lobbyId = lobby.lobby_id;
+      const turn = game.turn;
+      const count = 0;
+      const time = blockHeight + 120 / ENV.BLOCK_TIME;
+      sql.push(createScheduledData(`z|*${lobbyId}|${turn}|${count}`, time));
     }
     return sql;
   } catch (e) {

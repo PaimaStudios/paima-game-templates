@@ -42,12 +42,130 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"IGetPlayersByWinsResult": {
+				"description": "'GetPlayersByWins' return type",
+				"properties": {
+					"draws": {
+						"type": "number",
+						"format": "double"
+					},
+					"last_block_height": {
+						"type": "number",
+						"format": "double"
+					},
+					"losses": {
+						"type": "number",
+						"format": "double"
+					},
+					"played_games": {
+						"type": "number",
+						"format": "double"
+					},
+					"wallet": {
+						"type": "string"
+					},
+					"wins": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"draws",
+					"last_block_height",
+					"losses",
+					"played_games",
+					"wallet",
+					"wins"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetPlayersByGamesPlayedResult": {
+				"description": "'GetPlayersByGamesPlayed' return type",
+				"properties": {
+					"draws": {
+						"type": "number",
+						"format": "double"
+					},
+					"last_block_height": {
+						"type": "number",
+						"format": "double"
+					},
+					"losses": {
+						"type": "number",
+						"format": "double"
+					},
+					"played_games": {
+						"type": "number",
+						"format": "double"
+					},
+					"wallet": {
+						"type": "string"
+					},
+					"wins": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"draws",
+					"last_block_height",
+					"losses",
+					"played_games",
+					"wallet",
+					"wins"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetPlayersByLatestResult": {
+				"description": "'GetPlayersByLatest' return type",
+				"properties": {
+					"draws": {
+						"type": "number",
+						"format": "double"
+					},
+					"last_block_height": {
+						"type": "number",
+						"format": "double"
+					},
+					"losses": {
+						"type": "number",
+						"format": "double"
+					},
+					"played_games": {
+						"type": "number",
+						"format": "double"
+					},
+					"wallet": {
+						"type": "string"
+					},
+					"wins": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"draws",
+					"last_block_height",
+					"losses",
+					"played_games",
+					"wallet",
+					"wins"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"IGetOpenLobbiesResult": {
 				"description": "'GetOpenLobbies' return type",
 				"properties": {
 					"buildings": {
 						"type": "string",
 						"nullable": true
+					},
+					"creation_block_height": {
+						"type": "number",
+						"format": "double"
 					},
 					"gold": {
 						"type": "number",
@@ -86,6 +204,7 @@
 				},
 				"required": [
 					"buildings",
+					"creation_block_height",
 					"gold",
 					"init_tiles",
 					"lobby_creator",
@@ -136,6 +255,11 @@
 						"type": "number",
 						"format": "double"
 					},
+					"started_block_height": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
 					"time_limit": {
 						"type": "number",
 						"format": "double"
@@ -154,6 +278,7 @@
 					"lobby_state",
 					"num_of_players",
 					"round_limit",
+					"started_block_height",
 					"time_limit",
 					"units"
 				],
@@ -223,6 +348,11 @@
 						"type": "number",
 						"format": "double"
 					},
+					"started_block_height": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
 					"time_limit": {
 						"type": "number",
 						"format": "double"
@@ -244,6 +374,7 @@
 					"lobby_state",
 					"num_of_players",
 					"round_limit",
+					"started_block_height",
 					"time_limit",
 					"units"
 				],
@@ -394,6 +525,164 @@
 						"schema": {
 							"format": "double",
 							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/game/is_game_over": {
+			"get": {
+				"operationId": "IsGameOver",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"current_round": {
+											"type": "number",
+											"format": "double"
+										},
+										"isGameOver": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"current_round",
+										"isGameOver"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "lobby_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/leaderboard/wins": {
+			"get": {
+				"operationId": "GetLeaderboardByWins",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"players": {
+											"items": {
+												"$ref": "#/components/schemas/IGetPlayersByWinsResult"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"players"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "wallet",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/leaderboard/played": {
+			"get": {
+				"operationId": "GetLeaderboardByPlayed",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"players": {
+											"items": {
+												"$ref": "#/components/schemas/IGetPlayersByGamesPlayedResult"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"players"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "wallet",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/leaderboard/latest": {
+			"get": {
+				"operationId": "GetLeaderboardByLatest",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"players": {
+											"items": {
+												"$ref": "#/components/schemas/IGetPlayersByLatestResult"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"players"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "wallet",
+						"required": true,
+						"schema": {
+							"type": "string"
 						}
 					}
 				]

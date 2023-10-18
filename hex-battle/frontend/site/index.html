@@ -678,7 +678,18 @@
             </div>
         </div>
     </div>
+    
+    <!-- LEADERBOARD -->
+    <div id="leaderboard" class="options_popup center hide" style="height: 600px;">
 
+        <div class="center">
+            <div style="width: 400px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div class="item" style="font-weight: bold;">Leaderboard</div>
+                <div id="leaderboard_list" class="item" style="font-weight: bold; display: flex; flex-direction: column; justify-content: space-between;"></div>
+                <button class="item button_cancel" onclick="leaderboard_hide()">Close</button>
+            </div>
+        </div>
+    </div>
 
     <!-- WALLET SELECTION  -->
     <div id="wallet_selection" class="options_popup center hide">
@@ -706,6 +717,21 @@
     </div>
 </div>
 <script>
+    // <!-- LEADERBOARD -->
+    function leaderboard_show(players) {
+                        // <div>2. 1234...3443 6 wins of 20 games</div>
+        document.getElementById("leaderboard_list").innerHTML = "";
+        document.getElementById("leaderboard_list").innerHTML = players.map((p, index) => {
+            const short = `${p.wallet.substring(0, 4)}...${p.wallet.substring(p.wallet.length - 4, p.wallet.length)}`
+            return `<div>${index}. ${short} ${p.wins} wins of ${p.played_games} games</div>`
+        }).join('');
+        document.getElementById("leaderboard").classList.remove("hide");
+        document.getElementById("dark-background").classList.remove("hide");
+    }
+    function leaderboard_hide() {
+        document.getElementById("leaderboard").classList.add("hide");
+        document.getElementById("dark-background").classList.add("hide");
+    }
     // <!-- WALLET SELECTION -->
     let wallet_selection_callback = (options) => { };
     function wallet_selection_show(callback) {

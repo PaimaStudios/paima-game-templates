@@ -15,7 +15,7 @@ const myGrammar = `
   joinLobby           = j|*lobbyID
   submitMoves         = m|*lobbyID|roundNumber|move
   surrender           = x|*lobbyID
-  zombieScheduledData = z|*lobbyID|roundNumber
+  zombieScheduledData = z|*lobbyID|roundNumber|count?
 `;
 
 const createLobby: ParserRecord<CreateLobbyInput> = {
@@ -106,6 +106,7 @@ const submitMoves: ParserRecord<SubmitMovesInput> = {
 const zombieScheduledData: ParserRecord<ZombieScheduledInput> = {
   lobbyID: PaimaParser.NCharsParser(12, 12),
   roundNumber: PaimaParser.NumberParser(0, 9999),
+  count: PaimaParser.OptionalParser(0, PaimaParser.NumberParser(0, 9999)),
 };
 
 const parserCommands: Record<string, ParserRecord<ParsedSubmittedInput>> = {

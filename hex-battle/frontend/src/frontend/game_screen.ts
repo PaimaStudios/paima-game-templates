@@ -85,12 +85,18 @@ export class GameScreen extends ScreenUI {
   last_block_height: number | null = null;
   now_block_height = -1;
 
+  endGameWithDraw = false;
+
   constructor(
     private game: Game,
     private onChainGame: boolean
   ) {
     super();
     this.init();
+  }
+
+  isGameOver() {
+    return this.game.winner || this.endGameWithDraw;
   }
 
   async start() {
@@ -108,12 +114,30 @@ export class GameScreen extends ScreenUI {
 
     if (this.onChainGame) {
       this.fetchtimer = setInterval(() => {
-        if (this.game.winner) return;
+        if (this.isGameOver()) return;
         mw.default.getLatestProcessedBlockHeight().then(date => {
           if (date.success) {
             this.now_block_height = date.result;
           }
         });
+
+        mw.default
+          .isGameOver(this.game.lobbyId)
+          .then(res => {
+            if (res.success) {
+              if (
+                res.data.isGameOver &&
+                res.data.current_round === this.game.turn &&
+                !this.game.winner
+              ) {
+                // Lobby closed and no winner. This is a draw.
+                this.endGameWithDraw = true;
+              }
+            }
+          })
+          .catch(err => {
+            console.log('isGameOver', err);
+          });
 
         mw.default
           .getMoveForRound(this.game.lobbyId, this.game.turn)
@@ -481,7 +505,7 @@ export class GameScreen extends ScreenUI {
   }
 
   hoverEventListener = (evt: MouseEvent) => {
-    if (this.game.winner) {
+    if (this.isGameOver()) {
       // game finished;
       return;
     }
@@ -545,7 +569,7 @@ export class GameScreen extends ScreenUI {
   hold_time: any = null;
 
   mouseDownListener = (evt: MouseEvent) => {
-    if (this.game.winner) {
+    if (this.isGameOver()) {
       const addHold = () => {
         const mouse_xy = this.getMousePos(evt, false);
 
@@ -575,14 +599,14 @@ export class GameScreen extends ScreenUI {
   };
 
   mouseUpListener = (evt: MouseEvent) => {
-    if (this.game.winner && (this.hold_time || this.hold_time)) {
+    if (this.isGameOver() && (this.hold_time || this.hold_time)) {
       this.hold_click = 0;
       clearTimeout(this.hold_time);
     }
   };
 
   clickEventListener = (evt: MouseEvent) => {
-    if (this.game.winner) {
+    if (this.isGameOver()) {
       return;
     }
 
@@ -738,7 +762,8 @@ export class GameScreen extends ScreenUI {
     '#95a5a6', // concrete
     '#f39c12', // orange
   ];
-  drawWinnerOrLoser() {
+
+  drawWinnerOrLoser(winner: Player | null) {
     this.ctx.beginPath();
     this.ctx.globalAlpha = 0.7;
     this.ctx.fillStyle = 'black';
@@ -795,7 +820,11 @@ export class GameScreen extends ScreenUI {
     this.ctx.closePath();
 
     this.ctx.beginPath();
-    this.ctx.fillStyle = Player.getColor(this.game.winner!.id);
+    if (winner) {
+      this.ctx.fillStyle = Player.getColor(winner.id);
+    } else {
+      this.ctx.fillStyle = '#222';
+    }
     this.ctx.fillRect(
       this.HUD_height / 2,
       this.canvas.height / 2 - this.HUD_height / 2,
@@ -820,14 +849,22 @@ export class GameScreen extends ScreenUI {
     this.ctx.font = '40px Electrolize';
     this.ctx.fillStyle = 'white';
     this.ctx.textAlign = 'center';
-    const w = this.game.winner?.wallet || '';
-    const shortWallet = `${w.substring(0, 6)}...${w.substring(w.length - 4)}`;
 
-    this.ctx.fillText(
-      `Player ${shortWallet} wins!`,
-      this.canvas.width / 2,
-      this.canvas.height / 2
-    );
+    if (winner) {
+      const w = winner.wallet || '';
+      const shortWallet = `${w.substring(0, 6)}...${w.substring(w.length - 4)}`;
+      this.ctx.fillText(
+        `Player ${shortWallet} wins!`,
+        this.canvas.width / 2,
+        this.canvas.height / 2
+      );
+    } else {
+      this.ctx.fillText(
+        'Game ended in draw.',
+        this.canvas.width / 2,
+        this.canvas.height / 2
+      );
+    }
     this.ctx.closePath();
 
     this.ctx.beginPath();
@@ -913,7 +950,7 @@ export class GameScreen extends ScreenUI {
         this.ctx.fillText(
           text[i] || '',
           850,
-          HUD_top + fontSize*1.5 + fontSize * i * 1.1,
+          HUD_top + fontSize * 1.5 + fontSize * i * 1.1,
           300
         );
       }
@@ -1338,8 +1375,8 @@ export class GameScreen extends ScreenUI {
     this.draw3DUnderMap();
     this.drawMap();
     this.drawItems();
-    if (this.game.winner) {
-      this.drawWinnerOrLoser();
+    if (this.isGameOver()) {
+      this.drawWinnerOrLoser(this.game.winner);
     }
     this.DrawToast();
     this.DrawLoading();

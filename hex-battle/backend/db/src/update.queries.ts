@@ -116,3 +116,93 @@ const updateLobbyGameStateIR: any = {"usedParamSet":{"game_state":true,"current_
 export const updateLobbyGameState = new PreparedQuery<IUpdateLobbyGameStateParams,IUpdateLobbyGameStateResult>(updateLobbyGameStateIR);
 
 
+/** 'UpdatePlayerWin' parameters type */
+export interface IUpdatePlayerWinParams {
+  last_block_height: number;
+  wallet: string;
+}
+
+/** 'UpdatePlayerWin' return type */
+export type IUpdatePlayerWinResult = void;
+
+/** 'UpdatePlayerWin' query type */
+export interface IUpdatePlayerWinQuery {
+  params: IUpdatePlayerWinParams;
+  result: IUpdatePlayerWinResult;
+}
+
+const updatePlayerWinIR: any = {"usedParamSet":{"last_block_height":true,"wallet":true},"params":[{"name":"last_block_height","required":true,"transform":{"type":"scalar"},"locs":[{"a":88,"b":106}]},{"name":"wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":123,"b":130}]}],"statement":"UPDATE player\nSET wins = wins + 1,\nplayed_games = played_games + 1,\nlast_block_height = :last_block_height!\nWHERE wallet = :wallet!"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * UPDATE player
+ * SET wins = wins + 1,
+ * played_games = played_games + 1,
+ * last_block_height = :last_block_height!
+ * WHERE wallet = :wallet!
+ * ```
+ */
+export const updatePlayerWin = new PreparedQuery<IUpdatePlayerWinParams,IUpdatePlayerWinResult>(updatePlayerWinIR);
+
+
+/** 'UpdatePlayerLoss' parameters type */
+export interface IUpdatePlayerLossParams {
+  last_block_height: number;
+  wallet: string;
+}
+
+/** 'UpdatePlayerLoss' return type */
+export type IUpdatePlayerLossResult = void;
+
+/** 'UpdatePlayerLoss' query type */
+export interface IUpdatePlayerLossQuery {
+  params: IUpdatePlayerLossParams;
+  result: IUpdatePlayerLossResult;
+}
+
+const updatePlayerLossIR: any = {"usedParamSet":{"last_block_height":true,"wallet":true},"params":[{"name":"last_block_height","required":true,"transform":{"type":"scalar"},"locs":[{"a":92,"b":110}]},{"name":"wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":127,"b":134}]}],"statement":"UPDATE player\nSET losses = losses + 1,\nplayed_games = played_games + 1,\nlast_block_height = :last_block_height!\nWHERE wallet = :wallet!"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * UPDATE player
+ * SET losses = losses + 1,
+ * played_games = played_games + 1,
+ * last_block_height = :last_block_height!
+ * WHERE wallet = :wallet!
+ * ```
+ */
+export const updatePlayerLoss = new PreparedQuery<IUpdatePlayerLossParams,IUpdatePlayerLossResult>(updatePlayerLossIR);
+
+
+/** 'UpdatePlayerDraw' parameters type */
+export interface IUpdatePlayerDrawParams {
+  last_block_height: number;
+  wallet: string;
+}
+
+/** 'UpdatePlayerDraw' return type */
+export type IUpdatePlayerDrawResult = void;
+
+/** 'UpdatePlayerDraw' query type */
+export interface IUpdatePlayerDrawQuery {
+  params: IUpdatePlayerDrawParams;
+  result: IUpdatePlayerDrawResult;
+}
+
+const updatePlayerDrawIR: any = {"usedParamSet":{"last_block_height":true,"wallet":true},"params":[{"name":"last_block_height","required":true,"transform":{"type":"scalar"},"locs":[{"a":90,"b":108}]},{"name":"wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":125,"b":132}]}],"statement":"UPDATE player\nSET draws = draws + 1,\nplayed_games = played_games + 1,\nlast_block_height = :last_block_height!\nWHERE wallet = :wallet!"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * UPDATE player
+ * SET draws = draws + 1,
+ * played_games = played_games + 1,
+ * last_block_height = :last_block_height!
+ * WHERE wallet = :wallet!
+ * ```
+ */
+export const updatePlayerDraw = new PreparedQuery<IUpdatePlayerDrawParams,IUpdatePlayerDrawResult>(updatePlayerDrawIR);
+
+

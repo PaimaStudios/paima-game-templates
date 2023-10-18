@@ -1,5 +1,17 @@
-import type { ICreateRoundParams, IUpdateLobbyGameStateParams } from '@hexbattle/db';
-import { createRound, getLobbyGameState, getLobbyLean, updateLobbyGameState } from '@hexbattle/db';
+import type {
+  ICreateRoundParams,
+  IUpdateLobbyGameStateParams,
+  IUpdateLobbyToClosedParams,
+  IUpdatePlayerDrawParams,
+} from '@hexbattle/db';
+import {
+  createRound,
+  getLobbyGameState,
+  getLobbyLean,
+  updateLobbyGameState,
+  updateLobbyToClosed,
+  updatePlayerDraw,
+} from '@hexbattle/db';
 import { createScheduledData, type SQLUpdate } from '@paima/sdk/db';
 import type Prando from '@paima/sdk/prando';
 import type { Pool } from 'pg';
@@ -36,38 +48,58 @@ export async function zombieScheduledData(
     return [];
   }
 
-  console.log('Zombie scheduled data: ' + parsed);
+  console.log('Zombie scheduled data: ' + JSON.stringify(parsed));
 
-  const game = Game.import(lobbyState.game_state);
-  const skippedPlayerWallet = game.getCurrentPlayer().wallet;
-  const move = Moves.deserializePaima(game, {
-    move: JSON.stringify([]),
-    round: parsed.roundNumber,
-    wallet: skippedPlayerWallet,
-  });
-  game.initMoves(move.player);
-  game.endTurn();
+  if (parsed.count > 5) {
+    // END GAME
+    const game = Game.import(lobbyState.game_state);
+    const closedParams: IUpdateLobbyToClosedParams = {
+      lobby_id: parsed.lobbyID,
+    };
+    sql.push([updateLobbyToClosed, closedParams]);
+    for (const player of game.players) {
+      const drawParams: IUpdatePlayerDrawParams = {
+        last_block_height: blockHeight,
+        wallet: player.wallet,
+      };
+      const drawQuery: SQLUpdate = [updatePlayerDraw, drawParams];
+      sql.push(drawQuery);
+    }
+  } else {
+    // SKIP TURN
+    const game = Game.import(lobbyState.game_state);
+    const skippedPlayerWallet = game.getCurrentPlayer().wallet;
+    const move = Moves.deserializePaima(game, {
+      move: JSON.stringify([]),
+      round: parsed.roundNumber,
+      wallet: skippedPlayerWallet,
+    });
+    game.initMoves(move.player);
+    game.endTurn();
 
-  const roundParams: ICreateRoundParams = {
-    block_height: blockHeight,
-    lobby_id: parsed.lobbyID,
-    move: JSON.stringify([]),
-    round: parsed.roundNumber,
-    wallet: skippedPlayerWallet,
-  };
-  sql.push([createRound, roundParams]);
+    const roundParams: ICreateRoundParams = {
+      block_height: blockHeight,
+      lobby_id: parsed.lobbyID,
+      move: JSON.stringify([]),
+      round: parsed.roundNumber,
+      wallet: skippedPlayerWallet,
+    };
+    sql.push([createRound, roundParams]);
 
-  const updateGameStateParams: IUpdateLobbyGameStateParams = {
-    lobby_id: parsed.lobbyID,
-    game_state: Game.export(game),
-    current_round: game.turn,
-  };
-  sql.push([updateLobbyGameState, updateGameStateParams]);
+    const updateGameStateParams: IUpdateLobbyGameStateParams = {
+      lobby_id: parsed.lobbyID,
+      game_state: Game.export(game),
+      current_round: game.turn,
+    };
+    sql.push([updateLobbyGameState, updateGameStateParams]);
 
-  // Create
-  sql.push(
-    createScheduledData(`z|*${lobby.lobby_id}|${game.turn}`, blockHeight + 120 / ENV.BLOCK_TIME)
-  );
+    // Create next zombie scheduled data
+    const lobbyId = lobby.lobby_id;
+    const turn = game.turn;
+    const count = parsed.count + 1;
+    const time = blockHeight + 120 / ENV.BLOCK_TIME;
+    sql.push(createScheduledData(`z|*${lobbyId}|${turn}|${count}`, time));
+  }
 
   return sql;
 }

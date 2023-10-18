@@ -61,7 +61,7 @@ export class LobbyScreen extends BackgroundScreen {
     y: number
   ): {x: number; y: number; width: number; height: number} {
     this.ctx.textAlign = 'center';
-    this.ctx.font = '40px Electrolize';
+    this.ctx.font = '30px Electrolize';
     const textMetrics = this.ctx.measureText(text);
     // console.log(textMetrics);
     const offset = 8;
@@ -74,7 +74,7 @@ export class LobbyScreen extends BackgroundScreen {
       Math.abs(textMetrics.actualBoundingBoxRight) +
       2 * offset;
     const h = Math.max(
-      55,
+      46,
       Math.abs(textMetrics.actualBoundingBoxAscent) +
         Math.abs(textMetrics.actualBoundingBoxDescent) +
         2 * offset
@@ -123,22 +123,27 @@ export class LobbyScreen extends BackgroundScreen {
 
   DrawButtons() {
     const buttonTop = this.canvas.height * 0.3;
-    const buttonMargin = 100;
+    const buttonMargin = 80;
     const a = this.DrawButton('Join Lobby', this.canvas.width * 0.5, buttonTop);
     const b = this.DrawButton(
       'Create Lobby',
       this.canvas.width * 0.5,
       buttonTop + buttonMargin * 1
     );
+    const d = this.DrawButton(
+      'Rejoin Game',
+      this.canvas.width * 0.5,
+      buttonTop + buttonMargin * 2
+    );
     const c = this.DrawButton(
       'Practice Offline',
       this.canvas.width * 0.5,
       buttonTop + buttonMargin * 3
     );
-    const d = this.DrawButton(
-      'Rejoin Game',
+    const e = this.DrawButton(
+      'Leaderboard',
       this.canvas.width * 0.5,
-      buttonTop + buttonMargin * 2
+      buttonTop + buttonMargin * 4
     );
 
     if (!this.events.length) {
@@ -146,6 +151,7 @@ export class LobbyScreen extends BackgroundScreen {
       this.events.push({coord: b, cmd: 'CREATE'});
       this.events.push({coord: c, cmd: 'PRACTICE'});
       this.events.push({coord: d, cmd: 'REJOIN'});
+      this.events.push({coord: e, cmd: 'LEADERBOARD'});
     }
   }
 
@@ -346,6 +352,21 @@ export class LobbyScreen extends BackgroundScreen {
     );
   };
 
+  cmd_leaderboard = () => {
+    if (this.getIsLoading()) return;
+    this.setIsLoading(true);
+    mw.default
+      .getLeaderBoard(this.walletAddress || null, 'wins')
+      .then((res: any) => {
+        if (res.success) {
+          (window as any).leaderboard_show(res.data);
+        }
+      })
+      .finally(() => {
+        this.setIsLoading(false);
+      });
+  };
+
   mouse_click_event = (evt: Event) => {
     const mousePos = this.getMousePos(evt);
     const trigger = this.events.find(e =>
@@ -367,6 +388,11 @@ export class LobbyScreen extends BackgroundScreen {
 
         case 'PRACTICE': {
           this.cmd_practice();
+          break;
+        }
+
+        case 'LEADERBOARD': {
+          this.getMyWallet(this.cmd_leaderboard);
           break;
         }
       }
