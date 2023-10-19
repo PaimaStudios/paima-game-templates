@@ -1,12 +1,11 @@
-import {UnitType, BuildingType, AIPlayer, Hex} from '@hexbattle/engine';
+import {UnitType, BuildingType, AIPlayer, Hex, Name} from '@hexbattle/engine';
 import * as mw from '../paima/middleware';
 import {RandomGame} from '../random-game';
 import {BackgroundScreen} from './background_screen';
 import {GameScreen} from './game_screen';
 import {LoadScreen} from './load_screen';
-import {PreGameScreen} from './pregame_screen';
 import {VERSION} from '../version';
-import { RulesScreen } from './rules_screen';
+import {RulesScreen} from './rules_screen';
 
 export class LobbyScreen extends BackgroundScreen {
   drawTimer: any = null;
@@ -167,8 +166,29 @@ export class LobbyScreen extends BackgroundScreen {
     this.DrawBackground();
     this.DrawVersion();
     this.DrawButtons();
+    this.DrawName();
     this.DrawToast();
     this.DrawLoading();
+  }
+
+  name = '';
+  short = '';
+  DrawName() {
+    if (this.walletAddress && !this.name) {
+      this.name = Name.generateName(this.walletAddress);
+      this.short = Name.shortWallet(this.walletAddress);
+    }
+    this.ctx.beginPath();
+    this.ctx.textAlign = 'left';
+    this.ctx.font = '20px Electrolize';
+    this.ctx.fillStyle = '#fff';
+    const welcome = this.name
+      ? `Welcome ${this.name} (${this.short})`
+      : 'Not Connected';
+    this.ctx.fillText(welcome, 21, this.canvas.height - 19);
+    this.ctx.fillStyle = '#333';
+    this.ctx.fillText(welcome, 20, this.canvas.height - 20);
+    this.ctx.closePath();
   }
 
   getMyWallet(callback: () => void) {
@@ -366,7 +386,9 @@ export class LobbyScreen extends BackgroundScreen {
       .getLeaderBoard(this.walletAddress || null, 'wins')
       .then((res: any) => {
         if (res.success) {
-          (window as any).leaderboard_show(res.data);
+          const players = res.data;
+          players.forEach((p: any) => (p.name = Name.generateName(p.wallet)));
+          (window as any).leaderboard_show(players);
         }
       })
       .finally(() => {

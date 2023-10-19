@@ -21,14 +21,20 @@ export class LeaderboardController extends Controller {
     const pool = requirePool();
     const players = await getPlayersByWins.run(
       {
-        limit: 20,
+        limit: 100,
         offset: 0,
       },
       pool
     );
+
+    players.forEach((p, index) => {
+      (p as any).rank = String(index + 1);
+    });
+
     if (wallet && !players.find(p => p.wallet === wallet)) {
       const [me] = await getPlayerByWallet.run({ wallet }, pool);
       if (me) {
+        (me as any).rank = '-';
         players.push(me);
         players.sort((a, b) => b.wins - a.wins);
       }
@@ -44,14 +50,20 @@ export class LeaderboardController extends Controller {
     const pool = requirePool();
     const players = await getPlayersByGamesPlayed.run(
       {
-        limit: 20,
+        limit: 100,
         offset: 0,
       },
       pool
     );
+
+    players.forEach((p, index) => {
+      (p as any).rank = String(index + 1);
+    });
+
     if (wallet && !players.find(p => p.wallet === wallet)) {
       const [me] = await getPlayerByWallet.run({ wallet }, pool);
       if (me) {
+        (me as any).rank = '-';
         players.push(me);
         players.sort((a, b) => b.played_games - a.played_games);
       }
@@ -67,14 +79,20 @@ export class LeaderboardController extends Controller {
     const pool = requirePool();
     const players = await getPlayersByLatest.run(
       {
-        limit: 20,
+        limit: 100,
         offset: 0,
       },
       pool
     );
+
+    players.forEach((p, index) => {
+      (p as any).rank = String(index + 1);
+    });
+
     if (wallet && !players.find(p => p.wallet === wallet)) {
       const [me] = await getPlayerByWallet.run({ wallet }, pool);
       if (me) {
+        (me as any).rank = '-';
         players.push(me);
         players.sort((a, b) => b.last_block_height - a.last_block_height);
       }

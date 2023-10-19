@@ -1,17 +1,6 @@
-import {
-  Building,
-  BuildingType,
-  Game,
-  GameMap,
-  Player,
-  Tile,
-  Unit,
-  UnitType,
-} from '@hexbattle/engine';
-import {LoadScreen, loadFont} from './frontend/load_screen';
+import {loadFont} from './frontend/load_screen';
 import {LobbyScreen} from './frontend/lobby_screen';
 import {PreGameScreen} from './frontend/pregame_screen';
-import {RulesScreen} from './frontend/rules_screen';
 import {StartupScreen} from './frontend/startup_screen';
 import * as mw from './paima/middleware';
 
@@ -19,12 +8,6 @@ import * as mw from './paima/middleware';
   console.log('Welcome to HexBattle!');
   await loadFont();
 
-  // const game = RulesScreen.Setup();
-  // new LoadScreen(game).start().then(_ => {
-  //   new RulesScreen(game).start();
-  // });
-
-  // if (1) return;
   // eslint-disable-next-line node/no-unsupported-features/node-builtins
   const url = new URL(window.location.href);
   const lobby = url.searchParams.get('lobby');

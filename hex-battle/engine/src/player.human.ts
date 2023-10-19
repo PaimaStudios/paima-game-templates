@@ -1,10 +1,20 @@
 import {Building} from './building';
 import {GameMap} from './map';
+import {Name} from './name';
 import {Unit} from './unit';
 
 export class Player {
   public isHuman = true;
   public alive = true;
+  public name: string;
+  constructor(
+    public id: string,
+    public gold: number,
+    public wallet: string
+  ) {
+    this.name = Name.generateName(this.wallet);
+  }
+
   public goldPerRound(map: GameMap) {
     let delta = 0;
     map.tiles
@@ -24,12 +34,6 @@ export class Player {
   public getGold(map: GameMap) {
     this.gold += this.goldPerRound(map);
   }
-
-  constructor(
-    public id: string,
-    public gold: number,
-    public wallet: string
-  ) {}
 
   static getColor(playerId: string) {
     switch (playerId) {

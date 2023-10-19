@@ -7,3 +7,4 @@ export * from './player.human';
 export * from './tile';
 export * from './unit';
 export * from './hex';
+export * from './name';

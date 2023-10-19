@@ -59,7 +59,7 @@ export class RandomGame extends Game {
     const players = [
       ...new Array(humanPlayers)
         .fill(0)
-        .map((_, i) => new Player(playerIndex[i], initalGold, playerIndex[i])),
+        .map((_, i) => new Player(playerIndex[i], initalGold, localWallet)),
       ...new Array(AIPlayers)
         .fill(0)
         .map((_, i) => new AIPlayer(playerIndex[humanPlayers + i], initalGold)),

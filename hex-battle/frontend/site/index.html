@@ -4,573 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>HexBattle</title>
-    <style>
-        body {
-            overflow: hidden;
-        }
-
-        .container-zoom {
-            margin: auto;
-        }
-
-        @media only screen and (min-width: 60px) and (min-height: 32px) {
-            .container-zoom {
-                zoom: 0.05;
-            }
-        }
-
-        @media only screen and (min-width: 120px) and (min-height: 65px) {
-            .container-zoom {
-                zoom: 0.1;
-            }
-        }
-
-        @media only screen and (min-width: 180px) and (min-height: 97px) {
-            .container-zoom {
-                zoom: 0.15;
-            }
-        }
-
-        @media only screen and (min-width: 240px) and (min-height: 130px) {
-            .container-zoom {
-                zoom: 0.2;
-            }
-        }
-
-        @media only screen and (min-width: 300px) and (min-height: 162px) {
-            .container-zoom {
-                zoom: 0.25;
-            }
-        }
-
-        @media only screen and (min-width: 360px) and (min-height: 195px) {
-            .container-zoom {
-                zoom: 0.3;
-            }
-        }
-
-        @media only screen and (min-width: 420px) and (min-height: 227px) {
-            .container-zoom {
-                zoom: 0.35;
-            }
-        }
-
-        @media only screen and (min-width: 479px) and (min-height: 260px) {
-            .container-zoom {
-                zoom: 0.4;
-            }
-        }
-
-        @media only screen and (min-width: 540px) and (min-height: 292px) {
-            .container-zoom {
-                zoom: 0.44;
-            }
-        }
-
-        @media only screen and (min-width: 599px) and (min-height: 324px) {
-            .container-zoom {
-                zoom: 0.49;
-            }
-        }
-
-        @media only screen and (min-width: 659px) and (min-height: 357px) {
-            .container-zoom {
-                zoom: 0.54;
-            }
-        }
-
-        @media only screen and (min-width: 720px) and (min-height: 390px) {
-            .container-zoom {
-                zoom: 0.6;
-            }
-        }
-
-        @media only screen and (min-width: 780px) and (min-height: 422px) {
-            .container-zoom {
-                zoom: 0.65;
-            }
-        }
-
-        @media only screen and (min-width: 840px) and (min-height: 455px) {
-            .container-zoom {
-                zoom: 0.7;
-            }
-        }
-
-        @media only screen and (min-width: 900px) and (min-height: 487px) {
-            .container-zoom {
-                zoom: 0.75;
-            }
-        }
-
-        @media only screen and (min-width: 960px) and (min-height: 520px) {
-            .container-zoom {
-                zoom: 0.8;
-            }
-        }
-
-        @media only screen and (min-width: 1020px) and (min-height: 552px) {
-            .container-zoom {
-                zoom: 0.85;
-            }
-        }
-
-        @media only screen and (min-width: 1080px) and (min-height: 585px) {
-            .container-zoom {
-                zoom: 0.9;
-            }
-        }
-
-        @media only screen and (min-width: 1140px) and (min-height: 617px) {
-            .container-zoom {
-                zoom: 0.95;
-            }
-        }
-
-        @media only screen and (min-width: 1200px) and (min-height: 650px) {
-            .container-zoom {
-                zoom: 1;
-            }
-        }
-
-        @media only screen and (min-width: 1260px) and (min-height: 682px) {
-            .container-zoom {
-                zoom: 1.05;
-            }
-        }
-
-        @media only screen and (min-width: 1320px) and (min-height: 715px) {
-            .container-zoom {
-                zoom: 1.1;
-            }
-        }
-
-        @media only screen and (min-width: 1380px) and (min-height: 747px) {
-            .container-zoom {
-                zoom: 1.15;
-            }
-        }
-
-        @media only screen and (min-width: 1440px) and (min-height: 780px) {
-            .container-zoom {
-                zoom: 1.2;
-            }
-        }
-
-        @media only screen and (min-width: 1500px) and (min-height: 812px) {
-            .container-zoom {
-                zoom: 1.25;
-            }
-        }
-
-        @media only screen and (min-width: 1560px) and (min-height: 845px) {
-            .container-zoom {
-                zoom: 1.3;
-            }
-        }
-
-        @media only screen and (min-width: 1620px) and (min-height: 877px) {
-            .container-zoom {
-                zoom: 1.35;
-            }
-        }
-
-        @media only screen and (min-width: 1680px) and (min-height: 910px) {
-            .container-zoom {
-                zoom: 1.4;
-            }
-        }
-
-        @media only screen and (min-width: 1740px) and (min-height: 942px) {
-            .container-zoom {
-                zoom: 1.45;
-            }
-        }
-
-        @media only screen and (min-width: 1800px) and (min-height: 975px) {
-            .container-zoom {
-                zoom: 1.5;
-            }
-        }
-
-        @media only screen and (min-width: 1860px) and (min-height: 1007px) {
-            .container-zoom {
-                zoom: 1.55;
-            }
-        }
-
-        @media only screen and (min-width: 1920px) and (min-height: 1040px) {
-            .container-zoom {
-                zoom: 1.6;
-            }
-        }
-
-        @media only screen and (min-width: 1980px) and (min-height: 1072px) {
-            .container-zoom {
-                zoom: 1.65;
-            }
-        }
-
-        @media only screen and (min-width: 2040px) and (min-height: 1105px) {
-            .container-zoom {
-                zoom: 1.7;
-            }
-        }
-
-        @media only screen and (min-width: 2100px) and (min-height: 1137px) {
-            .container-zoom {
-                zoom: 1.75;
-            }
-        }
-
-        @media only screen and (min-width: 2160px) and (min-height: 1170px) {
-            .container-zoom {
-                zoom: 1.8;
-            }
-        }
-
-        @media only screen and (min-width: 2220px) and (min-height: 1202px) {
-            .container-zoom {
-                zoom: 1.85;
-            }
-        }
-
-        @media only screen and (min-width: 2280px) and (min-height: 1235px) {
-            .container-zoom {
-                zoom: 1.9;
-            }
-        }
-
-        @media only screen and (min-width: 2340px) and (min-height: 1267px) {
-            .container-zoom {
-                zoom: 1.95;
-            }
-        }
-
-        @media only screen and (min-width: 2400px) and (min-height: 1300px) {
-            .container-zoom {
-                zoom: 2;
-            }
-        }
-
-        @media only screen and (min-width: 2460px) and (min-height: 1332px) {
-            .container-zoom {
-                zoom: 2.05;
-            }
-        }
-
-        @media only screen and (min-width: 2520px) and (min-height: 1365px) {
-            .container-zoom {
-                zoom: 2.1;
-            }
-        }
-
-        @media only screen and (min-width: 2580px) and (min-height: 1397px) {
-            .container-zoom {
-                zoom: 2.15;
-            }
-        }
-
-        @media only screen and (min-width: 2640px) and (min-height: 1430px) {
-            .container-zoom {
-                zoom: 2.2;
-            }
-        }
-
-        @media only screen and (min-width: 2700px) and (min-height: 1462px) {
-            .container-zoom {
-                zoom: 2.25;
-            }
-        }
-
-        @media only screen and (min-width: 2760px) and (min-height: 1494px) {
-            .container-zoom {
-                zoom: 2.29;
-            }
-        }
-
-        @media only screen and (min-width: 2819px) and (min-height: 1527px) {
-            .container-zoom {
-                zoom: 2.34;
-            }
-        }
-
-        @media only screen and (min-width: 2879px) and (min-height: 1559px) {
-            .container-zoom {
-                zoom: 2.39;
-            }
-        }
-
-        @media only screen and (min-width: 2939px) and (min-height: 1592px) {
-            .container-zoom {
-                zoom: 2.44;
-            }
-        }
-
-        @media only screen and (min-width: 2999px) and (min-height: 1624px) {
-            .container-zoom {
-                zoom: 2.49;
-            }
-        }
-
-        @media only screen and (min-width: 3059px) and (min-height: 1657px) {
-            .container-zoom {
-                zoom: 2.54;
-            }
-        }
-
-        @media only screen and (min-width: 3119px) and (min-height: 1689px) {
-            .container-zoom {
-                zoom: 2.59;
-            }
-        }
-
-        @media only screen and (min-width: 3179px) and (min-height: 1722px) {
-            .container-zoom {
-                zoom: 2.64;
-            }
-        }
-
-        @media only screen and (min-width: 3239px) and (min-height: 1754px) {
-            .container-zoom {
-                zoom: 2.69;
-            }
-        }
-
-        @media only screen and (min-width: 3299px) and (min-height: 1787px) {
-            .container-zoom {
-                zoom: 2.74;
-            }
-        }
-
-        @media only screen and (min-width: 3359px) and (min-height: 1819px) {
-            .container-zoom {
-                zoom: 2.79;
-            }
-        }
-
-        @media only screen and (min-width: 3419px) and (min-height: 1852px) {
-            .container-zoom {
-                zoom: 2.84;
-            }
-        }
-
-        @media only screen and (min-width: 3479px) and (min-height: 1884px) {
-            .container-zoom {
-                zoom: 2.89;
-            }
-        }
-
-        @media only screen and (min-width: 3539px) and (min-height: 1917px) {
-            .container-zoom {
-                zoom: 2.94;
-            }
-        }
-
-        @media only screen and (min-width: 3599px) and (min-height: 1949px) {
-            .container-zoom {
-                zoom: 2.99;
-            }
-        }
-
-        @media only screen and (min-width: 3659px) and (min-height: 1982px) {
-            .container-zoom {
-                zoom: 3.04;
-            }
-        }
-
-        @media only screen and (min-width: 3719px) and (min-height: 2014px) {
-            .container-zoom {
-                zoom: 3.09;
-            }
-        }
-
-        @media only screen and (min-width: 3779px) and (min-height: 2047px) {
-            .container-zoom {
-                zoom: 3.14;
-            }
-        }
-
-        @media only screen and (min-width: 3839px) and (min-height: 2079px) {
-            .container-zoom {
-                zoom: 3.19;
-            }
-        }
-
-        @media only screen and (min-width: 3899px) and (min-height: 2112px) {
-            .container-zoom {
-                zoom: 3.24;
-            }
-        }
-
-        @media only screen and (min-width: 3959px) and (min-height: 2144px) {
-            .container-zoom {
-                zoom: 3.29;
-            }
-        }
-
-        @media only screen and (min-width: 4019px) and (min-height: 2177px) {
-            .container-zoom {
-                zoom: 3.34;
-            }
-        }
-
-        @media only screen and (min-width: 4079px) and (min-height: 2209px) {
-            .container-zoom {
-                zoom: 3.39;
-            }
-        }
-
-        @media only screen and (min-width: 4139px) and (min-height: 2242px) {
-            .container-zoom {
-                zoom: 3.44;
-            }
-        }
-
-        @media only screen and (min-width: 4199px) and (min-height: 2274px) {
-            .container-zoom {
-                zoom: 3.49;
-            }
-        }
-
-        @media only screen and (min-width: 4259px) and (min-height: 2307px) {
-            .container-zoom {
-                zoom: 3.54;
-            }
-        }
-
-        @media only screen and (min-width: 4319px) and (min-height: 2339px) {
-            .container-zoom {
-                zoom: 3.59;
-            }
-        }
-
-        @media only screen and (min-width: 4379px) and (min-height: 2372px) {
-            .container-zoom {
-                zoom: 3.64;
-            }
-        }
-
-        @media only screen and (min-width: 4439px) and (min-height: 2404px) {
-            .container-zoom {
-                zoom: 3.69;
-            }
-        }
-
-        @media only screen and (min-width: 4499px) and (min-height: 2437px) {
-            .container-zoom {
-                zoom: 3.74;
-            }
-        }
-
-        @media only screen and (min-width: 4559px) and (min-height: 2469px) {
-            .container-zoom {
-                zoom: 3.79;
-            }
-        }
-
-        @media only screen and (min-width: 4619px) and (min-height: 2502px) {
-            .container-zoom {
-                zoom: 3.84;
-            }
-        }
-
-        @media only screen and (min-width: 4679px) and (min-height: 2534px) {
-            .container-zoom {
-                zoom: 3.89;
-            }
-        }
-
-        @media only screen and (min-width: 4739px) and (min-height: 2567px) {
-            .container-zoom {
-                zoom: 3.94;
-            }
-        }
-
-        @media only screen and (min-width: 4799px) and (min-height: 2599px) {
-            .container-zoom {
-                zoom: 3.99;
-            }
-        }
-    </style>
-    <style>
-        canvas {
-            background: white
-        }
-
-        #wrap,
-        #wrap canvas {
-            width: 1200px;
-            height: 650px;
-        }
-
-        #wrap {
-            position: relative
-        }
-
-        #wrap>* {
-            position: absolute
-        }
-
-        .options_popup {
-            width: 450px;
-            min-height: 400px;
-            background-color: rgb(255, 255, 255);
-            border-radius: 1px;
-            box-shadow: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
-            z-index: 2;
-        }
-
-        .center {
-            font-family: 'Electrolize';
-            font-size: 20px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .button_ok {
-            background-color: #2ecc71;
-            color: white;
-            border-radius: 2px;
-            font-size: 16px;
-
-            &:hover {
-                background-color: #27ae60;
-                cursor: pointer;
-            }
-        }
-
-        .button_cancel {
-            background-color: #e74c3c;
-            color: white;
-            border-radius: 2px;
-            font-size: 16px;
-
-            &:hover {
-                background-color: #c0392b;
-                cursor: pointer;
-            }
-        }
-
-        .hide {
-            display: none;
-        }
-
-        .item {
-            margin-top: 4px;
-            margin-bottom: 4px;
-        }
-
-        #dark-background {
-            backdrop-filter: blur(4px);
-            background-color: rgba(0, 0, 0, 0.5);
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-    </style>
+    <link rel="stylesheet" href="/assets/style.css">
 </head>
 
 <body>
@@ -662,8 +96,7 @@
 
                 <div class="item" style="font-size: 12px;">Initial Gold</div>
                 <input class="item" id="p_gold" style="font-size: 20px; text-align: center;" type="number" value="0"
-                    min="0" max="100" />
-
+                    min="0" max="100" /
                 <!-- Dropdown selection: Large / Medium / Small -->
                 <div class="item" style="font-size: 12px;">Map Size</div>
                 <select class="item" id="p_map_size" style="font-size: 20px; text-align: center;">
@@ -678,14 +111,16 @@
             </div>
         </div>
     </div>
-    
+
     <!-- LEADERBOARD -->
-    <div id="leaderboard" class="options_popup center hide" style="height: 600px;">
+    <div id="leaderboard" class="options_popup center hide" style="height: 600px; width: 600px;">
 
         <div class="center">
-            <div style="width: 400px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div style="width: 550px; display: flex; flex-direction: column; justify-content: space-between;">
                 <div class="item" style="font-weight: bold;">Leaderboard</div>
-                <div id="leaderboard_list" class="item" style="font-weight: bold; display: flex; flex-direction: column; justify-content: space-between;"></div>
+                <div id="leaderboard_list" class="item"
+                    style="font-weight: bold; display: flex; flex-direction: column; justify-content: space-between; text-align: center; height: 400px; overflow-y: scroll;">
+                </div>
                 <button class="item button_cancel" onclick="leaderboard_hide()">Close</button>
             </div>
         </div>
@@ -716,16 +151,16 @@
         </div>
     </div>
 
-     <!-- HELP SELECTION  -->
-     <div id="help_selection" class="options_popup center hide" style="width: 800px; height: 600px;">
+    <!-- HELP SELECTION  -->
+    <div id="help_selection" class="options_popup center hide" style="width: 800px; height: 600px;">
 
         <div class="center">
             <div style="width: 400px; display: flex; flex-direction: column; justify-content: space-between; width: 550px; font-size: 14px;
         ">
                 <div class="item" style="font-weight: bold;">HELP</div>
                 <div style="display: flex; flex-direction: column; ">
-                   
-                    
+
+
                     <div style="display: flex; flex-direction: row;">
                         <div style="min-width: 100px;">
                             Unit
@@ -738,7 +173,7 @@
                         </div>
                     </div>
 
-                   
+
                     <div style="display: flex; flex-direction: row;">
                         <div style="min-width: 100px;">
                             <img src="assets/m_1.png" style="height: 40px;">
@@ -750,13 +185,13 @@
                             <img src="assets/f_1.png" style="height: 40px;">
                         </div>
                     </div>
-             
+
                     <div style="display: flex; flex-direction: row;">
                         <div style="min-width: 100px;">
                             <img src="assets/m_2.png" style="height: 40px;">
                         </div>
                         <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
-                            Strong Monster [Power 2] <br> 
+                            Strong Monster [Power 2] <br>
                         </div>
                         <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
                             <img src="assets/f_1.png" style="height: 40px;">
@@ -771,7 +206,7 @@
                             <img src="assets/m_3.png" style="height: 40px;">
                         </div>
                         <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
-                            Master Monster [Power 3] <br> 
+                            Master Monster [Power 3] <br>
                         </div>
                         <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
                             <img src="assets/f_1.png" style="height: 40px;">
@@ -788,7 +223,7 @@
                             <img src="assets/m_4.png" style="height: 40px;">
                         </div>
                         <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
-                            Suprime Monster [Power 4] <br> 
+                            Suprime Monster [Power 4] <br>
                         </div>
                         <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
                             <img src="assets/f_1.png" style="height: 40px;">
@@ -848,213 +283,14 @@
                     </div>
 
                 </div>
-          
-             
+
+
 
                 <button class="item button_cancel" onclick="help_hide()">Close</button>
             </div>
         </div>
     </div>
 
-
-
 </div>
-<script>
-    // <!-- HELP --> 
-    function help_show() {
-        document.getElementById("help_selection").classList.remove("hide");
-        document.getElementById("dark-background").classList.remove("hide");
-    }
-    function help_hide() {
-        document.getElementById("help_selection").classList.add("hide");
-        document.getElementById("dark-background").classList.add("hide");
-    }
-
-    // <!-- LEADERBOARD -->
-    function leaderboard_show(players) {
-                        // <div>2. 1234...3443 6 wins of 20 games</div>
-        document.getElementById("leaderboard_list").innerHTML = "";
-        document.getElementById("leaderboard_list").innerHTML = players.map((p, index) => {
-            const short = `${p.wallet.substring(0, 4)}...${p.wallet.substring(p.wallet.length - 4, p.wallet.length)}`
-            return `<div>${index}. ${short} ${p.wins} wins of ${p.played_games} games</div>`
-        }).join('');
-        document.getElementById("leaderboard").classList.remove("hide");
-        document.getElementById("dark-background").classList.remove("hide");
-    }
-    function leaderboard_hide() {
-        document.getElementById("leaderboard").classList.add("hide");
-        document.getElementById("dark-background").classList.add("hide");
-    }
-    // <!-- WALLET SELECTION -->
-    let wallet_selection_callback = (options) => { };
-    function wallet_selection_show(callback) {
-        wallet_selection_callback = callback;
-        document.getElementById("wallet_selection").classList.remove("hide");
-        document.getElementById("dark-background").classList.remove("hide");
-    }
-    function wallet_selection_hide() {
-        wallet_selection_callback = null;
-        document.getElementById("wallet_selection").classList.add("hide");
-        document.getElementById("dark-background").classList.add("hide");
-    }
-    function select_wallet() {
-        wallet_selection_callback({ 
-            wallet: document.getElementById("wallet_dropdown").value,
-        });
-        wallet_selection_hide();
-    }
-
-    // <!-- PRACTICE OPTIONS -->
-    let practice_options_callback = (options) => { };
-    function practice_options_show(callback) {
-        practice_options_callback = callback;
-        document.getElementById("practice_options").classList.remove("hide");
-        document.getElementById("dark-background").classList.remove("hide");
-    }
-    function practice_options_hide() {
-        practice_options_callback = null;
-        document.getElementById("practice_options").classList.add("hide");
-        document.getElementById("dark-background").classList.add("hide");
-    }
-    function practive_options_create() {
-        practice_options_callback({
-            number_of_players: document.getElementById("p_number_of_players").value,
-            units: document.getElementById("p_units").value,
-            gold: document.getElementById("p_gold").value,
-            map_size: document.getElementById("p_map_size").value
-        });
-        practice_options_hide();
-    }
-
-    // <!-- NEW GAME OPTIONS -->
-    let new_game_options_callback = (options) => { };
-    function new_game_options_show(callback) {
-        new_game_options_callback = callback;
-        document.getElementById("new_game_options").classList.remove("hide");
-        document.getElementById("dark-background").classList.remove("hide");
-    }
-    function new_game_options_hide() {
-        new_game_options_callback = null;
-        document.getElementById("new_game_options").classList.add("hide");
-        document.getElementById("dark-background").classList.add("hide");
-    }
-    function new_game_options_create() {
-        new_game_options_callback({
-            number_of_players: document.getElementById("number_of_players").value,
-            units: document.getElementById("units").value,
-            gold: document.getElementById("gold").value,
-            map_size: document.getElementById("map_size").value
-        });
-        new_game_options_hide();
-    }
-    // <!-- JOIN LOBBY -->
-    let join_lobby_callback = (lobby_id) => { };
-    function join_lobby_show(lobbies, callback) {
-        /* 
-        {
-		"lobby_id" : "xpm2WayfEj7D",
-		"current_round" : 0,
-		"created_at" : "2023-10-13T13:05:47.746Z",
-		"creation_block_height" : 19228306,
-		"lobby_creator" : "0xeeacbe169ad0eb650e8130fc918e2fde0d8548b3",
-		"lobby_state" : "open",
-		"game_state" : null,
-		"game_winner" : null,
-		"num_of_players" : 3,
-		"map" : "[{\"q\":0,\"r\":1,\"s\":-1},{\"q\":1,\"r\":0,\"s\":-1},{\"q\":1,\"r\":-1,\"s\":0},{\"q\":0,\"r\":-1,\"s\":1},{\"q\":-1,\"r\":2,\"s\":-1},{\"q\":0,\"r\":2,\"s\":-2},{\"q\":1,\"r\":1,\"s\":-2},{\"q\":2,\"r\":0,\"s\":-2},{\"q\":2,\"r\":-1,\"s\":-1},{\"q\":2,\"r\":-2,\"s\":0},{\"q\":1,\"r\":-2,\"s\":1},{\"q\":0,\"r\":-2,\"s\":2},{\"q\":-1,\"r\":-1,\"s\":2},{\"q\":-2,\"r\":0,\"s\":2},{\"q\":-2,\"r\":1,\"s\":1},{\"q\":-3,\"r\":3,\"s\":0},{\"q\":-2,\"r\":3,\"s\":-1},{\"q\":-1,\"r\":3,\"s\":-2},{\"q\":2,\"r\":1,\"s\":-3},{\"q\":3,\"r\":0,\"s\":-3},{\"q\":3,\"r\":-1,\"s\":-2},{\"q\":2,\"r\":-3,\"s\":1},{\"q\":0,\"r\":-3,\"s\":3},{\"q\":-1,\"r\":-2,\"s\":3},{\"q\":-2,\"r\":-1,\"s\":3},{\"q\":-3,\"r\":1,\"s\":2},{\"q\":-4,\"r\":4,\"s\":0},{\"q\":-2,\"r\":4,\"s\":-2},{\"q\":-1,\"r\":4,\"s\":-3},{\"q\":2,\"r\":2,\"s\":-4},{\"q\":3,\"r\":1,\"s\":-4},{\"q\":4,\"r\":0,\"s\":-4},{\"q\":4,\"r\":-1,\"s\":-3},{\"q\":4,\"r\":-2,\"s\":-2},{\"q\":4,\"r\":-3,\"s\":-1},{\"q\":4,\"r\":-4,\"s\":0},{\"q\":3,\"r\":-4,\"s\":1},{\"q\":2,\"r\":-4,\"s\":2},{\"q\":-1,\"r\":-3,\"s\":4},{\"q\":-2,\"r\":-2,\"s\":4},{\"q\":-3,\"r\":-1,\"s\":4},{\"q\":-4,\"r\":0,\"s\":4},{\"q\":-4,\"r\":1,\"s\":3},{\"q\":-4,\"r\":2,\"s\":2},{\"q\":-4,\"r\":3,\"s\":1},{\"q\":-5,\"r\":5,\"s\":0},{\"q\":-4,\"r\":5,\"s\":-1},{\"q\":-3,\"r\":5,\"s\":-2},{\"q\":-2,\"r\":5,\"s\":-3},{\"q\":-1,\"r\":5,\"s\":-4},{\"q\":0,\"r\":5,\"s\":-5},{\"q\":2,\"r\":3,\"s\":-5},{\"q\":3,\"r\":2,\"s\":-5},{\"q\":4,\"r\":1,\"s\":-5},{\"q\":5,\"r\":0,\"s\":-5},{\"q\":5,\"r\":-1,\"s\":-4},{\"q\":5,\"r\":-3,\"s\":-2},{\"q\":5,\"r\":-4,\"s\":-1},{\"q\":5,\"r\":-5,\"s\":0},{\"q\":4,\"r\":-5,\"s\":1},{\"q\":3,\"r\":-5,\"s\":2},{\"q\":2,\"r\":-5,\"s\":3},{\"q\":0,\"r\":-5,\"s\":5},{\"q\":-1,\"r\":-4,\"s\":5},{\"q\":-2,\"r\":-3,\"s\":5},{\"q\":-3,\"r\":-2,\"s\":5},{\"q\":-5,\"r\":0,\"s\":5},{\"q\":-5,\"r\":1,\"s\":4},{\"q\":-5,\"r\":2,\"s\":3},{\"q\":-5,\"r\":3,\"s\":2},{\"q\":10,\"r\":-5,\"s\":-5},{\"q\":10,\"r\":-4,\"s\":-6},{\"q\":11,\"r\":-5,\"s\":-6},{\"q\":11,\"r\":-6,\"s\":-5},{\"q\":9,\"r\":-5,\"s\":-4},{\"q\":8,\"r\":-3,\"s\":-5},{\"q\":9,\"r\":-3,\"s\":-6},{\"q\":10,\"r\":-3,\"s\":-7},{\"q\":11,\"r\":-4,\"s\":-7},{\"q\":12,\"r\":-5,\"s\":-7},{\"q\":12,\"r\":-7,\"s\":-5},{\"q\":11,\"r\":-7,\"s\":-4},{\"q\":10,\"r\":-7,\"s\":-3},{\"q\":8,\"r\":-5,\"s\":-3},{\"q\":7,\"r\":-2,\"s\":-5},{\"q\":8,\"r\":-2,\"s\":-6},{\"q\":9,\"r\":-2,\"s\":-7},{\"q\":10,\"r\":-2,\"s\":-8},{\"q\":11,\"r\":-3,\"s\":-8},{\"q\":12,\"r\":-4,\"s\":-8},{\"q\":13,\"r\":-5,\"s\":-8},{\"q\":13,\"r\":-7,\"s\":-6},{\"q\":12,\"r\":-8,\"s\":-4},{\"q\":10,\"r\":-8,\"s\":-2},{\"q\":9,\"r\":-7,\"s\":-2},{\"q\":8,\"r\":-6,\"s\":-2},{\"q\":7,\"r\":-5,\"s\":-2},{\"q\":7,\"r\":-4,\"s\":-3},{\"q\":7,\"r\":-3,\"s\":-4},{\"q\":6,\"r\":-1,\"s\":-5},{\"q\":7,\"r\":-1,\"s\":-6},{\"q\":8,\"r\":-1,\"s\":-7},{\"q\":10,\"r\":-1,\"s\":-9},{\"q\":11,\"r\":-2,\"s\":-9},{\"q\":13,\"r\":-4,\"s\":-9},{\"q\":14,\"r\":-5,\"s\":-9},{\"q\":14,\"r\":-6,\"s\":-8},{\"q\":14,\"r\":-7,\"s\":-7},{\"q\":14,\"r\":-8,\"s\":-6},{\"q\":14,\"r\":-9,\"s\":-5},{\"q\":13,\"r\":-9,\"s\":-4},{\"q\":12,\"r\":-9,\"s\":-3},{\"q\":10,\"r\":-9,\"s\":-1},{\"q\":9,\"r\":-8,\"s\":-1},{\"q\":8,\"r\":-7,\"s\":-1},{\"q\":7,\"r\":-6,\"s\":-1},{\"q\":6,\"r\":-5,\"s\":-1},{\"q\":6,\"r\":-4,\"s\":-2},{\"q\":6,\"r\":-3,\"s\":-3},{\"q\":6,\"r\":-2,\"s\":-4},{\"q\":6,\"r\":0,\"s\":-6},{\"q\":7,\"r\":0,\"s\":-7},{\"q\":8,\"r\":0,\"s\":-8},{\"q\":9,\"r\":0,\"s\":-9},{\"q\":10,\"r\":0,\"s\":-10},{\"q\":11,\"r\":-1,\"s\":-10},{\"q\":13,\"r\":-3,\"s\":-10},{\"q\":14,\"r\":-4,\"s\":-10},{\"q\":15,\"r\":-7,\"s\":-8},{\"q\":15,\"r\":-8,\"s\":-7},{\"q\":14,\"r\":-10,\"s\":-4},{\"q\":13,\"r\":-10,\"s\":-3},{\"q\":12,\"r\":-10,\"s\":-2},{\"q\":11,\"r\":-10,\"s\":-1},{\"q\":9,\"r\":-9,\"s\":0},{\"q\":6,\"r\":-6,\"s\":0}]",
-		"units" : "AA",
-		"buildings" : "B",
-		"gold" : 10,
-		"inittiles" : 4,
-		"timelimit" : 9999,
-		"roundlimit" : 9999
-	    }
-        */
-        join_lobby_callback = callback;
-        const list_of_lobbies = document.getElementById("list_of_lobbies");
-        list_of_lobbies.innerHTML = "";
-
-        if (lobbies.length === 0) {
-            list_of_lobbies.innerHTML = `Sorry no lobbies are open.<br>Create a new game.`
-        } else {
-
-
-            list_of_lobbies.innerHTML = lobbies.map(l => {
-                const wallet = l.lobby_creator;
-                const shortWallet = `${wallet.substring(0, 6)}...${wallet.substring(wallet.length - 4)}`;
-                // Time Limit: ${l.timelimit}<br>
-                // Round Limit: ${l.roundlimit}<br>
-                const item = `
-<div style="font-size:12px; margin-right:20px; margin-top:10px; margin-bottom:10px;">
-    <span style="font-weight:bold"> Lobby ${l.lobby_id}</span><br>
-    Players: ${l.num_of_players}<br>
-    Creator: ${shortWallet}<br>
-    Units: ${l.units}<br>
-    Buildings: ${l.buildings}<br>
-    Gold: ${l.gold}<br>
-    Inital Tiles: ${l.inittiles}<br>
-</div>`;
-                const button = `
-<button style="width:100px; height:40px; margin-left:auto" class="item button_ok" onclick="join_lobby_join('${l.lobby_id}')">
-    Join
-</button>`;
-
-                return `
-<div style="display: flex; flex-direction: row;">
-    ${item}
-    ${button}
-</div>`;
-            }).join('');
-        }
-        document.getElementById("join_lobby_options").classList.remove("hide");
-        document.getElementById("dark-background").classList.remove("hide");
-    }
-    function join_lobby_hide() {
-        join_lobby_callback = null;
-        document.getElementById("join_lobby_options").classList.add("hide");
-        document.getElementById("dark-background").classList.add("hide");
-    }
-    function join_lobby_join(lobby_id) {
-        join_lobby_callback(lobby_id);
-        join_lobby_hide();
-    }
-    // <!-- REJOIN LOBBY -->
-    let rejoin_lobby_callback = (lobby_id) => { };
-    function rejoin_lobby_show(lobbies, callback) {
-        rejoin_lobby_callback = callback;
-        const list_of_lobbies = document.getElementById("list_of_rejoin_lobbies");
-        list_of_lobbies.innerHTML = "";
-        // lobby_id, lobby_state, current_round, num_of_players, lobby_creator
-        if (lobbies.length === 0) {
-            list_of_lobbies.innerHTML = `You have no active games.<br>Join or Create a new game.`
-        } else {
-
-            // <br>State ${l.lobby_state}
-            // <br>Round #${l.current_round}</div>
-            list_of_lobbies.innerHTML = lobbies.map(l => `
-<div style="display: flex; flex-direction: row; margin-top: 10px;  margin-top:10px; margin-bottom:10px;>
-    <div style="margin-right:20px;">
-        ${l.activePlayers}/${l.num_of_players} players
-    <button style="margin-left:auto" class="item button_ok" onclick="rejoin_lobby_join('${l.lobby_id}')">
-        Rejoin ${l.lobby_id}
-    </button>
-</div>
-        `).join('');
-        }
-        document.getElementById("rejoin_lobby_options").classList.remove("hide");
-        document.getElementById("dark-background").classList.remove("hide");
-    }
-    function rejoin_lobby_hide() {
-        rejoin_lobby_callback = null;
-        document.getElementById("rejoin_lobby_options").classList.add("hide");
-        document.getElementById("dark-background").classList.add("hide");
-    }
-    function rejoin_lobby_join(lobby_id) {
-        rejoin_lobby_callback(lobby_id);
-        rejoin_lobby_hide();
-    }
-
-
-
-</script>
+<script src="./assets/popup.js"></script>
 <script src="./bundle.js"></script>
