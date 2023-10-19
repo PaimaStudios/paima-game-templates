@@ -169,6 +169,12 @@ export class GameScreen extends GameDraw {
         if (player.gold < Unit.getPrice(itemTile.unit.type)) {
           throw new Error('No money');
         }
+        const mainenance = Unit.getMaintenancePrice(itemTile.unit.type);
+        if (player.goldPerRound(this.game.map) + mainenance < 0) {
+          this.setToastMessage('Gold per round cannot be negative.');
+          throw new Error('Not enough gold per round');
+        }
+
         this.itemClick = itemTile;
         this.itemNearbyTiles = this.game.getNewUnitTiles(
           player,
@@ -177,6 +183,16 @@ export class GameScreen extends GameDraw {
       } else if (itemTile.building) {
         if (player.gold < Building.getPrice(itemTile.building.type)) {
           throw new Error('No money');
+        }
+        const maintenance = Building.getMaintenancePrice(
+          itemTile.building.type
+        );
+        if (
+          maintenance &&
+          player.goldPerRound(this.game.map) + maintenance < 0
+        ) {
+          this.setToastMessage('Gold per round cannot be negative.');
+          throw new Error('Not enough gold per round');
         }
         this.itemClick = itemTile;
         this.itemNearbyTiles = this.game.getBuildingTiles(player);

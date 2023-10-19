@@ -72,13 +72,29 @@ export class Building {
   public static getGoldGeneration(buildingType: BuildingType) {
     switch (buildingType) {
       case BuildingType.BASE:
-        return 3; // 2 builing +1 land
+        return 2 + 1 + Building.getMaintenancePrice(buildingType); // 2 builing +1 land
       case BuildingType.FARM:
-        return 5; // 4 farm + 1 land
+        return 4 + 1 + Building.getMaintenancePrice(buildingType); // 4 farm + 1 land
       case BuildingType.TOWER:
-        return 1; // 1 from land
+        return 1 + Building.getMaintenancePrice(buildingType); // 1 from land - 2 from tower
       case BuildingType.TOWER2:
-        return 1; // 1 from land
+        return 1 + Building.getMaintenancePrice(buildingType); // 1 from land - 5 from tower2
+
+      default:
+        throw new Error('Building type not found. Missing price');
+    }
+  }
+
+  public static getMaintenancePrice(buildingType: BuildingType) {
+    switch (buildingType) {
+      case BuildingType.BASE:
+        return 0;
+      case BuildingType.FARM:
+        return 0;
+      case BuildingType.TOWER:
+        return -2;
+      case BuildingType.TOWER2:
+        return -5;
 
       default:
         throw new Error('Building type not found. Missing price');

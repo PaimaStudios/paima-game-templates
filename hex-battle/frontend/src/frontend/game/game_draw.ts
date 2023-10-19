@@ -97,7 +97,8 @@ export abstract class GameDraw extends ScreenUI {
     // helpers to create tiles in position
     // This is not very consistent.
     const y_ = this.canvas.height - this.HUD_height - this.offset_y;
-    const itemPos = Hex.pixel_to_pointy_hex({x: -110, y: y_}, this.size);
+    const x_ = this.canvas.width / 2 - 240 - this.offset_x;
+    const itemPos = Hex.pixel_to_pointy_hex({x: x_, y: y_}, this.size);
     console.log({itemPos});
     const qrs = Tile.addVectors([
       itemPos,
@@ -757,6 +758,8 @@ export abstract class GameDraw extends ScreenUI {
     return '#' + RR + GG + BB;
   }
 
+  imageCache = new ImageCache(this.game);
+
   // DRAW specific tile
   private DrawTile(
     frame: number,
@@ -787,7 +790,14 @@ export abstract class GameDraw extends ScreenUI {
           shade
         );
       } else {
-        this.ctx.fillStyle = Player.getColor(tile.owner.id);
+        if (tile.building && tile.building.type === BuildingType.BASE) {
+          this.ctx.fillStyle = this.shadeColor(
+            Player.getColor(tile.owner.id),
+            20
+          );
+        } else {
+          this.ctx.fillStyle = Player.getColor(tile.owner.id);
+        }
       }
     } else {
       if (shade) {
@@ -798,16 +808,23 @@ export abstract class GameDraw extends ScreenUI {
     }
     this.ctx.fill();
     this.ctx.closePath();
+  }
 
-    const imageCache = new ImageCache(this.game);
-
+  private DrawTileImage(
+    frame: number,
+    tile: Tile,
+    highlight: boolean,
+    itemClick: Tile | null,
+    itemNearbyTiles: Tile[]
+  ) {
+    const [x, y] = Hex.pointy_hex_to_pixel(tile, this.size);
     this.ctx.beginPath();
     if (highlight && itemClick && itemNearbyTiles.find(t => t.same(tile))) {
       if (itemClick.unit) {
         this.DrawImage(
           x,
           y,
-          imageCache.getImageSource(itemClick.unit.type),
+          this.imageCache.getImageSource(itemClick.unit.type),
           `${Unit.getPowerLevel(itemClick.unit.type)}`
         );
       }
@@ -815,7 +832,7 @@ export abstract class GameDraw extends ScreenUI {
         this.DrawImage(
           x,
           y,
-          imageCache.getImageSource(itemClick.building.type),
+          this.imageCache.getImageSource(itemClick.building.type),
           `${Building.getPowerLevel(itemClick.building.type)}`
         );
       }
@@ -825,7 +842,7 @@ export abstract class GameDraw extends ScreenUI {
       this.DrawImage(
         x,
         y,
-        imageCache.getImageSource(tile.building.type, tile.owner.id),
+        this.imageCache.getImageSource(tile.building.type, tile.owner.id),
         `${Building.getPowerLevel(tile.building.type)}`
       );
     }
@@ -837,7 +854,7 @@ export abstract class GameDraw extends ScreenUI {
       this.DrawImage(
         x - s,
         y + c,
-        imageCache.getImageSource(tile.unit.type, tile.owner.id),
+        this.imageCache.getImageSource(tile.unit.type, tile.owner.id),
         `${Unit.getPowerLevel(tile.unit.type)}`
       );
     }
@@ -869,6 +886,35 @@ export abstract class GameDraw extends ScreenUI {
       this.ctx.fill();
       this.ctx.closePath();
     }
+  }
+
+  private DrawMapUnits(
+    frame: number,
+    itemClick: Tile | null,
+    clickFirst: Tile | null,
+    lastHighlight: Tile | null,
+    itemNearbyTiles: Tile[]
+  ) {
+    // DrawTileImage()
+    for (const tile of this.game.map.tiles) {
+      if (clickFirst && clickFirst === tile) {
+        // do nothing
+      } else if (lastHighlight && lastHighlight === tile) {
+        // draw at end.
+      } else {
+        this.DrawTileImage(frame, tile, false, itemClick, itemNearbyTiles);
+      }
+    }
+    if (clickFirst)
+      this.DrawTileImage(frame, clickFirst, true, itemClick, itemNearbyTiles);
+    if (lastHighlight)
+      this.DrawTileImage(
+        frame,
+        lastHighlight,
+        true,
+        itemClick,
+        itemNearbyTiles
+      );
   }
 
   // DRAW game map
@@ -916,5 +962,12 @@ export abstract class GameDraw extends ScreenUI {
       this.DrawTile(frame, clickFirst, true, itemClick, itemNearbyTiles, 40);
     if (lastHighlight)
       this.DrawTile(frame, lastHighlight, true, itemClick, itemNearbyTiles, 80);
+    this.DrawMapUnits(
+      frame,
+      itemClick,
+      clickFirst,
+      lastHighlight,
+      itemNearbyTiles
+    );
   }
 }

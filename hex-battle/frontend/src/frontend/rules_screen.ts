@@ -81,6 +81,11 @@ export class RulesScreen extends GameDraw {
         if (player.gold < Unit.getPrice(itemTile.unit.type)) {
           throw new Error('No money');
         }
+        const mainenance = Unit.getMaintenancePrice(itemTile.unit.type);
+        if (player.goldPerRound(this.game.map) + mainenance < 0) {
+          this.setToastMessage('Gold per round cannot be negative.');
+          throw new Error('Not enough gold per round');
+        }
         this.itemClick = itemTile;
         this.itemNearbyTiles = this.game.getNewUnitTiles(
           player,
@@ -89,6 +94,16 @@ export class RulesScreen extends GameDraw {
       } else if (itemTile.building) {
         if (player.gold < Building.getPrice(itemTile.building.type)) {
           throw new Error('No money');
+        }
+        const maintenance = Building.getMaintenancePrice(
+          itemTile.building.type
+        );
+        if (
+          maintenance &&
+          player.goldPerRound(this.game.map) + maintenance < 0
+        ) {
+          this.setToastMessage('Gold per round cannot be negative.');
+          throw new Error('Not enough gold per round');
         }
         this.itemClick = itemTile;
         this.itemNearbyTiles = this.game.getBuildingTiles(player);
@@ -259,8 +274,6 @@ export class RulesScreen extends GameDraw {
     this.lastItemHightLight = null;
   };
 
-
-
   hold_click = 0;
   hold_time: any = null;
 
@@ -377,7 +390,13 @@ export class RulesScreen extends GameDraw {
     this.DrawToast();
     this.DrawLoading();
 
-    this.DrawHelp();
+    if (!this.isGameOver()) {
+      this.DrawHelp();
+      this.DrawButtons();
+    }
+  }
+
+  DrawButtons() {
     const e1 = this.DrawButton('HELP', this.canvas.width - 100, 200);
     const e2 = this.DrawButton('EXIT', this.canvas.width - 100, 270);
     if (!this.buttonEvents.length) {
@@ -402,11 +421,15 @@ export class RulesScreen extends GameDraw {
   }[] = [];
   help(text: string, x: number, y: number, height = 45) {
     this.ctx.lineWidth = 1;
+    const fontSize = 20;
+    this.ctx.font = fontSize + 'px Electrolize';
+    const textMetrics = this.ctx.measureText(text);
+
     this.ctx.beginPath();
     this.ctx.strokeStyle = '#34495e';
     this.ctx.fillStyle = '#f39c12';
-    const width = 400;
-    this.ctx.rect(x, y, width, height);
+
+    this.ctx.rect(x, y, textMetrics.width + 20, height);
     this.ctx.fill();
     this.ctx.stroke();
     this.ctx.closePath();
@@ -414,13 +437,13 @@ export class RulesScreen extends GameDraw {
     this.ctx.beginPath();
     this.ctx.textAlign = 'center';
     this.ctx.fillStyle = '#34495e';
-    const fontSize = 20;
-    this.ctx.font = fontSize + 'px Electrolize';
+    
+
     this.ctx.fillText(
       text,
-      x + width / 2,
+      x + textMetrics.width / 2 + 10,
       y + height / 2 + fontSize / 3,
-      width
+      textMetrics.width
     );
     this.ctx.closePath();
   }
@@ -444,7 +467,7 @@ export class RulesScreen extends GameDraw {
       );
     } else if (this.clickFirst?.unit) {
       this.help(
-        'Try to reach your enemy base.',
+        "Try to reach the enemy's base.",
         this.canvas.width / 2 - 40,
         this.canvas.height - this.HUD_height - 35 - height
       );
@@ -460,16 +483,21 @@ export class RulesScreen extends GameDraw {
         20,
         this.canvas.height / 2 - 40
       );
+      this.help(
+        'Select to build new units or buildings.',
+        this.canvas.width / 2 - 200,
+        this.canvas.height - this.HUD_height - 35 - height
+      );
       if (this.game.turn > 0) {
         this.help(
           'The number in each unit shows its Power.',
-          20,
-          this.canvas.height / 2 + 60
+          this.canvas.width - 440,
+          this.canvas.height / 2
         );
         this.help(
           'Units can only destroy or get near units with less Power.',
-          20,
-          this.canvas.height / 2 + 120
+          this.canvas.width - 540,
+          this.canvas.height / 2 + 60
         );
       }
     } else {
@@ -583,26 +611,39 @@ export class RulesScreen extends GameDraw {
       return t;
     };
 
-    markHex(playerA, -3, 3);
-    const base = buildDist(playerA, -3, 3, 0, 0, BuildingType.BASE);
-    markHex(playerA, base.q, base.r);
+    {
+      markHex(playerA, -3, 3);
+      const base = buildDist(playerA, -3, 3, 0, 0, BuildingType.BASE);
+      markHex(playerA, base.q, base.r);
+    }
+    {
+      /* TRAINING */
 
-    /* TRAINING */
+      markHex(playerB, 1, -2);
+      const base2 = buildDist(playerB, 1, -2, 0, 1, BuildingType.BASE);
+      markHex(playerB, base2.q, base2.r);
+      const unitA1 = unitDist(playerB, base2.q, base2.r, 4, 2, UnitType.UNIT_1);
+      unitDist(playerB, unitA1.q, unitA1.r, 5, 1, UnitType.UNIT_1);
 
-    markHex(playerB, 1, -2);
-    buildDist(playerB, 1, -2, 0, 1, BuildingType.BASE);
-    const unit2 = unitDist(playerB, 1, -2, 5, 2, UnitType.UNIT_1);
-    markHex(playerB, unit2.q, unit2.r);
-    const farm = buildDist(playerB, 1, -2, 3, 1, BuildingType.FARM);
-    /* const farm2 = */
-    buildDist(playerB, 1, -2, 4, 2, BuildingType.FARM);
+      const unitB1 = unitDist(playerB, base2.q, base2.r, 5, 2, UnitType.UNIT_3);
+      markHex(playerB, unitB1.q, unitB1.r);
 
-    const tower = buildDist(playerB, farm.q, farm.r, 2, 1, BuildingType.TOWER);
-    markHex(playerB, tower.q, tower.r);
+      const farm = buildDist(playerB, 1, -2, 3, 1, BuildingType.FARM);
+      // const farm2 = buildDist(playerB, 1, -2, 4, 2, BuildingType.FARM);
+      // buildDist(playerB, farm2.q, farm2.r, 5, 4, BuildingType.TOWER2);
 
-    unitDist(playerB, 1, -2, 2, 2, UnitType.UNIT_2);
-    unitDist(playerB, 1, -2, 5, 1, UnitType.UNIT_1);
+      const tower = buildDist(
+        playerB,
+        farm.q,
+        farm.r,
+        2,
+        1,
+        BuildingType.TOWER
+      );
+      markHex(playerB, tower.q, tower.r);
 
+      // unitDist(playerB, 1, -2, 2, 2, UnitType.UNIT_2);
+    }
     return new Game(
       'RULES',
       new GameMap(tiles),

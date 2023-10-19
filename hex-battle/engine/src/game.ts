@@ -281,9 +281,22 @@ export class Game {
     switch (action.type) {
       case 'new_building':
         {
-          const price = Building.getPrice(action.newBuildingType!);
+          if (!action.newBuildingType) {
+            throw new Error('Missing building type');
+          }
+
+          const price = Building.getPrice(action.newBuildingType);
           if (price > player.gold) {
             throw new Error('Not enough gold');
+          }
+          const maintenance = Building.getMaintenancePrice(
+            action.newBuildingType
+          );
+          if (
+            maintenance < 0 &&
+            player.goldPerRound(this.map) + maintenance < 0
+          ) {
+            throw new Error('Cannot build. Cannot pay maintenance');
           }
 
           const target: Tile | null = action.original[0];
@@ -307,6 +320,13 @@ export class Game {
         const price = Unit.getPrice(action.newUnitType);
         if (price > player.gold) {
           throw new Error('Not enough gold');
+        }
+        const maintenance = Unit.getMaintenancePrice(action.newUnitType);
+        if (
+          maintenance < 0 &&
+          player.goldPerRound(this.map) + maintenance < 0
+        ) {
+          throw new Error('Cannot build. Cannot pay maintenance');
         }
         break;
       }
@@ -452,16 +472,68 @@ export class Game {
       return;
     }
 
+    // award user with gold.
+    const playerEndingTurn = this.getCurrentPlayer();
+    playerEndingTurn.getGold(this.map);
+
+    // apply negative gold penalty
+    while (playerEndingTurn.goldPerRound(this.map) < 0) {
+      const tiles = this.getMyTiles(playerEndingTurn);
+      // Get all tiles that have units or buildings and sort by maintenance cost
+      const myUnitsAndBuildings = tiles
+        .filter(
+          t =>
+            t.owner &&
+            t.owner.id === playerEndingTurn.id &&
+            (t.unit ||
+              (t.building &&
+                (t.building.type === BuildingType.TOWER ||
+                  t.building.type === BuildingType.TOWER2)))
+        )
+        .sort((a, b) => {
+          const aCost = a.unit
+            ? Unit.getMaintenancePrice(a.unit.type)
+            : Building.getMaintenancePrice(a.building!.type);
+          const bCost = b.unit
+            ? Unit.getMaintenancePrice(b.unit.type)
+            : Building.getMaintenancePrice(b.building!.type);
+          return aCost - bCost;
+        });
+
+      // select least amount of units that give non-negative gold per turn
+      if (myUnitsAndBuildings.length) {
+        const gpt = playerEndingTurn.goldPerRound(this.map);
+        let bestCandidate: Tile | undefined;
+        myUnitsAndBuildings.forEach(t => {
+          if (t.unit && gpt >= Unit.getMaintenancePrice(t.unit.type)) {
+            bestCandidate = t;
+          }
+          if (
+            t.building &&
+            gpt >= Building.getMaintenancePrice(t.building.type)
+          ) {
+            bestCandidate = t;
+          }
+        });
+
+        if (bestCandidate) {
+          bestCandidate.unit = null;
+          bestCandidate.building = null;
+        } else {
+          // no best candidate, then remove most expensive
+          myUnitsAndBuildings[0].unit = null;
+          myUnitsAndBuildings[0].building = null;
+        }
+      } else {
+        throw new Error('No units to remove. This should not happen.');
+      }
+    }
+
     this.turn += 1;
     do {
       // move player index
       this.currentPlayerIndex =
         (this.currentPlayerIndex + 1) % this.players.length;
-
-      // If all player moved, give gold.
-      if (this.currentPlayerIndex === 0) {
-        this.players.forEach(p => p.getGold(this.map));
-      }
     } while (!this.getCurrentPlayer().alive);
 
     const player = this.getCurrentPlayer();

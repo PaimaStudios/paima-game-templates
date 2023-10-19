@@ -52,11 +52,12 @@ export class LobbyScreen extends BackgroundScreen {
   }
 
   startDraw() {
-    this.drawTimer = setInterval(() => this.DrawUI(), 33);
+    this.drawTimer = setInterval(() => this.Draw(), 33);
   }
 
   DrawButton(
     text: string,
+    code: string,
     x: number,
     y: number
   ): {x: number; y: number; width: number; height: number} {
@@ -66,7 +67,11 @@ export class LobbyScreen extends BackgroundScreen {
     // console.log(textMetrics);
     const offset = 8;
     this.ctx.beginPath();
-    this.ctx.fillStyle = '#34495e'; // asphault
+    if (this.hoverButton && this.hoverButton.cmd === code) {
+      this.ctx.fillStyle = '#4b6584'; // green
+    } else {
+      this.ctx.fillStyle = '#34495e'; // asphault
+    }
     //'#27ae60'; // green
 
     const w =
@@ -121,34 +126,45 @@ export class LobbyScreen extends BackgroundScreen {
     this.ctx.fillText(VERSION, this.canvas.width - 40, this.canvas.height - 20);
   }
 
+  hoverButton: {coord: {x: number; y: number; width: number; height: number}; cmd: string} | null = null;
+
   DrawButtons() {
-    const buttonTop = this.canvas.height * 0.3;
     const buttonMargin = 80;
-    const a = this.DrawButton('Join Lobby', this.canvas.width * 0.5, buttonTop);
+    const a = this.DrawButton(
+      'Join Lobby',
+      'JOIN',
+      this.canvas.width * 0.25,
+      this.canvas.height * 0.5 - buttonMargin
+    );
     const b = this.DrawButton(
       'Create Lobby',
-      this.canvas.width * 0.5,
-      buttonTop + buttonMargin * 1
+      'CREATE',
+      this.canvas.width * 0.25,
+      this.canvas.height * 0.5
     );
     const d = this.DrawButton(
       'Rejoin Game',
-      this.canvas.width * 0.5,
-      buttonTop + buttonMargin * 2
+      'REJOIN',
+      this.canvas.width * 0.25,
+      this.canvas.height * 0.5 + buttonMargin
     );
     const c = this.DrawButton(
       'Practice Offline',
-      this.canvas.width * 0.5,
-      buttonTop + buttonMargin * 3
+      'PRACTICE',
+      this.canvas.width * 0.75,
+      this.canvas.height * 0.5
     );
     const e = this.DrawButton(
       'Leaderboard',
-      this.canvas.width * 0.5,
-      buttonTop + buttonMargin * 4
+      'LEADERBOARD',
+      this.canvas.width * 0.75,
+      this.canvas.height * 0.5 + buttonMargin
     );
     const f = this.DrawButton(
       'Tutorial',
-      this.canvas.width * 0.5,
-      buttonTop + buttonMargin * 5
+      'TUTORIAL',
+      this.canvas.width * 0.75,
+      this.canvas.height * 0.5 - buttonMargin
     );
 
     if (!this.events.length) {
@@ -161,29 +177,74 @@ export class LobbyScreen extends BackgroundScreen {
     }
   }
 
-  DrawUI() {
+  DrawLogo() {
+    const backColor = '#d1d8e0';
+    const frontColor = '#4b6584';
+    const topMargin = 100;
+    const fontSize = 90;
+    this.ctx.beginPath();
+    this.ctx.fillStyle = frontColor;
+    this.ctx.textAlign = 'center';
+    this.ctx.font = fontSize + 'px Hexagon';
+
+    const titleSize = this.ctx.measureText('Hexlands');
+    // Draw bounding box for title
+    this.ctx.fillStyle = 'white';
+    this.ctx.globalAlpha = 0.7;
+    this.ctx.strokeStyle = backColor;
+    this.ctx.rect(
+      this.canvas.width / 2 - titleSize.width / 2 - 10,
+      topMargin - fontSize,
+      titleSize.width + 20,
+      fontSize + 14
+    );
+    this.ctx.fill();
+    this.ctx.globalAlpha = 1;
+
+    // Draw title
+    this.ctx.fillStyle = '#a5b1c2';
+    this.ctx.fillText('Hexlands', this.canvas.width / 2 - 1, topMargin-1);
+
+    const max = 6;
+    this.ctx.fillStyle = backColor;
+    for (let i = 0; i <= max; i++) {
+      this.ctx.fillText('Hexlands', this.canvas.width / 2 + i, topMargin + i);
+    }
+
+    this.ctx.fillStyle = frontColor;
+    this.ctx.fillText(
+      'Hexlands',
+      this.canvas.width / 2 + max - 1,
+      topMargin + max - 1
+    );
+
+    this.ctx.closePath();
+  }
+
+  Draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.DrawBackground();
     this.DrawVersion();
     this.DrawButtons();
+    this.DrawLogo();
     this.DrawName();
     this.DrawToast();
     this.DrawLoading();
   }
 
-  name = '';
-  short = '';
+  private playerName = '';
+  private playerShort = '';
   DrawName() {
-    if (this.walletAddress && !this.name) {
-      this.name = Name.generateName(this.walletAddress);
-      this.short = Name.shortWallet(this.walletAddress);
+    if (this.walletAddress && !this.playerName) {
+      this.playerName = Name.generateName(this.walletAddress);
+      this.playerShort = Name.shortWallet(this.walletAddress);
     }
     this.ctx.beginPath();
     this.ctx.textAlign = 'left';
     this.ctx.font = '20px Electrolize';
     this.ctx.fillStyle = '#fff';
-    const welcome = this.name
-      ? `Welcome ${this.name} (${this.short})`
+    const welcome = this.playerName
+      ? `Welcome ${this.playerName} (${this.playerShort})`
       : 'Not Connected';
     this.ctx.fillText(welcome, 21, this.canvas.height - 19);
     this.ctx.fillStyle = '#333';
@@ -441,6 +502,7 @@ export class LobbyScreen extends BackgroundScreen {
     }
   };
 
+  
   mouse_hover_event = (evt: Event) => {
     const mousePos = this.getMousePos(evt);
     const trigger = this.events.find(e =>
@@ -449,7 +511,9 @@ export class LobbyScreen extends BackgroundScreen {
     if (trigger) {
       this.canvas.style.cursor = 'pointer';
       this.hover = null;
+      this.hoverButton = trigger;
     } else {
+      this.hoverButton = null;
       this.canvas.style.cursor = 'default';
       this.hover = Hex.pixel_to_pointy_hex(mousePos, 20);
     }

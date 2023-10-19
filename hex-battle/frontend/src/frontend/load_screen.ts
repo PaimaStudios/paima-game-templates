@@ -57,6 +57,18 @@ export class ImageCache {
 export function loadFont() {
   return Promise.all([
     new Promise((resolve, reject) => {
+      new FontFace('Hexagon', 'url(/assets/hexagon.ttf)')
+        .load()
+        .then(font => {
+          (document.fonts as any).add(font);
+          resolve(null);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    }),
+
+    new Promise((resolve, reject) => {
       new FontFace(
         'VT323',
         'url(https://fonts.gstatic.com/s/vt323/v8/CfvjE7QXPaQqLo02SkpIgA.ttf)'
