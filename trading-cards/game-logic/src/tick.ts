@@ -162,6 +162,7 @@ export function applyEvent(matchState: MatchState, event: TickEvent): void {
     matchState.players[turnPlayerIndex].currentDraw++;
     matchState.players[turnPlayerIndex].currentDeck = event.draw.newDeck;
     if (event.draw.card == null) {
+      // take 1 damage if you need to draw a card, but you have no cards left
       matchState.players[turnPlayerIndex].hitPoints -= 1;
     } else {
       matchState.players[turnPlayerIndex].currentHand.push(event.draw.card);
@@ -189,7 +190,12 @@ export function applyEvent(matchState: MatchState, event: TickEvent): void {
     const nonTurnPlayerIndex = matchState.players.findIndex(
       player => player.turn !== matchState.turn
     );
-    matchState.players[nonTurnPlayerIndex].hitPoints -= event.damageDealt;
+    // we only want to deal damage if the player has had the chance to make at least 1 move
+    // otherwise, this will attack the opponent on the very first turn since they haven't even had a chance to do anything yet
+    // in our card game, 2nd player of first turn can attack (but not all card games allow this)
+    if (matchState.properRound > 0 || matchState.turn === matchState.players.length - 1) {
+      matchState.players[nonTurnPlayerIndex].hitPoints -= event.damageDealt;
+    }
 
     for (const player of matchState.players.keys()) {
       for (const boardCard of matchState.players[player].currentBoard.keys()) {
