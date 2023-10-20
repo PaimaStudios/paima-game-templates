@@ -1,0 +1,27 @@
+{
+  "name": "@cards/middleware",
+  "version": "1.0.0",
+  "description": "Middleware for the game, to be imported into any frontend",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "sh scripts/build.sh",
+    "build:devnet": "cross-env NODE_ENV=devnet sh scripts/build.sh",
+    "build:mainnet": "cross-env NODE_ENV=mainnet sh scripts/build.sh",
+    "lint": "prettier --write '**/*.ts'"
+  },
+  "keywords": [],
+  "author": "PaimaStudios",
+  "dependencies": {
+    "@cards/game-logic": "1.0.0",
+    "@cards/utils": "1.0.0"
+  },
+  "devDependencies": {
+    "esbuild-plugin-polyfill-node": "^0.3.0",
+    "dotenv": "^16.0.3",
+    "esbuild": "^0.19.4",
+    "esbuild-plugin-d.ts": "^1.1.0"
+  }
+}
