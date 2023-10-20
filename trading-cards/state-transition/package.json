@@ -1,0 +1,28 @@
+{
+  "name": "@cards/state-transition",
+  "version": "1.0.0",
+  "description": "Module which includes all state transition logic.",
+  "main": "build/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "DOTENV_CONFIG_PATH=../.env.development node --require dotenv/config --experimental-specifier-resolution=node build/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@cards/db": "1.0.0",
+    "@cards/game-logic": "1.0.0",
+    "@cards/utils": "1.0.0",
+    "bignumber.js": "9.1.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "node-fetch": "^3.2.4",
+    "utility-types": "3.10.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.31"
+  }
+}

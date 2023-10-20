@@ -1,0 +1,16 @@
+// Defaults
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  color: white;
+  font-family: "Inter", "Arial", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-align: center;
+}
