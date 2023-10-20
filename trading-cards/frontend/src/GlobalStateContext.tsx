@@ -262,10 +262,10 @@ export function GlobalStateProvider({
       <ConnectingModal open={connectedWallet == null} />
       {children}
       <PaimaNotice />
-      <br />
+      {/* <br />
       <AstarNotice />
       <br />
-      <PolygonNotice />
+      <PolygonNotice /> */}
     </GlobalStateContext.Provider>
   );
 }
