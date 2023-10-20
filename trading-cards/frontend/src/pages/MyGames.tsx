@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import {
   Box,
   Table,
@@ -75,16 +75,16 @@ const ActionButton: React.FC<{ lobby: IGetPaginatedUserLobbiesResult }> = (
   return (
     <Box sx={{ display: "flex" }}>
       {actions.map((action, i) => (
-        <>
+        <Fragment key={action}>
           {i > 0 && <Box sx={{ marginLeft: "8px" }} />}
           <Button
-            key={action}
+            
             disabled={props.lobby.lobby_state === "closed"}
             onClick={() => handleLobbyAction(action, props.lobby)}
           >
             {action}
           </Button>
-        </>
+        </Fragment>
       ))}
     </Box>
   );

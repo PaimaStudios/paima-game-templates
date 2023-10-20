@@ -63,14 +63,19 @@ export function GlobalStateProvider({
 }): React.ReactElement {
   const [isPageVisible, setIsPageVisible] = useState(!document.hidden);
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      setIsPageVisible(!document.hidden && document.hasFocus());
-    };
+    const setFocus = () => {
+      setIsPageVisible(true);
+    }
+    const setBlur = () => {
+      setIsPageVisible(false);
+    }
 
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("blur", setBlur);
+    window.addEventListener("focus", setFocus);
 
     return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("blur", setBlur);
+      window.removeEventListener("focus", setFocus);
     };
   }, []);
 
@@ -201,13 +206,12 @@ export function GlobalStateProvider({
       const newWallet = connectResult.success
         ? connectResult.result.walletAddress
         : undefined;
-      setConnectedWallet(newWallet);
+      setConnectedWallet(oldWallet => newWallet == null ? oldWallet : newWallet);
     };
     fetch();
     const interval = setInterval(fetch, 5000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- don't care about isPageVisible
-  }, [connectedWallet]);
+  }, [connectedWallet, isPageVisible]);
 
   useEffect(() => {
     // poll trade nfts
@@ -258,10 +262,10 @@ export function GlobalStateProvider({
       <ConnectingModal open={connectedWallet == null} />
       {children}
       <PaimaNotice />
-      {/* <br />
+      <br />
       <AstarNotice />
       <br />
-      <PolygonNotice /> */}
+      <PolygonNotice />
     </GlobalStateContext.Provider>
   );
 }

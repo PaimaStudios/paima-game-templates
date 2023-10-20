@@ -1,6 +1,5 @@
 import { Box, MenuItem, Select, Typography } from "@mui/material";
 import { useGlobalStateContext } from "@src/GlobalStateContext";
-import Button from "@src/components/Button";
 import Navbar from "@src/components/Navbar";
 import Wrapper from "@src/components/Wrapper";
 import React, { useMemo, useState } from "react";
@@ -9,6 +8,14 @@ import type { CardDbId } from "@cards/game-logic";
 import { DECK_LENGTH } from "@cards/game-logic";
 import { burnTradeNft, buyTradeNft } from "@src/services/contract";
 import * as Paima from "@cards/middleware";
+import LoadingButton from "@src/components/LoadingButton";
+
+enum Buttons {
+  NONE,
+  STORE,
+  BUY,
+  BURN
+};
 
 export default function TradeNfts(): React.ReactElement {
   const { connectedWallet, collection, tradeNfts } = useGlobalStateContext();
@@ -22,6 +29,7 @@ export default function TradeNfts(): React.ReactElement {
   const [selectedTradeNft, setSelectedTradeNft] = useState<
     undefined | number
   >(tradeNfts?.tradeNfts[0]?.nft_id);
+  const [awaitingSignature, setAwaitingSignature] = useState<Buttons>(Buttons.NONE);
 
   if (connectedWallet == null) return <></>;
 
@@ -40,11 +48,21 @@ export default function TradeNfts(): React.ReactElement {
               }}
             >
               <Typography>{tradeNft.nft_id}</Typography>
-              <Button
-                onClick={() => burnTradeNft(connectedWallet, tradeNft.nft_id)}
+              <LoadingButton
+                loading={awaitingSignature === Buttons.BURN}
+                onClick={async () => {
+                  setAwaitingSignature(Buttons.BURN);
+                  try {
+                    await burnTradeNft(connectedWallet, tradeNft.nft_id);
+                  } catch (e) {
+                    console.error(e);
+                  } finally {
+                    setAwaitingSignature(Buttons.NONE);
+                  }
+                }}
               >
-                burn & claim
-              </Button>
+                Burn & Claim
+              </LoadingButton>
               <Box
                 sx={{
                   display: "flex",
@@ -81,29 +99,48 @@ export default function TradeNfts(): React.ReactElement {
                   </MenuItem>
                 ))}
             </Select>
-            <Button
+            <LoadingButton
+              loading={awaitingSignature === Buttons.STORE}
               disabled={selectedCards.length === 0 || selectedTradeNft == null}
+              sx={{ width: "300px" }}
               onClick={async () => {
                 if (selectedTradeNft == null) return;
-
-                const sortedCards = [...selectedCards];
-                sortedCards.sort();
-                await Paima.default.setTradeNftCards(
-                  selectedTradeNft,
-                  sortedCards
-                );
+                setAwaitingSignature(Buttons.STORE);
+                try {
+                  const sortedCards = [...selectedCards];
+                  sortedCards.sort();
+                  await Paima.default.setTradeNftCards(
+                    selectedTradeNft,
+                    sortedCards
+                  );
+                } catch (e) {
+                  console.error(e);
+                } finally {
+                  setAwaitingSignature(Buttons.NONE);
+                }
               }}
             >
               Store Selected Cards into NFT
-            </Button>
+            </LoadingButton>
           </Box>
-          <Button
+          <LoadingButton
+            loading={awaitingSignature === Buttons.BUY}
             sx={(theme) => ({ backgroundColor: theme.palette.menuButton.main, width: "200px" })}
-            onClick={() => buyTradeNft(connectedWallet)}
+            onClick={async () => {
+              setAwaitingSignature(Buttons.BUY);
+              try {
+                await buyTradeNft(connectedWallet)
+              } catch (e) {
+                console.error(e);
+              } finally {
+                setAwaitingSignature(Buttons.NONE);
+              }
+            }}
           >
             Buy Trade Nft
-          </Button>
+          </LoadingButton>
         </Box>
+        <Box minHeight={24} />
         <Box
           sx={{
             display: "flex",

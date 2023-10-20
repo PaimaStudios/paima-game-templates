@@ -1,6 +1,5 @@
 import type { IGetBoughtPacksResult } from "@cards/db/build/select.queries";
 import type { CardRegistryId } from "@cards/game-logic";
-import { LoadingButton } from "@mui/lab";
 import { Box } from "@mui/material";
 import { useGlobalStateContext } from "@src/GlobalStateContext";
 import Navbar from "@src/components/Navbar";
@@ -8,6 +7,7 @@ import Wrapper from "@src/components/Wrapper";
 import { buyCardPack } from "@src/services/contract";
 import React, { useEffect, useState } from "react";
 import Card from "./CardGame/Card";
+import LoadingButton from "@src/components/LoadingButton";
 
 export default function BuyPack(): React.ReactElement {
   const { connectedWallet, collection } = useGlobalStateContext();

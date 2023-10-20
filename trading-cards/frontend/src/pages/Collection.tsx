@@ -56,7 +56,7 @@ export default function Collection(): React.ReactElement {
             <Box marginBottom={12} />
           </>
         )}
-        {sortedCards.length > 0 && <Box marginBottom={2}>New selection</Box>}
+        {sortedCards.length > 0 && <Box marginBottom={2}>{(selectedDeck?.length ?? 0) > 0 ? "New selection" : "Select your cards"}</Box>}
         <Box
           sx={{
             display: "flex",

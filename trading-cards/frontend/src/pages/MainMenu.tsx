@@ -7,7 +7,7 @@ import Wrapper from "@src/components/Wrapper";
 import Logo from "@src/components/Logo";
 import { buyNft } from "@src/services/contract";
 import { useGlobalStateContext } from "@src/GlobalStateContext";
-import { LoadingButton } from "@mui/lab";
+import LoadingButton from "@src/components/LoadingButton";
 
 const NoNFTMenu = () => {
   const {
