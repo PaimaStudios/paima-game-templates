@@ -10,6 +10,7 @@ import {RandomGame} from './random-game';
 
 const TUTORIAL = false;
 const PRACTICE = false;
+const SKIP_STARTUP = false;
 
 (async () => {
   console.log('Welcome to HexBattle!');
@@ -20,14 +21,16 @@ const PRACTICE = false;
     new LoadScreen(game).start().then(_ => {
       new RulesScreen(game).start();
     });
+    return;
   }
+
   if (PRACTICE) {
     const game = new RandomGame(
       'PRACTICE',
       'OFFLINE',
-      1,
-      1,
-      'small',
+      0,
+      5,
+      'large',
       Array(1).fill(UnitType.UNIT_1),
       [BuildingType.BASE],
       4,
@@ -46,6 +49,7 @@ const PRACTICE = false;
         }
       }
     });
+    return;
   }
 
   if (PRACTICE || TUTORIAL) {
@@ -78,10 +82,15 @@ const PRACTICE = false;
     const gameLobby = new LobbyScreen();
     gameLobby.start();
   } else {
-    const startupScreen = new StartupScreen(() => {
+    if (SKIP_STARTUP) {
       const gameLobby = new LobbyScreen();
       gameLobby.start();
-    });
-    startupScreen.start();
+    } else {
+      const startupScreen = new StartupScreen(() => {
+        const gameLobby = new LobbyScreen();
+        gameLobby.start();
+      });
+      startupScreen.start();
+    }
   }
 })();

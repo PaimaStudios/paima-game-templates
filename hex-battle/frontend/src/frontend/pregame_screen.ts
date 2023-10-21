@@ -66,7 +66,7 @@ export class PreGameScreen extends BackgroundScreen {
     private lobbyId: string,
     private walletName: string | null
   ) {
-    super();
+    super('full');
   }
 
   events: {

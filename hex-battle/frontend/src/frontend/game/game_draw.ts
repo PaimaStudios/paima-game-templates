@@ -12,6 +12,7 @@ import {
 import {ScreenUI} from '../screen';
 import {DrawHex} from '../hex.draw';
 import {ImageCache} from '../load_screen';
+import {Colors} from '../colors';
 
 export enum ITEM {
   UNIT_1 = 0,
@@ -259,7 +260,7 @@ export abstract class GameDraw extends ScreenUI {
       if (!player) throw new Error('Player not found');
 
       this.ctx.beginPath();
-      this.ctx.fillStyle = Player.getColor(player.id);
+      this.ctx.fillStyle = Colors.getColor(player.id);
 
       this.ctx.font = this.font18VT323;
       this.ctx.textAlign = 'left';
@@ -318,7 +319,7 @@ export abstract class GameDraw extends ScreenUI {
 
     // Main HUD Area
     this.ctx.beginPath();
-    this.ctx.fillStyle = Player.getColor(player.id);
+    this.ctx.fillStyle = Colors.getColor(player.id);
     this.ctx.fillRect(
       lineWidth,
       HUD_top + lineWidth,
@@ -429,18 +430,6 @@ export abstract class GameDraw extends ScreenUI {
   // iterations of hexes to draw
   private endFrame = 0;
   private endTiles: (XYCoord & {color: string})[] = [];
-  private readonly colors = [
-    '#1abc9c', // turquoise
-    '#3498db', // peter river
-    '#9b59b6', // amethyst
-    '#e67e22', // carrot
-    '#e74c3c', // alizarin
-    '#2ecc71', // emerald
-    '#f1c40f', // sun flower
-    '#34495e', // wet asphalt
-    '#95a5a6', // concrete
-    '#f39c12', // orange
-  ];
 
   protected DrawWinnerOrLoser(winner: Player | null, barPercent: number) {
     this.ctx.beginPath();
@@ -458,7 +447,7 @@ export abstract class GameDraw extends ScreenUI {
         const qrs = Hex.pixel_to_pointy_hex({x: x_, y: y_}, this.size);
         const xy = {
           ...Hex.qrsToXy(qrs, this.size),
-          color: this.colors[(Math.random() * this.colors.length) | 0],
+          color: Colors.colors[(Math.random() * Colors.colors.length) | 0],
         };
         if (!this.endTiles.find(t => t.x === xy.x && t.y === xy.y)) {
           insert = true;
@@ -500,7 +489,7 @@ export abstract class GameDraw extends ScreenUI {
 
     this.ctx.beginPath();
     if (winner) {
-      this.ctx.fillStyle = Player.getColor(winner.id);
+      this.ctx.fillStyle = Colors.getColor(winner.id);
     } else {
       this.ctx.fillStyle = '#222';
     }
@@ -673,7 +662,7 @@ export abstract class GameDraw extends ScreenUI {
         // console.log('draw item highlight', itemHighlight);
         this.ctx.beginPath();
         this.ctx.lineWidth = (this.size * 0.375) | 0;
-        this.ctx.fillStyle = Player.getColor(player.id);
+        this.ctx.fillStyle = Colors.getColor(player.id);
         const [x, y] = Hex.pointy_hex_to_pixel(lastItemHightLight, this.size);
         DrawHex.drawHexagon(
           this.ctx,
@@ -788,34 +777,6 @@ export abstract class GameDraw extends ScreenUI {
     }
   }
 
-  // calculate shade of color [-100, 100]
-  private shadeColor(color: string, percent: number) {
-    let R = parseInt(color.substring(1, 3), 16);
-    let G = parseInt(color.substring(3, 5), 16);
-    let B = parseInt(color.substring(5, 7), 16);
-
-    R = ((R * (100 + percent)) / 100) | 0;
-    G = ((G * (100 + percent)) / 100) | 0;
-    B = ((B * (100 + percent)) / 100) | 0;
-
-    R = R < 255 ? R : 255;
-    G = G < 255 ? G : 255;
-    B = B < 255 ? B : 255;
-
-    R = Math.round(R);
-    G = Math.round(G);
-    B = Math.round(B);
-
-    const RR =
-      R.toString(16).length === 1 ? '0' + R.toString(16) : R.toString(16);
-    const GG =
-      G.toString(16).length === 1 ? '0' + G.toString(16) : G.toString(16);
-    const BB =
-      B.toString(16).length === 1 ? '0' + B.toString(16) : B.toString(16);
-
-    return '#' + RR + GG + BB;
-  }
-
   imageCache = new ImageCache(this.game);
 
   // DRAW specific tile
@@ -845,18 +806,18 @@ export abstract class GameDraw extends ScreenUI {
       if (shade !== 0) {
         const altColor =
           tile.building && tile.building.type === BuildingType.BASE
-            ? this.shadeColor(Player.getColor(tile.owner.id), shade + 20)
-            : this.shadeColor(Player.getColor(tile.owner.id), shade);
+            ? Colors.shadeColor(Colors.getColor(tile.owner.id), shade + 20)
+            : Colors.shadeColor(Colors.getColor(tile.owner.id), shade);
 
         this.ctx.fillStyle = altColor;
       } else {
         if (tile.building && tile.building.type === BuildingType.BASE) {
-          this.ctx.fillStyle = this.shadeColor(
-            Player.getColor(tile.owner.id),
+          this.ctx.fillStyle = Colors.shadeColor(
+            Colors.getColor(tile.owner.id),
             20
           );
         } else {
-          this.ctx.fillStyle = Player.getColor(tile.owner.id);
+          this.ctx.fillStyle = Colors.getColor(tile.owner.id);
         }
       }
     } else {

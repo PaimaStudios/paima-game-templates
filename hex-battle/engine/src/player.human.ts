@@ -35,32 +35,6 @@ export class Player {
     this.gold += this.goldPerRound(map);
   }
 
-  static getColor(playerId: string) {
-    switch (playerId) {
-      case 'A':
-        return '#1abc9c'; // turquoise
-      case 'B':
-        return '#3498db'; // peter river
-      case 'C':
-        return '#9b59b6'; // amethyst
-      case 'D':
-        return '#e67e22'; // carrot
-      case 'E':
-        return '#e74c3c'; // alizarin
-      case 'F':
-        return '#2ecc71'; // emerald
-      case 'G':
-        return '#f1c40f'; // sun flower
-      case 'H':
-        return '#34495e'; // wet asphalt
-      case 'I':
-        return '#95a5a6'; // concrete
-      case 'J':
-        return '#f39c12'; // orange
-    }
-    throw new Error('missing color');
-  }
-
   static getPlayerIndex(playerId: string) {
     let pid = -1;
     switch (playerId) {

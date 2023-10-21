@@ -1,11 +1,12 @@
 import {Hex, QRSCoord} from '@hexbattle/engine';
 import {ScreenUI} from './screen';
 import {DrawHex} from './hex.draw';
+import {Colors} from './colors';
 
 export abstract class BackgroundScreen extends ScreenUI {
   drawTimer: any = null;
   hover: QRSCoord | null = null;
-  backSize = 40;
+  size = 40;
 
   private background: {
     qrs: QRSCoord;
@@ -16,22 +17,13 @@ export abstract class BackgroundScreen extends ScreenUI {
     fillStyle: string;
   }[] = [];
 
-  constructor() {
+  constructor(private format: 'full' | 'logo') {
     super();
   }
 
-  DrawBackground() {
-    const size = this.backSize;
-    const colors = [
-      '#3498db',
-      '#2ecc71',
-      '#e67e22',
-      '#9b59b6',
-      '#f1c40f',
-      '#ecf0f1',
-    ];
-
-    if (!this.background.length) {
+  buildHexes() {
+    const size = (this.size * 1.1) | 0;
+    if (this.format === 'full') {
       const topLeft = Hex.pixel_to_pointy_hex({x: 2 * size, y: 2 * size}, size);
       const bottomRight = Hex.pixel_to_pointy_hex(
         {x: this.canvas.width - 2 * size, y: this.canvas.height - 2 * size},
@@ -64,7 +56,8 @@ export abstract class BackgroundScreen extends ScreenUI {
               qrs: {q, r, s},
               x,
               y,
-              fillStyle: colors[Math.floor(Math.random() * colors.length)],
+              fillStyle:
+                Colors.colors[Math.floor(Math.random() * Colors.colors.length)],
               targetStyle: null,
               targetStyleSteps: null,
             });
@@ -72,9 +65,18 @@ export abstract class BackgroundScreen extends ScreenUI {
         }
       }
     }
+    //  else if (this.format === 'logo') {
+    // }
+  }
+  DrawBackground() {
+    const size = (this.size * 1.1) | 0;
+    if (!this.background.length) {
+      this.buildHexes();
+    }
 
     const fadeStep = 33;
     this.ctx.strokeStyle = '#333';
+    const resize = 0.85;
 
     this.background.forEach(h => {
       const rand = Math.random();
@@ -82,7 +84,7 @@ export abstract class BackgroundScreen extends ScreenUI {
         this.ctx.beginPath();
         this.ctx.globalAlpha = 1;
         this.ctx.fillStyle = '#ededed';
-        DrawHex.drawHexagon(this.ctx, h.x, h.y, size);
+        DrawHex.drawHexagonBorder(this.ctx, h.x, h.y, size, resize);
         this.ctx.fill();
         this.ctx.lineWidth = 2;
         this.ctx.strokeStyle = '#aaaaaa';
@@ -99,19 +101,21 @@ export abstract class BackgroundScreen extends ScreenUI {
           if (!h.targetStyle) {
             // generate a number between 0 and 5 for a minute
             const x = ((((new Date().getTime() / 1000) | 0) % 60) / 10) | 0;
-            h.targetStyle = colors[x];
+            h.targetStyle = Colors.colors[x];
             // h.targetStyle = colors[Math.floor(Math.random() * colors.length)];
             h.targetStyleSteps = fadeStep;
           }
         }
 
-        const maxAlpha = 0.4;
+        const maxAlpha = 1.0;
+        this.ctx.lineWidth = (this.size / 6) | 0;
+        this.ctx.strokeStyle = Colors.colorDark;
         if (h.targetStyle && h.targetStyleSteps) {
           // smooth transition between two colors for fadeStep frames
           this.ctx.beginPath();
           this.ctx.globalAlpha = (maxAlpha * h.targetStyleSteps) / fadeStep;
           this.ctx.fillStyle = h.fillStyle;
-          DrawHex.drawHexagon(this.ctx, h.x, h.y, size);
+          DrawHex.drawHexagonBorder(this.ctx, h.x, h.y, size, resize);
           this.ctx.fill();
           this.ctx.closePath();
 
@@ -119,7 +123,7 @@ export abstract class BackgroundScreen extends ScreenUI {
           this.ctx.globalAlpha =
             (maxAlpha * (fadeStep - h.targetStyleSteps)) / fadeStep;
           this.ctx.fillStyle = h.targetStyle;
-          DrawHex.drawHexagon(this.ctx, h.x, h.y, size);
+          DrawHex.drawHexagonBorder(this.ctx, h.x, h.y, size, resize);
           this.ctx.fill();
           this.ctx.closePath();
 
@@ -134,7 +138,7 @@ export abstract class BackgroundScreen extends ScreenUI {
           this.ctx.beginPath();
           this.ctx.globalAlpha = maxAlpha;
           this.ctx.fillStyle = h.fillStyle;
-          DrawHex.drawHexagon(this.ctx, h.x, h.y, size);
+          DrawHex.drawHexagonBorder(this.ctx, h.x, h.y, size, resize);
           this.ctx.fill();
           this.ctx.closePath();
         }

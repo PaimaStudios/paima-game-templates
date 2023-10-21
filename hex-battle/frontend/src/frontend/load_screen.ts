@@ -1,6 +1,7 @@
 // image cache
 import {BuildingType, Game, Player, UnitType} from '@hexbattle/engine';
 import {ScreenUI} from './screen';
+import {Colors} from './colors';
 
 export class ImageCache {
   constructor(private game: Game) {}
@@ -54,49 +55,34 @@ export class ImageCache {
   }
 }
 
+function getFontPromise(fontName: string, fontURL: string) {
+  return new Promise((resolve, reject) => {
+    new FontFace(fontName, `url(${fontURL})`)
+      .load()
+      .then(font => {
+        (document.fonts as any).add(font);
+        resolve(null);
+      })
+      .catch(err => {
+        reject(err);
+      });
+  });
+}
+
 export function loadFont() {
   return Promise.all([
-    new Promise((resolve, reject) => {
-      new FontFace('Hexagon', 'url(/assets/hexagon.ttf)')
-        .load()
-        .then(font => {
-          (document.fonts as any).add(font);
-          resolve(null);
-        })
-        .catch(err => {
-          reject(err);
-        });
-    }),
-
-    new Promise((resolve, reject) => {
-      new FontFace(
-        'VT323',
-        'url(https://fonts.gstatic.com/s/vt323/v8/CfvjE7QXPaQqLo02SkpIgA.ttf)'
-      )
-        .load()
-        .then(font => {
-          (document.fonts as any).add(font);
-          resolve(null);
-        })
-        .catch(err => {
-          reject(err);
-        });
-    }),
-
-    new Promise((resolve, reject) => {
-      new FontFace(
-        'Electrolize',
-        'url(https://fonts.gstatic.com/s/electrolize/v18/cIf5Ma1dtE0zSiGSiED7AUEGso5tQafB.ttf)'
-      )
-        .load()
-        .then(font => {
-          (document.fonts as any).add(font);
-          resolve(null);
-        })
-        .catch(err => {
-          reject(err);
-        });
-    }),
+    getFontPromise(
+      'Rajdhani',
+      'https://fonts.cdnfonts.com/s/15366/Rajdhani-Bold.woff'
+    ),
+    getFontPromise(
+      'VT323',
+      'https://fonts.gstatic.com/s/vt323/v8/CfvjE7QXPaQqLo02SkpIgA.ttf'
+    ),
+    getFontPromise(
+      'Electrolize',
+      'https://fonts.gstatic.com/s/electrolize/v18/cIf5Ma1dtE0zSiGSiED7AUEGso5tQafB.ttf'
+    ),
   ]);
 }
 
@@ -133,7 +119,7 @@ export class LoadScreen extends ScreenUI {
   draw = () => {
     for (const player of this.game.players) {
       this.ctx.beginPath();
-      this.ctx.fillStyle = Player.getColor(player.id);
+      this.ctx.fillStyle = Colors.getColor(player.id);
 
       this.ctx.textAlign = 'left';
       this.ctx.font = '10px Electrolize';

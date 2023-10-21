@@ -6,6 +6,8 @@ import {GameScreen} from './game/game_screen';
 import {ImageCache, LoadScreen} from './load_screen';
 import {VERSION} from '../version';
 import {RulesScreen} from './game/rules_screen';
+import {DrawHex} from './hex.draw';
+import {Colors} from './colors';
 
 export class LobbyScreen extends BackgroundScreen {
   drawTimer: any = null;
@@ -19,7 +21,7 @@ export class LobbyScreen extends BackgroundScreen {
   readonly size = 36;
 
   constructor() {
-    super();
+    super('full');
   }
 
   async start() {
@@ -121,7 +123,7 @@ export class LobbyScreen extends BackgroundScreen {
 
   DrawVersion() {
     this.ctx.textAlign = 'right';
-    this.ctx.font = '12px Electrolize';
+    this.ctx.font = ((this.size * 0.6) | 0) + 'px Electrolize';
     this.ctx.fillStyle = '#333';
     this.ctx.fillText(VERSION, this.canvas.width - 40, this.canvas.height - 20);
   }
@@ -183,61 +185,64 @@ export class LobbyScreen extends BackgroundScreen {
   imageCache = new ImageCache(null as any);
   logoSize = [935, 1022];
   DrawLogo() {
-    const src = 'assets/hexlands.png';
-
-    this.imageCache.preloadImage(src).then(() => {
-      const image = ImageCache.images.get(src);
-      const w = (image.width / 2) | 0;
-      const h = (image.height / 2) | 0;
-      this.ctx.drawImage(
-        image,
-        this.canvas.width / 2 - w / 2,
-        this.canvas.height / 2 - h / 2,
-        w,
-        h
+    // const src = 'assets/hexlands.png';
+    {
+      this.ctx.globalAlpha = 0.3;
+      this.ctx.beginPath();
+      this.ctx.strokeStyle = 'white';
+      this.ctx.lineWidth = this.size / 5;
+      const logoSize = (this.size * 3.2) | 0;
+      const hexes = 4;
+      const offset = (Math.cos(Math.PI / 6) * logoSize * (hexes - 1)) | 0;
+      DrawHex.longHexagon(
+        this.ctx,
+        this.canvas.width / 2 - offset,
+        this.size * 4.2, // this.canvas.height / 2,
+        logoSize,
+        hexes
       );
-    });
-    // const backColor = '#d1d8e0';
-    // const frontColor = '#4b6584';
-    // const topMargi  n = 100;
-    // const fontSize = 90;
-    // this.ctx.beginPath();
-    // this.ctx.fillStyle = frontColor;
-    // this.ctx.textAlign = 'center';
-    // this.ctx.font = fontSize + 'px Hexagon';
+      this.ctx.fillStyle = 'black';
+      this.ctx.fill();
+      this.ctx.stroke();
+      this.ctx.closePath();
+      this.ctx.globalAlpha = 1;
+    }
 
-    // const titleSize = this.ctx.measureText('Hexlands');
-    // // Draw bounding box for title
-    // this.ctx.fillStyle = 'white';
-    // this.ctx.globalAlpha = 0.7;
-    // this.ctx.strokeStyle = backColor;
-    // this.ctx.rect(
-    //   this.canvas.width / 2 - titleSize.width / 2 - 10,
-    //   topMargin - fontSize,
-    //   titleSize.width + 20,
-    //   fontSize + 14
-    // );
-    // this.ctx.fill();
-    // this.ctx.globalAlpha = 1;
+    {
+      this.ctx.beginPath();
+      this.ctx.strokeStyle = Colors.colorDark;
+      this.ctx.lineWidth = this.size / 5;
+      const logoSize = (this.size * 3.0) | 0;
+      const hexes = 4;
+      const offset = (Math.cos(Math.PI / 6) * logoSize * (hexes - 1)) | 0;
+      DrawHex.longHexagon(
+        this.ctx,
+        this.canvas.width / 2 - offset,
+        this.size * 4, // this.canvas.height / 2,
+        logoSize,
+        hexes
+      );
+      this.ctx.fillStyle = '#fff';
+      this.ctx.fill();
+      this.ctx.stroke();
+      this.ctx.closePath();
+    }
 
-    // // Draw title
-    // this.ctx.fillStyle = '#a5b1c2';
-    // this.ctx.fillText('Hexlands', this.canvas.width / 2 - 1, topMargin - 1);
+    const fontSize = this.size * 2;
+    this.ctx.beginPath();
+    this.ctx.fillStyle = Colors.colorDark;
+    this.ctx.textAlign = 'center';
+    this.ctx.font = fontSize + 'px Rajdhani';
+    const store = (this.ctx as any).letterSpacing;
+    (this.ctx as any).letterSpacing = ((this.size * 1.3) | 0) + 'px';
+    this.ctx.fillText(
+      'HEXLANDS',
+      this.canvas.width / 2 + this.size * 0.65,
+      this.size * 4 + this.size * 0.7
+    );
+    (this.ctx as any).letterSpacing = store;
 
-    // const max = 6;
-    // this.ctx.fillStyle = backColor;
-    // for (let i = 0; i <= max; i++) {
-    //   this.ctx.fillText('Hexlands', this.canvas.width / 2 + i, topMargin + i);
-    // }
-
-    // this.ctx.fillStyle = frontColor;
-    // this.ctx.fillText(
-    //   'Hexlands',
-    //   this.canvas.width / 2 + max - 1,
-    //   topMargin + max - 1
-    // );
-
-    // this.ctx.closePath();
+    this.ctx.closePath();
   }
 
   Draw() {
@@ -260,7 +265,7 @@ export class LobbyScreen extends BackgroundScreen {
     }
     this.ctx.beginPath();
     this.ctx.textAlign = 'left';
-    this.ctx.font = '20px Electrolize';
+    this.ctx.font = this.size + 'px Electrolize';
     this.ctx.fillStyle = '#fff';
     const welcome = this.playerName
       ? `Welcome ${this.playerName} (${this.playerShort})`
@@ -533,7 +538,7 @@ export class LobbyScreen extends BackgroundScreen {
     } else {
       this.hoverButton = null;
       this.canvas.style.cursor = 'default';
-      this.hover = Hex.pixel_to_pointy_hex(mousePos, this.backSize);
+      this.hover = Hex.pixel_to_pointy_hex(mousePos, (this.size * 1.1) | 0);
     }
   };
 
