@@ -6,6 +6,7 @@ export const NFT = process.env.NFT as string;
 export const CARD_TRADE_NATIVE_PROXY = process.env
   .CARD_TRADE_NATIVE_PROXY as string;
 export const CARD_TRADE_NFT = process.env.CARD_TRADE_NFT as string;
+export const CHAIN_EXPLORER_URI = process.env.CHAIN_EXPLORER_URI as string;
 export const GENERIC_PAYMENT = process.env.GENERIC_PAYMENT as string;
 export const GENERIC_PAYMENT_PROXY = process.env
   .GENERIC_PAYMENT_PROXY as string;

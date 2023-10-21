@@ -3,7 +3,6 @@ import "./CreateLobby.scss";
 import { Box, Checkbox, FormControlLabel } from "@mui/material";
 import Navbar from "@src/components/Navbar";
 import Wrapper from "@src/components/Wrapper";
-import NumericField from "@src/components/NumericField";
 import { useGlobalStateContext } from "@src/GlobalStateContext";
 import { useNavigate } from "react-router-dom";
 import { Page } from "@src/pages/PageCoordinator";
@@ -20,7 +19,7 @@ const CreateLobby: React.FC = () => {
   } = useGlobalStateContext();
 
   // TODO: we don't actually use this for the card game so we should delete everything related to number of rounds
-  const [numberOfRounds, setNumberOfRounds] = useState(Math.floor(Number.MAX_SAFE_INTEGER / 2).toString());
+  const [numberOfRounds, setNumberOfRounds] = useState("999999");
   const [turnLength, setTurnLength] = useState("100");
   const [isHidden, setIsHidden] = useState(false);
   const [isPractice, setIsPractice] = useState(false);

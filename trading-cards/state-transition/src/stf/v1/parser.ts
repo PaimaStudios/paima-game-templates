@@ -51,7 +51,7 @@ const tradeNftMint: ParserRecord<TradeNftMintInput> = {
 const createdLobby: ParserRecord<CreatedLobbyInput> = {
   creatorNftId: PaimaParser.NumberParser(),
   creatorCommitments: PaimaParser.NCharsParser(0, 1000),
-  numOfRounds: PaimaParser.NumberParser(0, 1000),
+  numOfRounds: PaimaParser.NumberParser(0, Number.MAX_SAFE_INTEGER), // TODO: delete numberOfRounds
   turnLength: PaimaParser.NumberParser(1, 10000),
   isHidden: PaimaParser.TrueFalseParser(false),
   isPractice: PaimaParser.TrueFalseParser(false),

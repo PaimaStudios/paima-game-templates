@@ -282,10 +282,12 @@ const CardsGame: React.FC<CardGameProps> = ({
             (() => {
               const turnPlayer = getTurnPlayer(display.matchState);
 
-              const target =
-                turnPlayer.nftId === selectedNft ? "You deal" : "You take";
+              if (tickEvent.damageDealt > 0) {
+                const target =
+                  turnPlayer.nftId === selectedNft ? "You deal" : "You take";
 
-              return `${target} ${tickEvent.damageDealt} damage!`;
+                return `${target} ${tickEvent.damageDealt} damage!`;
+              }
             })()
           );
           await new Promise((resolve) => setTimeout(resolve, 3000));

@@ -37,7 +37,7 @@ export default function Collection(): React.ReactElement {
       <Navbar />
       <Wrapper blurred={false}>
         {collection.cards != null && selectedDeck != null && (
-          <>
+          <Box sx={{ marginRight: "auto", marginLeft: "auto" }}>
             <Box marginBottom={1}>Currently selected cards</Box>
             <Box
               sx={{
@@ -54,7 +54,7 @@ export default function Collection(): React.ReactElement {
               ))}
             </Box>
             <Box marginBottom={12} />
-          </>
+          </Box>
         )}
         {sortedCards.length > 0 && <Box marginBottom={2}>{(selectedDeck?.length ?? 0) > 0 ? "New selection" : "Select your cards"}</Box>}
         <Box

@@ -116,10 +116,21 @@ export function processTick(
     ? [
         {
           kind: TICK_EVENT_KIND.turnEnd,
-          damageDealt:
-            getNonTurnPlayer(matchState).currentBoard.length === 0
-              ? getTurnPlayer(matchState).currentBoard.length
-              : 0,
+          damageDealt: (() => {
+            // we only want to deal damage if the player has had the chance to make at least 1 move
+            // otherwise, this will attack the opponent on the very first turn since they haven't even had a chance to do anything yet
+            // in our card game, 2nd player of first turn can attack (but not all card games allow this)
+            if (matchState.properRound === 0 && matchState.turn < matchState.players.length - 1) {
+              return 0;
+            }
+
+            // if player has no cards left on their board
+            if (getNonTurnPlayer(matchState).currentBoard.length === 0) {
+              // deal 1 point of dmg for every card you have
+              getTurnPlayer(matchState).currentBoard.length
+            }
+            return 0;
+          })(),
         },
       ]
     : [];
@@ -190,12 +201,7 @@ export function applyEvent(matchState: MatchState, event: TickEvent): void {
     const nonTurnPlayerIndex = matchState.players.findIndex(
       player => player.turn !== matchState.turn
     );
-    // we only want to deal damage if the player has had the chance to make at least 1 move
-    // otherwise, this will attack the opponent on the very first turn since they haven't even had a chance to do anything yet
-    // in our card game, 2nd player of first turn can attack (but not all card games allow this)
-    if (matchState.properRound > 0 || matchState.turn === matchState.players.length - 1) {
-      matchState.players[nonTurnPlayerIndex].hitPoints -= event.damageDealt;
-    }
+    matchState.players[nonTurnPlayerIndex].hitPoints -= event.damageDealt;
 
     for (const player of matchState.players.keys()) {
       for (const boardCard of matchState.players[player].currentBoard.keys()) {
