@@ -161,19 +161,26 @@ const validateMovesAndApply = (
       const originTile = game.map.tiles.find(t => t.same(action.origin));
       const targetTile = game.map.tiles.find(t => t.same(action.target));
 
-      if (action.type === 'move') {
-        if (!originTile || !targetTile) throw new Error('Tile not found');
-        game.moveUnit(player, originTile, targetTile);
-      } else if (action.type === 'new_unit') {
-        if (!targetTile) throw new Error('Tile not found');
-        if (!action.newUnitType) throw new Error('Unit type not found');
-        game.placeUnit(player, targetTile, action.newUnitType);
-      } else if (action.type === 'new_building') {
-        if (!targetTile) throw new Error('Tile not found');
-        if (!action.newBuildingType) throw new Error('Building type not found');
-        game.placeBuilding(player, targetTile, action.newBuildingType);
-      } else {
-        throw new Error('Invalid action type');
+      switch (action.type) {
+        case 'move':
+          if (!originTile || !targetTile) throw new Error('Tile not found');
+          game.moveUnit(player, originTile, targetTile);
+          break;
+        case 'new_unit':
+          if (!targetTile) throw new Error('Tile not found');
+          if (!action.newUnitType) throw new Error('Unit type not found');
+          game.placeUnit(player, targetTile, action.newUnitType);
+          break;
+        case 'new_building':
+          if (!targetTile) throw new Error('Tile not found');
+          if (!action.newBuildingType) throw new Error('Building type not found');
+          game.placeBuilding(player, targetTile, action.newBuildingType);
+          break;
+        case 'surrender':
+          game.surrender(player);
+          break;
+        default:
+          throw new Error('Invalid action type');
       }
     }
     // });

@@ -5,6 +5,7 @@ import {DrawHex} from './hex.draw';
 export abstract class BackgroundScreen extends ScreenUI {
   drawTimer: any = null;
   hover: QRSCoord | null = null;
+  backSize = 40;
 
   private background: {
     qrs: QRSCoord;
@@ -20,7 +21,7 @@ export abstract class BackgroundScreen extends ScreenUI {
   }
 
   DrawBackground() {
-    const size = 20;
+    const size = this.backSize;
     const colors = [
       '#3498db',
       '#2ecc71',
@@ -58,7 +59,7 @@ export abstract class BackgroundScreen extends ScreenUI {
           if (y > this.canvas.height - size / 2 || y < size / 2) continue;
           if (x > this.canvas.width - size / 2 || x < size / 2) continue;
 
-          if (Math.random() < 0.7) {
+          if (Math.random() < 0.55) {
             this.background.push({
               qrs: {q, r, s},
               x,

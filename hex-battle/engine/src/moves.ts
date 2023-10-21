@@ -5,7 +5,7 @@ import {Player} from './player.human';
 import {Tile} from './tile';
 import {UnitType, Unit} from './unit';
 
-type GameActionType = 'move' | 'new_unit' | 'new_building';
+type GameActionType = 'move' | 'new_unit' | 'new_building' | 'surrender';
 
 export class GameAction {
   public updates: Tile[] = [];
@@ -15,7 +15,7 @@ export class GameAction {
 
   constructor(
     public type: GameActionType,
-    public target: QRSCoord,
+    public target: QRSCoord | null,
     public origin: QRSCoord | null,
     public unitMoved: string | null,
     public newUnitType: UnitType | null,
@@ -71,6 +71,24 @@ export class Moves {
           originR: number;
           originS: number;
         }) => {
+          // if target is not defined, it's a surrender
+          if (
+            typeof moveData.targetQ !== 'number' &&
+            typeof moveData.targetR !== 'number' &&
+            typeof moveData.targetS !== 'number'
+          ) {
+            // Surrender!
+            const action = new GameAction(
+              'surrender',
+              null,
+              null,
+              null,
+              null,
+              null
+            );
+            return action;
+          }
+
           const targetQRS = {
             q: moveData.targetQ,
             r: moveData.targetR,
@@ -222,12 +240,14 @@ export class Moves {
 
     return this.actions.map(action => {
       switch (action.type) {
+        case 'surrender':
+          return 'surrender';
         case 'move':
-          return format2(action.target, action.origin!);
+          return format2(action.target!, action.origin!);
         case 'new_unit':
-          return format1(action.newUnitType!, action.target);
+          return format1(action.newUnitType!, action.target!);
         case 'new_building':
-          return format1(action.newBuildingType!, action.target);
+          return format1(action.newBuildingType!, action.target!);
         default:
           throw new Error('Missing serialization instructions');
       }
@@ -384,12 +404,20 @@ export class Moves {
     }
   }
 
+  // surrender
+  public applySurrender(game: Game, action: GameAction) {
+    this.defeatPlayer(game, action, this.player.id, undefined);
+    this.applyEffects(game, action);
+    this.actions.push(action);
+    return action;
+  }
+
   // tileA destination
   public applyPlaceUnit(game: Game, action: GameAction) {
     const unit = new Unit(
       this.player,
       action.newUnitType!,
-      Unit.generateUnitId(game.turn, action.target)
+      Unit.generateUnitId(game.turn, action.target!)
     );
     unit.canMove = false;
     this.attack(game, action, unit);

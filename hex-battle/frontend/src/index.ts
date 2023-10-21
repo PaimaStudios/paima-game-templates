@@ -1,12 +1,56 @@
-import {loadFont} from './frontend/load_screen';
+import {UnitType, BuildingType, AIPlayer} from '@hexbattle/engine';
+import {GameScreen} from './frontend/game/game_screen';
+import {LoadScreen, loadFont} from './frontend/load_screen';
 import {LobbyScreen} from './frontend/lobby_screen';
 import {PreGameScreen} from './frontend/pregame_screen';
+import {RulesScreen} from './frontend/game/rules_screen';
 import {StartupScreen} from './frontend/startup_screen';
 import * as mw from './paima/middleware';
+import {RandomGame} from './random-game';
+
+const TUTORIAL = false;
+const PRACTICE = false;
 
 (async () => {
   console.log('Welcome to HexBattle!');
   await loadFont();
+
+  if (TUTORIAL) {
+    const game = RulesScreen.Setup();
+    new LoadScreen(game).start().then(_ => {
+      new RulesScreen(game).start();
+    });
+  }
+  if (PRACTICE) {
+    const game = new RandomGame(
+      'PRACTICE',
+      'OFFLINE',
+      1,
+      1,
+      'small',
+      Array(1).fill(UnitType.UNIT_1),
+      [BuildingType.BASE],
+      4,
+      100,
+      0.24
+    );
+
+    new LoadScreen(game).start().then(_ => {
+      new GameScreen(game, false).start();
+
+      // Launch game if first turn is not human.
+      if (game.turn === 0) {
+        const player = game.getCurrentPlayer();
+        if (player instanceof AIPlayer) {
+          setTimeout(() => player.randomMove(game), 1000);
+        }
+      }
+    });
+  }
+
+  if (PRACTICE || TUTORIAL) {
+    return;
+  }
 
   // eslint-disable-next-line node/no-unsupported-features/node-builtins
   const url = new URL(window.location.href);

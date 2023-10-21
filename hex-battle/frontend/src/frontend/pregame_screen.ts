@@ -11,7 +11,7 @@ import {
 import {MapPlayerGame} from '../map-player-game';
 import * as mw from '../paima/middleware';
 import {BackgroundScreen} from './background_screen';
-import {GameScreen} from './game_screen';
+import {GameScreen} from './game/game_screen';
 import {LoadScreen} from './load_screen';
 
 interface LobbyData {
@@ -189,13 +189,21 @@ export class PreGameScreen extends BackgroundScreen {
       const move = Moves.deserializePaima(game, round);
       game.initMoves(move.player);
       for (const action of move.actions) {
-        // 'move' | 'new_unit' | 'new_building';
-        if (action.type === 'move') {
-          game.moves[move.turn].applyMoveUnit(game, action);
-        } else if (action.type === 'new_unit') {
-          game.moves[move.turn].applyPlaceUnit(game, action);
-        } else if (action.type === 'new_building') {
-          game.moves[move.turn].applyPlaceBuilding(game, action);
+        switch (action.type) {
+          case 'move':
+            game.moves[move.turn].applyMoveUnit(game, action);
+            break;
+          case 'new_unit':
+            game.moves[move.turn].applyPlaceUnit(game, action);
+            break;
+          case 'new_building':
+            game.moves[move.turn].applyPlaceBuilding(game, action);
+            break;
+          case 'surrender':
+            game.moves[move.turn].applySurrender(game, action);
+            break;
+          default:
+            throw new Error('Invalid action type');
         }
       }
       game.endTurn();

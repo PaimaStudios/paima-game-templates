@@ -183,7 +183,7 @@ export class LoadScreen extends ScreenUI {
   async start() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.drawText();
-
+    await this.imageCache.preloadImage('assets/options.png');
     for (const player of this.game.players) {
       await Promise.all(
         LoadScreen.imagesTypes.map(i =>
@@ -198,6 +198,6 @@ export class LoadScreen extends ScreenUI {
       this.draw();
     }
 
-    await this.wait(1000);
+    // await this.wait(1000);
   }
 }

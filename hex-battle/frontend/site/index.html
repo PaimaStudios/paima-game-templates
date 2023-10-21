@@ -7,290 +7,306 @@
     <link rel="stylesheet" href="/assets/style.css">
 </head>
 
-<body>
+<body style="background-color: black;">
+    <div id="wrap" class="container-zoom">
+        <canvas id="myCanvas" width="1920" height="1040"></canvas>
+        <div id="dark-background" class="hide"></div>
 
-</body>
+                <!-- GAME OPTIONS -->
+                <div id="game_options" class="options_popup center hide">
 
-</html>
-<div id="wrap" class="container-zoom">
-    <canvas id="myCanvas" width="1200" height="650"></canvas>
+                    <div class="center">
+                        <div style="width: 400px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div class="item" style="font-weight: bold;">Game Options</div>
+                    
+                            <button class="item button_neutral" onclick="(help_show()||true) && game_options_hide();">Game Help</button>
+                            <button id="surrender" class="item button_neutral" onclick="game_options_surrender()">Surrender</button>
 
-    <div id="dark-background" class="hide"></div>
-    <!-- NEW GAME OPTIONS -->
-    <div id="new_game_options" class="options_popup center hide">
-
-        <div class="center">
-            <div style="width: 400px; display: flex; flex-direction: column; justify-content: space-between;
-        ">
-                <div class="item" style="font-weight: bold;">Create New Game</div>
-                <div class="item" style="font-size: 12px;">Number of players</div>
-                <input class="item" id="number_of_players" style="font-size: 20px; text-align: center;" type="number"
-                    value="2" min="2" max="5" />
-
-                <div class="item" style="font-size: 12px;">Initial Units</div>
-                <input class="item" id="units" style="font-size: 20px; text-align: center;" type="number" value="1"
-                    min="0" max="5" />
-
-                <div class="item" style="font-size: 12px;">Initial Gold</div>
-                <input class="item" id="gold" style="font-size: 20px; text-align: center;" type="number" value="0"
-                    min="0" max="100" />
-
-                <!-- Dropdown selection: Large / Medium / Small -->
-                <div class="item" style="font-size: 12px;">Map Size</div>
-                <select class="item" id="map_size" style="font-size: 20px; text-align: center;">
-                    <option value="large">Large</option>
-                    <option value="medium">Medium</option>
-                    <option value="small">Small</option>
-                </select>
-                <br>
-
-                <button class="item button_ok" onclick="new_game_options_create()">Create Game</button>
-                <button class="item button_cancel" onclick="new_game_options_hide()">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- JOIN LOBBY -->
-    <div id="join_lobby_options" class="options_popup center hide">
-        <div class="center">
-            <div style="width: 400px; display: flex; flex-direction: column; justify-content: space-between;
-        ">
-                <div class="item" style="font-weight: bold;">Join Lobby</div>
-                <div id="list_of_lobbies"
-                    style="min-height: 200px; max-height: 200px; overflow-y: scroll; margin-top: 20px; margin-bottom: 20px;">
+                            <button id="surrender" class="item button_neutral" onclick="window.location.replace('/')">Exit</button>
+                            <button class="item button_cancel" onclick="game_options_hide()">Cancel</button>
+                        </div>
+                    </div>
                 </div>
-                <button class="item button_cancel" onclick="join_lobby_hide()">Cancel</button>
+
+
+
+        <!-- NEW GAME OPTIONS -->
+        <div id="new_game_options" class="options_popup center hide">
+
+            <div class="center">
+                <div style="width: 400px; display: flex; flex-direction: column; justify-content: space-between;
+        ">
+                    <div class="item" style="font-weight: bold;">Create New Game</div>
+                    <div class="item" style="font-size: 12px;">Number of players</div>
+                    <input class="item" id="number_of_players" style="font-size: 20px; text-align: center;"
+                        type="number" value="2" min="2" max="5" />
+
+                    <div class="item" style="font-size: 12px;">Initial Units</div>
+                    <input class="item" id="units" style="font-size: 20px; text-align: center;" type="number" value="1"
+                        min="0" max="5" />
+
+                    <div class="item" style="font-size: 12px;">Initial Gold</div>
+                    <input class="item" id="gold" style="font-size: 20px; text-align: center;" type="number" value="0"
+                        min="0" max="100" />
+
+                    <!-- Dropdown selection: Large / Medium / Small -->
+                    <div class="item" style="font-size: 12px;">Map Size</div>
+                    <select class="item" id="map_size" style="font-size: 20px; text-align: center;">
+                        <option value="large">Large</option>
+                        <option value="medium">Medium</option>
+                        <option value="small">Small</option>
+                    </select>
+                    <br>
+
+                    <button class="item button_ok" onclick="new_game_options_create()">Create Game</button>
+                    <button class="item button_cancel" onclick="new_game_options_hide()">Cancel</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- REJOIN LOBBY -->
-    <div id="rejoin_lobby_options" class="options_popup center hide">
-        <div class="center">
-            <div style="width: 400px; display: flex; flex-direction: column; justify-content: space-between;
+        <!-- JOIN LOBBY -->
+        <div id="join_lobby_options" class="options_popup center hide">
+            <div class="center">
+                <div style="width: 400px; display: flex; flex-direction: column; justify-content: space-between;
+        ">
+                    <div class="item" style="font-weight: bold;">Join Lobby</div>
+                    <div id="list_of_lobbies"
+                        style="min-height: 200px; max-height: 200px; overflow-y: scroll; margin-top: 20px; margin-bottom: 20px;">
+                    </div>
+                    <button class="item button_cancel" onclick="join_lobby_hide()">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- REJOIN LOBBY -->
+        <div id="rejoin_lobby_options" class="options_popup center hide">
+            <div class="center">
+                <div style="width: 400px; display: flex; flex-direction: column; justify-content: space-between;
             ">
-                <div class="item" style="font-weight: bold;">Rejoin Lobby</div>
-                <div id="list_of_rejoin_lobbies"
-                    style="min-height: 200px; max-height: 200px; overflow-y: scroll; margin-top: 20px; margin-bottom: 20px;">
+                    <div class="item" style="font-weight: bold;">Rejoin Lobby</div>
+                    <div id="list_of_rejoin_lobbies"
+                        style="min-height: 200px; max-height: 200px; overflow-y: scroll; margin-top: 20px; margin-bottom: 20px;">
+                    </div>
+                    <button class="item button_cancel" onclick="rejoin_lobby_hide()">Cancel</button>
                 </div>
-                <button class="item button_cancel" onclick="rejoin_lobby_hide()">Cancel</button>
             </div>
         </div>
-    </div>
 
-    <!-- PRACTICE OPTIONS -->
-    <div id="practice_options" class="options_popup center hide">
+        <!-- PRACTICE OPTIONS -->
+        <div id="practice_options" class="options_popup center hide">
 
-        <div class="center">
-            <div style="width: 400px; display: flex; flex-direction: column; justify-content: space-between;
+            <div class="center">
+                <div style="width: 400px; display: flex; flex-direction: column; justify-content: space-between;
         ">
-                <div class="item" style="font-weight: bold;">Create Practice Game</div>
+                    <div class="item" style="font-weight: bold;">Create Practice Game</div>
 
-                <div class="item" style="font-size: 12px;">Number of AI Players</div>
-                <input class="item" id="p_number_of_players" style="font-size: 20px; text-align: center;" type="number"
-                    value="3" min="1" max="4" />
+                    <div class="item" style="font-size: 12px;">Number of AI Players</div>
+                    <input class="item" id="p_number_of_players" style="font-size: 20px; text-align: center;"
+                        type="number" value="3" min="1" max="4" />
 
-                <div class="item" style="font-size: 12px;">Initial Units</div>
-                <input class="item" id="p_units" style="font-size: 20px; text-align: center;" type="number" value="1"
-                    min="0" max="5" />
+                    <div class="item" style="font-size: 12px;">Initial Units</div>
+                    <input class="item" id="p_units" style="font-size: 20px; text-align: center;" type="number"
+                        value="1" min="0" max="5" />
 
-                <div class="item" style="font-size: 12px;">Initial Gold</div>
-                <input class="item" id="p_gold" style="font-size: 20px; text-align: center;" type="number" value="0"
-                    min="0" max="100" /
-                <!-- Dropdown selection: Large / Medium / Small -->
-                <div class="item" style="font-size: 12px;">Map Size</div>
-                <select class="item" id="p_map_size" style="font-size: 20px; text-align: center;">
-                    <option value="large">Large</option>
-                    <option value="medium">Medium</option>
-                    <option value="small">Small</option>
-                </select>
-                <br>
+                    <div class="item" style="font-size: 12px;">Initial Gold</div>
+                    <input class="item" id="p_gold" style="font-size: 20px; text-align: center;" type="number" value="0"
+                        min="0" max="100" / <!-- Dropdown selection: Large / Medium / Small -->
+                    <div class="item" style="font-size: 12px;">Map Size</div>
+                    <select class="item" id="p_map_size" style="font-size: 20px; text-align: center;">
+                        <option value="large">Large</option>
+                        <option value="medium">Medium</option>
+                        <option value="small">Small</option>
+                    </select>
+                    <br>
 
-                <button class="item button_ok" onclick="practive_options_create()">Create Practice Game</button>
-                <button class="item button_cancel" onclick="practice_options_hide()">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- LEADERBOARD -->
-    <div id="leaderboard" class="options_popup center hide" style="height: 600px; width: 600px;">
-
-        <div class="center">
-            <div style="width: 550px; display: flex; flex-direction: column; justify-content: space-between;">
-                <div class="item" style="font-weight: bold;">Leaderboard</div>
-                <div id="leaderboard_list" class="item"
-                    style="font-weight: bold; display: flex; flex-direction: column; justify-content: space-between; text-align: center; height: 400px; overflow-y: scroll;">
+                    <button class="item button_ok" onclick="practive_options_create()">Create Practice Game</button>
+                    <button class="item button_cancel" onclick="practice_options_hide()">Cancel</button>
                 </div>
-                <button class="item button_cancel" onclick="leaderboard_hide()">Close</button>
             </div>
         </div>
-    </div>
 
-    <!-- WALLET SELECTION  -->
-    <div id="wallet_selection" class="options_popup center hide">
+        <!-- LEADERBOARD -->
+        <div id="leaderboard" class="options_popup center hide" style="height: 600px; width: 600px;">
 
-        <div class="center">
-            <div style="width: 400px; display: flex; flex-direction: column; justify-content: space-between;
-        ">
-                <div class="item" style="font-weight: bold;">Wallet Selection</div>
-
-                <!-- Dropdown selection: Large / Medium / Small -->
-                <div class="item" style="font-size: 12px;">Select your wallet</div>
-                <select class="item" id="wallet_dropdown" style="font-size: 20px; text-align: center;">
-                    <option value="metamask">Metamask</option>
-                    <option value="evm-flint">Flint</option>
-                    <option value="cardano">Cardano</option>
-                    <option value="polkadot">Polkadot</option>
-                    <option value="pera">Pera Algorand</option>
-                </select>
-                <br>
-
-                <button class="item button_ok" onclick="select_wallet()">Select Wallet</button>
-                <button class="item button_cancel" onclick="wallet_selection_hide()">Later</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- HELP SELECTION  -->
-    <div id="help_selection" class="options_popup center hide" style="width: 800px; height: 600px;">
-
-        <div class="center">
-            <div style="width: 400px; display: flex; flex-direction: column; justify-content: space-between; width: 550px; font-size: 14px;
-        ">
-                <div class="item" style="font-weight: bold;">HELP</div>
-                <div style="display: flex; flex-direction: column; ">
-
-
-                    <div style="display: flex; flex-direction: row;">
-                        <div style="min-width: 100px;">
-                            Unit
-                        </div>
-                        <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
-                            Name [Power]
-                        </div>
-                        <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
-                            Defeats
-                        </div>
+            <div class="center">
+                <div style="width: 550px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div class="item" style="font-weight: bold;">Leaderboard</div>
+                    <div id="leaderboard_list" class="item"
+                        style="font-weight: bold; display: flex; flex-direction: column; justify-content: space-between; text-align: center; height: 400px; overflow-y: scroll;">
                     </div>
-
-
-                    <div style="display: flex; flex-direction: row;">
-                        <div style="min-width: 100px;">
-                            <img src="assets/m_1.png" style="height: 40px;">
-                        </div>
-                        <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
-                            Monster [Power 1] <br>
-                        </div>
-                        <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
-                            <img src="assets/f_1.png" style="height: 40px;">
-                        </div>
-                    </div>
-
-                    <div style="display: flex; flex-direction: row;">
-                        <div style="min-width: 100px;">
-                            <img src="assets/m_2.png" style="height: 40px;">
-                        </div>
-                        <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
-                            Strong Monster [Power 2] <br>
-                        </div>
-                        <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
-                            <img src="assets/f_1.png" style="height: 40px;">
-                            <img src="assets/m_1.png" style="height: 40px;">
-                            <img src="assets/b_1.png" style="height: 40px;">
-                        </div>
-                    </div>
-
-
-                    <div style="display: flex; flex-direction: row;">
-                        <div style="min-width: 100px;">
-                            <img src="assets/m_3.png" style="height: 40px;">
-                        </div>
-                        <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
-                            Master Monster [Power 3] <br>
-                        </div>
-                        <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
-                            <img src="assets/f_1.png" style="height: 40px;">
-                            <img src="assets/m_1.png" style="height: 40px;">
-                            <img src="assets/b_1.png" style="height: 40px;">
-                            <img src="assets/m_2.png" style="height: 40px;">
-                            <img src="assets/t1_1.png" style="height: 40px;">
-                        </div>
-                    </div>
-
-
-                    <div style="display: flex; flex-direction: row;">
-                        <div style="min-width: 100px;">
-                            <img src="assets/m_4.png" style="height: 40px;">
-                        </div>
-                        <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
-                            Suprime Monster [Power 4] <br>
-                        </div>
-                        <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
-                            <img src="assets/f_1.png" style="height: 40px;">
-                            <img src="assets/m_1.png" style="height: 40px;">
-                            <img src="assets/b_1.png" style="height: 40px;">
-                            <img src="assets/m_2.png" style="height: 40px;">
-                            <img src="assets/t1_1.png" style="height: 40px;">
-                            <img src="assets/t2_1.png" style="height: 40px;">
-                            <img src="assets/m_4.png" style="height: 40px;">
-
-                        </div>
-                    </div>
-
-
-                    <div style="display: flex; flex-direction: row;">
-                        <div style="min-width: 100px;">
-                            <img src="assets/f_1.png" style="height: 40px;">
-                        </div>
-                        <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
-                            Building [Power 0] <br>Produces +4 Gold per Turn
-                        </div>
-                        <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
-                        </div>
-                    </div>
-
-                    <div style="display: flex; flex-direction: row;">
-                        <div style="min-width: 100px;">
-                            <img src="assets/b_1.png" style="height: 40px;">
-                        </div>
-                        <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
-                            Base [Power 1] <br>If destroyed player loses.
-                        </div>
-                        <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
-                        </div>
-                    </div>
-
-                    <div style="display: flex; flex-direction: row;">
-                        <div style="min-width: 100px;">
-                            <img src="assets/t1_1.png" style="height: 40px;">
-                        </div>
-                        <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
-                            Tower [Power 2] <br> Protects nearby tiles.
-                        </div>
-                        <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
-                        </div>
-                    </div>
-
-                    <div style="display: flex; flex-direction: row;">
-                        <div style="min-width: 100px;">
-                            <img src="assets/t2_1.png" style="height: 40px;">
-                        </div>
-                        <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
-                            Mighty Tower [Power 3] <br> Protects nearby tiles.
-                        </div>
-                        <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
-                        </div>
-                    </div>
-
+                    <button class="item button_cancel" onclick="leaderboard_hide()">Close</button>
                 </div>
-
-
-
-                <button class="item button_cancel" onclick="help_hide()">Close</button>
             </div>
         </div>
-    </div>
 
-</div>
+        <!-- WALLET SELECTION  -->
+        <div id="wallet_selection" class="options_popup center hide">
+
+            <div class="center">
+                <div style="width: 400px; display: flex; flex-direction: column; justify-content: space-between;
+        ">
+                    <div class="item" style="font-weight: bold;">Wallet Selection</div>
+
+                    <!-- Dropdown selection: Large / Medium / Small -->
+                    <div class="item" style="font-size: 12px;">Select your wallet</div>
+                    <select class="item" id="wallet_dropdown" style="font-size: 20px; text-align: center;">
+                        <option value="metamask">Metamask</option>
+                        <option value="evm-flint">Flint</option>
+                        <option value="cardano">Cardano</option>
+                        <option value="polkadot">Polkadot</option>
+                        <option value="pera">Pera Algorand</option>
+                    </select>
+                    <br>
+
+                    <button class="item button_ok" onclick="select_wallet()">Select Wallet</button>
+                    <button class="item button_cancel" onclick="wallet_selection_hide()">Later</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- HELP SELECTION  -->
+        <div id="help_selection" class="options_popup center hide" style="width: 800px; height: 600px;">
+
+            <div class="center">
+                <div style="width: 400px; display: flex; flex-direction: column; justify-content: space-between; width: 550px; font-size: 14px;
+        ">
+                    <div class="item" style="font-weight: bold;">HELP</div>
+                    <div style="display: flex; flex-direction: column; ">
+
+
+                        <div style="display: flex; flex-direction: row;">
+                            <div style="min-width: 100px;">
+                                Unit
+                            </div>
+                            <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
+                                Name [Power]
+                            </div>
+                            <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+                                Defeats
+                            </div>
+                        </div>
+
+
+                        <div style="display: flex; flex-direction: row;">
+                            <div style="min-width: 100px;">
+                                <img src="assets/m_1.png" style="height: 40px;">
+                            </div>
+                            <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
+                                Monster [Power 1] <br>
+                            </div>
+                            <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+                                <img src="assets/f_1.png" style="height: 40px;">
+                            </div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: row;">
+                            <div style="min-width: 100px;">
+                                <img src="assets/m_2.png" style="height: 40px;">
+                            </div>
+                            <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
+                                Strong Monster [Power 2] <br>
+                            </div>
+                            <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+                                <img src="assets/f_1.png" style="height: 40px;">
+                                <img src="assets/m_1.png" style="height: 40px;">
+                                <img src="assets/b_1.png" style="height: 40px;">
+                            </div>
+                        </div>
+
+
+                        <div style="display: flex; flex-direction: row;">
+                            <div style="min-width: 100px;">
+                                <img src="assets/m_3.png" style="height: 40px;">
+                            </div>
+                            <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
+                                Master Monster [Power 3] <br>
+                            </div>
+                            <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+                                <img src="assets/f_1.png" style="height: 40px;">
+                                <img src="assets/m_1.png" style="height: 40px;">
+                                <img src="assets/b_1.png" style="height: 40px;">
+                                <img src="assets/m_2.png" style="height: 40px;">
+                                <img src="assets/t1_1.png" style="height: 40px;">
+                            </div>
+                        </div>
+
+
+                        <div style="display: flex; flex-direction: row;">
+                            <div style="min-width: 100px;">
+                                <img src="assets/m_4.png" style="height: 40px;">
+                            </div>
+                            <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
+                                Suprime Monster [Power 4] <br>
+                            </div>
+                            <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+                                <img src="assets/f_1.png" style="height: 40px;">
+                                <img src="assets/m_1.png" style="height: 40px;">
+                                <img src="assets/b_1.png" style="height: 40px;">
+                                <img src="assets/m_2.png" style="height: 40px;">
+                                <img src="assets/t1_1.png" style="height: 40px;">
+                                <img src="assets/t2_1.png" style="height: 40px;">
+                                <img src="assets/m_4.png" style="height: 40px;">
+
+                            </div>
+                        </div>
+
+
+                        <div style="display: flex; flex-direction: row;">
+                            <div style="min-width: 100px;">
+                                <img src="assets/f_1.png" style="height: 40px;">
+                            </div>
+                            <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
+                                Building [Power 0] <br>Produces +4 Gold per Turn
+                            </div>
+                            <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+                            </div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: row;">
+                            <div style="min-width: 100px;">
+                                <img src="assets/b_1.png" style="height: 40px;">
+                            </div>
+                            <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
+                                Base [Power 1] <br>If destroyed player loses.
+                            </div>
+                            <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+                            </div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: row;">
+                            <div style="min-width: 100px;">
+                                <img src="assets/t1_1.png" style="height: 40px;">
+                            </div>
+                            <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
+                                Tower [Power 2] <br> Protects nearby tiles.
+                            </div>
+                            <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+                            </div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: row;">
+                            <div style="min-width: 100px;">
+                                <img src="assets/t2_1.png" style="height: 40px;">
+                            </div>
+                            <div style="min-width: 200px; max-width: 200px; margin-right: 10px;">
+                                Mighty Tower [Power 3] <br> Protects nearby tiles.
+                            </div>
+                            <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                    <button class="item button_cancel" onclick="help_hide()">Close</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
 <script src="./assets/popup.js"></script>
 <script src="./bundle.js"></script>
+
+</html>

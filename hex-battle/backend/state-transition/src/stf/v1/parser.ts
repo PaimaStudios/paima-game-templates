@@ -14,7 +14,6 @@ const myGrammar = `
   createLobby         = c|numOfPlayers|units|buildings|gold|initTiles|map|timeLimit|roundLimit
   joinLobby           = j|*lobbyID
   submitMoves         = m|*lobbyID|roundNumber|move
-  surrender           = x|*lobbyID
   zombieScheduledData = z|*lobbyID|roundNumber|count?
 `;
 
@@ -79,6 +78,9 @@ const submitMoves: ParserRecord<SubmitMovesInput> = {
     //   Build Tower "t" | "T" {tower 1 or 2}
 
     return parts.map(part => {
+      if (part === 'surrender') {
+        return JSON.stringify({ surrender: true });
+      }
       const build = part.match(/^([ABCDFtT])(-?\d+)#(-?\d+)$/);
       if (build) {
         // is command to build unit or building at target

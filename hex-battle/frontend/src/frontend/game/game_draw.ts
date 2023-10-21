@@ -27,10 +27,18 @@ export enum ITEM {
 
 export abstract class GameDraw extends ScreenUI {
   // global scale [unitless]
-  protected readonly size = 20;
+  // 33 for 1920x1040
+  protected readonly size = 32;
 
+  protected font18VT323 = `${(0.9 * this.size) | 0}px VT323`;
+  protected font20Electrolize = `${this.size | 0}px Electrolize`;
+  protected font22Electrolize = `${(1.1 * this.size) | 0}px Electrolize`;
+  protected font30Electrolize = `${(1.5 * this.size) | 0}px Electrolize`;
+  protected font40Electrolize = `${(2.0 * this.size) | 0}px Electrolize`;
+  protected font34Electrolize = `${(1.7 * this.size) | 0}px Electrolize`;
+  protected font55Electrolize = `${(2.8 * this.size) | 0}px Electrolize`;
   // default image size
-  readonly imageSize = (this.size * 1.6) | 0;
+  protected readonly imageSize = (this.size * 1.6) | 0;
 
   // 1 wave per second
   readonly cos = new Array(60).fill(0).map((_, i) => {
@@ -214,14 +222,24 @@ export abstract class GameDraw extends ScreenUI {
     );
     const zoom = parseFloat(x.getPropertyValue('zoom'));
     const rect = this.canvas.getBoundingClientRect();
-    // console.log({
-    //   screen: 'game_screen.ts',
-    //   zoom,
-    //   clientX: event.clientX,
-    //   rectLeft: rect.left,
-    //   clientY: event.clientY,
-    //   rectTop: rect.top,
-    // });
+
+    // this.ctx.font = this.font18VT323;
+    // this.ctx.fillStyle = 'black';
+    // this.ctx.textAlign = 'left';
+    // this.ctx.fillText(
+    //   JSON.stringify({
+    //     screen: 'game_screen.ts',
+    //     zoom,
+    //     clientX: event.clientX,
+    //     rectLeft: rect.left,
+    //     clientY: event.clientY,
+    //     rectTop: rect.top,
+    //   }),
+    //   this.size,
+    //   this.canvas.height / 2
+    // );
+
+    console.log();
     return {
       x:
         event.clientX / (zoom || 1) -
@@ -242,17 +260,30 @@ export abstract class GameDraw extends ScreenUI {
 
       this.ctx.beginPath();
       this.ctx.fillStyle = Player.getColor(player.id);
-      this.ctx.font = '18px VT323';
+
+      this.ctx.font = this.font18VT323;
       this.ctx.textAlign = 'left';
 
-      this.ctx.fillText(this.getDisplayName(player), 10, 20 + position * 22);
+      this.ctx.fillText(
+        this.getDisplayName(player).substring(0, 24), // this is not a monospace font - so we need to calculate lenght
+        (this.size / 2) | 0,
+        this.size + position * ((this.size * 1.1) | 0)
+      );
 
       if (!player.alive) {
-        this.ctx.fillText('💀', 180, 20 + position * 22);
+        this.ctx.fillText(
+          '💀',
+          9 * this.size,
+          this.size + position * ((this.size * 1.1) | 0)
+        );
       } else {
         const gpr = player.goldPerRound(this.game.map);
         const goldText = `${player.gold} (${gpr >= 0 ? '+' + gpr : gpr})`;
-        this.ctx.fillText(` Gold ${goldText}`, 180, 20 + position * 22);
+        this.ctx.fillText(
+          ` Gold ${goldText}`,
+          9 * this.size,
+          this.size + position * ((this.size * 1.1) | 0)
+        );
       }
     }
   }
@@ -276,7 +307,7 @@ export abstract class GameDraw extends ScreenUI {
     lastItemHightLight: Tile | null
   ) {
     const player = this.game.getCurrentPlayer();
-    const lineWidth = 7;
+    const lineWidth = (0.35 * this.size) | 0;
     const HUD_top = this.canvas.height - this.HUD_height;
 
     // Background Area
@@ -297,24 +328,36 @@ export abstract class GameDraw extends ScreenUI {
     this.ctx.closePath();
 
     this.ctx.beginPath();
-    this.ctx.font = '22px Electrolize';
+    this.ctx.font = this.font22Electrolize;
     this.ctx.fillStyle = 'white';
     this.ctx.textAlign = 'left';
 
     if (player.wallet === this.game.localWallet) {
       // this.alertNewRound();
-      this.ctx.fillText('Your turn', 20, HUD_top + 28);
+      this.ctx.fillText(
+        'Your turn',
+        this.size,
+        (HUD_top + 1.4 * this.size) | 0
+      );
     } else {
-      this.ctx.fillText("Opponent's turn", 20, HUD_top + 28);
+      this.ctx.fillText(
+        "Opponent's turn",
+        this.size,
+        (HUD_top + 1.4 * this.size) | 0
+      );
     }
 
-    this.ctx.fillText(this.getDisplayName(player), 20, HUD_top + 53);
-    this.ctx.font = '20px Electrolize';
+    this.ctx.fillText(
+      this.getDisplayName(player),
+      this.size,
+      (HUD_top + 2.65 * this.size) | 0
+    );
+    this.ctx.font = this.font20Electrolize;
     const gpr = player.goldPerRound(this.game.map);
     this.ctx.fillText(
       `Gold ${player.gold} (${gpr >= 0 ? '+' : ''}${gpr})`,
-      20,
-      HUD_top + 78
+      this.size,
+      (HUD_top + 3.9 * this.size) | 0
     );
 
     this.ctx.closePath();
@@ -328,14 +371,17 @@ export abstract class GameDraw extends ScreenUI {
       }
       this.ctx.beginPath();
       this.ctx.fillStyle = 'white';
-      const fontSize = ((20 * 3) / text.length) | 0;
-      this.ctx.font = fontSize + 'px Electrolize';
+      const fontSize = Math.min(
+        this.size * 2,
+        ((this.size * 3) / text.length) | 0
+      );
+      this.ctx.font = `${fontSize}px Electrolize`;
       for (let i = 0; i < text.length; i += 1) {
         this.ctx.fillText(
           text[i] || '',
-          850,
+          (0.7 * this.canvas.width) | 0,
           HUD_top + fontSize * 1.5 + fontSize * i * 1.1,
-          300
+          15 * this.size
         );
       }
     }
@@ -345,25 +391,37 @@ export abstract class GameDraw extends ScreenUI {
     if (item.unit) {
       const u = Unit.getNameAndDescription(item.unit.type);
       return [
-        `${u.name} $${Unit.getPrice(item.unit.type)}`,
-        `Maintenance $${Unit.getMaintenancePrice(item.unit.type)} per turn`,
+        `${u.name} ${Unit.getPrice(item.unit.type)} gold`,
+        `Maintenance ${Unit.getMaintenancePrice(item.unit.type)} gold per turn`,
         u.description,
         `Power Level ${Unit.getPowerLevel(item.unit.type)}`,
       ];
     }
     if (item.building) {
       const b = Building.getNameAndDescription(item.building.type);
+      const maintenance = Building.getMaintenancePrice(item.building.type);
       return [
-        `${b.name} $${Building.getPrice(item.building.type)}`,
+        `${b.name} ${Building.getPrice(item.building.type)} gold`,
+        maintenance ? `Maintenance ${maintenance} gold per turn` : '',
         b.description,
         `Power Level ${Building.getPowerLevel(item.building.type)}`,
       ];
     }
     if (item === this.itemTiles[ITEM.END_TURN]) {
-      return ['END TURN', ''];
+      return [
+        'END TURN',
+        '',
+        'After ending your turn',
+        'you cannot undo moves.',
+      ];
     }
     if (item === this.itemTiles[ITEM.UNDO]) {
-      return ['UNDO LAST MOVE', ''];
+      return [
+        'UNDO LAST MOVE',
+        '',
+        'During your turn, you can undo',
+        'as many times you want.',
+      ];
     }
     throw new Error('Missing name');
   }
@@ -467,7 +525,7 @@ export abstract class GameDraw extends ScreenUI {
     this.ctx.closePath();
 
     this.ctx.beginPath();
-    this.ctx.font = '40px Electrolize';
+    this.ctx.font = this.font40Electrolize;
     this.ctx.fillStyle = 'white';
     this.ctx.textAlign = 'center';
 
@@ -488,13 +546,13 @@ export abstract class GameDraw extends ScreenUI {
     this.ctx.closePath();
 
     this.ctx.beginPath();
-    this.ctx.font = '20px Electrolize';
+    this.ctx.font = this.font20Electrolize;
     this.ctx.fillStyle = 'white';
     this.ctx.textAlign = 'center';
     this.ctx.fillText(
       'Hold click to exit',
       this.canvas.width / 2,
-      this.canvas.height / 2 + 30
+      (this.canvas.height / 2 + 1.5 * this.size) | 0
     );
     this.ctx.closePath();
   }
@@ -526,7 +584,7 @@ export abstract class GameDraw extends ScreenUI {
           (1 / factor) * (y + this.offset_y) +
             ImageCache.images.get(src).width / 2 -
             10 / factor,
-          (1 / factor) * 5,
+          (this.size * 1.2) | 0,
           0,
           2 * Math.PI
         );
@@ -536,7 +594,7 @@ export abstract class GameDraw extends ScreenUI {
         this.ctx.globalAlpha = 1;
 
         this.ctx.closePath();
-        this.ctx.font = (((10 * 1) / factor) | 0) + 'px Electrolize';
+        this.ctx.font = this.font34Electrolize;
         this.ctx.fillStyle = 'black';
         this.ctx.textAlign = 'center';
         this.ctx.fillText(
@@ -785,10 +843,12 @@ export abstract class GameDraw extends ScreenUI {
 
     if (tile.owner) {
       if (shade !== 0) {
-        this.ctx.fillStyle = this.shadeColor(
-          Player.getColor(tile.owner.id),
-          shade
-        );
+        const altColor =
+          tile.building && tile.building.type === BuildingType.BASE
+            ? this.shadeColor(Player.getColor(tile.owner.id), shade + 20)
+            : this.shadeColor(Player.getColor(tile.owner.id), shade);
+
+        this.ctx.fillStyle = altColor;
       } else {
         if (tile.building && tile.building.type === BuildingType.BASE) {
           this.ctx.fillStyle = this.shadeColor(
@@ -886,6 +946,29 @@ export abstract class GameDraw extends ScreenUI {
       this.ctx.fill();
       this.ctx.closePath();
     }
+  }
+
+  protected DrawOptions() {
+    this.ctx.beginPath();
+    const src = 'assets/options.png';
+    if (!ImageCache.images.has(src)) {
+      throw new Error('Preload images first: ' + src);
+    }
+    const coord = {
+      x: this.canvas.width - 3 * this.size,
+      y: this.size,
+      w: this.size * 2,
+      h: this.size * 2,
+    };
+    this.ctx.drawImage(
+      ImageCache.images.get(src),
+      coord.x,
+      coord.y,
+      coord.w,
+      coord.h
+    );
+    this.ctx.closePath();
+    return coord;
   }
 
   private DrawMapUnits(

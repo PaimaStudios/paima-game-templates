@@ -15,8 +15,13 @@ export class StartupScreen extends ScreenUI {
   readonly paimaLogo = '/assets/paima.png';
   readonly algorandLogo = '/assets/algorand.png';
 
+  ready = false;
   constructor(public finishCallback: () => void) {
     super();
+    const src = 'assets/hexlands.png';
+    this.imageCache.preloadImage(src).then(() => {
+      this.ready = true;
+    });
   }
 
   async start(): Promise<void> {
@@ -34,8 +39,10 @@ export class StartupScreen extends ScreenUI {
 
   selfStop() {
     if (this.stageCounter[0] === 0 && this.stageCounter[1] === 0) {
-      this.stop();
-      this.finishCallback();
+      if (this.ready) {
+        this.stop();
+        this.finishCallback();
+      } // wait logo to load
       return;
     }
 

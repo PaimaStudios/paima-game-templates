@@ -157,6 +157,7 @@ export class AIPlayer extends Player {
       )
     );
 
+    const gpt = game.getCurrentPlayer().goldPerRound(game.map);
     const placeUnits: {
       type: 'placeUnit';
       unit: UnitType;
@@ -164,6 +165,7 @@ export class AIPlayer extends Player {
     }[] = [];
     [UnitType.UNIT_1, UnitType.UNIT_2, UnitType.UNIT_3, UnitType.UNIT_4]
       .filter(unit => game.getCurrentPlayer().gold >= Unit.getPrice(unit))
+      .filter(unit => gpt + Unit.getMaintenancePrice(unit) >= 0)
       .forEach(unit => {
         const unitTiles = game.getNewUnitTiles(
           game.getCurrentPlayer(),
@@ -188,6 +190,7 @@ export class AIPlayer extends Player {
       .filter(
         building => game.getCurrentPlayer().gold >= Building.getPrice(building)
       )
+      .filter(building => gpt + Building.getMaintenancePrice(building) >= 0)
       .forEach(building =>
         buildingTiles.forEach(place =>
           build.push({
@@ -212,6 +215,7 @@ export class AIPlayer extends Player {
       return;
     }
 
+    // TODO THIS MIGHT NOT WORK ANYMORE. GOLD PER TURN IS NOT CALCULATED.
     while (game.currentPlayerHasMoves()) {
       try {
         const unitTile = game

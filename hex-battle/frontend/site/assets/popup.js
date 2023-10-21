@@ -11,6 +11,30 @@ function help_hide() {
   document.getElementById('dark-background').classList.add('hide');
 }
 
+// <!-- GAME OPTIONS -->
+let lobbyId = null;
+let surrender_callback = options => {};
+function game_options_show(surrender_callback_) {
+  if (surrender_callback) {
+    document.getElementById('surrender').classList.remove('hide');
+    surrender_callback = surrender_callback_;
+  } else {
+    document.getElementById('surrender').classList.add('hide');
+  }
+  document.getElementById('game_options').classList.remove('hide');
+  document.getElementById('dark-background').classList.remove('hide');
+}
+function game_options_hide() {
+  lobbyId = null;
+
+  document.getElementById('game_options').classList.add('hide');
+  document.getElementById('dark-background').classList.add('hide');
+}
+function game_options_surrender() {
+  surrender_callback();
+  game_options_hide();
+}
+
 // <!-- LEADERBOARD -->
 function leaderboard_show(players) {
   // <div>2. 1234...3443 6 wins of 20 games</div>

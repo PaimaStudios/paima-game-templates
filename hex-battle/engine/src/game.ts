@@ -279,6 +279,13 @@ export class Game {
     }
 
     switch (action.type) {
+      case 'surrender': {
+        if (player.id !== this.getCurrentPlayerId()) {
+          throw new Error('It is not player turn');
+        }
+        break;
+      }
+
       case 'new_building':
         {
           if (!action.newBuildingType) {
@@ -391,6 +398,20 @@ export class Game {
 
     this.initMoves(player);
     return this.moves[this.turn].applyPlaceBuilding(this, action);
+  }
+
+  // ACTION: surrender
+  public surrender(player: Player): GameAction {
+    const action = new GameAction('surrender', null, null, null, null, null);
+    try {
+      this.isValid(player, action);
+    } catch (e) {
+      console.log('Cannot apply move:', (e as Error).message);
+      throw e;
+    }
+
+    this.initMoves(player);
+    return this.moves[this.turn].applySurrender(this, action);
   }
 
   // ACTION: create new unit

@@ -2,10 +2,10 @@ import {UnitType, BuildingType, AIPlayer, Hex, Name} from '@hexbattle/engine';
 import * as mw from '../paima/middleware';
 import {RandomGame} from '../random-game';
 import {BackgroundScreen} from './background_screen';
-import {GameScreen} from './game_screen';
-import {LoadScreen} from './load_screen';
+import {GameScreen} from './game/game_screen';
+import {ImageCache, LoadScreen} from './load_screen';
 import {VERSION} from '../version';
-import {RulesScreen} from './rules_screen';
+import {RulesScreen} from './game/rules_screen';
 
 export class LobbyScreen extends BackgroundScreen {
   drawTimer: any = null;
@@ -15,6 +15,8 @@ export class LobbyScreen extends BackgroundScreen {
     coord: {x: number; y: number; width: number; height: number};
     cmd: string;
   }[] = [];
+
+  readonly size = 36;
 
   constructor() {
     super();
@@ -55,6 +57,7 @@ export class LobbyScreen extends BackgroundScreen {
     this.drawTimer = setInterval(() => this.Draw(), 33);
   }
 
+  font30Electrolize = `${(this.size * 1.5) | 0}px Electrolize`;
   DrawButton(
     text: string,
     code: string,
@@ -62,10 +65,10 @@ export class LobbyScreen extends BackgroundScreen {
     y: number
   ): {x: number; y: number; width: number; height: number} {
     this.ctx.textAlign = 'center';
-    this.ctx.font = '30px Electrolize';
+    this.ctx.font = this.font30Electrolize;
     const textMetrics = this.ctx.measureText(text);
     // console.log(textMetrics);
-    const offset = 8;
+    const offset = (this.size / 2) | 0;
     this.ctx.beginPath();
     if (this.hoverButton && this.hoverButton.cmd === code) {
       this.ctx.fillStyle = '#4b6584'; // green
@@ -74,31 +77,28 @@ export class LobbyScreen extends BackgroundScreen {
     }
     //'#27ae60'; // green
 
-    const w =
+    const w = Math.max(
+      this.size * 12,
       Math.abs(textMetrics.actualBoundingBoxLeft) +
-      Math.abs(textMetrics.actualBoundingBoxRight) +
-      2 * offset;
+        Math.abs(textMetrics.actualBoundingBoxRight) +
+        2 * offset
+    );
     const h = Math.max(
-      46,
+      this.size * 3,
       Math.abs(textMetrics.actualBoundingBoxAscent) +
         Math.abs(textMetrics.actualBoundingBoxDescent) +
         2 * offset
     );
-    const x_ =
-      x -
-      offset -
-      (Math.abs(textMetrics.actualBoundingBoxLeft) +
-        Math.abs(textMetrics.actualBoundingBoxRight)) /
-        2;
-    const y_ = y - textMetrics.actualBoundingBoxAscent - offset;
-    this.ctx.roundRect(x_, y_, w, h, 6);
+    const x_ = x - w / 2;
+    const y_ = y - h / 2;
+    this.ctx.roundRect(x_, y_, w, h, (this.size / 3) | 0);
     this.ctx.fill();
     this.ctx.closePath();
 
     this.ctx.beginPath();
     // this.ctx.stroke();
     this.ctx.fillStyle = '#ecf0f1';
-    this.ctx.fillText(text, x, y);
+    this.ctx.fillText(text, x, (y + this.size * 0.4) | 0);
     this.ctx.closePath();
     return {x: x_, y: y_, width: w, height: h};
   }
@@ -126,44 +126,47 @@ export class LobbyScreen extends BackgroundScreen {
     this.ctx.fillText(VERSION, this.canvas.width - 40, this.canvas.height - 20);
   }
 
-  hoverButton: {coord: {x: number; y: number; width: number; height: number}; cmd: string} | null = null;
+  hoverButton: {
+    coord: {x: number; y: number; width: number; height: number};
+    cmd: string;
+  } | null = null;
 
   DrawButtons() {
-    const buttonMargin = 80;
+    const buttonMargin = this.size * 5;
     const a = this.DrawButton(
       'Join Lobby',
       'JOIN',
-      this.canvas.width * 0.25,
+      this.canvas.width * 0.2,
       this.canvas.height * 0.5 - buttonMargin
     );
     const b = this.DrawButton(
       'Create Lobby',
       'CREATE',
-      this.canvas.width * 0.25,
+      this.canvas.width * 0.2,
       this.canvas.height * 0.5
     );
     const d = this.DrawButton(
       'Rejoin Game',
       'REJOIN',
-      this.canvas.width * 0.25,
+      this.canvas.width * 0.2,
       this.canvas.height * 0.5 + buttonMargin
     );
     const c = this.DrawButton(
       'Practice Offline',
       'PRACTICE',
-      this.canvas.width * 0.75,
+      this.canvas.width * 0.8,
       this.canvas.height * 0.5
     );
     const e = this.DrawButton(
       'Leaderboard',
       'LEADERBOARD',
-      this.canvas.width * 0.75,
+      this.canvas.width * 0.8,
       this.canvas.height * 0.5 + buttonMargin
     );
     const f = this.DrawButton(
       'Tutorial',
       'TUTORIAL',
-      this.canvas.width * 0.75,
+      this.canvas.width * 0.8,
       this.canvas.height * 0.5 - buttonMargin
     );
 
@@ -177,48 +180,64 @@ export class LobbyScreen extends BackgroundScreen {
     }
   }
 
+  imageCache = new ImageCache(null as any);
+  logoSize = [935, 1022];
   DrawLogo() {
-    const backColor = '#d1d8e0';
-    const frontColor = '#4b6584';
-    const topMargin = 100;
-    const fontSize = 90;
-    this.ctx.beginPath();
-    this.ctx.fillStyle = frontColor;
-    this.ctx.textAlign = 'center';
-    this.ctx.font = fontSize + 'px Hexagon';
+    const src = 'assets/hexlands.png';
 
-    const titleSize = this.ctx.measureText('Hexlands');
-    // Draw bounding box for title
-    this.ctx.fillStyle = 'white';
-    this.ctx.globalAlpha = 0.7;
-    this.ctx.strokeStyle = backColor;
-    this.ctx.rect(
-      this.canvas.width / 2 - titleSize.width / 2 - 10,
-      topMargin - fontSize,
-      titleSize.width + 20,
-      fontSize + 14
-    );
-    this.ctx.fill();
-    this.ctx.globalAlpha = 1;
+    this.imageCache.preloadImage(src).then(() => {
+      const image = ImageCache.images.get(src);
+      const w = (image.width / 2) | 0;
+      const h = (image.height / 2) | 0;
+      this.ctx.drawImage(
+        image,
+        this.canvas.width / 2 - w / 2,
+        this.canvas.height / 2 - h / 2,
+        w,
+        h
+      );
+    });
+    // const backColor = '#d1d8e0';
+    // const frontColor = '#4b6584';
+    // const topMargi  n = 100;
+    // const fontSize = 90;
+    // this.ctx.beginPath();
+    // this.ctx.fillStyle = frontColor;
+    // this.ctx.textAlign = 'center';
+    // this.ctx.font = fontSize + 'px Hexagon';
 
-    // Draw title
-    this.ctx.fillStyle = '#a5b1c2';
-    this.ctx.fillText('Hexlands', this.canvas.width / 2 - 1, topMargin-1);
+    // const titleSize = this.ctx.measureText('Hexlands');
+    // // Draw bounding box for title
+    // this.ctx.fillStyle = 'white';
+    // this.ctx.globalAlpha = 0.7;
+    // this.ctx.strokeStyle = backColor;
+    // this.ctx.rect(
+    //   this.canvas.width / 2 - titleSize.width / 2 - 10,
+    //   topMargin - fontSize,
+    //   titleSize.width + 20,
+    //   fontSize + 14
+    // );
+    // this.ctx.fill();
+    // this.ctx.globalAlpha = 1;
 
-    const max = 6;
-    this.ctx.fillStyle = backColor;
-    for (let i = 0; i <= max; i++) {
-      this.ctx.fillText('Hexlands', this.canvas.width / 2 + i, topMargin + i);
-    }
+    // // Draw title
+    // this.ctx.fillStyle = '#a5b1c2';
+    // this.ctx.fillText('Hexlands', this.canvas.width / 2 - 1, topMargin - 1);
 
-    this.ctx.fillStyle = frontColor;
-    this.ctx.fillText(
-      'Hexlands',
-      this.canvas.width / 2 + max - 1,
-      topMargin + max - 1
-    );
+    // const max = 6;
+    // this.ctx.fillStyle = backColor;
+    // for (let i = 0; i <= max; i++) {
+    //   this.ctx.fillText('Hexlands', this.canvas.width / 2 + i, topMargin + i);
+    // }
 
-    this.ctx.closePath();
+    // this.ctx.fillStyle = frontColor;
+    // this.ctx.fillText(
+    //   'Hexlands',
+    //   this.canvas.width / 2 + max - 1,
+    //   topMargin + max - 1
+    // );
+
+    // this.ctx.closePath();
   }
 
   Draw() {
@@ -502,7 +521,6 @@ export class LobbyScreen extends BackgroundScreen {
     }
   };
 
-  
   mouse_hover_event = (evt: Event) => {
     const mousePos = this.getMousePos(evt);
     const trigger = this.events.find(e =>
@@ -515,7 +533,7 @@ export class LobbyScreen extends BackgroundScreen {
     } else {
       this.hoverButton = null;
       this.canvas.style.cursor = 'default';
-      this.hover = Hex.pixel_to_pointy_hex(mousePos, 20);
+      this.hover = Hex.pixel_to_pointy_hex(mousePos, this.backSize);
     }
   };
 
