@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 import { useGlobalStateContext } from "@src/GlobalStateContext";
 import Button from "@src/components/Button";
 import Navbar from "@src/components/Navbar";
@@ -37,8 +37,20 @@ export default function Collection(): React.ReactElement {
       <Navbar />
       <Wrapper blurred={false}>
         {collection.cards != null && selectedDeck != null && (
-          <Box sx={{ marginRight: "auto", marginLeft: "auto" }}>
-            <Box marginBottom={1}>Currently selected cards</Box>
+          <Paper
+            sx={{
+              padding: 2,
+              background: "rgba(0,0,0,0.1)",
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              gap: 2,
+              marginRight: "auto",
+              marginLeft: "auto",
+              marginBottom: 8
+            }}
+          >
+            <Typography sx={{ marginLeft: "auto", marginRight: "auto" }} color="white">Current cards</Typography>
             <Box
               sx={{
                 display: "flex",
@@ -53,8 +65,7 @@ export default function Collection(): React.ReactElement {
                 />
               ))}
             </Box>
-            <Box marginBottom={12} />
-          </Box>
+          </Paper>
         )}
         {sortedCards.length > 0 && <Box marginBottom={2}>{(selectedDeck?.length ?? 0) > 0 ? "New selection" : "Select your cards"}</Box>}
         <Box

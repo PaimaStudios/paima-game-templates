@@ -7,6 +7,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Typography,
 } from "@mui/material";
 import Navbar from "@src/components/Navbar";
 import SearchBar from "@src/components/SearchBar";
@@ -18,6 +19,7 @@ import type { IGetLobbyByIdResult } from "@cards/db";
 import { useNavigate } from "react-router-dom";
 import { Page } from "@src/pages/PageCoordinator";
 import { getOpenLobbies, joinLobby, searchLobby } from "@src/services/utils";
+import { useDebounce } from 'use-debounce';
 
 type Column = {
   id: keyof IGetLobbyByIdResult | "action";
@@ -53,6 +55,19 @@ const OpenLobbies: React.FC = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchText, setSearchText] = useState("");
+  const [debounceSearchText] = useDebounce(searchText, 1000);
+  useEffect(() => {
+    (async () => {
+      if (selectedNft.nft == null) return;
+
+      const results = await searchLobby(selectedNft.nft, debounceSearchText, 0);
+      if (results == null || results.length === 0) return;
+      const newLobbies = results.filter(
+        (result) => !lobbies.some((lobby) => lobby.lobby_id === result.lobby_id)
+      );
+      setLobbies([...lobbies, ...newLobbies]);
+    })()
+  }, [debounceSearchText])
 
   useEffect(() => {
     if (selectedNft.nft == null) return;
@@ -62,24 +77,8 @@ const OpenLobbies: React.FC = () => {
     });
   }, [selectedNft.nft]);
 
-  const handleSearchTextChange = (query: string) => {
-    setSearchText(query);
-    searchForHiddenLobby(query);
-  };
-
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
-  };
-
-  const searchForHiddenLobby = async (query: string) => {
-    if (selectedNft.nft == null) return;
-
-    const results = await searchLobby(selectedNft.nft, query, 0);
-    if (results == null || results.length === 0) return;
-    const newLobbies = results.filter(
-      (result) => !lobbies.some((lobby) => lobby.lobby_id === result.lobby_id)
-    );
-    setLobbies([...lobbies, ...newLobbies]);
   };
 
   const handleChangeRowsPerPage = (
@@ -111,7 +110,7 @@ const OpenLobbies: React.FC = () => {
         <SearchBar
           value={searchText}
           onRefresh={handleLobbiesRefresh}
-          onSearch={handleSearchTextChange}
+          onSearch={setSearchText}
         />
       </Navbar>
       <Wrapper>
@@ -131,6 +130,19 @@ const OpenLobbies: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
+              {filteredLobbies.length === 0 && (
+                <TableRow
+                  hover
+                  role="checkbox"
+                  tabIndex={-1}
+                >
+                  <TableCell colSpan={columns.length}>
+                    <Typography sx={{ textAlign: "center", marginTop: 4, marginBottom: 4}}>
+                      No open lobbies at this time. Create your own or play against an AI
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              )}
               {filteredLobbies
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((lobby) => {

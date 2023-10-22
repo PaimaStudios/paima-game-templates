@@ -57,7 +57,7 @@ export async function searchLobby(
   const response = await Paima.default.getLobbySearch(nftId, query, page, 1);
   console.log("search lobby response: ", response);
   if (!response.success) {
-    throw new Error("Could not search lobby");
+    return [];
   }
   return response.result.lobbies;
 }
