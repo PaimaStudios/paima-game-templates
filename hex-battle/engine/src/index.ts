@@ -8,3 +8,4 @@ export * from './tile';
 export * from './unit';
 export * from './hex';
 export * from './name';
+export * from './create-game';

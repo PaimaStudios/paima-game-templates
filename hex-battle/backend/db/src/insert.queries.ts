@@ -106,6 +106,7 @@ export interface ICreateRoundParams {
   lobby_id: string;
   move: string;
   round: number;
+  seed: string;
   wallet: string;
 }
 
@@ -118,13 +119,13 @@ export interface ICreateRoundQuery {
   result: ICreateRoundResult;
 }
 
-const createRoundIR: any = {"usedParamSet":{"lobby_id":true,"wallet":true,"move":true,"round":true,"block_height":true},"params":[{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":71,"b":80}]},{"name":"wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":83,"b":90}]},{"name":"move","required":true,"transform":{"type":"scalar"},"locs":[{"a":93,"b":98}]},{"name":"round","required":true,"transform":{"type":"scalar"},"locs":[{"a":101,"b":107}]},{"name":"block_height","required":true,"transform":{"type":"scalar"},"locs":[{"a":110,"b":123}]}],"statement":"INSERT INTO round(lobby_id, wallet, move, round, block_height)\nVALUES (:lobby_id!, :wallet!, :move!, :round!, :block_height!)"};
+const createRoundIR: any = {"usedParamSet":{"lobby_id":true,"wallet":true,"move":true,"round":true,"block_height":true,"seed":true},"params":[{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":77,"b":86}]},{"name":"wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":89,"b":96}]},{"name":"move","required":true,"transform":{"type":"scalar"},"locs":[{"a":99,"b":104}]},{"name":"round","required":true,"transform":{"type":"scalar"},"locs":[{"a":107,"b":113}]},{"name":"block_height","required":true,"transform":{"type":"scalar"},"locs":[{"a":116,"b":129}]},{"name":"seed","required":true,"transform":{"type":"scalar"},"locs":[{"a":132,"b":137}]}],"statement":"INSERT INTO round(lobby_id, wallet, move, round, block_height, seed)\nVALUES (:lobby_id!, :wallet!, :move!, :round!, :block_height!, :seed!)"};
 
 /**
  * Query generated from SQL:
  * ```
- * INSERT INTO round(lobby_id, wallet, move, round, block_height)
- * VALUES (:lobby_id!, :wallet!, :move!, :round!, :block_height!)
+ * INSERT INTO round(lobby_id, wallet, move, round, block_height, seed)
+ * VALUES (:lobby_id!, :wallet!, :move!, :round!, :block_height!, :seed!)
  * ```
  */
 export const createRound = new PreparedQuery<ICreateRoundParams,ICreateRoundResult>(createRoundIR);

@@ -41,8 +41,8 @@ VALUES (:lobby_id!, :player_wallet!)
 ;
 
 /* @name createRound */
-INSERT INTO round(lobby_id, wallet, move, round, block_height)
-VALUES (:lobby_id!, :wallet!, :move!, :round!, :block_height!)
+INSERT INTO round(lobby_id, wallet, move, round, block_height, seed)
+VALUES (:lobby_id!, :wallet!, :move!, :round!, :block_height!, :seed!)
 ;
 
 /* @name createPlayer */

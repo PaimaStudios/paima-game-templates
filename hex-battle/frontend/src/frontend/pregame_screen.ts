@@ -7,8 +7,8 @@ import {
   Moves,
   Hex,
   QRSCoord,
+  CreateGame,
 } from '@hexbattle/engine';
-import {MapPlayerGame} from '../map-player-game';
 import * as mw from '../paima/middleware';
 import {BackgroundScreen} from './background_screen';
 import {GameScreen} from './game/game_screen';
@@ -36,6 +36,7 @@ interface Lobby {
   time_limit: number;
   round_limit: number;
   started_block_height: number;
+  seed: string;
 }
 
 interface PlayerData {
@@ -148,7 +149,6 @@ export class PreGameScreen extends BackgroundScreen {
     this.stop();
 
     const initalGold = this.lobby!.gold;
-    const validIds = ['A', 'B', 'C', 'D', 'E'];
     const tiles: Tile[] = this.map
       .map((coord: {q: number; r: number; s: number}) => {
         if (
@@ -166,7 +166,7 @@ export class PreGameScreen extends BackgroundScreen {
     const map = new GameMap(tiles);
     map.updateLimits();
     const players = this.players.map(
-      (p, i) => new Player(validIds[i], initalGold, p.player_wallet)
+      (p, i) => new Player(Player.PlayerIndexes[i], initalGold, p.player_wallet)
     );
 
     const localWallet = mw.default.getUserWallet(null, () => {
@@ -174,7 +174,7 @@ export class PreGameScreen extends BackgroundScreen {
     });
 
     if (!localWallet.success) throw new Error('Local wallet not found');
-    const game = new MapPlayerGame(
+    const game = CreateGame.newGame(
       this.lobbyId,
       localWallet.result,
       map,
@@ -182,7 +182,8 @@ export class PreGameScreen extends BackgroundScreen {
       this.lobby!.units.split('') as UnitType[],
       this.lobby!.buildings.split('') as BuildingType[],
       this.lobby!.init_tiles,
-      this.lobby!.started_block_height
+      this.lobby!.started_block_height,
+      new mw.prando(this.lobby!.seed)
     );
 
     this.rounds.forEach((round: Round) => {

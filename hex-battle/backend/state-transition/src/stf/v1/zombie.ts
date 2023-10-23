@@ -83,6 +83,7 @@ export async function zombieScheduledData(
       move: JSON.stringify([]),
       round: parsed.roundNumber,
       wallet: skippedPlayerWallet,
+      seed: String(randomnessGenerator._seed),
     };
     sql.push([createRound, roundParams]);
 

@@ -40,12 +40,12 @@ function leaderboard_show(players) {
   // <div>2. 1234...3443 6 wins of 20 games</div>
   document.getElementById('leaderboard_list').innerHTML =
     `
-  <div style="display:flex; flex-direction: row; border-bottom: 1px solid #ccc;margin-bottom: 10px;padding-bottom: 6px;">
-    <div class="leaderboard-row">Rank</div> 
-    <div class="leaderboard-row" style="width:200px">Player</div>
-    <div class="leaderboard-row">Wins</div>
-    <div class="leaderboard-row">Losses</div>
-    <div class="leaderboard-row">Draws</div>
+  <div class="leaderboard-head">
+    <div class="leaderboard-row" style="width:100px;">Rank</div> 
+    <div class="leaderboard-row" style="width:400px;">Player</div>
+    <div class="leaderboard-row" style="width:120px;">Wins</div>
+    <div class="leaderboard-row" style="width:120px;">Losses</div>
+    <div class="leaderboard-row" style="width:120px;">Draws</div>
   </div>` +
     players
       .map(p => {
@@ -55,22 +55,16 @@ function leaderboard_show(players) {
         )}`;
         return `
         <div style="display:flex; flex-direction: row;">
-          <div class="leaderboard-row" style="  
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #34495e;
-            border-radius: 100px;
-            color: white;">
-            <div style="flex: 0 0 80px;">${p.rank}</div>
+          <div class="leaderboard-row leaderboard-item" style="">
+            <div class="leaderboard-rank">${p.rank}</div>
           </div> 
-          <div class="leaderboard-row" style="width:200px; text-align:left; margin-left:10px;">
+          <div class="leaderboard-row leaderboard-name" style="">
             <div style="overflow:hidden">${p.name}</div>
-            <div style="font-size:12px; font-family:monospace;">${short}</div>
+            <div style="font-size:18px; font-family:monospace;">${short}</div>
           </div>
-          <div class="leaderboard-row">${p.wins}</div>
-          <div class="leaderboard-row">${p.losses}</div>
-          <div class="leaderboard-row">${p.draws}</div>
+          <div class="leaderboard-row" style="width:120px;">${p.wins}</div>
+          <div class="leaderboard-row" style="width:120px;">${p.losses}</div>
+          <div class="leaderboard-row" style="width:120px;">${p.draws}</div>
         </div>`;
       })
       .join('');
@@ -163,25 +157,24 @@ function join_lobby_show(lobbies, callback) {
         // Time Limit: ${l.timelimit}<br>
         // Round Limit: ${l.roundlimit}<br>
         const item = `
-<div style="font-size:12px; margin-right:20px; margin-top:10px; margin-bottom:10px;">
-<span style="font-weight:bold"> Lobby ${l.lobby_id}</span><br>
-Players: ${l.num_of_players}<br>
-Creator: ${shortWallet}<br>
-Units: ${l.units}<br>
-Buildings: ${l.buildings}<br>
-Gold: ${l.gold}<br>
-Inital Tiles: ${l.inittiles}<br>
-</div>`;
+        <div style="font-size:18px; margin-right:20px; margin-top:10px; margin-bottom:10px;">
+          <span style="font-weight:bold"> Lobby ${l.lobby_id}</span><br>
+          Players: ${l.num_of_players}<br>
+          Units: ${l.units.length}<br>
+          Buildings: ${l.buildings.length - 1}<br>
+          Gold: ${l.gold}<br>
+          Creator: ${shortWallet}<br>
+        </div>`;
+
         const button = `
-<button style="width:100px; height:40px; margin-left:auto" class="item button_ok" onclick="join_lobby_join('${l.lobby_id}')">
-Join
-</button>`;
+        <button 
+          style="width:100px; height:40px; margin-left:auto" class="item button_ok" 
+          onclick="join_lobby_join('${l.lobby_id}')">Join</button>`;
 
         return `
-<div style="display: flex; flex-direction: row;">
-${item}
-${button}
-</div>`;
+        <div style="display: flex; flex-direction: row;">
+          ${item} ${button}
+        </div>`;
       })
       .join('');
   }
@@ -212,14 +205,14 @@ function rejoin_lobby_show(lobbies, callback) {
     list_of_lobbies.innerHTML = lobbies
       .map(
         l => `
-<div style="display: flex; flex-direction: row; margin-top: 10px;  margin-top:10px; margin-bottom:10px;>
-<div style="margin-right:20px;">
-    ${l.activePlayers}/${l.num_of_players} players
-<button style="margin-left:auto" class="item button_ok" onclick="rejoin_lobby_join('${l.lobby_id}')">
-    Rejoin ${l.lobby_id}
-</button>
-</div>
-    `
+          <div style="display: flex; flex-direction: row; margin-top: 10px;  margin-top:10px; margin-bottom:10px;>
+          <div style="margin-right:20px;">
+              Players ${l.activePlayers}/${l.num_of_players}</br>
+              Lobby Id: ${l.lobby_id}</br>
+          <button style="margin-left:auto; height: 40px;" class="item button_ok" onclick="rejoin_lobby_join('${l.lobby_id}')">
+              Rejoin
+          </button>
+          </div>`
       )
       .join('');
   }

@@ -3,12 +3,14 @@ import {GameMap} from './map';
 import {Name} from './name';
 import {Unit} from './unit';
 
+export type PlayerID = 'A' | 'B' | 'C' | 'D' | 'E';
+
 export class Player {
   public isHuman = true;
   public alive = true;
   public name: string;
   constructor(
-    public id: string,
+    public id: PlayerID,
     public gold: number,
     public wallet: string
   ) {
@@ -35,7 +37,9 @@ export class Player {
     this.gold += this.goldPerRound(map);
   }
 
-  static getPlayerIndex(playerId: string) {
+  static PlayerIndexes: PlayerID[] = ['A', 'B', 'C', 'D', 'E'];
+
+  static getPlayerIndex(playerId: PlayerID) {
     let pid = -1;
     switch (playerId) {
       case 'A':
@@ -52,21 +56,6 @@ export class Player {
         break;
       case 'E':
         pid = 4;
-        break;
-      case 'F':
-        pid = 5;
-        break;
-      case 'G':
-        pid = 6;
-        break;
-      case 'H':
-        pid = 7;
-        break;
-      case 'I':
-        pid = 8;
-        break;
-      case 'J':
-        pid = 9;
         break;
       default:
         throw new Error('missing player id');

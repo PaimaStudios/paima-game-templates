@@ -78,6 +78,7 @@ export async function submitMoves(
       move: JSON.stringify(parsed.move),
       round: parsed.roundNumber,
       wallet: user,
+      seed: String(randomnessGenerator._seed)
     };
     sql.push([createRound, roundParams]);
 

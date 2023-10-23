@@ -17,7 +17,8 @@ CREATE TABLE lobby (
   gold INTEGER NOT NULL,
   init_tiles INTEGER NOT NULL,
   time_limit INTEGER NOT NULL,
-  round_limit INTEGER NOT NULL
+  round_limit INTEGER NOT NULL,
+  seed TEXT
 );
 
 CREATE TABLE lobby_player (
@@ -34,6 +35,7 @@ CREATE TABLE round (
     move TEXT NOT NULL,
     round INTEGER NOT NULL,
     block_height INTEGER NOT NULL,
+    seed TEXT,
     PRIMARY KEY (lobby_id, id)
 );
 

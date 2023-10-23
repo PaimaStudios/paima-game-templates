@@ -48,8 +48,8 @@ export abstract class BackgroundScreen extends ScreenUI {
         for (let r = rMin; r < rMax; r += 1) {
           const s = -(q + r);
           const {x, y} = Hex.qrsToXy({q, r, s}, size);
-          if (y > this.canvas.height - size / 2 || y < size / 2) continue;
-          if (x > this.canvas.width - size / 2 || x < size / 2) continue;
+          if (y > this.canvas.height - size * 0.75 || y < size * 0.75) continue;
+          if (x > this.canvas.width - size * 0.75 || x < size * 0.75) continue;
 
           if (Math.random() < 0.55) {
             this.background.push({

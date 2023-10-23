@@ -1,5 +1,11 @@
 // image cache
-import {BuildingType, Game, Player, UnitType} from '@hexbattle/engine';
+import {
+  BuildingType,
+  Game,
+  Player,
+  PlayerID,
+  UnitType,
+} from '@hexbattle/engine';
 import {ScreenUI} from './screen';
 import {Colors} from './colors';
 
@@ -26,7 +32,7 @@ export class ImageCache {
 
   getImageSource(
     unit: UnitType | BuildingType,
-    playerId: string | null = null
+    playerId: PlayerID | null = null
   ): string {
     const pid = Player.getPlayerIndex(
       playerId || this.game.getCurrentPlayer().id

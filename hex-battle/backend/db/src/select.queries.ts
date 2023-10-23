@@ -351,6 +351,7 @@ export interface IGetLobbyRoundsResult {
   lobby_id: string;
   move: string;
   round: number;
+  seed: string | null;
   wallet: string;
 }
 
@@ -385,6 +386,7 @@ export interface IGetMovesForRoundResult {
   lobby_id: string;
   move: string;
   round: number;
+  seed: string | null;
   wallet: string;
 }
 

@@ -1,10 +1,10 @@
 import {Building, BuildingType} from './building';
 import {Game} from './game';
-import {Player} from './player.human';
+import {Player, PlayerID} from './player.human';
 import {Unit, UnitType} from './unit';
 
 export class AIPlayer extends Player {
-  constructor(playerId: string, gold: number) {
+  constructor(playerId: PlayerID, gold: number) {
     super(playerId, gold, `AI-${(Math.random() * 10000) | 0}`);
     this.isHuman = false;
   }
@@ -15,7 +15,6 @@ export class AIPlayer extends Player {
     if (game.getCurrentPlayerId() !== this.id) {
       throw new Error("It's not my turn!");
     }
-
     // eslint-disable-next-line no-constant-condition
     while (1) {
       const moves = this.getAllMoves(game);

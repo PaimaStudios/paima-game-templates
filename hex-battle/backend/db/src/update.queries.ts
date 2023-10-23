@@ -4,6 +4,7 @@ import { PreparedQuery } from '@pgtyped/runtime';
 /** 'UpdateLobbyToActive' parameters type */
 export interface IUpdateLobbyToActiveParams {
   lobby_id: string;
+  seed: string;
   started_block_height: number;
 }
 
@@ -16,13 +17,15 @@ export interface IUpdateLobbyToActiveQuery {
   result: IUpdateLobbyToActiveResult;
 }
 
-const updateLobbyToActiveIR: any = {"usedParamSet":{"started_block_height":true,"lobby_id":true},"params":[{"name":"started_block_height","required":true,"transform":{"type":"scalar"},"locs":[{"a":64,"b":85}]},{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":104,"b":113}]}],"statement":"UPDATE lobby\nSET lobby_state = 'active', started_block_height = :started_block_height!\nWHERE lobby_id = :lobby_id!"};
+const updateLobbyToActiveIR: any = {"usedParamSet":{"started_block_height":true,"seed":true,"lobby_id":true},"params":[{"name":"started_block_height","required":true,"transform":{"type":"scalar"},"locs":[{"a":69,"b":90}]},{"name":"seed","required":true,"transform":{"type":"scalar"},"locs":[{"a":105,"b":110}]},{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":129,"b":138}]}],"statement":"UPDATE lobby\nSET lobby_state = 'active', \n    started_block_height = :started_block_height!, \n    seed = :seed!\nWHERE lobby_id = :lobby_id!"};
 
 /**
  * Query generated from SQL:
  * ```
  * UPDATE lobby
- * SET lobby_state = 'active', started_block_height = :started_block_height!
+ * SET lobby_state = 'active', 
+ *     started_block_height = :started_block_height!, 
+ *     seed = :seed!
  * WHERE lobby_id = :lobby_id!
  * ```
  */
@@ -71,14 +74,14 @@ export interface IUpdateLobbyWinnerQuery {
   result: IUpdateLobbyWinnerResult;
 }
 
-const updateLobbyWinnerIR: any = {"usedParamSet":{"game_winner":true,"lobby_id":true},"params":[{"name":"game_winner","required":true,"transform":{"type":"scalar"},"locs":[{"a":31,"b":43}]},{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":88,"b":97}]}],"statement":"UPDATE lobby\nSET game_winner = :game_winner!,\nlobby_state = 'finished'\nWHERE lobby_id = :lobby_id!"};
+const updateLobbyWinnerIR: any = {"usedParamSet":{"game_winner":true,"lobby_id":true},"params":[{"name":"game_winner","required":true,"transform":{"type":"scalar"},"locs":[{"a":31,"b":43}]},{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":92,"b":101}]}],"statement":"UPDATE lobby\nSET game_winner = :game_winner!,\n    lobby_state = 'finished'\nWHERE lobby_id = :lobby_id!"};
 
 /**
  * Query generated from SQL:
  * ```
  * UPDATE lobby
  * SET game_winner = :game_winner!,
- * lobby_state = 'finished'
+ *     lobby_state = 'finished'
  * WHERE lobby_id = :lobby_id!
  * ```
  */
@@ -101,15 +104,14 @@ export interface IUpdateLobbyGameStateQuery {
   result: IUpdateLobbyGameStateResult;
 }
 
-const updateLobbyGameStateIR: any = {"usedParamSet":{"game_state":true,"current_round":true,"lobby_id":true},"params":[{"name":"game_state","required":true,"transform":{"type":"scalar"},"locs":[{"a":31,"b":42}]},{"name":"current_round","required":true,"transform":{"type":"scalar"},"locs":[{"a":61,"b":75}]},{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":94,"b":103}]}],"statement":"UPDATE lobby\nSET \ngame_state = :game_state!,\ncurrent_round = :current_round!\nWHERE lobby_id = :lobby_id!"};
+const updateLobbyGameStateIR: any = {"usedParamSet":{"game_state":true,"current_round":true,"lobby_id":true},"params":[{"name":"game_state","required":true,"transform":{"type":"scalar"},"locs":[{"a":30,"b":41}]},{"name":"current_round","required":true,"transform":{"type":"scalar"},"locs":[{"a":64,"b":78}]},{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":97,"b":106}]}],"statement":"UPDATE lobby\nSET game_state = :game_state!,\n    current_round = :current_round!\nWHERE lobby_id = :lobby_id!"};
 
 /**
  * Query generated from SQL:
  * ```
  * UPDATE lobby
- * SET 
- * game_state = :game_state!,
- * current_round = :current_round!
+ * SET game_state = :game_state!,
+ *     current_round = :current_round!
  * WHERE lobby_id = :lobby_id!
  * ```
  */
@@ -131,15 +133,15 @@ export interface IUpdatePlayerWinQuery {
   result: IUpdatePlayerWinResult;
 }
 
-const updatePlayerWinIR: any = {"usedParamSet":{"last_block_height":true,"wallet":true},"params":[{"name":"last_block_height","required":true,"transform":{"type":"scalar"},"locs":[{"a":88,"b":106}]},{"name":"wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":123,"b":130}]}],"statement":"UPDATE player\nSET wins = wins + 1,\nplayed_games = played_games + 1,\nlast_block_height = :last_block_height!\nWHERE wallet = :wallet!"};
+const updatePlayerWinIR: any = {"usedParamSet":{"last_block_height":true,"wallet":true},"params":[{"name":"last_block_height","required":true,"transform":{"type":"scalar"},"locs":[{"a":96,"b":114}]},{"name":"wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":131,"b":138}]}],"statement":"UPDATE player\nSET wins = wins + 1,\n    played_games = played_games + 1,\n    last_block_height = :last_block_height!\nWHERE wallet = :wallet!"};
 
 /**
  * Query generated from SQL:
  * ```
  * UPDATE player
  * SET wins = wins + 1,
- * played_games = played_games + 1,
- * last_block_height = :last_block_height!
+ *     played_games = played_games + 1,
+ *     last_block_height = :last_block_height!
  * WHERE wallet = :wallet!
  * ```
  */
@@ -161,15 +163,15 @@ export interface IUpdatePlayerLossQuery {
   result: IUpdatePlayerLossResult;
 }
 
-const updatePlayerLossIR: any = {"usedParamSet":{"last_block_height":true,"wallet":true},"params":[{"name":"last_block_height","required":true,"transform":{"type":"scalar"},"locs":[{"a":92,"b":110}]},{"name":"wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":127,"b":134}]}],"statement":"UPDATE player\nSET losses = losses + 1,\nplayed_games = played_games + 1,\nlast_block_height = :last_block_height!\nWHERE wallet = :wallet!"};
+const updatePlayerLossIR: any = {"usedParamSet":{"last_block_height":true,"wallet":true},"params":[{"name":"last_block_height","required":true,"transform":{"type":"scalar"},"locs":[{"a":100,"b":118}]},{"name":"wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":135,"b":142}]}],"statement":"UPDATE player\nSET losses = losses + 1,\n    played_games = played_games + 1,\n    last_block_height = :last_block_height!\nWHERE wallet = :wallet!"};
 
 /**
  * Query generated from SQL:
  * ```
  * UPDATE player
  * SET losses = losses + 1,
- * played_games = played_games + 1,
- * last_block_height = :last_block_height!
+ *     played_games = played_games + 1,
+ *     last_block_height = :last_block_height!
  * WHERE wallet = :wallet!
  * ```
  */
@@ -191,15 +193,15 @@ export interface IUpdatePlayerDrawQuery {
   result: IUpdatePlayerDrawResult;
 }
 
-const updatePlayerDrawIR: any = {"usedParamSet":{"last_block_height":true,"wallet":true},"params":[{"name":"last_block_height","required":true,"transform":{"type":"scalar"},"locs":[{"a":90,"b":108}]},{"name":"wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":125,"b":132}]}],"statement":"UPDATE player\nSET draws = draws + 1,\nplayed_games = played_games + 1,\nlast_block_height = :last_block_height!\nWHERE wallet = :wallet!"};
+const updatePlayerDrawIR: any = {"usedParamSet":{"last_block_height":true,"wallet":true},"params":[{"name":"last_block_height","required":true,"transform":{"type":"scalar"},"locs":[{"a":98,"b":116}]},{"name":"wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":133,"b":140}]}],"statement":"UPDATE player\nSET draws = draws + 1,\n    played_games = played_games + 1,\n    last_block_height = :last_block_height!\nWHERE wallet = :wallet!"};
 
 /**
  * Query generated from SQL:
  * ```
  * UPDATE player
  * SET draws = draws + 1,
- * played_games = played_games + 1,
- * last_block_height = :last_block_height!
+ *     played_games = played_games + 1,
+ *     last_block_height = :last_block_height!
  * WHERE wallet = :wallet!
  * ```
  */
