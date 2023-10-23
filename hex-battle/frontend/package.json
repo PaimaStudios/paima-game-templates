@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "gts lint",
     "clean": "gts clean",
     "start": "npx webpack serve",
-    "fix": "gts fix"
+    "fix": "gts fix",
+    "compile": "npx webpack --config webpack.config.prod.js"
   },
   "author": "",
   "license": "ISC",

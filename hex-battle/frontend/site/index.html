@@ -108,7 +108,8 @@
 
                     <div class="item" style="font-size: 18px;">Initial Gold</div>
                     <input class="item" id="p_gold" style="font-size: 22px; text-align: center;" type="number" value="0"
-                        min="0" max="100" / <!-- Dropdown selection: Large / Medium / Small -->
+                        min="0" max="100"> 
+                    <!-- Dropdown selection: Large / Medium / Small -->
                     <div class="item" style="font-size: 18px;">Map Size</div>
                     <select class="item" id="p_map_size" style="font-size: 22px; text-align: center;">
                         <option value="large">Large</option>
@@ -146,14 +147,18 @@
 
                     <!-- Dropdown selection: Large / Medium / Small -->
                     <div class="item" style="font-size: 18px;">Select your wallet</div>
-                    <select class="item" id="wallet_dropdown" style="font-size: 30px; text-align: center;">
+                    <select class="item" id="wallet_dropdown" style="font-size: 30px; text-align: center;" onchange="console.log('test')|| this.value === 'pera' ? document.getElementById('wallet_warning').classList.remove('hide') : document.getElementById('wallet_warning').classList.add('hide')  ">
                         <option value="metamask">Metamask</option>
+                        <option value="pera">Pera Algorand</option>
                         <option value="evm-flint">Flint</option>
                         <option value="cardano">Cardano</option>
                         <option value="polkadot">Polkadot</option>
-                        <option value="pera">Pera Algorand</option>
                     </select>
                     <br>
+                    <div id="wallet_warning" class="hide" style="color:rgb(229, 103, 0); font-size: 20px; margin:auto; margin-bottom: 20px;">
+                        Warning: <a href="https://developer.algorand.org/docs/get-details/accounts/rekey/">Rekeyed Wallets</a> cannot be used to play. 
+                    </div>
+                    
 
                     <button class="item button_ok" onclick="select_wallet()">Select Wallet</button>
                     <button class="item button_cancel" onclick="wallet_selection_hide()">Later</button>
@@ -280,7 +285,8 @@
                             </div>
                         </div>
 
-                        <div class="help-row">
+                        <div class=
+                        "help-row">
                             <div style="min-width: 100px;">
                                 <img src="assets/t2_1.png" class="help-image">
                             </div>
