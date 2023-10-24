@@ -19,6 +19,7 @@ export interface IGetMyActiveLobbiesResult {
   lobby_state: string | null;
   num_of_players: number;
   round_limit: number;
+  seed: string | null;
   started_block_height: number | null;
   time_limit: number;
   units: string;
@@ -30,7 +31,7 @@ export interface IGetMyActiveLobbiesQuery {
   result: IGetMyActiveLobbiesResult;
 }
 
-const getMyActiveLobbiesIR: any = {"usedParamSet":{"player_wallet":true},"params":[{"name":"player_wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":373,"b":387}]}],"statement":"SELECT \n    lobby_player.lobby_id, \n    lobby_state, \n    num_of_players, \n    current_round, \n    lobby_creator, \n    lobby_player.player_wallet \n    units,\n    buildings,\n    gold,\n    init_tiles,\n    time_limit,\n    round_limit,\n    started_block_height\nFROM lobby_player\nINNER JOIN lobby as LL ON LL.lobby_id = lobby_player.lobby_id \nWHERE lobby_player.player_wallet = :player_wallet!\nAND (LL.lobby_state = 'active' OR LL.lobby_state = 'open')\nORDER BY created_at DESC"};
+const getMyActiveLobbiesIR: any = {"usedParamSet":{"player_wallet":true},"params":[{"name":"player_wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":383,"b":397}]}],"statement":"SELECT \n    lobby_player.lobby_id, \n    lobby_state, \n    num_of_players, \n    current_round, \n    lobby_creator, \n    lobby_player.player_wallet \n    units,\n    buildings,\n    gold,\n    init_tiles,\n    time_limit,\n    round_limit,\n    started_block_height,\n    seed\nFROM lobby_player\nINNER JOIN lobby as LL ON LL.lobby_id = lobby_player.lobby_id \nWHERE lobby_player.player_wallet = :player_wallet!\nAND (LL.lobby_state = 'active' OR LL.lobby_state = 'open')\nORDER BY created_at DESC"};
 
 /**
  * Query generated from SQL:
@@ -48,7 +49,8 @@ const getMyActiveLobbiesIR: any = {"usedParamSet":{"player_wallet":true},"params
  *     init_tiles,
  *     time_limit,
  *     round_limit,
- *     started_block_height
+ *     started_block_height,
+ *     seed
  * FROM lobby_player
  * INNER JOIN lobby as LL ON LL.lobby_id = lobby_player.lobby_id 
  * WHERE lobby_player.player_wallet = :player_wallet!
@@ -102,6 +104,7 @@ export interface IGetOpenLobbiesResult {
   lobby_state: string | null;
   num_of_players: number;
   round_limit: number;
+  seed: string | null;
   time_limit: number;
   units: string | null;
 }
@@ -112,7 +115,7 @@ export interface IGetOpenLobbiesQuery {
   result: IGetOpenLobbiesResult;
 }
 
-const getOpenLobbiesIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT \n    lobby_creator,\n    lobby_id, \n    lobby_state, \n    num_of_players,  \n    units,\n    buildings,\n    gold,\n    init_tiles,\n    time_limit,\n    round_limit,\n    creation_block_height\nFROM lobby \nwhere lobby_state = 'open'\nAND created_at > now() - interval '1 day' \nORDER BY created_at DESC"};
+const getOpenLobbiesIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT \n    lobby_creator,\n    lobby_id, \n    lobby_state, \n    num_of_players,  \n    units,\n    buildings,\n    gold,\n    init_tiles,\n    time_limit,\n    round_limit,\n    creation_block_height, \n    seed\nFROM lobby \nwhere lobby_state = 'open'\nAND created_at > now() - interval '1 day' \nORDER BY created_at DESC"};
 
 /**
  * Query generated from SQL:
@@ -128,7 +131,8 @@ const getOpenLobbiesIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT
  *     init_tiles,
  *     time_limit,
  *     round_limit,
- *     creation_block_height
+ *     creation_block_height, 
+ *     seed
  * FROM lobby 
  * where lobby_state = 'open'
  * AND created_at > now() - interval '1 day' 
@@ -252,6 +256,7 @@ export interface IGetLobbyLeanResult {
   lobby_state: string | null;
   num_of_players: number;
   round_limit: number;
+  seed: string | null;
   started_block_height: number | null;
   time_limit: number;
   units: string | null;
@@ -263,12 +268,26 @@ export interface IGetLobbyLeanQuery {
   result: IGetLobbyLeanResult;
 }
 
-const getLobbyLeanIR: any = {"usedParamSet":{"lobby_id":true},"params":[{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":212,"b":221}]}],"statement":"SELECT lobby_id, current_round, created_at, lobby_creator, lobby_state, game_winner, num_of_players, units, buildings, gold, init_tiles, time_limit, round_limit, started_block_height\nFROM lobby \nWHERE lobby_id = :lobby_id!"};
+const getLobbyLeanIR: any = {"usedParamSet":{"lobby_id":true},"params":[{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":287,"b":296}]}],"statement":"SELECT lobby_id,\n    current_round, \n    created_at, \n    lobby_creator, \n    lobby_state, \n    game_winner, \n    num_of_players, \n    units, \n    buildings, \n    gold, \n    init_tiles, \n    time_limit, \n    round_limit, \n    started_block_height, \n    seed\nFROM lobby \nWHERE lobby_id = :lobby_id!"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT lobby_id, current_round, created_at, lobby_creator, lobby_state, game_winner, num_of_players, units, buildings, gold, init_tiles, time_limit, round_limit, started_block_height
+ * SELECT lobby_id,
+ *     current_round, 
+ *     created_at, 
+ *     lobby_creator, 
+ *     lobby_state, 
+ *     game_winner, 
+ *     num_of_players, 
+ *     units, 
+ *     buildings, 
+ *     gold, 
+ *     init_tiles, 
+ *     time_limit, 
+ *     round_limit, 
+ *     started_block_height, 
+ *     seed
  * FROM lobby 
  * WHERE lobby_id = :lobby_id!
  * ```

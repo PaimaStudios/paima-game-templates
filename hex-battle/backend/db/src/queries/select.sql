@@ -12,7 +12,8 @@ SELECT
     init_tiles,
     time_limit,
     round_limit,
-    started_block_height
+    started_block_height,
+    seed
 FROM lobby_player
 INNER JOIN lobby as LL ON LL.lobby_id = lobby_player.lobby_id 
 WHERE lobby_player.player_wallet = :player_wallet!
@@ -37,7 +38,8 @@ SELECT
     init_tiles,
     time_limit,
     round_limit,
-    creation_block_height
+    creation_block_height, 
+    seed
 FROM lobby 
 where lobby_state = 'open'
 AND created_at > now() - interval '1 day' 
@@ -66,7 +68,21 @@ WHERE lobby_id = :lobby_id!
 ;
 
 /* @name getLobbyLean */
-SELECT lobby_id, current_round, created_at, lobby_creator, lobby_state, game_winner, num_of_players, units, buildings, gold, init_tiles, time_limit, round_limit, started_block_height
+SELECT lobby_id,
+    current_round, 
+    created_at, 
+    lobby_creator, 
+    lobby_state, 
+    game_winner, 
+    num_of_players, 
+    units, 
+    buildings, 
+    gold, 
+    init_tiles, 
+    time_limit, 
+    round_limit, 
+    started_block_height, 
+    seed
 FROM lobby 
 WHERE lobby_id = :lobby_id!
 ;

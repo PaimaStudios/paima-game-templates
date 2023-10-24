@@ -174,6 +174,13 @@ export class PreGameScreen extends BackgroundScreen {
     });
 
     if (!localWallet.success) throw new Error('Local wallet not found');
+
+    let seed = this.lobby!.seed;
+    if (!seed) {
+      console.log('CRITIAL ERROR SEED NOT FOUND.');
+      seed = this.lobby!.lobby_id;
+    }
+
     const game = CreateGame.newGame(
       this.lobbyId,
       localWallet.result,
@@ -183,7 +190,7 @@ export class PreGameScreen extends BackgroundScreen {
       this.lobby!.buildings.split('') as BuildingType[],
       this.lobby!.init_tiles,
       this.lobby!.started_block_height,
-      new mw.prando(this.lobby!.seed)
+      new mw.prando(seed)
     );
 
     this.rounds.forEach((round: Round) => {
@@ -327,7 +334,7 @@ export class PreGameScreen extends BackgroundScreen {
     }
 
     if (walletName) {
-      const status = await mw.default.userWalletLogin(walletName, false);
+      const status = await mw.default.userWalletLogin(walletName, true);
       console.log({status});
     }
 

@@ -290,7 +290,7 @@ export class LobbyScreen extends BackgroundScreen {
       (window as any).wallet_selection_show((options: {wallet: string}) => {
         if (options.wallet) {
           mw.default
-            .userWalletLogin(options.wallet, false)
+            .userWalletLogin(options.wallet, true)
             .then((x: any) => {
               if (x.success) {
                 this.walletName = options.wallet;

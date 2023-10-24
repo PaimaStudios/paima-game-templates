@@ -8,6 +8,7 @@ import {
 } from '@hexbattle/engine';
 import {ScreenUI} from './screen';
 import {Colors} from './colors';
+import {HexAudio} from './audio';
 
 export class ImageCache {
   constructor(private game: Game) {}
@@ -176,6 +177,7 @@ export class LoadScreen extends ScreenUI {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.drawText();
     await this.imageCache.preloadImage('assets/options.png');
+    await new HexAudio().load();
     for (const player of this.game.players) {
       await Promise.all(
         LoadScreen.imagesTypes.map(i =>

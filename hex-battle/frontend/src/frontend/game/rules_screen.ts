@@ -91,6 +91,7 @@ export class RulesScreen extends GameDraw {
           player,
           itemTile.unit.type
         );
+        this.playSound();
       } else if (itemTile.building) {
         if (player.gold < Building.getPrice(itemTile.building.type)) {
           throw new Error('No money');
@@ -107,7 +108,10 @@ export class RulesScreen extends GameDraw {
         }
         this.itemClick = itemTile;
         this.itemNearbyTiles = this.game.getBuildingTiles(player);
+        this.playSound();
       } else if (itemTile === this.itemTiles[ITEM.END_TURN]) {
+        this.playSound();
+
         this.game.endTurn();
         this.blockedUI = true;
         setTimeout(() => {
@@ -118,7 +122,10 @@ export class RulesScreen extends GameDraw {
         }, 2000);
       } else if (itemTile === this.itemTiles[ITEM.UNDO]) {
         console.log('UNDO');
-        this.game.undo();
+        if (this.game.moves[this.game.turn]?.actions?.length) {
+          this.game.undo();
+          this.playSound();
+        }
       } else {
         throw new Error('unknown item');
       }
@@ -156,12 +163,14 @@ export class RulesScreen extends GameDraw {
       // has clicked on item before
       if (this.itemClick) {
         if (this.itemClick.unit) {
+          this.playSound();
           this.game.placeUnit(player, tile, this.itemClick.unit.type);
           if (this.game.players.filter(p => p.alive).length === 1) {
             // this move ended the game.
             this.game.endTurn();
           }
         } else if (this.itemClick.building) {
+          this.playSound();
           this.game.placeBuilding(player, tile, this.itemClick.building.type);
         } else {
           throw new Error('unknown item');
@@ -174,6 +183,7 @@ export class RulesScreen extends GameDraw {
       // has clicked on a valid-unit tile before
       if (this.clickFirst) {
         try {
+          this.playSound();
           this.game.moveUnit(player, this.clickFirst, tile);
           if (this.game.players.filter(p => p.alive).length === 1) {
             // this move ended the game.
@@ -190,6 +200,7 @@ export class RulesScreen extends GameDraw {
       if (tile.unit && tile.unit.canMove && tile.owner?.id === player.id) {
         this.clickFirst = tile;
         this.getMovingDistance = this.game.getUnitMovement(this.clickFirst);
+        this.playSound();
         return;
       }
       // clicked on non-game-element
@@ -289,6 +300,7 @@ export class RulesScreen extends GameDraw {
         absMousePos.y < e.coord.y + e.coord.height
       ) {
         e.trigger();
+        this.playSound();
       }
     });
 

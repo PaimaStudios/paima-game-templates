@@ -1,7 +1,41 @@
 import {Building, BuildingType} from './building';
 import {Game} from './game';
+import {QRSCoord} from './hex';
+import {GameMap} from './map';
 import {Player, PlayerID} from './player.human';
+import {Tile} from './tile';
 import {Unit, UnitType} from './unit';
+
+type HexMove =
+  | {
+      type: 'build';
+      building: BuildingType;
+      place: {q: number; r: number; s: number};
+    }
+  | {
+      type: 'moveUnit';
+      unit: {q: number; r: number; s: number};
+      place: {q: number; r: number; s: number};
+    }
+  | {
+      type: 'placeUnit';
+      unit: UnitType;
+      place: {q: number; r: number; s: number};
+    };
+
+type MapQualityItem = {
+  isNeutral: boolean;
+  isMine: boolean;
+  isEnemy: boolean;
+  isEnemyUnit: boolean;
+  isEnemyBuilding: boolean;
+  isEnemyEmpty: boolean;
+  nextMyBase: boolean;
+  nextEnemyBuilding: boolean;
+  nextEnemyUnit: boolean;
+  nextEnemyEmpty: boolean;
+};
+type MapQuality = Map<string, MapQualityItem>;
 
 export class AIPlayer extends Player {
   constructor(playerId: PlayerID, gold: number) {
@@ -16,13 +50,15 @@ export class AIPlayer extends Player {
       throw new Error("It's not my turn!");
     }
     // eslint-disable-next-line no-constant-condition
+    let exported = '';
+    // eslint-disable-next-line no-constant-condition
     while (1) {
       const moves = this.getAllMoves(game);
       if (!moves.length) break;
-
+      exported = Game.export(game);
       const bestMove = moves.reduce(
         (best, move) => {
-          const gameCopy = Game.import(Game.export(game));
+          const gameCopy = Game.import(exported);
           const playerCopy = gameCopy.getCurrentPlayer() as AIPlayer;
           if (move.type === 'build') {
             gameCopy.placeBuilding(
@@ -121,86 +157,335 @@ export class AIPlayer extends Player {
     return globalScore;
   }
 
-  private getAllMoves(game: Game): (
-    | {
-        type: 'build';
-        building: BuildingType;
-        place: {q: number; r: number; s: number};
-      }
-    | {
-        type: 'moveUnit';
-        unit: {q: number; r: number; s: number};
-        place: {q: number; r: number; s: number};
-      }
-    | {
-        type: 'placeUnit';
-        unit: UnitType;
-        place: {q: number; r: number; s: number};
-      }
-  )[] {
-    const units = game
-      .getMyTiles(game.getCurrentPlayer())
-      .filter(t => t.unit && t.unit.canMove);
+  private qualityKey(tile: Tile): string {
+    return `${tile.q},${tile.r},${tile.s}`;
+  }
+  private mapQuality(game: Game): MapQuality {
+    const player = game.getCurrentPlayer();
+    const nearByTiles = (tile: Tile): Tile[] => {
+      const center = tile.getCoordinates();
+      const neighbors: QRSCoord[] = Array(6)
+        .fill(0)
+        .map((_, i) => {
+          return Tile.addVectors([
+            center,
+            Tile.dirToVec(Tile.directionVector(i, 1)),
+          ]);
+        });
+      return game.map.tiles.filter((t: Tile) => {
+        return neighbors.some((n: QRSCoord) => t.same(n));
+      });
+    };
+    const isMyBaseTile = (tile: Tile) =>
+      tile.owner &&
+      tile.owner.id === player.id &&
+      tile.building &&
+      (tile.building.type === BuildingType.BASE ||
+        tile.building.type === BuildingType.FARM);
+    const isEnemyBuildingTile = (tile: Tile) =>
+      tile.owner && tile.owner.id !== player.id && tile.building;
+    const isEnemyUnit = (tile: Tile) =>
+      tile.owner && tile.owner.id !== player.id && tile.unit;
+    const isEnemyEmptyTile = (tile: Tile) =>
+      tile.owner && tile.owner.id !== player.id && !tile.unit && !tile.building;
+
+    const quality = new Map();
+
+    const setTile = (tile: Tile) => {
+      const isNeutral = !tile.owner;
+      const isMine = !isNeutral && tile.owner!.id === player.id;
+      const isEnemy = !isNeutral && !isMine;
+      const _isEnemyUnit = isEnemy && tile.unit;
+      const isEnemyBuilding = isEnemy && tile.building;
+      const isEnemyEmpty = isEnemy && !tile.unit && !tile.building;
+      const neighbors = nearByTiles(tile);
+      const nextMyBase = neighbors.some(t => isMyBaseTile(t));
+      const nextEnemyBuilding =
+        (isMine || isNeutral) && neighbors.some(t => isEnemyBuildingTile(t));
+      const nextEnemyUnit =
+        (isMine || isNeutral) && neighbors.some(t => isEnemyUnit(t));
+      const nextEnemyEmpty =
+        (isMine || isNeutral) && neighbors.some(t => isEnemyEmptyTile(t));
+
+      const q = {
+        isNeutral,
+        isMine,
+        isEnemy,
+        isEnemyUnit: _isEnemyUnit,
+        isEnemyBuilding,
+        isEnemyEmpty,
+        nextMyBase,
+        nextEnemyBuilding,
+        nextEnemyUnit,
+        nextEnemyEmpty,
+      };
+
+      quality.set(this.qualityKey(tile), q);
+    };
+    for (const tile of game.map.tiles) {
+      setTile(tile);
+    }
+    return quality;
+  }
+
+  /* Moves are divided into 4 stages:
+     First build farms
+     Then move units
+     Then build towers
+     Then build units
+  */
+  private getMovesStage1(
+    game: Game,
+    myTiles: Tile[],
+    mapQuality: MapQuality
+  ): HexMove[] {
+    // Allow 1 farm each 12 tiles and 5 units
+    const player = game.getCurrentPlayer();
+    if (player.gold < Building.getPrice(BuildingType.FARM)) return [];
+    const farms = myTiles.filter(
+      t => t.building && t.building.type === BuildingType.FARM
+    ).length;
+    const maxFarmsForUnits = (myTiles.filter(t => t.unit).length / 5) | 0;
+    const maxFarmForTiles = (myTiles.length / 10) | 0;
+    if (Math.max(maxFarmsForUnits, maxFarmForTiles) <= farms) {
+      return [];
+    }
+
+    const firstTile = game.getBuildingTiles(player).find(b => {
+      const tileStats = mapQuality.get(this.qualityKey(b));
+      if (!tileStats) throw new Error('Missing tile stats');
+      return tileStats.nextMyBase;
+    });
+    if (!firstTile) return [];
+
+    return [
+      {
+        type: 'build',
+        building: BuildingType.FARM,
+        place: firstTile.getCoordinates(),
+      },
+    ];
+  }
+
+  private getMovesStage2(
+    game: Game,
+    myTiles: Tile[],
+    mapQuality: MapQuality
+  ): HexMove[] {
+    // only check 3 units max.
+    let count = 3;
+    const units = myTiles
+      .filter(t => t.unit && t.unit.canMove)
+      .sort(() => Math.random() - 0.5)
+      .filter(() => count-- > 0);
+
     const moves: {
       type: 'moveUnit';
       unit: {q: number; r: number; s: number};
       place: {q: number; r: number; s: number};
     }[] = [];
-    units.map(unit =>
-      game.getUnitMovement(unit).map(place =>
+    const addMoves = (unit: Tile, tiles: Tile[]) => {
+      tiles.forEach(tile =>
         moves.push({
           type: 'moveUnit',
           unit: unit.getCoordinates(),
-          place: place.getCoordinates(),
+          place: tile.getCoordinates(),
         })
-      )
-    );
+      );
+    };
 
-    const gpt = game.getCurrentPlayer().goldPerRound(game.map);
+    units.forEach(unit => {
+      const places = game.getUnitMovement(unit);
+      const quality = places.map(place => ({
+        place,
+        q: mapQuality.get(this.qualityKey(place))!,
+      }));
+      const checkFilter = (
+        tiles: {place: Tile; q: MapQualityItem}[],
+        f: (q: {place: Tile; q: MapQualityItem}) => boolean
+      ) => {
+        const priority = tiles.filter(t => f(t));
+        if (priority.length) {
+          addMoves(
+            unit,
+            priority.map(p => p.place)
+          );
+          return true;
+        }
+        return false;
+      };
+
+      if (checkFilter(quality, q => q.q?.isEnemyBuilding)) return;
+      if (checkFilter(quality, q => q.q?.isEnemyUnit)) return;
+      if (checkFilter(quality, q => q.q?.isEnemyEmpty)) return;
+      if (checkFilter(quality, q => q.q?.nextEnemyEmpty)) return;
+      if (checkFilter(quality, q => q.q?.nextEnemyBuilding)) return;
+      if (checkFilter(quality, q => q.q?.nextEnemyUnit)) return;
+      if (checkFilter(quality, q => q.q?.isNeutral)) return;
+      if (checkFilter(quality, q => q.q?.isMine)) return;
+    });
+
+    return moves;
+  }
+
+  private getMovesStage3(
+    game: Game,
+    myTiles: Tile[],
+    mapQuality: MapQuality
+  ): HexMove[] {
+    const player = game.getCurrentPlayer();
+    const gpt = player.goldPerRound(game.map);
+
     const placeUnits: {
       type: 'placeUnit';
       unit: UnitType;
       place: {q: number; r: number; s: number};
     }[] = [];
-    [UnitType.UNIT_1, UnitType.UNIT_2, UnitType.UNIT_3, UnitType.UNIT_4]
-      .filter(unit => game.getCurrentPlayer().gold >= Unit.getPrice(unit))
-      .filter(unit => gpt + Unit.getMaintenancePrice(unit) >= 0)
-      .forEach(unit => {
-        const unitTiles = game.getNewUnitTiles(
-          game.getCurrentPlayer(),
-          UnitType.UNIT_1
-        );
-        unitTiles.forEach(place =>
-          placeUnits.push({
-            type: 'placeUnit',
-            unit,
-            place: place.getCoordinates(),
-          })
-        );
-      });
 
-    const buildingTiles = game.getBuildingTiles(game.getCurrentPlayer());
-    const build: {
+    const addMoves = (unit: UnitType, tiles: Tile[]) => {
+      tiles.forEach(tile =>
+        placeUnits.push({
+          type: 'placeUnit',
+          unit,
+          place: tile.getCoordinates(),
+        })
+      );
+    };
+
+    const units = [
+      UnitType.UNIT_1,
+      UnitType.UNIT_2,
+      UnitType.UNIT_3,
+      UnitType.UNIT_4,
+    ]
+      .filter(unit => player.gold >= Unit.getPrice(unit))
+      .filter(unit => gpt + Unit.getMaintenancePrice(unit) >= 0);
+
+    units.forEach(unit => {
+      const unitTiles = game.getNewUnitTiles(player, unit);
+      const quality = unitTiles.map(place => ({
+        place,
+        q: mapQuality.get(this.qualityKey(place))!,
+      }));
+      const checkFilter = (
+        tiles: {place: Tile; q: MapQualityItem}[],
+        f: (q: {place: Tile; q: MapQualityItem}) => boolean
+      ) => {
+        const priority = tiles.filter(t => f(t));
+        if (priority.length) {
+          addMoves(
+            unit,
+            priority.map(p => p.place)
+          );
+          return true;
+        }
+        return false;
+      };
+
+      if (checkFilter(quality, q => q.q?.isEnemyBuilding)) return;
+      if (checkFilter(quality, q => q.q?.isEnemyUnit)) return;
+      if (checkFilter(quality, q => q.q?.isEnemyEmpty)) return;
+      if (checkFilter(quality, q => q.q?.nextEnemyEmpty)) return;
+      if (checkFilter(quality, q => q.q?.nextEnemyBuilding)) return;
+      if (checkFilter(quality, q => q.q?.nextEnemyUnit)) return;
+      if (checkFilter(quality, q => q.q?.isNeutral)) return;
+      if (checkFilter(quality, q => q.q?.isMine)) return;
+    });
+
+    return placeUnits;
+  }
+
+  private getMovesStage4(
+    game: Game,
+    myTiles: Tile[],
+    mapQuality: MapQuality
+  ): HexMove[] {
+    // Allow 1 farm each 12 tiles and 5 units
+    const player = game.getCurrentPlayer();
+    const gpt = player.goldPerRound(game.map);
+
+    const towers = myTiles.filter(
+      t =>
+        t.building &&
+        (t.building.type === BuildingType.TOWER ||
+          t.building.type === BuildingType.TOWER2)
+    );
+    const maxTowerForUnits = (myTiles.filter(t => t.unit).length / 5) | 0;
+    const maxTowerForTiles = (myTiles.length / 10) | 0;
+    if (Math.max(maxTowerForUnits, maxTowerForTiles) <= towers.length) {
+      return [];
+    }
+
+    const buildings = [BuildingType.TOWER, BuildingType.TOWER2]
+      .filter(
+        building => game.getCurrentPlayer().gold >= Building.getPrice(building)
+      )
+      .filter(building => gpt + Building.getMaintenancePrice(building) >= 0);
+
+    if (!buildings) return [];
+
+    const placeUnits: {
       type: 'build';
       building: BuildingType;
       place: {q: number; r: number; s: number};
     }[] = [];
-    [BuildingType.FARM, BuildingType.TOWER, BuildingType.TOWER2]
-      .filter(
-        building => game.getCurrentPlayer().gold >= Building.getPrice(building)
-      )
-      .filter(building => gpt + Building.getMaintenancePrice(building) >= 0)
-      .forEach(building =>
-        buildingTiles.forEach(place =>
-          build.push({
-            type: 'build',
-            building,
-            place: place.getCoordinates(),
-          })
-        )
-      );
 
-    return [...moves, ...build, ...placeUnits];
+    const addMoves = (building: BuildingType, tiles: Tile[]) => {
+      tiles.forEach(tile =>
+        placeUnits.push({
+          type: 'build',
+          building,
+          place: tile.getCoordinates(),
+        })
+      );
+    };
+
+    buildings.forEach(building => {
+      const buildingTiles = game.getBuildingTiles(player);
+      const quality = buildingTiles.map(place => ({
+        place,
+        q: mapQuality.get(this.qualityKey(place))!,
+      }));
+      const checkFilter = (
+        tiles: {place: Tile; q: MapQualityItem}[],
+        f: (q: {place: Tile; q: MapQualityItem}) => boolean
+      ) => {
+        const priority = tiles.filter(t => f(t));
+        if (priority.length) {
+          addMoves(
+            building,
+            priority.map(p => p.place)
+          );
+          return true;
+        }
+        return false;
+      };
+
+      if (checkFilter(quality, q => q.q?.nextEnemyUnit)) return;
+      if (checkFilter(quality, q => q.q?.nextEnemyBuilding)) return;
+      if (checkFilter(quality, q => q.q?.nextEnemyEmpty)) return;
+    });
+
+    return placeUnits;
+  }
+
+  private getAllMoves(game: Game): HexMove[] {
+    const mapQuality = this.mapQuality(game);
+    const player = game.getCurrentPlayer();
+    const myTiles = game.getMyTiles(player);
+    const stage1 = this.getMovesStage1(game, myTiles, mapQuality);
+    if (stage1.length) return stage1;
+
+    const stage2 = this.getMovesStage2(game, myTiles, mapQuality);
+    if (stage2.length) return stage2;
+
+    const stage3 = this.getMovesStage3(game, myTiles, mapQuality);
+    if (stage3.length) return stage3;
+
+    const stage4 = this.getMovesStage4(game, myTiles, mapQuality);
+    if (stage4.length) return stage4;
+
+    return [];
   }
 
   // return array of moves and endturn.

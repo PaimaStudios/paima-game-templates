@@ -188,6 +188,7 @@ export class GameScreen extends GameDraw {
           player,
           itemTile.unit.type
         );
+        this.playSound();
       } else if (itemTile.building) {
         if (player.gold < Building.getPrice(itemTile.building.type)) {
           throw new Error('No money');
@@ -204,6 +205,7 @@ export class GameScreen extends GameDraw {
         }
         this.itemClick = itemTile;
         this.itemNearbyTiles = this.game.getBuildingTiles(player);
+        this.playSound();
       } else if (itemTile === this.itemTiles[ITEM.END_TURN]) {
         if (this.onChainGame) {
           console.log('SUBMIT END TURN');
@@ -211,6 +213,7 @@ export class GameScreen extends GameDraw {
             this.setToastMessage('You have not moved yet');
             return;
           }
+          this.playSound();
 
           this.blockedUI = true;
           const turn = this.game.turn;
@@ -231,11 +234,16 @@ export class GameScreen extends GameDraw {
               this.blockedUI = false;
             });
         } else {
+          this.playSound();
+
           this.game.endTurn();
         }
       } else if (itemTile === this.itemTiles[ITEM.UNDO]) {
         console.log('UNDO');
-        this.game.undo();
+        if (this.game.moves[this.game.turn]?.actions?.length) {
+          this.game.undo();
+          this.playSound();
+        }
       } else {
         throw new Error('unknown item');
       }
@@ -273,6 +281,7 @@ export class GameScreen extends GameDraw {
       // has clicked on item before
       if (this.itemClick) {
         if (this.itemClick.unit) {
+          this.playSound();
           this.game.placeUnit(player, tile, this.itemClick.unit.type);
           if (this.game.players.filter(p => p.alive).length === 1) {
             // this move ended the game.
@@ -285,6 +294,7 @@ export class GameScreen extends GameDraw {
             }
           }
         } else if (this.itemClick.building) {
+          this.playSound();
           this.game.placeBuilding(player, tile, this.itemClick.building.type);
         } else {
           throw new Error('unknown item');
@@ -350,6 +360,7 @@ export class GameScreen extends GameDraw {
           //   clickFirst!.unit = unitStore;
           //   this.game.moveUnit(player, clickFirst!, tile);
           // })();
+          this.playSound();
           this.game.moveUnit(player, this.clickFirst, tile);
           if (this.game.players.filter(p => p.alive).length === 1) {
             // this move ended the game.
@@ -372,6 +383,7 @@ export class GameScreen extends GameDraw {
       if (tile.unit && tile.unit.canMove && tile.owner?.id === player.id) {
         this.clickFirst = tile;
         this.getMovingDistance = this.game.getUnitMovement(this.clickFirst);
+        this.playSound();
         return;
       }
       // clicked on non-game-element
@@ -470,6 +482,7 @@ export class GameScreen extends GameDraw {
         absMousePos.y < event.coord.y + event.coord.h
       ) {
         event.callback();
+        this.playSound();
       }
     });
 

@@ -13,6 +13,7 @@ import {ScreenUI} from '../screen';
 import {DrawHex} from '../hex.draw';
 import {ImageCache} from '../load_screen';
 import {Colors} from '../colors';
+import {HexAudio} from '../audio';
 
 export enum ITEM {
   UNIT_1 = 0,
@@ -215,6 +216,10 @@ export abstract class GameDraw extends ScreenUI {
           throw new Error('Missing definition');
       }
     }
+  }
+
+  protected playSound() {
+    new HexAudio().play();
   }
 
   protected getMousePos(event: MouseEvent, withOffset = true) {
