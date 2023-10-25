@@ -289,8 +289,9 @@ export class LobbyScreen extends BackgroundScreen {
     } catch (e) {
       (window as any).wallet_selection_show((options: {wallet: string}) => {
         if (options.wallet) {
+          const batcherEnabled = !!mw.ENV.BATCHER_URI;
           mw.default
-            .userWalletLogin(options.wallet, true)
+            .userWalletLogin(options.wallet, batcherEnabled)
             .then((x: any) => {
               if (x.success) {
                 this.walletName = options.wallet;

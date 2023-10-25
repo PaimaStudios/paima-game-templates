@@ -334,7 +334,11 @@ export class PreGameScreen extends BackgroundScreen {
     }
 
     if (walletName) {
-      const status = await mw.default.userWalletLogin(walletName, true);
+      const batcherEnabled = !!mw.ENV.BATCHER_URI;
+      const status = await mw.default.userWalletLogin(
+        walletName,
+        batcherEnabled
+      );
       console.log({status});
     }
 
