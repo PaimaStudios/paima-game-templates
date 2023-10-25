@@ -13,7 +13,7 @@ import {ScreenUI} from '../screen';
 import {DrawHex} from '../hex.draw';
 import {ImageCache} from '../load_screen';
 import {Colors} from '../colors';
-import {HexAudio} from '../audio';
+import {AudioType, HexAudio} from '../audio';
 
 export enum ITEM {
   UNIT_1 = 0,
@@ -219,7 +219,7 @@ export abstract class GameDraw extends ScreenUI {
   }
 
   protected playSound() {
-    new HexAudio().play();
+    new HexAudio().play(AudioType.click);
   }
 
   protected getMousePos(event: MouseEvent, withOffset = true) {
@@ -308,6 +308,8 @@ export abstract class GameDraw extends ScreenUI {
   //     this.setToastMessage('Your turn!');
   //   }
 
+  private lastYourTurnAudio = -1;
+
   protected DrawHUDBackgroundAndText(
     itemClick: Tile | null,
     lastItemHightLight: Tile | null
@@ -340,6 +342,10 @@ export abstract class GameDraw extends ScreenUI {
 
     if (player.wallet === this.game.localWallet) {
       // this.alertNewRound();
+      if (this.lastYourTurnAudio !== this.game.turn) {
+        this.lastYourTurnAudio = this.game.turn;
+        new HexAudio().play(AudioType.turn);
+      }
       this.ctx.fillText(
         'Your turn',
         this.size,

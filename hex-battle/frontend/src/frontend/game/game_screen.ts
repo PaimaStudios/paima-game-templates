@@ -447,7 +447,7 @@ export class GameScreen extends GameDraw {
           mouse_xy.y > y &&
           mouse_xy.y < y + h
         ) {
-          if (this.hold_click < 100) {
+          if (this.hold_click < 10) {
             this.hold_click += 1;
             this.hold_time = setTimeout(addHold, 20);
           } else {
@@ -462,7 +462,7 @@ export class GameScreen extends GameDraw {
   };
 
   mouseUpListener = (evt: MouseEvent) => {
-    if (this.isGameOver() && (this.hold_time || this.hold_time)) {
+    if (this.isGameOver() && (this.hold_time || this.hold_click)) {
       this.hold_click = 0;
       clearTimeout(this.hold_time);
     }
@@ -614,7 +614,7 @@ export class GameScreen extends GameDraw {
     this.DrawPlayers();
     this.DrawItems(this.frame, this.lastItemHightLight);
     if (this.isGameOver()) {
-      this.DrawWinnerOrLoser(this.game.winner, this.hold_click / 100);
+      this.DrawWinnerOrLoser(this.game.winner, this.hold_click / 10);
     }
     const optionsCoord = this.DrawOptions();
     if (!this.events.length && optionsCoord) {
