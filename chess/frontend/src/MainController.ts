@@ -3,6 +3,7 @@ import type { LobbyState, UserLobby, LobbyStateQuery } from "@chess/utils";
 import type { MatchState, TickEvent } from "@chess/game-logic";
 import type { MatchExecutor } from "@paima/sdk/executors";
 import type { PackedUserStats } from "./paima/middleware";
+import type { LoginInfo } from "@paima/sdk/mw-core";
 
 // The MainController is a React component that will be used to control the state of the application
 // It will be used to check if the user has metamask installed and if they are connected to the correct network
@@ -26,7 +27,7 @@ class MainController {
   callback: (
     page: Page | null,
     isLoading: boolean,
-    extraData: LobbyState
+    extraData: LobbyState,
   ) => void;
 
   private checkCallback() {
@@ -46,12 +47,9 @@ class MainController {
     return typeof window.ethereum !== "undefined" ? true : false;
   };
 
-  async connectWallet(wallet: string, preferBatchedMode: boolean) {
+  async connectWallet(loginInfo: LoginInfo) {
     this.callback(Page.Login, true, null);
-    const response = await Paima.default.userWalletLogin(
-      wallet,
-      preferBatchedMode
-    );
+    const response = await Paima.default.userWalletLogin(loginInfo);
     console.log("connect wallet response: ", response);
     if (response.success === true) {
       this.userAddress = response.result.walletAddress;
@@ -80,7 +78,7 @@ class MainController {
       this.userAddress,
       query,
       page,
-      1
+      1,
     );
     console.log("search lobby response: ", response);
     this.callback(null, false, null);
@@ -97,7 +95,7 @@ class MainController {
     botDifficulty: number,
     isHidden = false,
     isPractice = false,
-    isWhite = true
+    isWhite = true,
   ): Promise<void> {
     await this.enforceWalletConnected();
     this.callback(null, true, null);
@@ -108,7 +106,7 @@ class MainController {
       botDifficulty,
       isHidden,
       isPractice,
-      isWhite
+      isWhite,
     );
     console.log("create lobby response: ", response);
     if (!response.success) {
@@ -166,7 +164,7 @@ class MainController {
     const response = await Paima.default.getOpenLobbies(
       this.userAddress,
       page,
-      limit
+      limit,
     );
     console.log("get open lobbies response: ", response);
     this.callback(null, false, null);
@@ -174,7 +172,7 @@ class MainController {
       throw new Error("Could not get open lobbies");
     }
     return response.lobbies.filter(
-      (lobby: LobbyState) => lobby.lobby_state === "open"
+      (lobby: LobbyState) => lobby.lobby_state === "open",
     );
   }
 
@@ -184,7 +182,7 @@ class MainController {
     const response = await Paima.default.getUserLobbiesMatches(
       this.userAddress,
       page,
-      limit
+      limit,
     );
     console.log("get my games response: ", response);
     this.callback(null, false, null);
@@ -207,7 +205,7 @@ class MainController {
   }
 
   async getMatchExecutor(
-    lobbyId: string
+    lobbyId: string,
   ): Promise<MatchExecutor<MatchState, TickEvent>> {
     await this.enforceWalletConnected();
     this.callback(null, true, null);

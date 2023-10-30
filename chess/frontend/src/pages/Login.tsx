@@ -2,44 +2,74 @@ import React, { useContext, useState } from "react";
 import { Button, Typography } from "@mui/material";
 import { AppContext } from "@src/main";
 import type MainController from "@src/MainController";
-
+import type { LoginInfo } from "@paima/sdk/mw-core";
 import Card from "@src/components/Card";
 import Layout from "@src/layouts/Layout";
 import SelectField from "@src/components/SelectField";
+import * as Paima from "../paima/middleware.js";
+import { LocalWallet } from "@thirdweb-dev/wallets";
+import { getChainByChainId } from "@thirdweb-dev/chains";
 
 const wallets = [
-  "Metamask",
+  "Guest",
+  "EVM",
   "EVM Self-sequence",
   "Algorand",
-  "Flint - EVM",
   "Polkadot",
   "Cardano"
 ] as const;
 
 type WalletType = typeof wallets[number];
 
-const walletMapping: Record<WalletType, string> = {
-  Metamask: "metamask",
-  "EVM Self-sequence": "metamask",
-  "Flint - EVM": "evm-flint",
-  Cardano: 'cardano',
-  Polkadot: "polkadot",
-  Algorand: "pera",
-};
 
-const preferBatchedModeMapping: Record<WalletType, boolean> = {
-  Metamask: true,
-  "EVM Self-sequence": false,
-  "Flint - EVM": false,
-  Cardano: false,
-  Polkadot: false,
-  Algorand: false,
-};
+const WalletMode = (Paima as any).WalletMode; // TODO: fix this when published to NPM
+console.log(WalletMode)
+
+async function getLocalWallet() {
+  const wallet = new LocalWallet({
+    chain: getChainByChainId(Number.parseInt(process.env.CHAIN_ID))
+  });
+  await wallet.loadOrCreate({
+    strategy: "encryptedJson",
+    // note: no password. This is unsafe, since somebody with physical access to your computer can get your key
+    // but it's just for chess so it's not a big deal
+    password: "",
+  });
+  // connect the wallet to the application
+  await wallet.connect();
+  return await wallet.getSigner();
+}
 
 const Login: React.FC = () => {
   const mainController: MainController = useContext(AppContext);
 
-  const [selectedWallet, setSelectedWallet] = useState<WalletType>("Metamask");
+  const [selectedWallet, setSelectedWallet] = useState<WalletType | undefined>(wallets[0]);
+  const [walletMapping, setWalletMapping] = useState<undefined | Record<WalletType, LoginInfo>>(undefined);
+
+  React.useEffect(() => {
+    async function getWallets() {
+      const localWallet = await getLocalWallet();
+      setWalletMapping({
+        "Guest": {
+          mode: WalletMode.EvmEthers,
+          connection: {
+            metadata: {
+              name: 'thirdweb.localwallet',
+              displayName: "Local Wallet"
+            },
+            api: localWallet,
+          },
+          preferBatchedMode: true
+        },
+        EVM: { mode: WalletMode.EvmInjected, preferBatchedMode: true },
+        "EVM Self-sequence": { mode: WalletMode.EvmInjected, preferBatchedMode: false },
+        Cardano: { mode: WalletMode.Cardano },
+        Polkadot: { mode: WalletMode.Polkadot },
+        Algorand: { mode: WalletMode.Algorand },
+      });
+    }
+    getWallets();
+  }, []);
 
   return (
     <Layout small navbar={false}>
@@ -56,7 +86,7 @@ const Login: React.FC = () => {
         <Button
           disabled={!selectedWallet}
           onClick={() =>
-            mainController.connectWallet(walletMapping[selectedWallet], preferBatchedModeMapping[selectedWallet])
+            mainController.connectWallet(walletMapping[selectedWallet])
           }
         >
           Connect

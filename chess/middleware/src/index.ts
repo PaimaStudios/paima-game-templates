@@ -1,17 +1,11 @@
 import { paimaEndpoints } from '@paima/sdk/mw-core';
 import {
   initMiddlewareCore,
-  cardanoWalletLoginEndpoint,
-  switchToBatchedCardanoMode,
-  switchToBatchedEthMode,
-  switchToBatchedPolkadotMode,
-  switchToUnbatchedMode,
-  switchToAutomaticMode,
   userWalletLoginWithoutChecks,
   updateBackendUri,
   getRemoteBackendVersion,
 } from '@paima/sdk/mw-core';
-
+import { WalletMode } from '@paima/providers'; // TODO: remove from middleware once we fix nodenext builds
 import { gameBackendVersion, GAME_NAME } from '@chess/utils';
 
 import { queryEndpoints } from './endpoints/queries';
@@ -26,14 +20,10 @@ const endpoints = {
 };
 
 export * from './types';
+export type * from './types';
 export {
+  WalletMode,
   userWalletLoginWithoutChecks,
-  cardanoWalletLoginEndpoint,
-  switchToUnbatchedMode,
-  switchToBatchedEthMode,
-  switchToBatchedCardanoMode,
-  switchToBatchedPolkadotMode,
-  switchToAutomaticMode,
   updateBackendUri,
   getRemoteBackendVersion,
 };
