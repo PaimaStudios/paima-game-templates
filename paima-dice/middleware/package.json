@@ -1,0 +1,26 @@
+{
+  "name": "@dice/middleware",
+  "version": "1.0.0",
+  "description": "Middleware for Dice game, to be imported into any frontend",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "sh scripts/build.sh",
+    "lint": "prettier --write '**/*.ts'"
+  },
+  "keywords": [],
+  "author": "PaimaStudios",
+  "dependencies": {
+    "@dice/game-logic": "1.0.0",
+    "@dice/utils": "1.0.0"
+  },
+  "devDependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
+    "@esbuild-plugins/node-modules-polyfill": "^0.1.4",
+    "dotenv": "^16.0.3",
+    "esbuild": "^0.15.15",
+    "@paima/build-utils": "1.1.3"
+  }
+}

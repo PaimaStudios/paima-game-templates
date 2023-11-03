@@ -1,0 +1,6 @@
+extensions:
+  - name: "Dice NFT contract"
+    type: erc721
+    contractAddress: "0x9373764E38DCbC035B8FE2281Cb8c3C9C34F284C"
+    startBlockHeight: 14963216
+    scheduledPrefix: "nftmint"
