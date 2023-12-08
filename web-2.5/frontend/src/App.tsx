@@ -1,6 +1,7 @@
 import type { FormEventHandler } from 'react';
 import { useState } from 'react';
 import './App.css';
+import { WalletMode } from '@paima/sdk/providers';
 import mw from 'mw';
 
 function App() {
@@ -36,7 +37,10 @@ function App() {
   };
 
   const userWalletLogin = async () => {
-    const response = await mw.userWalletLogin('metamask');
+    const response = await mw.userWalletLogin({
+      mode: WalletMode.EvmInjected,
+      preferBatchedMode: false,
+    });
     if (!response.success) {
       console.log('Error while logging in address:', response.errorMessage, response.errorCode);
     } else {
