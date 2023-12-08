@@ -6,7 +6,7 @@ import type {
   IGetUserStatsResult,
 } from '@game/db';
 
-import type { IGetBlockHeightsResult } from '@paima/sdk/db';
+import type { IGetBlockHeightsResult } from '@paima/node-sdk/db';
 import type { WalletAddress } from '@paima/sdk/utils';
 
 export interface QueryLobby {

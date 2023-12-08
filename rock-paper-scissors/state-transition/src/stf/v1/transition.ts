@@ -1,6 +1,6 @@
 import type { Pool } from 'pg';
 import type Prando from '@paima/sdk/prando';
-import type { SQLUpdate } from '@paima/sdk/db';
+import type { SQLUpdate } from '@paima/node-sdk/db';
 
 import type { IGetLobbyByIdResult, IGetRoundMovesResult, IGetRoundDataResult } from '@game/db';
 import { getCachedMoves, getLobbyById, getRoundData, getUserStats, endMatch } from '@game/db';

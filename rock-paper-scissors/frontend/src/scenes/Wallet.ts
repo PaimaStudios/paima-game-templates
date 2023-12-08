@@ -1,5 +1,6 @@
 import 'phaser';
 import mw from '@game/middleware';
+import { WalletMode } from '@paima/sdk/providers';
 
 export class Wallet extends Phaser.Scene {
   constructor() {
@@ -57,7 +58,10 @@ send commands to your allies.`;
     button.on('pointerdown', async () => {
       soldierVoice.stop();
       try {
-        const wallet = await mw.userWalletLogin('metamask');
+        const wallet = await mw.userWalletLogin({
+          mode: WalletMode.EvmInjected,
+          preferBatchedMode: false,
+        });
         if (wallet.success) {
           this.scene.start('lobby_scene');
         } else {

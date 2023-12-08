@@ -4,7 +4,7 @@ import { createLobby } from '@game/db';
 import { closeLobby } from '@game/db';
 import { RockPaperScissors } from '@game/game-logic';
 import { PRACTICE_BOT_ADDRESS } from '@game/utils';
-import type { SQLUpdate } from '@paima/sdk/db';
+import type { SQLUpdate } from '@paima/node-sdk/db';
 import type Prando from '@paima/sdk/prando';
 import type { WalletAddress } from '@paima/sdk/utils';
 import type { CreatedLobbyInput, JoinedLobbyInput } from '../types';

@@ -1,5 +1,6 @@
 import mw from '@game/middleware';
 import type { QueryLobby } from '@game/utils';
+import { WalletMode } from '@paima/sdk/providers';
 
 export class Lobby extends Phaser.Scene {
   constructor() {
@@ -41,7 +42,10 @@ export class Lobby extends Phaser.Scene {
 
     buttonB.setInteractive();
     buttonB.on('pointerdown', async () => {
-      const wallet = await mw.userWalletLogin('metamask');
+      const wallet = await mw.userWalletLogin({
+        mode: WalletMode.EvmInjected,
+        preferBatchedMode: false,
+      });
       if (!wallet.success) return;
       const x = await mw.createLobby(3, 60, false, false);
       if (!x.success) return;
@@ -61,7 +65,10 @@ export class Lobby extends Phaser.Scene {
 
     buttonC.setInteractive();
     buttonC.on('pointerdown', async () => {
-      const wallet = await mw.userWalletLogin('metamask');
+      const wallet = await mw.userWalletLogin({
+        mode: WalletMode.EvmInjected,
+        preferBatchedMode: false,
+      });
       if (!wallet.success) return;
       const x = await mw.createLobby(3, 60, false, true);
       if (!x.success) return;
@@ -111,7 +118,10 @@ export class Lobby extends Phaser.Scene {
       const lobbyId = lobbies[i].lobby_id;
       buttonA.on('pointerdown', async () => {
         try {
-          const wallet = await mw.userWalletLogin('metamask');
+          const wallet = await mw.userWalletLogin({
+            mode: WalletMode.EvmInjected,
+            preferBatchedMode: false,
+          });
           if (!wallet.success) return;
 
           if (isNew) {
@@ -148,7 +158,10 @@ export class Lobby extends Phaser.Scene {
   }
 
   async updateLobbyUI() {
-    const wallet = await mw.userWalletLogin('metamask');
+    const wallet = await mw.userWalletLogin({
+      mode: WalletMode.EvmInjected,
+      preferBatchedMode: false,
+    });
     if (!wallet.success) throw new Error('Cannot get wallet');
 
     // Run in parallel: Joinable and existing Lobbies.

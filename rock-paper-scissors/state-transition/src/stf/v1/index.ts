@@ -3,7 +3,7 @@ import type { Pool } from 'pg';
 import parse from './parser';
 import type Prando from '@paima/sdk/prando';
 import type { SubmittedChainData } from '@paima/sdk/utils';
-import type { SQLUpdate } from '@paima/sdk/db';
+import type { SQLUpdate } from '@paima/node-sdk/db';
 
 import {
   createdLobby,

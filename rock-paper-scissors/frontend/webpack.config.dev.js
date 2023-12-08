@@ -68,11 +68,14 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.js'],
     fallback: {
-      assert: false,
-      fs: false,
-      stream: false,
-      crypto: false,
-      url: false,
+      crypto: require.resolve('crypto-browserify'),
+      stream: require.resolve('stream-browserify'),
+      http: require.resolve('stream-http'),
+      https: require.resolve('https-browserify'),
+      os: require.resolve('os-browserify'),
+      url: require.resolve('url/'),
+      zlib: require.resolve('browserify-zlib'),
+      assert: require.resolve('assert/'),
     },
   },
 };

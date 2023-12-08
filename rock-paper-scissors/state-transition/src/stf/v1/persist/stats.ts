@@ -1,8 +1,8 @@
 import type { IGetUserStatsResult, INewStatsParams, IUpdateStatsParams } from '@game/db';
 import { newStats, updateStats } from '@game/db';
 import { GameResult, ShortNotationGameResult } from '@game/game-logic';
-import type { SQLUpdate } from '@paima/sdk/db';
-import { createScheduledData } from '@paima/sdk/db';
+import type { SQLUpdate } from '@paima/node-sdk/db';
+import { createScheduledData } from '@paima/node-sdk/db';
 import type { WalletAddress } from '@paima/sdk/utils';
 
 // Generate blank/empty user stats
