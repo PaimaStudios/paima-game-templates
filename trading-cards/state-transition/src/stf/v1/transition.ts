@@ -59,7 +59,7 @@ import type {
   ZombieRoundInput,
 } from './types.js';
 import { CARD_PACK_PRICE, NFT_NAME, PRACTICE_BOT_NFT_ID } from '@cards/utils';
-import { getBlockHeights, type SQLUpdate } from '@paima/sdk/db';
+import { getBlockHeights, type SQLUpdate } from '@paima/node-sdk/db';
 import { PracticeAI } from './persist/practice-ai';
 import type { IGetRoundResult } from '@cards/db/src/select.queries';
 import {

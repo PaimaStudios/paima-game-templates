@@ -31,6 +31,7 @@ const NoNFTMenu = () => {
       <LoadingButton
         loading={isBuying || buyDone}
         sx={(theme) => ({
+          marginTop: 5,
           "&.Mui-disabled": {
             backgroundColor: theme.palette.menuButton.dark,
           },
@@ -42,7 +43,7 @@ const NoNFTMenu = () => {
             await buyNft(connectedWallet);
             setBuyDone(true);
           } catch (e) {
-            console.error(e)
+            console.error(e);
           } finally {
             setIsBuying(false);
           }

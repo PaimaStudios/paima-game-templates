@@ -17,7 +17,7 @@ import {
   zombieRound,
   updateStats,
 } from './transition';
-import type { SQLUpdate } from '@paima/sdk/db';
+import type { SQLUpdate } from '@paima/node-sdk/db';
 import { GENERIC_PAYMENT_MESSAGES, PARSER_KEYS } from '@cards/game-logic';
 import { ZERO_ADDRESS } from '@cards/utils';
 

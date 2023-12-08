@@ -9,7 +9,7 @@ import {
   getTradeNfts,
   getUserStats,
 } from '@cards/db/src/select.queries.js';
-import { getNftOwner, getOwnedNfts } from '@paima/sdk/utils-backend';
+import { getNftOwner, getOwnedNfts } from '@paima/node-sdk/utils-backend';
 import { NFT_NAME, CARD_TRADE_NFT_NAME } from '@cards/utils';
 import type { AccountNftResponse, ApiResult, UserStatsResponse } from '@cards/game-logic';
 import {

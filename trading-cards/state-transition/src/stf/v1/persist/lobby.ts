@@ -11,7 +11,7 @@ import {
   serializeLocalCard,
 } from '@cards/game-logic';
 import { persistStartMatch } from './match.js';
-import type { SQLUpdate } from '@paima/sdk/db';
+import type { SQLUpdate } from '@paima/node-sdk/db';
 import type { IJoinPlayerToLobbyParams } from '@cards/db/src/insert.queries.js';
 import { joinPlayerToLobby } from '@cards/db/src/insert.queries.js';
 import { PRACTICE_BOT_NFT_ID } from '@cards/utils';

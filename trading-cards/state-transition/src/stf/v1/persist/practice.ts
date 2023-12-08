@@ -1,6 +1,6 @@
 import { PARSER_KEYS, PARSER_PREFIXES } from '@cards/game-logic';
-import type { SQLUpdate } from '@paima/sdk/db';
-import { createScheduledData } from '@paima/sdk/db';
+import type { SQLUpdate } from '@paima/node-sdk/db';
+import { createScheduledData } from '@paima/node-sdk/db';
 
 // Schedule a practice move update to be executed in the future
 export function schedulePracticeMove(

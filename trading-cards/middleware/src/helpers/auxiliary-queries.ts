@@ -25,7 +25,7 @@ export async function auxGet<R>(
   try {
     const result = (await response.json()) as ApiResult<R>;
     if (result.success) return result;
-    return errorFxn(result.errorCode);
+    return errorFxn(result.errorCode ?? 'Unknown error');
   } catch (err) {
     return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
   }
@@ -45,7 +45,7 @@ export async function auxGetLobbyState(lobbyID: string): Promise<PackedLobbyStat
   try {
     const j = (await res.json()) as ApiResult<LobbyStateResponse>;
     if (j.success) return { success: true, lobby: j.result.lobby };
-    return errorFxn(j.errorCode);
+    return errorFxn(j.errorCode ?? 'Unknown error');
   } catch (err) {
     return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
   }
@@ -68,7 +68,7 @@ export async function getRawNewLobbies(
   try {
     const j = (await res.json()) as ApiResult<UserLobbiesBlockHeightResponse>;
     if (j.success) return { success: true, lobbies: j.result.lobbies };
-    return errorFxn(j.errorCode);
+    return errorFxn(j.errorCode ?? 'Unknown error');
   } catch (err) {
     return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
   }

@@ -15,7 +15,7 @@ import {
   serializeHandCard,
   serializeMove,
 } from '@cards/game-logic';
-import type { SQLUpdate } from '@paima/sdk/db';
+import type { SQLUpdate } from '@paima/node-sdk/db';
 import {
   updateLobbyCurrentMatch,
   updateLobbyCurrentRound,

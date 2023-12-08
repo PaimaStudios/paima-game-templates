@@ -1,36 +1,43 @@
-const dotenv = require('dotenv')
-dotenv.config({ path: './../../.env.development' });
+const dotenv = require("dotenv");
+dotenv.config({ path: "./../../.env.development" });
 
 module.exports = {
-  mode: 'development',
-  entry: ['./src/main.tsx'],
+  mode: "development",
+  entry: ["./src/main.tsx"],
   module: {
-    rules: require('./webpack.rules'),
+    rules: require("./webpack.rules"),
   },
   output: {
-    filename: '[name].js',
-    chunkFilename: '[name].chunk.js',
+    filename: "[name].js",
+    chunkFilename: "[name].chunk.js",
   },
-  plugins: require('./webpack.plugins'),
+  plugins: require("./webpack.plugins"),
   resolve: {
-    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css'],
-    alias: require('./webpack.aliases'),
+    extensions: [".js", ".ts", ".jsx", ".tsx", ".css"],
+    alias: require("./webpack.aliases"),
     fallback: {
-      fs: false,
+      crypto: require.resolve("crypto-browserify"),
+      stream: require.resolve("stream-browserify"),
+      http: require.resolve("stream-http"),
+      https: require.resolve("https-browserify"),
+      os: require.resolve("os-browserify"),
+      url: require.resolve("url/"),
+      zlib: require.resolve("browserify-zlib"),
+      assert: require.resolve("assert/"),
     },
   },
-  stats: 'errors-warnings',
-  devtool: 'eval-source-map',
+  stats: "errors-warnings",
+  devtool: "eval-source-map",
   devServer: {
     open: true,
     historyApiFallback: true,
     client: {
-      overlay: {errors: true, warnings: false}
-    }
+      overlay: { errors: true, warnings: false },
+    },
   },
   optimization: {
     splitChunks: {
-      chunks: 'all',
+      chunks: "all",
     },
   },
   performance: {

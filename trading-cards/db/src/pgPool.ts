@@ -1,5 +1,5 @@
 import type pg from 'pg';
-import { getConnection } from '@paima/sdk/db';
+import { getConnection } from '@paima/node-sdk/db';
 
 /**
  * Pool of Postgres connections to avoid overhead of connecting on every request.

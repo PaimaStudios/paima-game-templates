@@ -1,7 +1,7 @@
 import type { IGetUserStatsResult, INewStatsParams, IUpdateStatsParams } from '@cards/db';
 import { newStats, updateStats } from '@cards/db';
-import type { SQLUpdate } from '@paima/sdk/db';
-import { createScheduledData } from '@paima/sdk/db';
+import type { SQLUpdate } from '@paima/node-sdk/db';
+import { createScheduledData } from '@paima/node-sdk/db';
 import { PARSER_PREFIXES, type ConciseResult, PARSER_KEYS } from '@cards/game-logic';
 
 // Generate blank/empty user stats

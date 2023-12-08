@@ -1,43 +1,50 @@
-const dotenv = require('dotenv')
-dotenv.config({ path: './../../.env.production' });
+const dotenv = require("dotenv");
+dotenv.config({ path: "./../../.env.production" });
 
 module.exports = {
-  mode: 'production',
-  entry: ['./src/main.tsx'],
+  mode: "production",
+  entry: ["./src/main.tsx"],
   module: {
-    rules: require('./webpack.rules'),
+    rules: require("./webpack.rules"),
   },
   output: {
-    filename: '[name].[chunkhash].js',
-    chunkFilename: '[name].[chunkhash].chunk.js',
+    filename: "[name].[chunkhash].js",
+    chunkFilename: "[name].[chunkhash].chunk.js",
     clean: true,
   },
-  plugins: [...require('./webpack.plugins')],
+  plugins: [...require("./webpack.plugins")],
   resolve: {
-    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css'],
+    extensions: [".js", ".ts", ".jsx", ".tsx", ".css"],
     alias: {
       // Custom Aliases
-      ...require('./webpack.aliases'),
+      ...require("./webpack.aliases"),
     },
     fallback: {
-      fs: false,
+      crypto: require.resolve("crypto-browserify"),
+      stream: require.resolve("stream-browserify"),
+      http: require.resolve("stream-http"),
+      https: require.resolve("https-browserify"),
+      os: require.resolve("os-browserify"),
+      url: require.resolve("url/"),
+      zlib: require.resolve("browserify-zlib"),
+      assert: require.resolve("assert/"),
     },
   },
-  stats: 'errors-warnings',
+  stats: "errors-warnings",
   optimization: {
     minimize: true,
     sideEffects: true,
     concatenateModules: true,
-    runtimeChunk: 'single',
+    runtimeChunk: "single",
     splitChunks: {
-      chunks: 'all',
+      chunks: "all",
       maxInitialRequests: 10,
       minSize: 0,
       cacheGroups: {
         vendor: {
-          name: 'vendors',
+          name: "vendors",
           test: /[\\/]node_modules[\\/]/,
-          chunks: 'all',
+          chunks: "all",
         },
       },
     },

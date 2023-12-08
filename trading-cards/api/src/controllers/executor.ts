@@ -16,7 +16,7 @@ import {
 import { psqlInt } from '../validation';
 import { isLeft } from 'fp-ts/lib/Either';
 import { getMatch, getMatchMoves, getRound, getRoundMoves } from '@cards/db/src/select.queries';
-import { getBlockHeights } from '@paima/sdk/db';
+import { getBlockHeights } from '@paima/node-sdk/db';
 
 @Route('executor')
 export class ExecutorController extends Controller {

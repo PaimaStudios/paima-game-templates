@@ -25,6 +25,7 @@ import type {
   IGetTradeNftsResult,
 } from "@cards/db/build/select.queries";
 import LocalStorage from "./LocalStorage";
+import { WalletMode } from "@paima/sdk/providers";
 
 export const localDeckCache: Map<string, LocalCard[]> = new Map();
 
@@ -65,10 +66,10 @@ export function GlobalStateProvider({
   useEffect(() => {
     const setFocus = () => {
       setIsPageVisible(true);
-    }
+    };
     const setBlur = () => {
       setIsPageVisible(false);
-    }
+    };
 
     window.addEventListener("blur", setBlur);
     window.addEventListener("focus", setFocus);
@@ -202,11 +203,16 @@ export function GlobalStateProvider({
     const fetch = async () => {
       // avoid aggressively trying to change the wallet if the user isn't looking at the game
       if (connectedWallet != null && !isPageVisible) return;
-      const connectResult = await Paima.default.userWalletLogin("metamask");
+      const connectResult = await Paima.default.userWalletLogin({
+        mode: WalletMode.EvmInjected,
+        preferBatchedMode: false,
+      });
       const newWallet = connectResult.success
         ? connectResult.result.walletAddress
         : undefined;
-      setConnectedWallet(oldWallet => newWallet == null ? oldWallet : newWallet);
+      setConnectedWallet((oldWallet) =>
+        newWallet == null ? oldWallet : newWallet,
+      );
     };
     fetch();
     const interval = setInterval(fetch, 5000);
