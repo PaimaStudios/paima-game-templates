@@ -3,7 +3,7 @@ import type { Pool } from 'pg';
 import parse from './parser.js';
 import type Prando from '@paima/sdk/prando';
 import type { SubmittedChainData } from '@paima/sdk/utils';
-import type { SQLUpdate } from '@paima/sdk/db';
+import type { SQLUpdate } from '@paima/node-sdk/db';
 import { submitIncrement, submitMove, joinWorld } from './persist/global.js';
 
 export default async function (

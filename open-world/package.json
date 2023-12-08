@@ -19,8 +19,7 @@
     "database:up": "cd db/docker && docker compose up",
     "database:reset": "node change-db.js",
     "compile:api": "npm run compile -w api/",
-    "compile:db": "npm run compile -w db/",
-    "frontend": "npm run pack:middleware && http-server ./frontend"
+    "compile:db": "npm run compile -w db/"
   },
   "workspaces": [
     "./utils",
@@ -50,10 +49,10 @@
     "prettier": "^3.0.3",
     "ts-jest": "^29.1.1",
     "typescript": "^5.2.2",
-    "@paima/build-utils": "1.1.3"
+    "@paima/build-utils": "2.1.2"
   },
   "dependencies": {
-    "http-server": "^14.1.1",
-    "@paima/sdk": "1.1.3"
+    "@paima/sdk": "2.1.2",
+    "@paima/node-sdk": "2.1.2"
   }
 }

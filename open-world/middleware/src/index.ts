@@ -1,19 +1,14 @@
 import { paimaEndpoints } from '@paima/sdk/mw-core';
 import {
   initMiddlewareCore,
-  cardanoWalletLoginEndpoint,
-  switchToBatchedCardanoMode,
-  switchToBatchedEthMode,
-  switchToBatchedPolkadotMode,
-  switchToUnbatchedMode,
-  switchToAutomaticMode,
-  userWalletLoginWithoutChecks,
   updateBackendUri,
   getRemoteBackendVersion,
   postConciselyEncodedData,
 } from '@paima/sdk/mw-core';
 
 import { gameBackendVersion, GAME_NAME } from '@game/utils';
+
+import { WalletMode } from '@paima/sdk/providers';
 
 import { queryEndpoints } from './endpoints/queries';
 import { writeEndpoints } from './endpoints/write';
@@ -27,17 +22,7 @@ const endpoints = {
 };
 
 export * from './types';
-export {
-  userWalletLoginWithoutChecks,
-  cardanoWalletLoginEndpoint,
-  switchToUnbatchedMode,
-  switchToBatchedEthMode,
-  switchToBatchedCardanoMode,
-  switchToBatchedPolkadotMode,
-  switchToAutomaticMode,
-  updateBackendUri,
-  getRemoteBackendVersion,
-  postConciselyEncodedData,
-};
+export type * from './types';
+export { WalletMode, updateBackendUri, getRemoteBackendVersion, postConciselyEncodedData };
 
 export default endpoints;

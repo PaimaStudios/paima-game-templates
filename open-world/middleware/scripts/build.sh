@@ -4,6 +4,6 @@ cd middleware
 
 DOTENV_CONFIG_PATH=../../.env.$NODE_ENV npx paima-build-middleware
 
-cp -R packaged/paimaMiddleware.js ../frontend/
+cp -R packaged/middleware.js ../frontend/paimaMiddleware.js
 
-echo "Frontend-ready Middleware (Without Exports) Prepared In: packaged/paimaMiddleware.js"
+echo "Frontend-ready Middleware (Without Exports) Prepared In: packaged/middleware.js"
