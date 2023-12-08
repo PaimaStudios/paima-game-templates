@@ -48,10 +48,10 @@
     "prettier": "^3.0.3",
     "ts-jest": "^29.1.1",
     "typescript": "^5.2.2",
-    "@paima/build-utils": "2.1.1"
+    "@paima/build-utils": "2.1.2"
   },
   "dependencies": {
-    "@paima/sdk": "2.1.1",
-    "@paima/node-sdk": "2.1.1"
+    "@paima/sdk": "2.1.2",
+    "@paima/node-sdk": "2.1.2"
   }
 }
