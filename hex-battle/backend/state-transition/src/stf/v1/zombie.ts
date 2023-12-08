@@ -12,7 +12,7 @@ import {
   updateLobbyToClosed,
   updatePlayerDraw,
 } from '@hexbattle/db';
-import { createScheduledData, type SQLUpdate } from '@paima/sdk/db';
+import { createScheduledData, type SQLUpdate } from '@paima/node-sdk/db';
 import type Prando from '@paima/sdk/prando';
 import type { Pool } from 'pg';
 import type { ZombieScheduledInput } from './types';

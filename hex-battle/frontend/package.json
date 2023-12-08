@@ -12,6 +12,9 @@
   },
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "@paima/sdk": "2.1.2"
+  },
   "devDependencies": {
     "@hexbattle/engine": "file:../engine",
     "@types/node": "20.4.6",

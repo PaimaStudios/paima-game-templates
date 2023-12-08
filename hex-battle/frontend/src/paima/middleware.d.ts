@@ -1,5 +1,4 @@
-import { cardanoWalletLoginEndpoint, switchToBatchedCardanoMode, switchToBatchedEthMode, switchToBatchedPolkadotMode, switchToUnbatchedMode, switchToAutomaticMode, userWalletLoginWithoutChecks, updateBackendUri, getRemoteBackendVersion } from '@paima/sdk/mw-core';
-import prando from '@paima/sdk/prando';
+import { userWalletLoginWithoutChecks, updateBackendUri, getRemoteBackendVersion } from '@paima/sdk/mw-core';
 import { ENV } from '@paima/sdk/utils';
 declare const endpoints: {
     createLobby: (numOfPlayers: number, units: string, buildings: string, gold: number, initTiles: number, map: string[]) => Promise<import("@paima/sdk/mw-core").FailedResult | {
@@ -38,8 +37,8 @@ declare const endpoints: {
     exportLogs: () => string;
     pushLog: (message: any, ...optionalParams: any[]) => void;
     getLatestProcessedBlockHeight: () => Promise<import("@paima/sdk/mw-core").Result<number>>;
-    userWalletLogin: (loginType: string, preferBatchedMode?: boolean | undefined) => Promise<import("@paima/sdk/mw-core").Result<import("@paima/sdk/mw-core").Wallet>>;
+    userWalletLogin: (loginInfo: import("@paima/sdk/mw-core").LoginInfo, setDefault?: boolean | undefined) => Promise<import("@paima/sdk/mw-core").Result<import("@paima/sdk/mw-core").Wallet>>;
     checkWalletStatus: () => Promise<import("@paima/sdk/mw-core").OldResult>;
 };
-export { userWalletLoginWithoutChecks, cardanoWalletLoginEndpoint, switchToUnbatchedMode, switchToBatchedEthMode, switchToBatchedCardanoMode, switchToBatchedPolkadotMode, switchToAutomaticMode, updateBackendUri, getRemoteBackendVersion, prando, ENV, };
+export { userWalletLoginWithoutChecks, updateBackendUri, getRemoteBackendVersion, ENV, };
 export default endpoints;

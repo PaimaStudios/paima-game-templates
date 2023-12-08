@@ -17,7 +17,7 @@ import {
   createPlayer,
   getPlayerByWallet,
 } from '@hexbattle/db';
-import { createScheduledData, type SQLUpdate } from '@paima/sdk/db';
+import { createScheduledData, type SQLUpdate } from '@paima/node-sdk/db';
 import type { JoinLobbyInput } from './types';
 import type { UnitType, BuildingType } from '@hexbattle/engine';
 import { Tile, GameMap, Player, Game, CreateGame } from '@hexbattle/engine';

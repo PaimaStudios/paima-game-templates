@@ -7,7 +7,7 @@ BUNDLE_WORKSPACE=state-transition node ./esbuildconfig.cjs
 rm -rf ../packaged
 mv -f ./packaged ..
 
-
+cp api/src/tsoa/swagger.json ../packaged/openapi.json
 
 echo "✅ Game code bundled and packaged in the parent folder."
 echo "To start your game node, simply use: ./paima-engine run"

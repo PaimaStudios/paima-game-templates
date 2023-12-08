@@ -21,7 +21,7 @@ import {
   updatePlayerWin,
   updatePlayerLoss,
 } from '@hexbattle/db';
-import { createScheduledData, type SQLUpdate } from '@paima/sdk/db';
+import { createScheduledData, type SQLUpdate } from '@paima/node-sdk/db';
 import type { SubmitMovesInput } from './types';
 import type Prando from '@paima/sdk/prando';
 import { Game, Moves } from '@hexbattle/engine';

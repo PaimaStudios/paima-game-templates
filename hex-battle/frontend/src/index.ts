@@ -7,6 +7,7 @@ import {RulesScreen} from './frontend/game/rules_screen';
 import {StartupScreen} from './frontend/startup_screen';
 import * as mw from './paima/middleware';
 import {RandomGame} from './random-game';
+import {nameToLogin} from './frontend/name_to_login';
 
 const TUTORIAL = false;
 const PRACTICE = false;
@@ -70,13 +71,15 @@ const SKIP_STARTUP = false;
   if (lobby && !wallet) {
     (window as any).wallet_selection_show((options: {wallet: string}) => {
       if (options.wallet) {
-        mw.default.userWalletLogin(options.wallet, false).then((x: any) => {
-          if (x.success) {
-            window.location.replace(
-              `/?lobby=${lobby}&wallet=${options.wallet}`
-            );
-          }
-        });
+        mw.default
+          .userWalletLogin(nameToLogin(options.wallet, false))
+          .then((x: any) => {
+            if (x.success) {
+              window.location.replace(
+                `/?lobby=${lobby}&wallet=${options.wallet}`
+              );
+            }
+          });
       }
     });
     const gameLobby = new LobbyScreen();

@@ -2,7 +2,7 @@ import { builder } from '@paima/sdk/concise';
 import type { EndpointErrorFxn, FailedResult, Result } from '@paima/sdk/mw-core';
 import {
   awaitBlock,
-  getActiveAddress,
+  getDefaultActiveAddress,
   PaimaMiddlewareErrorCode,
   postConciseData,
 } from '@paima/sdk/mw-core';
@@ -12,7 +12,7 @@ import { getLatestCreatedLobby, getLobby } from './queries';
 
 const getUserWallet = (errorFxn: EndpointErrorFxn): Result<string> => {
   try {
-    const wallet = getActiveAddress();
+    const wallet = getDefaultActiveAddress();
     if (wallet.length === 0) {
       return errorFxn(PaimaMiddlewareErrorCode.WALLET_NOT_CONNECTED);
     }

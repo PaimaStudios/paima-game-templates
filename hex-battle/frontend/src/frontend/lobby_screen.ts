@@ -8,6 +8,7 @@ import {VERSION} from '../version';
 import {RulesScreen} from './game/rules_screen';
 import {DrawHex} from './hex.draw';
 import {Colors} from './colors';
+import {nameToLogin} from './name_to_login';
 
 export class LobbyScreen extends BackgroundScreen {
   drawTimer: any = null;
@@ -284,14 +285,14 @@ export class LobbyScreen extends BackgroundScreen {
       if (!response.success) {
         throw new Error('Could not connect wallet.');
       }
-      this.walletAddress = response.result || response.data;
+      this.walletAddress = response.result;
       return callback();
     } catch (e) {
       (window as any).wallet_selection_show((options: {wallet: string}) => {
         if (options.wallet) {
           const batcherEnabled = !!mw.ENV.BATCHER_URI;
           mw.default
-            .userWalletLogin(options.wallet, batcherEnabled)
+            .userWalletLogin(nameToLogin(options.wallet, batcherEnabled))
             .then((x: any) => {
               if (x.success) {
                 this.walletName = options.wallet;

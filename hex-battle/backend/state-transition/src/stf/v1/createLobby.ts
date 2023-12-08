@@ -4,7 +4,7 @@ import type {
   ICreatePlayerParams,
 } from '@hexbattle/db';
 import { addPlayerToLobby, createPlayer, getPlayerByWallet } from '@hexbattle/db';
-import type { SQLUpdate } from '@paima/sdk/db';
+import type { SQLUpdate } from '@paima/node-sdk/db';
 import type Prando from '@paima/sdk/prando';
 import type { WalletAddress } from '@paima/sdk/utils';
 import type { Pool } from 'pg';

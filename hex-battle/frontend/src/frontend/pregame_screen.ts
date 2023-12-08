@@ -13,6 +13,8 @@ import * as mw from '../paima/middleware';
 import {BackgroundScreen} from './background_screen';
 import {GameScreen} from './game/game_screen';
 import {LoadScreen} from './load_screen';
+import Prando from '@paima/sdk/prando';
+import {nameToLogin} from './name_to_login';
 
 interface LobbyData {
   lobby: Lobby;
@@ -190,7 +192,7 @@ export class PreGameScreen extends BackgroundScreen {
       this.lobby!.buildings.split('') as BuildingType[],
       this.lobby!.init_tiles,
       this.lobby!.started_block_height,
-      new mw.prando(seed)
+      new Prando(seed)
     );
 
     this.rounds.forEach((round: Round) => {
@@ -336,8 +338,7 @@ export class PreGameScreen extends BackgroundScreen {
     if (walletName) {
       const batcherEnabled = !!mw.ENV.BATCHER_URI;
       const status = await mw.default.userWalletLogin(
-        walletName,
-        batcherEnabled
+        nameToLogin(walletName, batcherEnabled)
       );
       console.log({status});
     }
@@ -352,6 +353,9 @@ export class PreGameScreen extends BackgroundScreen {
       const localWallet = mw.default.getUserWallet(null, () => {
         throw Error('No wallet');
       });
+      if (!localWallet.success) {
+        throw new Error('getUserWallet failed');
+      }
       const me = this.players.find(p => p.player_wallet === localWallet.result);
       if (
         !me &&
