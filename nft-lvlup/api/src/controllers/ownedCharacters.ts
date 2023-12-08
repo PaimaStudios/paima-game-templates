@@ -1,6 +1,6 @@
 import { Controller, Get, Query, Route } from 'tsoa';
 import { getUserCharacters, requirePool } from '@game/db';
-import { getAllOwnedNfts } from '@paima/sdk/utils-backend';
+import { getAllOwnedNfts } from '@paima/node-sdk/utils-backend';
 import type { OwnedCharactersResponse } from '@game/utils';
 
 @Route('owned_characters')

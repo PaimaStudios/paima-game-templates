@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './App.css';
 import mw from 'mw';
 import type { IGetUserCharactersResult } from '@game/db';
+import { WalletMode } from '@paima/sdk/providers';
 
 function App() {
   const [characters, setCharacters] = useState<IGetUserCharactersResult[]>([]);
@@ -31,7 +32,10 @@ function App() {
   };
 
   async function userWalletLogin() {
-    const response = await mw.userWalletLogin('metamask');
+    const response = await mw.userWalletLogin({
+      mode: WalletMode.EvmInjected,
+      preferBatchedMode: false,
+    });
     if (!response.success) {
       console.log('Error while logging in address:', response.errorMessage, response.errorCode);
     } else {

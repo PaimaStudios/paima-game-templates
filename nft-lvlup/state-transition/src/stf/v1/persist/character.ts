@@ -2,7 +2,7 @@ import type { ICreateCharacterParams, ILvlUpCharacterParams } from '@game/db';
 import { createCharacter } from '@game/db';
 import { lvlUpCharacter } from '@game/db';
 import type { CharacterType } from '@game/utils';
-import type { SQLUpdate } from '@paima/sdk/db';
+import type { SQLUpdate } from '@paima/node-sdk/db';
 import type { WalletAddress } from '@paima/sdk/utils';
 
 // this file deals with receiving blockchain data input and outputting SQL updates (imported from pgTyped output of our SQL files)

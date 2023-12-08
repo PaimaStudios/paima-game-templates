@@ -27,7 +27,6 @@ const envs = Object.fromEntries(
 // https://vitejs.dev/config/
 export default defineConfig({
   // in combination with the EnvironmentPlugin makes process.env available and loads everything from .env file in root folder into it
-  // but it must start with VITE_
   // additionally loads .env.development or .env.production automatically
   envDir: '../..',
   plugins: [react()],

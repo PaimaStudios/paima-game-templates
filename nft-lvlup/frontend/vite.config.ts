@@ -3,14 +3,33 @@ import react from '@vitejs/plugin-react';
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill';
 import rollupNodePolyFill from 'rollup-plugin-node-polyfills';
-import EnvironmentPlugin from 'vite-plugin-environment';
+
+import { config } from 'dotenv';
+config({ path: `${process.cwd()}/../../.env.${process.env.NODE_ENV || 'development'}` });
+
+const envs = Object.fromEntries(
+  [
+    'CHAIN_URI',
+    'CHAIN_EXPLORER_URI',
+    'CHAIN_NAME',
+    'CHAIN_ID',
+    'CHAIN_CURRENCY_NAME',
+    'CHAIN_CURRENCY_SYMBOL',
+    'CHAIN_CURRENCY_DECIMALS',
+    'BLOCK_TIME',
+    'CONTRACT_ADDRESS',
+    'START_BLOCKHEIGHT',
+    'BACKEND_URI',
+    'WEBSERVER_PORT',
+  ].map(key => [`process.env.${key}`, JSON.stringify(process.env[key])])
+);
 
 // https://vitejs.dev/config/
 export default defineConfig({
   // in combination with the EnvironmentPlugin makes process.env available and loads everything from .env file in root folder into it
   // additionally loads .env.development or .env.production automatically
   envDir: '../..',
-  plugins: [react(), EnvironmentPlugin('all')],
+  plugins: [react()],
   define: {
     global: 'globalThis',
   },
@@ -20,6 +39,7 @@ export default defineConfig({
       // Node.js global to browser globalThis
       define: {
         global: 'globalThis',
+        ...envs,
       },
       // Enable esbuild polyfill plugins
       plugins: [
