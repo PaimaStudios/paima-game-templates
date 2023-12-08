@@ -19,7 +19,7 @@ import { ENV, type WalletAddress } from '@paima/sdk/utils';
 import type { ConciseResult, ExpandedResult, MatchResult, Timer } from '@chess/utils';
 import { scheduleZombieRound, deleteZombieRound } from './zombie.js';
 import type { INewFinalStateParams } from '@chess/db/src/insert.queries.js';
-import type { SQLUpdate } from '@paima/sdk/db';
+import type { SQLUpdate } from '@paima/node-sdk/db';
 
 // This function inserts a new empty round in the database.
 // We also schedule a future zombie round execution.

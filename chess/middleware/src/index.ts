@@ -1,17 +1,10 @@
 import { paimaEndpoints } from '@paima/sdk/mw-core';
 import {
   initMiddlewareCore,
-  cardanoWalletLoginEndpoint,
-  switchToBatchedCardanoMode,
-  switchToBatchedEthMode,
-  switchToBatchedPolkadotMode,
-  switchToUnbatchedMode,
-  switchToAutomaticMode,
   userWalletLoginWithoutChecks,
   updateBackendUri,
   getRemoteBackendVersion,
 } from '@paima/sdk/mw-core';
-
 import { gameBackendVersion, GAME_NAME } from '@chess/utils';
 
 import { queryEndpoints } from './endpoints/queries';
@@ -26,16 +19,7 @@ const endpoints = {
 };
 
 export * from './types';
-export {
-  userWalletLoginWithoutChecks,
-  cardanoWalletLoginEndpoint,
-  switchToUnbatchedMode,
-  switchToBatchedEthMode,
-  switchToBatchedCardanoMode,
-  switchToBatchedPolkadotMode,
-  switchToAutomaticMode,
-  updateBackendUri,
-  getRemoteBackendVersion,
-};
+export type * from './types';
+export { userWalletLoginWithoutChecks, updateBackendUri, getRemoteBackendVersion };
 
 export default endpoints;

@@ -38,7 +38,7 @@ import type {
 import { isBotMove, isUserStats, isZombieRound } from './types.js';
 import type { Timer } from '@chess/utils';
 import { updateTimer, PRACTICE_BOT_ADDRESS, currentPlayer } from '@chess/utils';
-import type { SQLUpdate } from '@paima/sdk/db';
+import type { SQLUpdate } from '@paima/node-sdk/db';
 import { calculateBestMove } from './persist/ai';
 
 // State transition when a create lobby input is processed

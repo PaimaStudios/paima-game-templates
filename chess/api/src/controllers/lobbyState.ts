@@ -3,7 +3,7 @@ import { getLobbyById, getRoundData, requirePool } from '@chess/db';
 import type { Timer } from '@chess/utils';
 import { updateTimer, type LobbyStateQuery } from '@chess/utils';
 import { getLobbyRounds } from '@chess/db/src/select.queries';
-import { getLatestProcessedBlockHeight } from '@paima/sdk/db';
+import { getLatestProcessedBlockHeight } from '@paima/node-sdk/db';
 
 interface Response {
   lobby: LobbyStateQuery | null;

@@ -27,14 +27,14 @@ const getTimer = (color: Color, lobbyState: LobbyState) => {
   if (color === WHITE) {
     return {
       player: whiteStarts ? lobbyState.lobby_creator : lobbyState.player_two,
-      value: blocksToSeconds(lobbyState.remaining_blocks.w),
+      blockchainTime: blocksToSeconds(lobbyState.remaining_blocks.w),
     };
   }
 
   if (color === BLACK) {
     return {
       player: whiteStarts ? lobbyState.player_two : lobbyState.lobby_creator,
-      value: blocksToSeconds(lobbyState.remaining_blocks.b),
+      blockchainTime: blocksToSeconds(lobbyState.remaining_blocks.b),
     };
   }
 };
@@ -51,7 +51,7 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
   // TODO: this should be internal variable in ChessBoard and not utilizing useState since it's mutable. once lobbyState?.latest_match_state is the source of truth
   const [game, setGame] = useState(new Chess());
   const [promotionPreference, setPromotionPreference] = useState("q");
-  const [lobbyState, setLobbyState] = useState<LobbyState>(lobby);
+  const [lobbyState, setLobbyState] = useState<LobbyState | null>(lobby);
 
   const theme = useTheme();
   const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -137,7 +137,7 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
   // TODO: graceful loader
   if (!lobbyState) return null;
 
-  const isActiveGame = lobbyState.lobby_state === "active" && !replayInProgress;
+  const isActiveGame = lobbyState != null && lobbyState.lobby_state === "active" && !replayInProgress;
   const interactionEnabled =
     isActiveGame &&
     !waitingConfirmation &&
@@ -160,62 +160,69 @@ const ChessGame: React.FC<Props> = ({ lobby }) => {
     isRunning={blackTimerRunning}
     {...getTimer("b", lobbyState)}
   />;
+
+  const content = (
+    <Card layout>
+      <Box>
+        <Typography variant="h2">
+          Chess Board{" "}
+          <Box textTransform="none" component="span">
+            {lobbyState.lobby_id}
+          </Box>
+        </Typography>
+        {waitingConfirmation ? (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography>Waiting for confirmation</Typography>
+            <CircularProgress size={20} sx={{ ml: 2 }} />
+          </Box>
+        ) : (
+          <Typography>
+            {chessLogic.gameStateText(lobbyState, game)}
+          </Typography>
+        )}
+      </Box>
+      <ChessBoard
+        arePiecesDraggable={interactionEnabled}
+        board={game.fen()}
+        playerColor={chessLogic.thisPlayerColor(lobbyState) === 'b' ? 'black' : 'white'}
+        promotion={promotionPreference}
+        handleMove={handleMove}
+      />
+      {isActiveGame && (
+        <PromotionList
+          onValueChange={setPromotionPreference}
+          value={promotionPreference}
+          color={chessLogic.thisPlayerColor(lobbyState)}
+        />
+      )}
+      {lobbyState.lobby_state === "finished" && (
+        <Button disabled={replayInProgress} onClick={handleReplay} fullWidth>
+          Replay
+        </Button>
+      )}
+    </Card>
+  );
+
+  const YourTimer = chessLogic.thisPlayerColor(lobbyState) === 'b' ? BlackTimer : WhiteTimer;
+  const OpponentTimer = chessLogic.thisPlayerColor(lobbyState) === 'b' ? WhiteTimer : BlackTimer;
   return (
     <Layout>
       <Box sx={{ display: "flex", justifyContent: "center", gap: "24px", flexDirection: isMediumScreen ? 'column' : 'row' }}>
         {lobbyState.lobby_state !== "finished" && (
           <Box sx={{ alignSelf: isMediumScreen ? 'initial' : "flex-end" }}>
-            {chessLogic.thisPlayerColor(lobbyState) === 'b' ? WhiteTimer : BlackTimer}
+            {isMediumScreen ? OpponentTimer : YourTimer}
           </Box>
         )}
-        <Card layout>
-          <Box>
-            <Typography variant="h2">
-              Chess Board{" "}
-              <Box textTransform="none" component="span">
-                {lobbyState.lobby_id}
-              </Box>
-            </Typography>
-            {waitingConfirmation ? (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Typography>Waiting for confirmation</Typography>
-                <CircularProgress size={20} sx={{ ml: 2 }} />
-              </Box>
-            ) : (
-              <Typography>
-                {chessLogic.gameStateText(lobbyState, game)}
-              </Typography>
-            )}
-          </Box>
-          <ChessBoard
-            arePiecesDraggable={interactionEnabled}
-            board={game.fen()}
-            playerColor={chessLogic.thisPlayerColor(lobbyState) === 'b' ? 'black' : 'white'}
-            promotion={promotionPreference}
-            handleMove={handleMove}
-          />
-          {isActiveGame && (
-            <PromotionList
-              onValueChange={setPromotionPreference}
-              value={promotionPreference}
-              color={chessLogic.thisPlayerColor(lobbyState)}
-            />
-          )}
-          {lobbyState.lobby_state === "finished" && (
-            <Button disabled={replayInProgress} onClick={handleReplay} fullWidth>
-              Replay
-            </Button>
-          )}
-        </Card>
+        {content}
         {lobbyState.lobby_state !== "finished" && (
           <Box sx={{ alignSelf: isMediumScreen ? 'initial' : "flex-start" }}>
-            {chessLogic.thisPlayerColor(lobbyState) === 'b' ? BlackTimer : WhiteTimer}
+            {isMediumScreen ? YourTimer : OpponentTimer}
           </Box>
         )}
       </Box>

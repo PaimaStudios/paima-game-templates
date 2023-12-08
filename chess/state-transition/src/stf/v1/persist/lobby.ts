@@ -8,7 +8,7 @@ import { PRACTICE_BOT_ADDRESS } from '@chess/utils';
 import { Chess } from 'chess.js';
 import { blankStats } from './stats';
 import { persistNewRound } from './match.js';
-import type { SQLUpdate } from '@paima/sdk/db';
+import type { SQLUpdate } from '@paima/node-sdk/db';
 import { initialState } from '@chess/game-logic';
 import { schedulePracticeMove } from './practice.js';
 
