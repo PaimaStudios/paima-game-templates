@@ -10,7 +10,7 @@ import {
   submittedMoves,
   scheduledData,
 } from './transition';
-import type { SQLUpdate } from '@paima/sdk/db';
+import type { SQLUpdate } from '@paima/node-sdk/db';
 
 export default async function (
   inputData: SubmittedChainData,

@@ -56,7 +56,7 @@
   "dependencies": {
     "@mui/icons-material": "^5.11.9",
     "@mui/material": "^5.11.7",
-    "@thirdweb-dev/wallets": "^2.0.9",
+    "@thirdweb-dev/wallets": "^2.1.11",
     "chess.js": "^1.0.0-beta.3",
     "clsx": "^1.2.1",
     "date-fns": "^2.29.3",

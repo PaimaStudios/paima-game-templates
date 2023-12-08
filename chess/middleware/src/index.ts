@@ -5,7 +5,6 @@ import {
   updateBackendUri,
   getRemoteBackendVersion,
 } from '@paima/sdk/mw-core';
-import { WalletMode } from '@paima/providers'; // TODO: remove from middleware once we fix nodenext builds
 import { gameBackendVersion, GAME_NAME } from '@chess/utils';
 
 import { queryEndpoints } from './endpoints/queries';
@@ -21,11 +20,6 @@ const endpoints = {
 
 export * from './types';
 export type * from './types';
-export {
-  WalletMode,
-  userWalletLoginWithoutChecks,
-  updateBackendUri,
-  getRemoteBackendVersion,
-};
+export { userWalletLoginWithoutChecks, updateBackendUri, getRemoteBackendVersion };
 
 export default endpoints;

@@ -25,7 +25,7 @@ const getBlockHeight = (url, command) =>
 // Update .env START_BLOCKHEIGHT with latest value from RPC command: "eth_getBlockByNumber"
 const updateEnvFile = async file => {
   const dataEnv = await fs.promises.readFile(__dirname + '/' + file, 'utf8');
-  const url = dataEnv.match(/CHAIN_URI="(.+)"/)[1];
+  const url = dataEnv.match(/\nCHAIN_URI="(.+)"/)[1];
   if (!url) throw new Error('CHAIN_URI not found');
   const START_BLOCKHEIGHT = await getBlockHeight(url, {
     jsonrpc: '2.0',
@@ -34,8 +34,8 @@ const updateEnvFile = async file => {
     id: 1,
   });
   const ndataEnv = dataEnv.replace(
-    /START_BLOCKHEIGHT="\d+"/,
-    `START_BLOCKHEIGHT="${START_BLOCKHEIGHT}"`
+    /\nSTART_BLOCKHEIGHT="\d+"/,
+    `\nSTART_BLOCKHEIGHT="${START_BLOCKHEIGHT}"`
   );
   await fs.promises.writeFile(file, ndataEnv, 'utf8');
   console.log(`ENV file changed: START_BLOCKHEIGHT="${START_BLOCKHEIGHT}"`);

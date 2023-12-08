@@ -1,5 +1,4 @@
 import { userWalletLoginWithoutChecks, updateBackendUri, getRemoteBackendVersion } from '@paima/sdk/mw-core';
-import { WalletMode } from '@paima/providers';
 declare const endpoints: {
     createLobby: (numberOfRounds: number, roundLength: number, playTimePerPlayer: number, botDifficulty: number, isHidden?: boolean, isPractice?: boolean, playerOneIsWhite?: boolean) => Promise<import("./types").CreateLobbySuccessfulResponse | import("@paima/sdk/mw-core").FailedResult>;
     joinLobby: (lobbyID: string) => Promise<import("@paima/sdk/mw-core").OldResult>;
@@ -24,5 +23,5 @@ declare const endpoints: {
 };
 export * from './types';
 export type * from './types';
-export { WalletMode, userWalletLoginWithoutChecks, updateBackendUri, getRemoteBackendVersion, };
+export { userWalletLoginWithoutChecks, updateBackendUri, getRemoteBackendVersion };
 export default endpoints;

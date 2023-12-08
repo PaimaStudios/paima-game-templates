@@ -6,9 +6,9 @@ import type { LoginInfo } from "@paima/sdk/mw-core";
 import Card from "@src/components/Card";
 import Layout from "@src/layouts/Layout";
 import SelectField from "@src/components/SelectField";
-import * as Paima from "../paima/middleware.js";
 import { LocalWallet } from "@thirdweb-dev/wallets";
 import { getChainByChainId } from "@thirdweb-dev/chains";
+import { WalletMode } from '@paima/providers';
 
 const wallets = [
   "Guest",
@@ -20,10 +20,6 @@ const wallets = [
 ] as const;
 
 type WalletType = typeof wallets[number];
-
-
-const WalletMode = (Paima as any).WalletMode; // TODO: fix this when published to NPM
-console.log(WalletMode)
 
 async function getLocalWallet() {
   const wallet = new LocalWallet({
