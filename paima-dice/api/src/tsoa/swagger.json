@@ -1,0 +1,984 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"lobby_status": {
+				"type": "string",
+				"enum": [
+					"active",
+					"closed",
+					"finished",
+					"open"
+				]
+			},
+			"IGetLobbyByIdResult": {
+				"description": "'GetLobbyById' return type",
+				"properties": {
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"creation_block_height": {
+						"type": "number",
+						"format": "double"
+					},
+					"current_match": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_proper_round": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_round": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_turn": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"hidden": {
+						"type": "boolean"
+					},
+					"lobby_creator": {
+						"type": "number",
+						"format": "double"
+					},
+					"lobby_id": {
+						"type": "string"
+					},
+					"lobby_state": {
+						"$ref": "#/components/schemas/lobby_status"
+					},
+					"max_players": {
+						"type": "number",
+						"format": "double"
+					},
+					"num_of_rounds": {
+						"type": "number",
+						"format": "double"
+					},
+					"play_time_per_player": {
+						"type": "number",
+						"format": "double"
+					},
+					"practice": {
+						"type": "boolean"
+					},
+					"round_length": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"created_at",
+					"creation_block_height",
+					"current_match",
+					"current_proper_round",
+					"current_round",
+					"current_turn",
+					"hidden",
+					"lobby_creator",
+					"lobby_id",
+					"lobby_state",
+					"max_players",
+					"num_of_rounds",
+					"play_time_per_player",
+					"practice",
+					"round_length"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Response": {
+				"properties": {
+					"lobby": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/IGetLobbyByIdResult"
+							}
+						],
+						"nullable": true
+					}
+				},
+				"required": [
+					"lobby"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetPaginatedOpenLobbiesResult": {
+				"description": "'GetPaginatedOpenLobbies' return type",
+				"properties": {
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"creation_block_height": {
+						"type": "number",
+						"format": "double"
+					},
+					"current_match": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_proper_round": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_round": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_turn": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"hidden": {
+						"type": "boolean"
+					},
+					"lobby_creator": {
+						"type": "number",
+						"format": "double"
+					},
+					"lobby_id": {
+						"type": "string"
+					},
+					"lobby_state": {
+						"$ref": "#/components/schemas/lobby_status"
+					},
+					"max_players": {
+						"type": "number",
+						"format": "double"
+					},
+					"num_of_rounds": {
+						"type": "number",
+						"format": "double"
+					},
+					"play_time_per_player": {
+						"type": "number",
+						"format": "double"
+					},
+					"practice": {
+						"type": "boolean"
+					},
+					"round_length": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"created_at",
+					"creation_block_height",
+					"current_match",
+					"current_proper_round",
+					"current_round",
+					"current_turn",
+					"hidden",
+					"lobby_creator",
+					"lobby_id",
+					"lobby_state",
+					"max_players",
+					"num_of_rounds",
+					"play_time_per_player",
+					"practice",
+					"round_length"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"OpenLobbiesResponse": {
+				"properties": {
+					"lobbies": {
+						"items": {
+							"$ref": "#/components/schemas/IGetPaginatedOpenLobbiesResult"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"lobbies"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetRandomActiveLobbyResult": {
+				"description": "'GetRandomActiveLobby' return type",
+				"properties": {
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"creation_block_height": {
+						"type": "number",
+						"format": "double"
+					},
+					"current_match": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_proper_round": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_round": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_turn": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"hidden": {
+						"type": "boolean"
+					},
+					"lobby_creator": {
+						"type": "number",
+						"format": "double"
+					},
+					"lobby_id": {
+						"type": "string"
+					},
+					"lobby_state": {
+						"$ref": "#/components/schemas/lobby_status"
+					},
+					"max_players": {
+						"type": "number",
+						"format": "double"
+					},
+					"num_of_rounds": {
+						"type": "number",
+						"format": "double"
+					},
+					"play_time_per_player": {
+						"type": "number",
+						"format": "double"
+					},
+					"practice": {
+						"type": "boolean"
+					},
+					"round_length": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"created_at",
+					"creation_block_height",
+					"current_match",
+					"current_proper_round",
+					"current_round",
+					"current_turn",
+					"hidden",
+					"lobby_creator",
+					"lobby_id",
+					"lobby_state",
+					"max_players",
+					"num_of_rounds",
+					"play_time_per_player",
+					"practice",
+					"round_length"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RandomActiveLobbyResponse": {
+				"properties": {
+					"lobby": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/IGetRandomActiveLobbyResult"
+							}
+						],
+						"nullable": true
+					}
+				},
+				"required": [
+					"lobby"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetOpenLobbyByIdResult": {
+				"description": "'GetOpenLobbyById' return type",
+				"properties": {
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"creation_block_height": {
+						"type": "number",
+						"format": "double"
+					},
+					"current_match": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_proper_round": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_round": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_turn": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"hidden": {
+						"type": "boolean"
+					},
+					"lobby_creator": {
+						"type": "number",
+						"format": "double"
+					},
+					"lobby_id": {
+						"type": "string"
+					},
+					"lobby_state": {
+						"$ref": "#/components/schemas/lobby_status"
+					},
+					"max_players": {
+						"type": "number",
+						"format": "double"
+					},
+					"num_of_rounds": {
+						"type": "number",
+						"format": "double"
+					},
+					"play_time_per_player": {
+						"type": "number",
+						"format": "double"
+					},
+					"practice": {
+						"type": "boolean"
+					},
+					"round_length": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"created_at",
+					"creation_block_height",
+					"current_match",
+					"current_proper_round",
+					"current_round",
+					"current_turn",
+					"hidden",
+					"lobby_creator",
+					"lobby_id",
+					"lobby_state",
+					"max_players",
+					"num_of_rounds",
+					"play_time_per_player",
+					"practice",
+					"round_length"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ISearchPaginatedOpenLobbiesResult": {
+				"description": "'SearchPaginatedOpenLobbies' return type",
+				"properties": {
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"creation_block_height": {
+						"type": "number",
+						"format": "double"
+					},
+					"current_match": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_proper_round": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_round": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_turn": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"hidden": {
+						"type": "boolean"
+					},
+					"lobby_creator": {
+						"type": "number",
+						"format": "double"
+					},
+					"lobby_id": {
+						"type": "string"
+					},
+					"lobby_state": {
+						"$ref": "#/components/schemas/lobby_status"
+					},
+					"max_players": {
+						"type": "number",
+						"format": "double"
+					},
+					"num_of_rounds": {
+						"type": "number",
+						"format": "double"
+					},
+					"play_time_per_player": {
+						"type": "number",
+						"format": "double"
+					},
+					"practice": {
+						"type": "boolean"
+					},
+					"round_length": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"created_at",
+					"creation_block_height",
+					"current_match",
+					"current_proper_round",
+					"current_round",
+					"current_turn",
+					"hidden",
+					"lobby_creator",
+					"lobby_id",
+					"lobby_state",
+					"max_players",
+					"num_of_rounds",
+					"play_time_per_player",
+					"practice",
+					"round_length"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SearchOpenLobbiesResponse": {
+				"properties": {
+					"lobbies": {
+						"anyOf": [
+							{
+								"items": {
+									"$ref": "#/components/schemas/IGetOpenLobbyByIdResult"
+								},
+								"type": "array"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/ISearchPaginatedOpenLobbiesResult"
+								},
+								"type": "array"
+							}
+						]
+					}
+				},
+				"required": [
+					"lobbies"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "@dice/api",
+		"version": "1.0.0",
+		"description": "Webserver REST API for the middleware to interact with game node.",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/lobby_raw": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Response"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "lobbyID",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/lobby_state": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Response"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "lobbyID",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/match_executor": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Response"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "lobbyID",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "matchWithinLobby",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/nfts/wallet": {
+			"get": {
+				"operationId": "GetWalletNFTs",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"type": "number",
+										"format": "double"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "wallet",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/open_lobbies": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/OpenLobbiesResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "nftId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "count",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/random_active_lobby": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RandomActiveLobbyResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/round_executor": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Response"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "lobbyID",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "matchWithinLobby",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "roundWithinMatch",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/round_status": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Response"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "lobbyID",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "matchWithinLobby",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "roundWithinMatch",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/search_open_lobbies": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SearchOpenLobbiesResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "nftId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "searchQuery",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "count",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/user_lobbies": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Response"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "nftId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "count",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/user_lobbies_blockheight": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Response"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "nftId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "blockHeight",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/user_stats": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Response"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "nftId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
