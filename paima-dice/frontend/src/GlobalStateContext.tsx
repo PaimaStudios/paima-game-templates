@@ -9,6 +9,7 @@ import ConnectingModal from "./ConnectingModal";
 import { PaimaNotice } from "./components/PaimaNotice";
 import { OasysNotice } from "./components/PaimaNotice";
 import { Box } from "@mui/material";
+import { WalletMode } from "@paima/sdk/providers";
 
 type GlobalState = {
   connectedWallet?: WalletAddress;
@@ -53,7 +54,10 @@ export function GlobalStateProvider({
   useEffect(() => {
     // poll connection to wallet
     const interval = setInterval(async () => {
-      const connectResult = await Paima.default.userWalletLogin("metamask");
+      const connectResult = await Paima.default.userWalletLogin({
+        mode: WalletMode.EvmInjected,
+        preferBatchedMode: false,
+      });
       const newWallet = connectResult.success
         ? connectResult.result.walletAddress
         : undefined;

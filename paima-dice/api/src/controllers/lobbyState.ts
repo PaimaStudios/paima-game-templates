@@ -2,7 +2,7 @@ import { Controller, Get, Query, Route } from 'tsoa';
 import { getLobbyById, getLobbyPlayers, requirePool } from '@dice/db';
 import { isLobbyWithStateProps, type LobbyPlayer, type LobbyState } from '@dice/utils';
 import { getMatch, getRound } from '@dice/db/src/select.queries';
-import { getBlockHeights } from '@paima/sdk/db';
+import { getBlockHeights } from '@paima/node-sdk/db';
 
 interface Response {
   // returns null if missing state properties, use lobbyRaw for any lobby

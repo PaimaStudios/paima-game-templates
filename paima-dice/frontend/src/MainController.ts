@@ -2,6 +2,7 @@ import { MatchState, TickEvent, LobbyState } from "@dice/utils";
 import * as Paima from "@dice/middleware";
 import type { MatchExecutor } from '@paima/sdk/executors';
 import { IGetLobbyByIdResult, IGetPaginatedUserLobbiesResult } from "@dice/db";
+import { WalletMode } from "@paima/sdk/providers";
 
 // The MainController is a React component that will be used to control the state of the application
 // It will be used to check if the user has metamask installed and if they are connected to the correct network
@@ -49,7 +50,10 @@ class MainController {
   };
 
   async silentConnectWallet() {
-    const response = await Paima.default.userWalletLogin("metamask");
+    const response = await Paima.default.userWalletLogin({
+      mode: WalletMode.EvmInjected,
+      preferBatchedMode: false,
+    });
 
     if (response.success === true) {
       this.userAddress = response.result.walletAddress;
@@ -58,7 +62,10 @@ class MainController {
 
   async connectWallet() {
     this.callback(Page.Landing, true, null);
-    const response = await Paima.default.userWalletLogin("metamask");
+    const response = await Paima.default.userWalletLogin({
+      mode: WalletMode.EvmInjected,
+      preferBatchedMode: false,
+    });
     console.log("connect wallet response: ", response);
     if (response.success === true) {
       this.userAddress = response.result.walletAddress;

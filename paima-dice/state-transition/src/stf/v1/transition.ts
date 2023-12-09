@@ -40,9 +40,9 @@ import type {
 } from './types.js';
 import { isUserStats, isZombieRound } from './types.js';
 import { NFT_NAME, PRACTICE_BOT_NFT_ID, isLobbyWithStateProps } from '@dice/utils';
-import { getBlockHeights, type SQLUpdate } from '@paima/sdk/db';
+import { getBlockHeights, type SQLUpdate } from '@paima/node-sdk/db';
 import { PracticeAI } from './persist/practice-ai';
-import { getOwnedNfts } from '@paima/sdk/utils-backend';
+import { getOwnedNfts } from '@paima/node-sdk/utils-backend';
 import type { IGetRoundResult } from '@dice/db/src/select.queries';
 import { getMatch, getRound, getRoundMoves } from '@dice/db/src/select.queries';
 import type { WalletAddress } from '@paima/sdk/utils';
@@ -132,14 +132,14 @@ export const joinedLobby = async (
   // TODO: even when doing it automatically, we should schedule it to avoid passing players in a weird way
   const activateLobbyUpdates: SQLUpdate[] = isFull
     ? persistStartMatch(
-      input.lobbyID,
-      matchEnvironment,
-      lobbyPlayers,
-      lobby.current_match,
-      lobby.round_length,
-      blockHeight,
-      randomnessGenerator
-    )
+        input.lobbyID,
+        matchEnvironment,
+        lobbyPlayers,
+        lobby.current_match,
+        lobby.round_length,
+        blockHeight,
+        randomnessGenerator
+      )
     : [];
 
   return [...joinUpdates, ...closeLobbyUpdates, ...activateLobbyUpdates];
@@ -507,7 +507,7 @@ async function fetchPrandoSeed(
 
 async function checkUserOwns(user: WalletAddress, nftId: number, dbConn: Pool): Promise<boolean> {
   const walletNfts = await getOwnedNfts(dbConn, NFT_NAME, user);
-  console.log('getOwnedNfts', walletNfts)
+  console.log('getOwnedNfts', walletNfts);
 
   return walletNfts.some(ownedNftId => Number(ownedNftId) === nftId);
 }

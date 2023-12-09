@@ -4,7 +4,7 @@ import { isLobbyWithStateProps, type LobbyPlayer, type MatchExecutorData } from 
 import { psqlInt } from '../validation';
 import { isLeft } from 'fp-ts/lib/Either';
 import { getMatch, getMatchMoves } from '@dice/db/src/select.queries';
-import { getBlockHeights } from '@paima/sdk/db';
+import { getBlockHeights } from '@paima/node-sdk/db';
 
 type Response = MatchExecutorData | null;
 

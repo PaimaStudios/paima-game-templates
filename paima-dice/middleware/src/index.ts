@@ -1,13 +1,6 @@
 import { paimaEndpoints } from '@paima/sdk/mw-core';
 import {
   initMiddlewareCore,
-  cardanoWalletLoginEndpoint,
-  switchToBatchedCardanoMode,
-  switchToBatchedEthMode,
-  switchToBatchedPolkadotMode,
-  switchToUnbatchedMode,
-  switchToAutomaticMode,
-  userWalletLoginWithoutChecks,
   updateBackendUri,
   getRemoteBackendVersion,
   postConciselyEncodedData,
@@ -28,13 +21,6 @@ const endpoints = {
 
 export * from './types';
 export {
-  userWalletLoginWithoutChecks,
-  cardanoWalletLoginEndpoint,
-  switchToUnbatchedMode,
-  switchToBatchedEthMode,
-  switchToBatchedCardanoMode,
-  switchToBatchedPolkadotMode,
-  switchToAutomaticMode,
   updateBackendUri,
   getRemoteBackendVersion,
   postConciselyEncodedData,

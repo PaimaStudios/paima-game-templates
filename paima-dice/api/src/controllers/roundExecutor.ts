@@ -3,7 +3,7 @@ import { requirePool, getLobbyById, getRoundMoves } from '@dice/db';
 import { isLeft } from 'fp-ts/Either';
 import { psqlInt } from '../validation.js';
 import type { RoundExecutorBackendData } from '@dice/utils';
-import { getBlockHeights } from '@paima/sdk/db';
+import { getBlockHeights } from '@paima/node-sdk/db';
 import { getMatch, getRound } from '@dice/db/src/select.queries.js';
 
 type Response = RoundExecutorBackendData | Error;

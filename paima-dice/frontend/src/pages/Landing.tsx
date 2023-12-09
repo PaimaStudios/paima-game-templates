@@ -20,7 +20,10 @@ const LandingPage: React.FC = () => {
   // }
 
   // const connectMiddleware = async () => {
-  //   const connect = await Paima.default.userWalletLogin();
+  //   const connect = await Paima.default.userWalletLogin({
+      //   mode: WalletMode.EvmInjected,
+      //   preferBatchedMode: false,
+      // });
   //   console.log("Paima Wallet Connection: ", connect);
   // }
 

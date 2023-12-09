@@ -32,7 +32,7 @@ export const NftContract = (signer: SignerProvider = getSignerOrProvider()) => {
 };
 
 export const NativeNftSaleProxyContract = (
-  signer: SignerProvider = getSignerOrProvider()
+  signer: SignerProvider = getSignerOrProvider(),
 ) => {
   return NativeNftSale__factory.connect(NATIVE_PROXY, signer);
 };
@@ -40,7 +40,7 @@ export const NativeNftSaleProxyContract = (
 export async function fetchNftPrice(): Promise<BigNumber> {
   const contract = NativeNftSale__factory.connect(
     NATIVE_PROXY,
-    getSignerOrProvider()
+    getSignerOrProvider(),
   );
   const result: EthersBigNumber = await contract.nftPrice();
   return new BigNumber(result.toString());
@@ -64,6 +64,7 @@ export async function fetchNftMaxSupply(): Promise<number> {
 }
 
 export const buyNft = async (account: string) => {
+  console.log("buyNFT: ", account);
   const signer = getSignerOrProvider(account);
   const nativeNftSaleProxyContract = NativeNftSaleProxyContract(signer);
   const tokenPrice = await nativeNftSaleProxyContract.nftPrice();

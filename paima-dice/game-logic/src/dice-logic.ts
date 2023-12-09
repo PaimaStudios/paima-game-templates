@@ -3,7 +3,7 @@ import { RoundKind } from '@dice/utils';
 import type { MatchState, DiceRolls, LobbyPlayer, LobbyWithStateProps } from '@dice/utils';
 import type { ConciseResult, MatchResult } from '@dice/utils';
 import Prando from '@paima/sdk/prando';
-import type { IGetBlockHeightsResult } from '@paima/sdk/db';
+import type { IGetBlockHeightsResult } from '@paima/node-sdk/db';
 
 /**
  * This function is mostly just a reminder that we seed Prando

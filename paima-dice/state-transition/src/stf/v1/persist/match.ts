@@ -9,7 +9,7 @@ import {
   PRACTICE_BOT_NFT_ID,
 } from '@dice/utils';
 import { scheduleZombieRound } from './zombie.js';
-import type { SQLUpdate } from '@paima/sdk/db';
+import type { SQLUpdate } from '@paima/node-sdk/db';
 import {
   updateLobbyCurrentMatch,
   updateLobbyCurrentRound,

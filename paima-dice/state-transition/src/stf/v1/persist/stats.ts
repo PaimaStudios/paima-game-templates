@@ -1,7 +1,7 @@
 import type { IGetUserStatsResult, INewStatsParams, IUpdateStatsParams } from '@dice/db';
 import { newStats, updateStats } from '@dice/db';
-import type { SQLUpdate } from '@paima/sdk/db';
-import { createScheduledData } from '@paima/sdk/db';
+import type { SQLUpdate } from '@paima/node-sdk/db';
+import { createScheduledData } from '@paima/node-sdk/db';
 import type { ConciseResult } from '@dice/utils';
 
 // Generate blank/empty user stats
