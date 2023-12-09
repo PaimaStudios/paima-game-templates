@@ -1,10 +1,10 @@
 import type { ActionResult } from '../types';
 import { builder } from '@paima/sdk/concise';
-import { getActiveAddress, postConciselyEncodedData } from '@paima/sdk/mw-core';
+import { getDefaultActiveAddress, postConciselyEncodedData } from '@paima/sdk/mw-core';
 import { ENV } from '@paima/sdk/utils';
 
 async function gainExperience(count: number): Promise<ActionResult> {
-  const userWalletAddress = getActiveAddress();
+  const userWalletAddress = getDefaultActiveAddress();
 
   const conciseBuilder = builder.initialize(undefined);
   conciseBuilder.setPrefix('xp');

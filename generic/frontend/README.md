@@ -17,7 +17,7 @@ When you do any changes to the middleware module you need to make it available f
 
 # Unity Editor Gameplay
 
-Unity Editor has one limitation regarding the code it's able to execute. You can't call JS code from the Editor, that is only possible with a WebGL build.
+Unity Editor has one limitation regarding the code it's able to execute: you can't call JS code from the Editor, that is only possible with a WebGL build.
 
 When running the game, every call to our middleware is mocked by a very simple logic that you can find in `Query.cs`. If you want to test with a real responses you need to [deploy](#deployment) the game.
 
