@@ -1,0 +1,4 @@
+# hardhat
+artifacts/
+cache/
+ignition/deployments/chain-31337

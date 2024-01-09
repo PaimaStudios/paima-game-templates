@@ -9,6 +9,7 @@ import { createLobby } from './createLobby.js';
 import { joinLobby } from './joinLobby.js';
 import { zombieScheduledData } from './zombie.js';
 
+// entrypoint for your state machine
 export default async function (
   inputData: SubmittedChainData,
   blockHeight: number,

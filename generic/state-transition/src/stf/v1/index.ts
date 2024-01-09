@@ -5,6 +5,7 @@ import type { SQLUpdate } from '@paima/node-sdk/db';
 import type { Pool } from 'pg';
 import { gainExperience } from './transition.js';
 
+// entrypoint for your state machine
 export default async function (
   inputData: SubmittedChainData,
   _blockHeight: number,
