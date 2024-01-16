@@ -1,5 +1,8 @@
+set -eu
+
 cd ..
 npm run build
 cd middleware
 
-DOTENV_CONFIG_PATH=../../.env.$NODE_ENV npx paima-build-middleware
+DOTENV_CONFIG_PATH=../../.env.${NETWORK:-localhost} npx paima-build-middleware
+

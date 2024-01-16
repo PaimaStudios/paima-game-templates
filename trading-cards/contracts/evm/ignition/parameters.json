@@ -1,0 +1,12 @@
+{
+    "AccountNft": {
+        "name": "Paima TCG Account",
+        "ticker": "PTA",
+        "price": 1
+    },
+    "TradeNft": {
+        "name": "Paima TCG Trade NFT",
+        "ticker": "PTTN",
+        "price": 1
+    }
+}

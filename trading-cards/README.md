@@ -13,7 +13,7 @@ npm run initialize
 This does the following:
 
 - install dependencies of this template
-- copies `.env.example` as `.env.development` to the parent folder
+- copies `.env.example` as `.env.localhost` to the parent folder
 
 To deploy contracts, mostly just follow the docs. There is just one nft type, `NULL`, with string `null` (you can change this, but frontend is currently set up like this when selling nfts).
 
@@ -68,22 +68,14 @@ This game requires multiple contracts to be deployed to function:
 | Card pack proxy contract    | GenericPaymentProxy.sol | Proxy for the payment contract                                                                        |
 |                             |                         |                                                                                                       |
 
-You can easily deploy all of these using the `deploy.sh` script in the `contracts/nft` folder that gets generated when running `./paima-engine contracts`. You can find the docs for doing that [here](https://docs.paimastudios.com/home/setup/deploying-your-stateful-nft)
+To deploy these scripts,
 
-Notably, use the following steps:
-
-1. Deploy your L2 contract
-2. Deploy an NFT contract for the account NFT
-3. Deploy a NativeNftSale contract for the account NFT
-4. Set the minter of the contract in (1) to the contract from (4)
-5. Deploy an NFT contract for the trading card NFT
-6. Deploy a NativeNftSale contract for the trading card NFT
-7. Set the minter of the contract in (5) to the contract from (6)
-8. Deploy the generic payment contract
+1. Start a local network using `npm run chain:start`
+2. `npm run chain:deploy`
 
 ## Environment Setup
 
-Config file `.env.development` is created during `npm run initialize` in the parent folder, based on `.env.example` in this project. This is an empty file that you need to fill in with your specific values, before running Paima Engine.
+Config file `.env.localhost` is created during `npm run initialize` in the parent folder, based on `.env.example` in this project. This is an empty file that you need to fill in with your specific values, before running Paima Engine.
 
 Feel free to use examples written in the file for initial testing.
 
@@ -107,7 +99,7 @@ To speed up the development cycle you can at any time completely reset the datab
 npm run database:reset
 ```
 
-This modifies your `.env.development` and `docker-compose.yml` files.
+This modifies your `.env.localhost` and `docker-compose.yml` files.
 
 ## Production
 
@@ -131,10 +123,10 @@ cd ..
 ./paima-engine-linux run
 ```
 
-You can set the `NODE_ENV` variable if you want to load a custom config for your Game Node. For example to load `.env.devnet` use:
+You can set the `NETWORK` variable if you want to load a custom config for your Game Node. For example to load `.env.testnet` use:
 
 ```
-NODE_ENV=devnet ./paima-engine-linux run
+NETWORK=testnet ./paima-engine-linux run
 ```
 
 ## Documentation
