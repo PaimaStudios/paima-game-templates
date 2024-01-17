@@ -1,25 +1,25 @@
 extensions:
   - name: "Account NFT"
     type: erc721
-    contractAddress: "0x9fC84E836a4bA8Df85054f609E0597Fb95A98bC1"
-    startBlockHeight: 41262584
+    contractAddress: "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    startBlockHeight: 0
     scheduledPrefix: accMint
   - name: "Trade NFT mint"
     type: erc721
-    contractAddress: "0xAAa79a9CEa8107703E2d365517ED91e2256FE436"
-    startBlockHeight: 41262584
+    contractAddress: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
+    startBlockHeight: 0
     scheduledPrefix: tradeMint
   - name: "Trade NFT transfer"
     type: generic
-    contractAddress: "0xAAa79a9CEa8107703E2d365517ED91e2256FE436"
-    startBlockHeight: 41262584
-    abiPath: "./abis/Nft.json"
+    contractAddress: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
+    startBlockHeight: 0
+    abiPath: "./contracts/evm/abi/@paima/evm-contracts/contracts/AnnotatedMintNft.sol/AnnotatedMintNft.json"
     eventSignature: "Transfer(address,address,uint256)"
     scheduledPrefix: tradeTransfer
   - name: "Generic Payment Proxy"
     type: generic
-    contractAddress: "0x175e451823B999a657Ef5F2060115a381b8eceDA"
-    startBlockHeight: 41262584
-    abiPath: "./abis/GenericPayment.json"
+    contractAddress: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6"
+    startBlockHeight: 0
+    abiPath: "./contracts/evm/abi/@paima/evm-contracts/contracts/GenericPayment.sol/GenericPayment.json"
     eventSignature: "Pay(uint256,address,string)"
     scheduledPrefix: "generic"

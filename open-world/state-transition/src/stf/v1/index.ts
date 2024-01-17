@@ -6,6 +6,7 @@ import type { SubmittedChainData } from '@paima/sdk/utils';
 import type { SQLUpdate } from '@paima/node-sdk/db';
 import { submitIncrement, submitMove, joinWorld } from './persist/global.js';
 
+// entrypoint for your state machine
 export default async function (
   inputData: SubmittedChainData,
   blockHeight: number,

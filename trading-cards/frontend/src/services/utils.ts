@@ -15,11 +15,11 @@ import * as Paima from "@cards/middleware";
 import LocalStorage from "@src/LocalStorage";
 import type { MatchExecutor } from "@paima/sdk/executors";
 
-export type Characters = typeof characters[number];
+export type Characters = (typeof characters)[number];
 export const characters = ["null"] as const;
 
-export const characterToNumberMap: Record<Characters, number> = {
-  null: 0,
+export const characterToNumberMap: Record<Characters, string> = {
+  null: "0",
 };
 
 export async function fetchNft(address: string): Promise<undefined | number> {
@@ -39,7 +39,7 @@ export async function loadLobbyState(lobbyId: string): Promise<LobbyState> {
 }
 
 export async function loadLobbyRaw(
-  lobbyId: string
+  lobbyId: string,
 ): Promise<IGetLobbyByIdResult> {
   const response = await Paima.default.getLobbyRaw(lobbyId);
   console.log("get lobby state response: ", response);
@@ -52,7 +52,7 @@ export async function loadLobbyRaw(
 export async function searchLobby(
   nftId: number,
   query: string,
-  page: number
+  page: number,
 ): Promise<IGetLobbyByIdResult[]> {
   const response = await Paima.default.getLobbySearch(nftId, query, page, 1);
   console.log("search lobby response: ", response);
@@ -68,7 +68,7 @@ export async function createLobby(
   numOfRounds: number,
   timePerPlayer: number,
   isHidden = false,
-  isPractice = false
+  isPractice = false,
 ): Promise<IGetLobbyByIdResult> {
   console.log(
     "create lobby: ",
@@ -77,7 +77,7 @@ export async function createLobby(
     numOfRounds,
     timePerPlayer,
     isHidden,
-    isPractice
+    isPractice,
   );
 
   if (creatorDeck?.length !== DECK_LENGTH) {
@@ -87,7 +87,7 @@ export async function createLobby(
 
   const commitments = await genCommitments(
     window.crypto,
-    creatorDeck.map((card) => card.id)
+    creatorDeck.map((card) => card.id),
   );
   const localDeck: LocalCard[] = creatorDeck.map((card, i) => ({
     id: card.id,
@@ -101,7 +101,7 @@ export async function createLobby(
     numOfRounds,
     timePerPlayer,
     isHidden,
-    isPractice
+    isPractice,
   );
   console.log("create lobby response: ", response);
   if (!response.success) {
@@ -115,7 +115,7 @@ export async function createLobby(
 export async function joinLobby(
   nftId: number,
   deck: { id: CardDbId; registryId: CardRegistryId }[],
-  lobbyId: string
+  lobbyId: string,
 ): Promise<IGetLobbyByIdResult> {
   if (deck?.length !== DECK_LENGTH) {
     // shouldn't happen
@@ -124,7 +124,7 @@ export async function joinLobby(
 
   const commitments = await genCommitments(
     window.crypto,
-    deck.map((card) => card.id)
+    deck.map((card) => card.id),
   );
   const localDeck: LocalCard[] = deck.map((card, i) => ({
     id: card.id,
@@ -135,7 +135,7 @@ export async function joinLobby(
   const response = await Paima.default.joinLobby(
     nftId,
     lobbyId,
-    commitments.commitments
+    commitments.commitments,
   );
   if (!response.success) {
     throw new Error("Could not join lobby");
@@ -151,7 +151,7 @@ export async function joinLobby(
 
 export async function closeLobby(
   nftId: number,
-  lobbyId: string
+  lobbyId: string,
 ): Promise<void> {
   const response = await Paima.default.closeLobby(nftId, lobbyId);
   console.log("close lobby response: ", response);
@@ -163,7 +163,7 @@ export async function closeLobby(
 export async function getOpenLobbies(
   nftId: number,
   page = 0,
-  limit = 100
+  limit = 100,
 ): Promise<IGetLobbyByIdResult[]> {
   const response = await Paima.default.getOpenLobbies(nftId, page, limit);
   console.log("get open lobbies response: ", response);
@@ -176,12 +176,12 @@ export async function getOpenLobbies(
 export async function getMyGames(
   nftId: number,
   page = 0,
-  limit = 100
+  limit = 100,
 ): Promise<IGetPaginatedUserLobbiesResult[]> {
   const response = await Paima.default.getUserLobbiesMatches(
     nftId,
     page,
-    limit
+    limit,
   );
   console.log("get my games response: ", response);
   if (!response.success) {
@@ -192,11 +192,11 @@ export async function getMyGames(
 
 export async function getMatchExecutor(
   lobbyId: string,
-  matchWithinLobby: number
+  matchWithinLobby: number,
 ): Promise<MatchExecutor<MatchState, TickEvent>> {
   const response = await Paima.default.getMatchExecutor(
     lobbyId,
-    matchWithinLobby
+    matchWithinLobby,
   );
   console.log("get match executor: ", response);
   if (!response.success) {

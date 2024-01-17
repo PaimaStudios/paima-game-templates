@@ -1,9 +1,11 @@
+set -eu
+
 cd ..
 npm run build
 cd middleware
 
 : "${NODE_ENV:=development}"
-DOTENV_CONFIG_PATH=../../.env.$NODE_ENV npx paima-build-middleware
+DOTENV_CONFIG_PATH=../../.env.${NODE_ENV:-development} npx paima-build-middleware
 
 OUT=../../frontend/src/paima
 rm -rf $OUT/

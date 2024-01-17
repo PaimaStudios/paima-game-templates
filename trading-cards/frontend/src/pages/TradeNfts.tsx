@@ -86,7 +86,7 @@ export default function TradeNfts(): React.ReactElement {
                     onClick={async () => {
                       setAwaitingSignature(Buttons.BURN);
                       try {
-                        await burnTradeNft(connectedWallet, tradeNft.nft_id);
+                        await burnTradeNft(connectedWallet, BigInt(tradeNft.nft_id));
                       } catch (e) {
                         console.error(e);
                       } finally {
@@ -168,7 +168,7 @@ export default function TradeNfts(): React.ReactElement {
               }
             }}
           >
-            Buy Trade Nft
+            Buy Trade NFT
           </LoadingButton>
         </Box>
         <Box minHeight={24} />

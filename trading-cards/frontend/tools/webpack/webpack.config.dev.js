@@ -1,5 +1,5 @@
 const dotenv = require("dotenv");
-dotenv.config({ path: "./../../.env.development" });
+dotenv.config({ path: `./../../.env.${process.env.NETWORK ?? "localhost"}` });
 
 module.exports = {
   mode: "development",

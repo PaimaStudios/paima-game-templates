@@ -21,6 +21,7 @@ import type { SQLUpdate } from '@paima/node-sdk/db';
 import { GENERIC_PAYMENT_MESSAGES, PARSER_KEYS } from '@cards/game-logic';
 import { ZERO_ADDRESS } from '@cards/utils';
 
+// entrypoint for your state machine
 export default async function (
   inputData: SubmittedChainData,
   blockHeight: number,

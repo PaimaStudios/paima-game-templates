@@ -3,7 +3,7 @@
     "strict": true,
     "jsx": "react",
     "allowJs": true,
-    "target": "ES6",
+    "target": "ESNext",
     "module": "ESNext",
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -16,7 +16,8 @@
     "paths": {
       "*": ["node_modules/*"],
       "@assets/*": ["./assets/*"],
-      "@src/*": ["./src/*"]
+      "@src/*": ["./src/*"],
+      "@abi/*": ["../contracts/evm/abi/*"]
     }
   },
   "include": ["src/**/*", "tools/**/*", "./.eslintrc.js"]

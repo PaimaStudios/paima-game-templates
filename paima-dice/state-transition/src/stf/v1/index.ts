@@ -14,6 +14,7 @@ import {
 } from './transition';
 import type { SQLUpdate } from '@paima/node-sdk/db';
 
+// entrypoint for your state machine
 export default async function (
   inputData: SubmittedChainData,
   blockHeight: number,
