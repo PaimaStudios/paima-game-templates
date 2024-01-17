@@ -1,59 +1,47 @@
-import type { Signer } from "@ethersproject/abstract-signer";
-import { BigNumber as EthersBigNumber, providers } from "ethers";
-
+import { createPublicClient, createWalletClient, custom, http } from "viem";
+import type { PublicClient, WalletClient } from "viem";
 import {
   NATIVE_PROXY,
-  CHAIN_URI,
   CARD_TRADE_NFT,
   CARD_TRADE_NATIVE_PROXY,
   CARD_PACK_PRICE,
   GENERIC_PAYMENT_PROXY,
 } from "./constants";
+import { viemChain } from "./chain";
 import { characterToNumberMap } from "./utils";
-import {
-  GenericPayment__factory,
-  NativeNftSale__factory,
-  Nft__factory,
-} from "@src/typechain";
-import { BigNumber } from "bignumber.js";
 import { GENERIC_PAYMENT_MESSAGES } from "@cards/game-logic";
+import { WalletMode, WalletModeMap } from "@paima/sdk/providers";
+import nftAbi from "@abi/@paima/evm-contracts/contracts/Nft.sol/Nft";
+import nativeNftSaleAbi from "@abi/@paima/evm-contracts/contracts/NativeNftSale.sol/NativeNftSale";
+import genericPaymentAbi from "@abi/@paima/evm-contracts/contracts/GenericPayment.sol/GenericPayment";
 
-export type SignerProvider = Signer | providers.Provider;
-
-export const DECIMALS = EthersBigNumber.from(10).pow(18);
-
-export const getSignerOrProvider = (account?: string): SignerProvider => {
-  let signerOrProvider;
-
-  if (account) {
-    const provider = new providers.Web3Provider(window.ethereum);
-    signerOrProvider = provider.getSigner();
-  } else {
-    const provider = new providers.JsonRpcProvider(CHAIN_URI);
-    signerOrProvider = provider;
-  }
-
-  return signerOrProvider;
-};
-
-export async function fetchNftPrice(): Promise<BigNumber> {
-  const contract = NativeNftSale__factory.connect(
-    NATIVE_PROXY,
-    getSignerOrProvider(),
-  );
-  const result: EthersBigNumber = await contract.nftPrice();
-  return new BigNumber(result.toString());
+function getClient(): PublicClient {
+  return createPublicClient({
+    chain: viemChain,
+    transport: http(),
+  });
+}
+function getWallet(account: string): WalletClient {
+  return createWalletClient({
+    account: account as `0x${string}`,
+    chain: viemChain,
+    transport: custom(
+      WalletModeMap[WalletMode.EvmInjected].getOrThrowProvider().getConnection()
+        .api,
+    ),
+  });
 }
 
 export async function fetchCurrentNftTokenId(
   nftContractAddress: string,
-): Promise<number> {
-  const contract = Nft__factory.connect(
-    nftContractAddress,
-    getSignerOrProvider(),
-  );
-  const result: EthersBigNumber = await contract.currentTokenId();
-  return result.toNumber();
+): Promise<bigint> {
+  const result = await getClient().readContract({
+    address: nftContractAddress as `0x${string}`,
+    abi: nftAbi,
+    functionName: "currentTokenId",
+    args: [],
+  });
+  return result;
 }
 
 /**
@@ -63,80 +51,92 @@ export async function fetchCurrentNftTokenId(
  */
 export async function fetchNftMaxSupply(
   nftContractAddress: string,
-): Promise<number> {
-  const contract = Nft__factory.connect(
-    nftContractAddress,
-    getSignerOrProvider(),
-  );
-  const result: EthersBigNumber = await contract.maxSupply();
-  return result.toNumber();
+): Promise<bigint> {
+  const result = await getClient().readContract({
+    address: nftContractAddress as `0x${string}`,
+    abi: nftAbi,
+    functionName: "maxSupply",
+    args: [],
+  });
+  return result;
 }
 
-export const buyNft = async (account: string) => {
-  const signer = getSignerOrProvider(account);
-  const nativeNftSaleProxyContract = NativeNftSale__factory.connect(
-    NATIVE_PROXY,
-    signer,
-  );
-  const tokenPrice = await nativeNftSaleProxyContract.nftPrice();
-
-  const provider = getSignerOrProvider();
-  const gasPrice = await provider.getGasPrice();
+export const buyAccountNft = async (account: string): Promise<string> => {
+  const accountNftPrice = await getClient().readContract({
+    address: NATIVE_PROXY as `0x${string}`,
+    abi: nativeNftSaleAbi,
+    functionName: "nftPrice",
+  });
+  const gasPrice = await getClient().getGasPrice();
 
   const characterNumber = characterToNumberMap["null"];
 
-  const tx = await nativeNftSaleProxyContract.buyNft(account, characterNumber, {
+  const { request } = await getClient().simulateContract({
+    account: account as `0x${string}`,
+    address: NATIVE_PROXY as `0x${string}`,
+    abi: nativeNftSaleAbi,
+    functionName: "buyNft",
+    gas: 800000n,
     gasPrice,
-    gasLimit: 800000,
-    value: tokenPrice.toString(),
+    value: accountNftPrice,
+    args: [account as `0x${string}`, characterNumber],
   });
-  return tx;
+  const txHash = await getWallet(account).writeContract(request);
+  return txHash;
 };
 
 export const buyCardPack = async (account: string) => {
-  const signer = getSignerOrProvider(account);
-  const gasPrice = await signer.getGasPrice();
-  const genericPaymentProxyContract = GenericPayment__factory.connect(
-    GENERIC_PAYMENT_PROXY,
-    signer,
-  );
-  const tx = await genericPaymentProxyContract.pay(
-    GENERIC_PAYMENT_MESSAGES.buyCardPack,
-    {
-      gasPrice,
-      gasLimit: 800000,
-      value: EthersBigNumber.from(CARD_PACK_PRICE.toString()),
-    },
-  );
+  const gasPrice = await getClient().getGasPrice();
+  const { request } = await getClient().simulateContract({
+    account: account as `0x${string}`,
+    address: GENERIC_PAYMENT_PROXY as `0x${string}`,
+    abi: genericPaymentAbi,
+    functionName: "pay",
+    gas: 800000n,
+    gasPrice,
+    value: BigInt(CARD_PACK_PRICE.toString()),
+    args: [GENERIC_PAYMENT_MESSAGES.buyCardPack],
+  });
+  const txHash = await getWallet(account).writeContract(request);
 
-  return tx;
+  return txHash;
 };
 
 export const buyTradeNft = async (account: string) => {
-  const signer = getSignerOrProvider(account);
-  const nativeNftSaleProxyContract = NativeNftSale__factory.connect(
-    CARD_TRADE_NATIVE_PROXY,
-    signer,
-  );
-  const tokenPrice = await nativeNftSaleProxyContract.nftPrice();
-  const gasPrice = await signer.getGasPrice();
-  const characterNumber = characterToNumberMap["null"];
-  const tx = await nativeNftSaleProxyContract.buyNft(account, characterNumber, {
-    gasPrice,
-    gasLimit: 800000,
-    value: tokenPrice.toString(),
+  const tradeNftPrice = await getClient().readContract({
+    address: CARD_TRADE_NATIVE_PROXY as `0x${string}`,
+    abi: nativeNftSaleAbi,
+    functionName: "nftPrice",
   });
-  return tx;
+  const gasPrice = await getClient().getGasPrice();
+  const characterNumber = characterToNumberMap["null"];
+
+  const { request } = await getClient().simulateContract({
+    account: account as `0x${string}`,
+    address: CARD_TRADE_NATIVE_PROXY as `0x${string}`,
+    abi: nativeNftSaleAbi,
+    functionName: "buyNft",
+    gas: 800000n,
+    gasPrice,
+    value: tradeNftPrice,
+    args: [account as `0x${string}`, characterNumber],
+  });
+  const txHash = await getWallet(account).writeContract(request);
+
+  return txHash;
 };
 
-export const burnTradeNft = async (account: string, nftId: number) => {
-  const signer = getSignerOrProvider(account);
-  const paimaNftContract = Nft__factory.connect(CARD_TRADE_NFT, signer);
-  const gasPrice = await signer.getGasPrice();
-
-  const tx = await paimaNftContract.burn(nftId, {
+export const burnTradeNft = async (account: string, nftId: bigint) => {
+  const gasPrice = await getClient().getGasPrice();
+  const { request } = await getClient().simulateContract({
+    account: account as `0x${string}`,
+    address: CARD_TRADE_NFT as `0x${string}`,
+    abi: nftAbi,
+    functionName: "burn",
+    gas: 800000n,
     gasPrice,
-    gasLimit: 800000,
+    args: [nftId],
   });
-  return tx;
+  const txHash = await getWallet(account).writeContract(request);
+  return txHash;
 };

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "@src/components/Button";
 import Wrapper from "@src/components/Wrapper";
 import Logo from "@src/components/Logo";
-import { buyNft } from "@src/services/contract";
+import { buyAccountNft } from "@src/services/contract";
 import { useGlobalStateContext } from "@src/GlobalStateContext";
 import LoadingButton from "@src/components/LoadingButton";
 
@@ -40,7 +40,7 @@ const NoNFTMenu = () => {
         onClick={async () => {
           try {
             setIsBuying(true);
-            await buyNft(connectedWallet);
+            await buyAccountNft(connectedWallet);
             setBuyDone(true);
           } catch (e) {
             console.error(e);

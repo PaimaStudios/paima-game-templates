@@ -52,6 +52,7 @@
     "eslint-plugin-react": "7.33.2",
     "eslint-plugin-react-hooks": "4.6.0",
     "hardhat": "^2.19.4",
+    "hardhat-abi-exporter": "github:paimaStudios/hardhat-abi-exporter#export-ts-wrapper",
     "hardhat-dependency-compiler": "^1.1.3",
     "hardhat-interact": "github:paimaStudios/hardhat-interact-bin#master",
     "isomorphic-fetch": "^3.0.0",

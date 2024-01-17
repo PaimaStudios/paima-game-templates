@@ -3,6 +3,7 @@ import '@nomicfoundation/hardhat-toolbox-viem';
 import '@nomicfoundation/hardhat-ignition-viem';
 import 'hardhat-dependency-compiler';
 import 'hardhat-interact';
+import 'hardhat-abi-exporter';
 
 import * as dotenv from 'dotenv';
 
@@ -23,11 +24,11 @@ const config: HardhatUserConfig = {
   networks: {
     // note: localhost / hardhat networks exist implicitly
     testnet: {
-      url: testnet.CHAIN_URI ?? "",
+      url: testnet.CHAIN_URI ?? '',
       accounts: testnet.DEPLOYER_PRIVATE_KEY == null ? [] : [testnet.DEPLOYER_PRIVATE_KEY],
     },
     production: {
-      url: mainnet.CHAIN_URI ?? "",
+      url: mainnet.CHAIN_URI ?? '',
       accounts: mainnet.DEPLOYER_PRIVATE_KEY == null ? [] : [mainnet.DEPLOYER_PRIVATE_KEY],
     },
   },
@@ -40,6 +41,13 @@ const config: HardhatUserConfig = {
       '@paima/evm-contracts/contracts/GenericPayment.sol',
       '@paima/evm-contracts/contracts/Proxy/GenericPaymentProxy.sol',
     ],
+  },
+  abiExporter: {
+    path: './contracts/evm/abi',
+    runOnCompile: true,
+    tsWrapper: true,
+    clear: true,
+    flat: false,
   },
 };
 

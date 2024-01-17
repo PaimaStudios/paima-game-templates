@@ -1,6 +1,8 @@
 import BigNumber from "bignumber.js";
 
 export const CHAIN_URI = process.env.CHAIN_URI as string;
+export const CHAIN_ID = process.env.CHAIN_ID as string;
+export const CHAIN_NAME = process.env.CHAIN_NAME as string;
 export const NATIVE_PROXY = process.env.NATIVE_PROXY as string;
 export const NFT = process.env.NFT as string;
 export const CARD_TRADE_NATIVE_PROXY = process.env
@@ -10,6 +12,8 @@ export const CHAIN_EXPLORER_URI = process.env.CHAIN_EXPLORER_URI as string;
 export const GENERIC_PAYMENT = process.env.GENERIC_PAYMENT as string;
 export const GENERIC_PAYMENT_PROXY = process.env
   .GENERIC_PAYMENT_PROXY as string;
+export const CHAIN_CURRENCY_NAME = process.env.NATIVE_PROXY as string;
+export const CHAIN_CURRENCY_SYMBOL = process.env.NATIVE_PROXY as string;
 export const CHAIN_CURRENCY_DECIMALS = Number.parseInt(
   process.env.CHAIN_CURRENCY_DECIMALS as string,
 );

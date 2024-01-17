@@ -19,8 +19,6 @@ function createNftAndProxy(m: IgnitionModuleBuilder) {
   // https://github.com/NomicFoundation/hardhat-ignition/issues/672
   // const baseUri = m.getParameter('baseUri');
   // m.call(nftContract, 'setBaseUri', [baseUri]);
-  // const minter = m.getParameter('minter');
-  // m.call(nftContract, 'setMinter', [minter]);
 
   const nftSaleContract = m.contract('NativeNftSale', []);
 
@@ -34,6 +32,9 @@ function createNftAndProxy(m: IgnitionModuleBuilder) {
     nftContract,
     price,
   ]);
+
+  // make that the NFT can be bought through the sale contract (and only the sale contract)
+  m.call(nftContract, 'setMinter', [nftSaleProxyContract]);
 
   return { nftContract, nftSaleProxyContract };
 }
