@@ -15,7 +15,12 @@ function createNftAndProxy(m: IgnitionModuleBuilder) {
 
   const name = m.getParameter('name');
   const ticker = m.getParameter('ticker');
-  const nftContract = m.contract('Nft', [name, ticker, 1_000_000_000, proxyAdminOwner]);
+  const nftContract = m.contract('AnnotatedMintNft', [
+    name,
+    ticker,
+    1_000_000_000,
+    proxyAdminOwner,
+  ]);
   // https://github.com/NomicFoundation/hardhat-ignition/issues/672
   // const baseUri = m.getParameter('baseUri');
   // m.call(nftContract, 'setBaseUri', [baseUri]);
@@ -26,7 +31,7 @@ function createNftAndProxy(m: IgnitionModuleBuilder) {
   const price = m.getParameter('price');
   m.call(nftSaleContract, 'updatePrice', [price]);
 
-  const nftSaleProxyContract = m.contract('NativeProxy', [
+  const nftSaleProxyContract = m.contract('NativeNftSaleProxy', [
     nftSaleContract,
     proxyAdminOwner,
     nftContract,

@@ -58,12 +58,12 @@ This game requires multiple contracts to be deployed to function:
 | Name                        | Contract                | Description                                                                                           |
 | --------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------- |
 | Game L2 contract            | PaimaL2Contract.sol     | Standard L2 contract that comes with Paima                                                            |
-| Account NFT contract        | Nft.sol                 | An account NFT that holds all your trading cards & user data                                          |
+| Account NFT contract        | AnnotatedMintNft.sol    | An account NFT that holds all your trading cards & user data                                          |
 | Account NFT mint contract   | NativeNftSale.sol       | Contract to mint new account NFTs                                                                     |
-| Account NFT mint proxy      | NativeProxy.sol         | Proxy for the account NFT mint contract                                                               |
-| Trade NFT contract          | Nft.sol                 | A "trading card" NFT used to list cards on NFT marketplaces without having to sell your whole account |
+| Account NFT mint proxy      | NativeNftSaleProxy.sol  | Proxy for the account NFT mint contract                                                               |
+| Trade NFT contract          | AnnotatedMintNft.sol    | A "trading card" NFT used to list cards on NFT marketplaces without having to sell your whole account |
 | Trade NFT mint contract     | NativeNftSale.sol       | Contract to mint new trade NFTs                                                                       |
-| Trade NFT native proxy      | NativeProxy.sol         | Proxy for the trade NFT mint contract                                                                 |
+| Trade NFT native proxy      | NativeNftSaleProxy.sol  | Proxy for the trade NFT mint contract                                                                 |
 | Card pack purchase contract | GenericPayment.sol      | Contract to accept payments for buying card packs                                                     |
 | Card pack proxy contract    | GenericPaymentProxy.sol | Proxy for the payment contract                                                                        |
 |                             |                         |                                                                                                       |

@@ -23,6 +23,13 @@ const config: HardhatUserConfig = {
   },
   networks: {
     // note: localhost / hardhat networks exist implicitly
+    // hardhat is in-process (temporal) created for single commands. localhost is persisted by `npx hardhat node`
+    hardhat: {
+      mining: {
+        auto: true,
+        interval: 2000,
+      },
+    },
     testnet: {
       url: testnet.CHAIN_URI ?? '',
       accounts: testnet.DEPLOYER_PRIVATE_KEY == null ? [] : [testnet.DEPLOYER_PRIVATE_KEY],
@@ -35,9 +42,9 @@ const config: HardhatUserConfig = {
   dependencyCompiler: {
     paths: [
       '@paima/evm-contracts/contracts/PaimaL2Contract.sol',
-      '@paima/evm-contracts/contracts/Nft.sol',
+      '@paima/evm-contracts/contracts/AnnotatedMintNft.sol',
       '@paima/evm-contracts/contracts/NativeNftSale.sol',
-      '@paima/evm-contracts/contracts/Proxy/NativeProxy.sol',
+      '@paima/evm-contracts/contracts/Proxy/NativeNftSaleProxy.sol',
       '@paima/evm-contracts/contracts/GenericPayment.sol',
       '@paima/evm-contracts/contracts/Proxy/GenericPaymentProxy.sol',
     ],

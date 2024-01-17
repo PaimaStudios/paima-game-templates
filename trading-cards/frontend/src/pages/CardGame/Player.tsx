@@ -87,7 +87,6 @@ export default function Player({
           if (selectedCard == null) return undefined;
           if (isThisPlayer) return undefined; // can only target opponent cards
           if (!('registryId' in selectedCard)) return undefined;
-          console.log(CARD_REGISTRY[selectedCard.registryId].defeats === card.registryId)
           return CARD_REGISTRY[selectedCard.registryId].defeats === card.registryId;
         })();
         

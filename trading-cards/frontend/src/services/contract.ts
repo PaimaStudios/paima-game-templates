@@ -11,7 +11,7 @@ import { viemChain } from "./chain";
 import { characterToNumberMap } from "./utils";
 import { GENERIC_PAYMENT_MESSAGES } from "@cards/game-logic";
 import { WalletMode, WalletModeMap } from "@paima/sdk/providers";
-import nftAbi from "@abi/@paima/evm-contracts/contracts/Nft.sol/Nft";
+import annotatedMintNftAbi from "@abi/@paima/evm-contracts/contracts/AnnotatedMintNft.sol/AnnotatedMintNft";
 import nativeNftSaleAbi from "@abi/@paima/evm-contracts/contracts/NativeNftSale.sol/NativeNftSale";
 import genericPaymentAbi from "@abi/@paima/evm-contracts/contracts/GenericPayment.sol/GenericPayment";
 
@@ -37,7 +37,7 @@ export async function fetchCurrentNftTokenId(
 ): Promise<bigint> {
   const result = await getClient().readContract({
     address: nftContractAddress as `0x${string}`,
-    abi: nftAbi,
+    abi: annotatedMintNftAbi,
     functionName: "currentTokenId",
     args: [],
   });
@@ -54,7 +54,7 @@ export async function fetchNftMaxSupply(
 ): Promise<bigint> {
   const result = await getClient().readContract({
     address: nftContractAddress as `0x${string}`,
-    abi: nftAbi,
+    abi: annotatedMintNftAbi,
     functionName: "maxSupply",
     args: [],
   });
@@ -131,7 +131,7 @@ export const burnTradeNft = async (account: string, nftId: bigint) => {
   const { request } = await getClient().simulateContract({
     account: account as `0x${string}`,
     address: CARD_TRADE_NFT as `0x${string}`,
-    abi: nftAbi,
+    abi: annotatedMintNftAbi,
     functionName: "burn",
     gas: 800000n,
     gasPrice,

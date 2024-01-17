@@ -168,7 +168,7 @@ export default function TradeNfts(): React.ReactElement {
               }
             }}
           >
-            Buy Trade Nft
+            Buy Trade NFT
           </LoadingButton>
         </Box>
         <Box minHeight={24} />
