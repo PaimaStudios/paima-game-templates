@@ -13,6 +13,7 @@ module.exports = [
     "process.env": JSON.stringify(
       Object.fromEntries(
         [
+          "NETWORK",
           "CHAIN_URI",
           "CHAIN_EXPLORER_URI",
           "CHAIN_NAME",
