@@ -20,8 +20,8 @@ let pool: Pool | null;
  * @returns readonly DB connection
  */
 export function requirePool(): Pool {
-  if (!pool) {
+  if (pool == null) {
     pool = getConnection(creds, true);
   }
-  return pool;
+  return pool as Pool;
 }
