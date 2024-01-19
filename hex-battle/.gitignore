@@ -28,8 +28,9 @@ snapshots
 *.local
 
 .env
-.env.production
-.env.development
+.env.localhost
+.env.mainnet
+.env.testnet
 
 # Frontend
 build.zip
@@ -44,7 +45,6 @@ paima-engine-mac
 paima-engine-linux
 
 production/
-contracts/
 frontend/site/bundle.js.LICENSE.txt
 frontend/patch.front.js
 frontend/stats.json

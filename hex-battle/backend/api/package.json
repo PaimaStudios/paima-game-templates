@@ -15,13 +15,13 @@
     "@hexbattle/utils": "1.0.0",
     "@hexbattle/db": "1.0.0",
     "cors": "^2.8.5",
-    "express": "^4.18.1",
-    "fp-ts": "^2.12.3",
-    "io-ts": "^2.2.18",
-    "tsoa": "^4.1.2"
+    "express": "^4.18.2",
+    "fp-ts": "^2.16.2",
+    "io-ts": "^2.2.21",
+    "tsoa": "^6.0.1"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.12",
-    "@types/express": "^4.17.14"
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21"
   }
 }

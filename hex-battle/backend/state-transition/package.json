@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "DOTENV_CONFIG_PATH=../.env.development node --require dotenv/config --experimental-specifier-resolution=node build/index.js"
+    "dev": "DOTENV_CONFIG_PATH=../.env.localhost node --require dotenv/config --experimental-specifier-resolution=node build/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -14,15 +14,14 @@
     "@hexbattle/db": "1.0.0",
     "@hexbattle/game-logic": "1.0.0",
     "@hexbattle/utils": "1.0.0",
-    "chess.js": "^1.0.0-beta.3",
     "cors": "^2.8.5",
-    "express": "^4.18.1",
-    "node-fetch": "^3.2.4",
+    "express": "^4.18.2",
+    "node-fetch": "^3.3.2",
     "@hexbattle/engine": "file:../../engine"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.12",
-    "@types/express": "^4.17.13",
-    "@types/node": "^17.0.31"
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.5"
   }
 }
