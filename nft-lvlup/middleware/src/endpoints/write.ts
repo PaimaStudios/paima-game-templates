@@ -6,7 +6,6 @@ import { MiddlewareErrorCode, buildEndpointErrorFxn } from '../errors';
 import type { WalletAddress } from '@paima/sdk/utils';
 import { getOwnedCharacters } from './queries';
 import { getUserWallet } from '../helpers/utility-functions';
-import { ENV } from '@paima/sdk/utils';
 
 async function levelUp(
   contractAddress: WalletAddress,

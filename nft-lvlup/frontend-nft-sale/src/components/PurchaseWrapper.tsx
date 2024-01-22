@@ -1,4 +1,4 @@
-import { useWeb3Context } from '../hooks/useWeb3Context';
+import { useClient } from 'wagmi';
 import Button from './Buttons';
 import AddressInfo from './AddressInfo';
 import { useNavigate } from 'react-router-dom';
@@ -10,13 +10,13 @@ interface Props {
 }
 
 const PurchaseWrapper: React.FC<Props> = ({ address, children }) => {
-  const { network } = useWeb3Context();
+  const client = useClient();
   const navigate = useNavigate();
 
   return (
     <div className="flex flex-col gap-8">
       <Button onClick={() => navigate(Pages.Admin)}>Admin functionality</Button>
-      <AddressInfo network={network} address={address} />
+      <AddressInfo network={client.chain.name} address={address} />
       {children}
     </div>
   );

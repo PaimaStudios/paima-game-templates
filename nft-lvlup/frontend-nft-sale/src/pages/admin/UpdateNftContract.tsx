@@ -1,9 +1,9 @@
 import type { FormEventHandler } from 'react';
 import { useState } from 'react';
-import { useWeb3Context } from '../../hooks/useWeb3Context';
 import { Link } from 'react-router-dom';
 import { CHAIN_EXPLORER_URI } from '../../services/constants';
 import Button from '../../components/Buttons';
+import { useAccount } from 'wagmi';
 
 interface Props {
   contractFunction: (account: string, value: string) => Promise<any>;
@@ -18,7 +18,7 @@ const UpdateNftContract: React.FC<Props> = ({
   title,
   label,
 }) => {
-  const { currentAccount } = useWeb3Context();
+  const { address: currentAccount } = useAccount();
 
   const [value, setNewValue] = useState<string>('');
 
@@ -29,6 +29,7 @@ const UpdateNftContract: React.FC<Props> = ({
   const handleSubmit: FormEventHandler = async e => {
     e.preventDefault();
     try {
+      if (currentAccount == null) return;
       setIsSuccessful(false);
       const tx = await contractFunction(currentAccount, value);
       setIsPending(true);

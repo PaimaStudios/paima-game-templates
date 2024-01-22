@@ -1,22 +1,25 @@
 import { ExternalLinkIcon } from '@heroicons/react/outline';
 
-import { useWeb3Context } from '../hooks/useWeb3Context';
 import { CHAIN_ID } from '../services/constants';
 import NFTImage from './NFTImage';
 import Button from './Buttons';
 import { useState } from 'react';
-import type { Characters } from '../services/utils';
-import { characters } from '../services/utils';
+import type { CharacterType } from '@game/utils';
+import { characters } from '@game/utils';
+import { useAccount, useChainId } from 'wagmi';
+import { useSwitchChain } from 'wagmi';
 
 interface Props {
   imageModal: string;
   nftPrice: string;
-  onNftBuy: (character: Characters) => void;
+  onNftBuy: (character: CharacterType) => void;
 }
 
 const Purchase = ({ imageModal, nftPrice, onNftBuy }: Props) => {
-  const [character, setCharacter] = useState<Characters>(characters[0]);
-  const { connected, chainId, switchChain } = useWeb3Context();
+  const { isConnected } = useAccount();
+  const [character, setCharacter] = useState<CharacterType>(characters[0]);
+  const chainId = useChainId();
+  const { switchChain } = useSwitchChain();
 
   return (
     <>
@@ -25,7 +28,7 @@ const Purchase = ({ imageModal, nftPrice, onNftBuy }: Props) => {
         <h3 className="text-left font-bold text-black font-base flex-1">{nftPrice} milkTADA</h3>
         <select
           value={character}
-          onChange={e => setCharacter(e.target.value as Characters)}
+          onChange={e => setCharacter(e.target.value as CharacterType)}
           className="flex-1"
         >
           {characters.map(character => (
@@ -46,11 +49,11 @@ const Purchase = ({ imageModal, nftPrice, onNftBuy }: Props) => {
         </a>
       </div>
       {chainId !== CHAIN_ID ? (
-        <Button onClick={() => switchChain?.(CHAIN_ID)} disabled={!connected}>
+        <Button onClick={() => switchChain({ chainId: CHAIN_ID })} disabled={!isConnected}>
           Switch network
         </Button>
       ) : (
-        <Button onClick={() => onNftBuy(character)} disabled={!connected}>
+        <Button onClick={() => onNftBuy(character)} disabled={!isConnected}>
           Buy NFT
         </Button>
       )}

@@ -23,5 +23,5 @@ export function requirePool(): Pool {
   if (!pool) {
     pool = getConnection(creds, true);
   }
-  return pool;
+  return pool as Pool;
 }

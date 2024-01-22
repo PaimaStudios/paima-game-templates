@@ -1,12 +1,11 @@
-import { useWeb3Context } from '../hooks/useWeb3Context';
-
+import { useAccount } from 'wagmi';
 import ConnectWallet from '../components/ConnectWallet';
 import Router from '../Router';
 
 const Home = () => {
-  const { connected } = useWeb3Context();
+  const { isConnected } = useAccount();
 
-  if (!connected) {
+  if (!isConnected) {
     return <ConnectWallet />;
   }
 

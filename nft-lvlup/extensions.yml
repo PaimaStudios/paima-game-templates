@@ -1,6 +1,6 @@
 extensions:
   - name: "characterNFT"
     type: erc721
-    contractAddress: "0xb1D0c3142Ef25d7A693bD60b6892a0Eea27eFAf0"
-    startBlockHeight: 13393575
+    contractAddress: "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    startBlockHeight: 0
     scheduledPrefix: "nftmint"
