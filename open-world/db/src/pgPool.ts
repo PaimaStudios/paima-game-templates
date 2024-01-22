@@ -19,5 +19,5 @@ export function requirePool(): pg.Pool {
   if (pool == null) {
     pool = getConnection(creds, false);
   }
-  return pool;
+  return pool as pg.Pool;
 }

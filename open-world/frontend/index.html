@@ -1,9 +1,11 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
-<meta charset="utf-8">
-<title>Open World Game</title>
+  <meta charset="utf-8">
+  <title>Open World Game</title>
 </head>
+
 <body>
   <div>
     <div id="login"></div>
@@ -12,19 +14,19 @@
   </div>
 </body>
 <script type="module">
-  import endpoints, { WalletMode} from './paimaMiddleware.js';
+  import endpoints, { WalletMode } from './paimaMiddleware.js';
 
   function inrange(user, x_i, y_i) {
     const distance = Math.pow(x_i - user.stats.x, 2) + Math.pow(y_i - user.stats.y, 2);
     return distance <= Math.sqrt(2);
   }
 
-  async function start () {
+  async function start() {
     // Get data for wallet and world
     const wallet = await endpoints.userWalletLogin({
-        mode: WalletMode.EvmInjected,
-        preferBatchedMode: false,
-      });
+      mode: WalletMode.EvmInjected,
+      preferBatchedMode: false,
+    });
     if (!wallet.success) throw new Error('Wallet Error');
 
     const user = await endpoints.getUserStats(wallet.result.walletAddress);
@@ -42,12 +44,12 @@
             loginDiv.innerHTML = "<span>Please wait...</span>";
             setTimeout(() => {
               window.location.reload();
-            }, 10*1000); // wait 10 seconds
+            }, 10 * 1000); // wait 10 seconds
           }
         })
       }
       loginDiv.appendChild(login);
-    return;
+      return;
     }
 
     const world = await endpoints.getWorldStats();
@@ -65,6 +67,9 @@
       if (stat.x > max_X) max_X = stat.x;
       if (stat.y > max_Y) max_Y = stat.y;
     });
+
+    /** @type HTMLButtonElement[] */
+    const buttons = [];
 
     // Draw table Y: rows, X: Columns
     const table = document.getElementById("openworld");
@@ -89,17 +94,22 @@
         if (inrange(user, x_i, y_i)) {
           if (!(user.stats.x === x_i && user.stats.y === y_i)) {
             let move = document.createElement("button");
+            buttons.push(move);
             move.style = 'width:50px; margin: 4px;'
             move.innerHTML = "move";
             move.onclick = () => {
               endpoints.submitMoves(x_i, y_i).then(x => {
                 if (x.success) {
+                  for (const button of buttons) {
+                    button.disabled = true;
+                  }
+                  // change color for pending txs
                   console.log(x);
                   cell.style.background = '#27ae60';
                   cell.style.color = '#2c3e50';
                   setTimeout(() => {
                     window.location.reload();
-                  }, 10*1000); // wait 10 seconds
+                  }, 10 * 1000); // wait 10 seconds
                 }
               })
             }
@@ -107,6 +117,7 @@
           }
 
           let increment = document.createElement("button");
+          buttons.push(increment);
           increment.style = 'width:50px;  margin: 4px;'
           increment.innerHTML = "+1";
           increment.onclick = () => {
@@ -116,8 +127,8 @@
                 cell.innerHTML = cell.innerHTML.replace(/\# \d+/, `# ${stat.counter}`);
               }
               setTimeout(() => {
-                  window.location.reload();
-              }, 10*1000); // wait 10 seconds
+                window.location.reload();
+              }, 10 * 1000); // wait 10 seconds
             })
           };
           cell.appendChild(increment);
@@ -128,4 +139,5 @@
 
   start().then(r => r);
 </script>
+
 </html>
