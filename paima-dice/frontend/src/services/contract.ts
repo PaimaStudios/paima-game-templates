@@ -1,55 +1,67 @@
-import type { Signer } from "@ethersproject/abstract-signer";
-import { BigNumber as EthersBigNumber, providers } from "ethers";
+import { BrowserProvider, JsonRpcProvider } from "ethers";
+import type { JsonRpcSigner } from "ethers";
 
-import { NATIVE_PROXY, NFT, CHAIN_URI } from "./constants";
+import {
+  NATIVE_NFT_SALE_PROXY,
+  NFT,
+  CHAIN_CURRENCY_DECIMALS,
+  CHAIN_URI,
+} from "./constants";
 import { characterToNumberMap } from "./utils";
-import { NativeNftSale__factory, Nft__factory } from "@src/typechain";
-import BigNumber from "bignumber.js";
+import {
+  NativeNftSale__factory,
+  AnnotatedMintNft__factory,
+} from "@typechain/index";
+import type { WalletMode } from "@paima/providers";
+import { WalletModeMap } from "@paima/providers";
 
-declare let window: any;
+export type SignerProvider = BrowserProvider | JsonRpcProvider;
 
-export type SignerProvider = Signer | providers.Provider;
+// we have to use a type alias because Vite requires isolatedModules which disallows const enums
+const evmInjectedMode: WalletMode.EvmInjected = 0;
 
-export const DECIMALS = EthersBigNumber.from(10).pow(18);
+const DECIMALS = 10n ** BigInt(CHAIN_CURRENCY_DECIMALS);
 
-export const getSignerOrProvider = (account?: string): SignerProvider => {
-  let signerOrProvider;
-
+const getPublicClient = (): JsonRpcProvider => {
+  return new JsonRpcProvider(CHAIN_URI);
+};
+const getWalletClient = (_account: string): BrowserProvider => {
+  const provider = new BrowserProvider(
+    WalletModeMap[evmInjectedMode].getOrThrowProvider().getConnection().api,
+  );
+  return provider;
+};
+export const getProvider = (account?: string): SignerProvider => {
   if (account) {
-    const provider = new providers.Web3Provider(window.ethereum);
-    signerOrProvider = provider.getSigner();
-  } else {
-    const provider = new providers.JsonRpcProvider(CHAIN_URI);
-    signerOrProvider = provider;
+    return getWalletClient(account);
   }
-
-  return signerOrProvider;
+  return getPublicClient();
+};
+export const getSigner = async (account: string): Promise<JsonRpcSigner> => {
+  return await getWalletClient(account).getSigner();
 };
 
 /** Note: the signer arg is available, but you probably never want to use it for this one. */
-export const NftContract = (signer: SignerProvider = getSignerOrProvider()) => {
-  return Nft__factory.connect(NFT, signer);
+export const NftContract = async (account: string) => {
+  const signer = await getSigner(account);
+  return AnnotatedMintNft__factory.connect(NFT, signer);
 };
 
-export const NativeNftSaleProxyContract = (
-  signer: SignerProvider = getSignerOrProvider(),
-) => {
-  return NativeNftSale__factory.connect(NATIVE_PROXY, signer);
+export const NativeNftSaleProxyContract = async (account: string) => {
+  const signer = await getSigner(account);
+  return NativeNftSale__factory.connect(NATIVE_NFT_SALE_PROXY, signer);
 };
 
-export async function fetchNftPrice(): Promise<BigNumber> {
-  const contract = NativeNftSale__factory.connect(
-    NATIVE_PROXY,
-    getSignerOrProvider(),
-  );
-  const result: EthersBigNumber = await contract.nftPrice();
-  return new BigNumber(result.toString());
+export async function fetchNftPrice(account: string): Promise<bigint> {
+  const nativeNftSaleProxyContract = await NativeNftSaleProxyContract(account);
+  const tokenPrice = await nativeNftSaleProxyContract.nftPrice();
+  return tokenPrice;
 }
 
-export async function fetchCurrentNftTokenId(): Promise<number> {
-  const contract = NftContract();
-  const result: EthersBigNumber = await contract.currentTokenId();
-  return result.toNumber();
+export async function fetchCurrentNftTokenId(account: string): Promise<bigint> {
+  const contract = await NftContract(account);
+  const result = await contract.currentTokenId();
+  return result;
 }
 
 /**
@@ -57,24 +69,24 @@ export async function fetchCurrentNftTokenId(): Promise<number> {
  * Not to be confused with amount already minted, that is "totalSupply".
  * Not to be confused with amount remaining to be minted, there is no name for that.
  */
-export async function fetchNftMaxSupply(): Promise<number> {
-  const contract = NftContract();
-  const result: EthersBigNumber = await contract.maxSupply();
-  return result.toNumber();
+export async function fetchNftMaxSupply(account: string): Promise<bigint> {
+  const contract = await NftContract(account);
+  const result = await contract.maxSupply();
+  return result;
 }
 
 export const buyNft = async (account: string) => {
   console.log("buyNFT: ", account);
-  const signer = getSignerOrProvider(account);
-  const nativeNftSaleProxyContract = NativeNftSaleProxyContract(signer);
-  const tokenPrice = await nativeNftSaleProxyContract.nftPrice();
+  const tokenPrice = await fetchNftPrice(account);
 
-  const provider = getSignerOrProvider();
-  const gasPrice = await provider.getGasPrice();
+  const provider = getProvider();
+  // https://github.com/ethers-io/ethers.js/discussions/4219#discussioncomment-6375652
+  const gasPrice = (await provider.getFeeData()).gasPrice;
 
   const characterNumber = characterToNumberMap["null"];
 
-  const tx = await nativeNftSaleProxyContract.buyNft(account, characterNumber, {
+  const nativeNftSaleProxyContract = await NativeNftSaleProxyContract(account);
+  const tx = await nativeNftSaleProxyContract.buyNft(account, "", {
     gasPrice,
     gasLimit: 800000,
     value: tokenPrice.toString(),

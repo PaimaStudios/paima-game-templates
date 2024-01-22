@@ -46,6 +46,8 @@ class MainController {
   }
 
   private isWalletConnected = (): boolean => {
+    // TODO: remove this. It's not sufficient since it doesn't cover EIP-6963
+    // we should instead check if Paima is connected to a wallet
     return typeof window.ethereum !== "undefined" ? true : false;
   };
 

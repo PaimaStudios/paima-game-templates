@@ -15,6 +15,7 @@ module.exports = [
     "process.env": JSON.stringify(
       Object.fromEntries(
         [
+          "NETWORK",
           "CHAIN_URI",
           "CHAIN_EXPLORER_URI",
           "CHAIN_NAME",
@@ -27,8 +28,7 @@ module.exports = [
           "START_BLOCKHEIGHT",
           "BACKEND_URI",
           "WEBSERVER_PORT",
-          "SERVER_ONLY_MODE",
-          "NATIVE_PROXY",
+          "NATIVE_NFT_SALE_PROXY",
           "NFT",
         ].map((key) => [key, process.env[key]])
       )

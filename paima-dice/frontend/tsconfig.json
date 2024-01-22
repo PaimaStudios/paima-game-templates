@@ -2,7 +2,7 @@
   "compilerOptions": {
     "jsx": "react",
     "allowJs": true,
-    "target": "ES6",
+    "target": "ESNext",
     "module": "ESNext",
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -13,10 +13,26 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "paths": {
-      "*": ["node_modules/*"],
-      "@assets/*": ["./assets/*"],
-      "@src/*": ["./src/*"]
+      "*": [
+        "node_modules/*"
+      ],
+      "@assets/*": [
+        "./assets/*"
+      ],
+      "@src/*": [
+        "./src/*"
+      ],
+      "@typechain/*": [
+        "../contracts/evm/typechain-types/*"
+      ],
+      "@abi/*": [
+        "../contracts/evm/abi/*"
+      ]
     }
   },
-  "include": ["src/**/*", "tools/**/*"]
+  "include": [
+    "../contracts/evm/typechain-types/**/*",
+    "src/**/*",
+    "tools/**/*"
+  ]
 }

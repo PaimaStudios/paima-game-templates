@@ -76,7 +76,5 @@ For further information, you can visit [Webpack Configuration](https://webpack.j
 Middleware is automatically loaded by webpack, you just need to pack it again if you make changes.
 
 ## Compile typechain
-There is a `src/typechain` folder which contains useful helpers for working with ethers library. It's comipled from ABIs in `src\abis`.
-```bash
-npx typechain --target=ethers-v5 'src/abis/*.json' --out-dir src/typechain
-```
+
+Typechain types are built from the root Hardhat config

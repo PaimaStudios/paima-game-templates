@@ -4,7 +4,7 @@ import { isLobbyWithStateProps, type LobbyPlayer, type LobbyState } from '@dice/
 import { getMatch, getRound } from '@dice/db/src/select.queries';
 import { getBlockHeights } from '@paima/node-sdk/db';
 
-interface Response {
+interface getLobbyStateResponse {
   // returns null if missing state properties, use lobbyRaw for any lobby
   lobby: LobbyState | null;
 }
@@ -12,7 +12,7 @@ interface Response {
 @Route('lobby_state')
 export class LobbyStateController extends Controller {
   @Get()
-  public async get(@Query() lobbyID: string): Promise<Response> {
+  public async get(@Query() lobbyID: string): Promise<getLobbyStateResponse> {
     const pool = requirePool();
     const [[lobby], rawPlayers] = await Promise.all([
       getLobbyById.run({ lobby_id: lobbyID }, pool),

@@ -28,8 +28,8 @@ snapshots
 *.local
 
 .env
-.env.production
-.env.development
+.env.mainnet
+.env.testnet
 
 # Frontend
 build.zip

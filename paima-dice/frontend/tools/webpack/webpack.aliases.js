@@ -10,4 +10,6 @@ const { createWebpackAliases } = require('./webpack.helpers');
 module.exports = createWebpackAliases({
   '@assets': 'assets',
   '@src': 'src',
+  '@abi': '../contracts/evm/abi',
+  '@typechain': '../contracts/evm/typechain-types'
 });
