@@ -4,7 +4,7 @@ import { PreparedQuery } from '@pgtyped/runtime';
 /** 'UpsertUser' parameters type */
 export interface IUpsertUserParams {
   experience: number;
-  name: string | null | void;
+  name?: string | null | void;
   wallet: string;
 }
 

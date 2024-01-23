@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "sh scripts/build.sh",
-    "build:devnet": "cross-env NODE_ENV=devnet sh scripts/build.sh",
+    "build:testnet": "cross-env NETWORK=testnet sh scripts/build.sh",
     "build:prod": "echo \"Error: no prod environment specified\" && exit 1",
     "lint": "prettier --write '**/*.ts'"
   },
@@ -18,7 +18,7 @@
     "@game/utils": "1.0.0"
   },
   "devDependencies": {
-    "esbuild": "^0.19.4",
+    "esbuild": "^0.19.11",
     "esbuild-plugin-polyfill-node": "^0.3.0"
   }
 }
