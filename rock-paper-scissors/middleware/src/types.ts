@@ -4,11 +4,11 @@ import type {
   BaseRoundStatus,
   LobbyState,
   LobbyStateQuery,
-  LobbyStatus,
   NewLobby,
   UserLobby,
   UserStats,
 } from '@game/utils';
+import { LobbyStatus } from '@game/db';
 
 export interface RoundEnd {
   blocks: number;

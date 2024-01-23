@@ -13,7 +13,7 @@ npm run initialize
 This does the following:
 
 - install dependencies of this template
-- copies `.env.example` as `.env.development` to the parent folder
+- copies `.env.example` as `.env.localhost` to the parent folder
 
 ### MacOS specific
 
@@ -49,9 +49,14 @@ this-template
 
 ## Environment Setup
 
-Config file `.env.development` is created during `npm run initialize` in the parent folder, based on `.env.example` in this project. This is an empty file that you need to fill in with your specific values, before running Paima Engine.
+Config file `.env.localhost` is created during `npm run initialize` in the parent folder, based on `.env.example` in this project. This is an empty file that you need to fill in with your specific values, before running Paima Engine.
 
 Feel free to use examples written in the file for initial testing.
+
+## Contracts
+
+1. Start a local network using `npm run chain:start`
+2. `npm run chain:deploy`
 
 ## Development
 
@@ -67,7 +72,7 @@ If there are any changes to the DB schema or queries, start the `pgtyped` watche
 npm run compile:db
 ```
 
-To speed up the development cycle you can at any time completely reset the database and start syncing from the latest blockheight. Run this command, that will modify your `.env.development` and `docker-compose.yml` files:
+To speed up the development cycle you can at any time completely reset the database and start syncing from the latest blockheight. Run this command, that will modify your `.env.localhost` and `docker-compose.yml` files:
 
 ```
 npm run database:reset
@@ -95,10 +100,10 @@ cd ..
 ./paima-engine-linux run
 ```
 
-You can set the `NODE_ENV` variable if you want to load a custom config for your Game Node. For example to load `.env.devnet` use:
+You can set the `NETWORK` variable if you want to load a custom config for your Game Node. For example to load `.env.localhost` use:
 
 ```
-NODE_ENV=devnet ./paima-engine-linux run
+NETWORK=localhost ./paima-engine-linux run
 ```
 
 ## Documentation

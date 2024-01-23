@@ -9,7 +9,7 @@ export class Wallet extends Phaser.Scene {
   preload() {
     this.load.image('background', 'assets/background_wallet2.jpg');
     this.load.image('soldier', 'assets/soldier2.jpg');
-    this.load.image('button-green', 'assets/buttogin-green.png');
+    this.load.image('button-green', 'assets/button-green.png');
     this.load.audio('soldier-voice', ['assets/connect-wallet.mp3']);
   }
   create() {

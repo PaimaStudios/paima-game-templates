@@ -1,17 +1,15 @@
 /** Types generated for queries found in "src/queries/select.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
-export type lobby_status = 'active' | 'closed' | 'finished' | 'open';
+import type { LobbyStatus, RockPaperScissors, MatchResult } from '@src/common.js';
 
-export type match_result = 'loss' | 'tie' | 'win';
-
-export type rock_paper_scissors = 'P' | 'R' | 'S';
+export type NumberOrString = number | string;
 
 /** 'GetPaginatedOpenLobbies' parameters type */
 export interface IGetPaginatedOpenLobbiesParams {
-  count: string | null | void;
-  page: string | null | void;
-  wallet: string | null | void;
+  count?: NumberOrString | null | void;
+  page?: NumberOrString | null | void;
+  wallet?: string | null | void;
 }
 
 /** 'GetPaginatedOpenLobbies' return type */
@@ -23,7 +21,7 @@ export interface IGetPaginatedOpenLobbiesResult {
   latest_match_state: string;
   lobby_creator: string;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   num_of_rounds: number;
   round_length: number;
   round_winner: string;
@@ -64,10 +62,10 @@ export const getPaginatedOpenLobbies = new PreparedQuery<IGetPaginatedOpenLobbie
 
 /** 'SearchPaginatedOpenLobbies' parameters type */
 export interface ISearchPaginatedOpenLobbiesParams {
-  count: string | null | void;
-  page: string | null | void;
-  searchQuery: string | null | void;
-  wallet: string | null | void;
+  count?: NumberOrString | null | void;
+  page?: NumberOrString | null | void;
+  searchQuery?: string | null | void;
+  wallet?: string | null | void;
 }
 
 /** 'SearchPaginatedOpenLobbies' return type */
@@ -79,7 +77,7 @@ export interface ISearchPaginatedOpenLobbiesResult {
   latest_match_state: string;
   lobby_creator: string;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   num_of_rounds: number;
   round_length: number;
   round_winner: string;
@@ -120,8 +118,8 @@ export const searchPaginatedOpenLobbies = new PreparedQuery<ISearchPaginatedOpen
 
 /** 'GetOpenLobbyById' parameters type */
 export interface IGetOpenLobbyByIdParams {
-  searchQuery: string | null | void;
-  wallet: string | null | void;
+  searchQuery?: string | null | void;
+  wallet?: string | null | void;
 }
 
 /** 'GetOpenLobbyById' return type */
@@ -133,7 +131,7 @@ export interface IGetOpenLobbyByIdResult {
   latest_match_state: string;
   lobby_creator: string;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   num_of_rounds: number;
   round_length: number;
   round_winner: string;
@@ -181,7 +179,7 @@ export interface IGetRandomLobbyResult {
   latest_match_state: string;
   lobby_creator: string;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   num_of_rounds: number;
   round_length: number;
   round_winner: string;
@@ -231,7 +229,7 @@ export interface IGetRandomActiveLobbyResult {
   latest_match_state: string;
   lobby_creator: string;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   num_of_rounds: number;
   player_two: string | null;
   practice: boolean;
@@ -261,7 +259,7 @@ export const getRandomActiveLobby = new PreparedQuery<IGetRandomActiveLobbyParam
 
 /** 'GetUserLobbies' parameters type */
 export interface IGetUserLobbiesParams {
-  wallet: string | null | void;
+  wallet?: string | null | void;
 }
 
 /** 'GetUserLobbies' return type */
@@ -273,7 +271,7 @@ export interface IGetUserLobbiesResult {
   latest_match_state: string;
   lobby_creator: string;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   num_of_rounds: number;
   player_two: string | null;
   practice: boolean;
@@ -305,9 +303,9 @@ export const getUserLobbies = new PreparedQuery<IGetUserLobbiesParams,IGetUserLo
 
 /** 'GetPaginatedUserLobbies' parameters type */
 export interface IGetPaginatedUserLobbiesParams {
-  count: string | null | void;
-  page: string | null | void;
-  wallet: string | null | void;
+  count?: NumberOrString | null | void;
+  page?: NumberOrString | null | void;
+  wallet?: string | null | void;
 }
 
 /** 'GetPaginatedUserLobbies' return type */
@@ -319,7 +317,7 @@ export interface IGetPaginatedUserLobbiesResult {
   latest_match_state: string;
   lobby_creator: string;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   num_of_rounds: number;
   player_two: string | null;
   practice: boolean;
@@ -353,9 +351,9 @@ export const getPaginatedUserLobbies = new PreparedQuery<IGetPaginatedUserLobbie
 
 /** 'GetAllPaginatedUserLobbies' parameters type */
 export interface IGetAllPaginatedUserLobbiesParams {
-  count: string | null | void;
-  page: string | null | void;
-  wallet: string | null | void;
+  count?: NumberOrString | null | void;
+  page?: NumberOrString | null | void;
+  wallet?: string | null | void;
 }
 
 /** 'GetAllPaginatedUserLobbies' return type */
@@ -367,7 +365,7 @@ export interface IGetAllPaginatedUserLobbiesResult {
   latest_match_state: string;
   lobby_creator: string;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   num_of_rounds: number;
   player_two: string | null;
   practice: boolean;
@@ -412,7 +410,7 @@ export interface IGetActiveLobbiesResult {
   latest_match_state: string;
   lobby_creator: string;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   num_of_rounds: number;
   player_two: string | null;
   practice: boolean;
@@ -440,7 +438,7 @@ export const getActiveLobbies = new PreparedQuery<IGetActiveLobbiesParams,IGetAc
 
 /** 'GetLobbyById' parameters type */
 export interface IGetLobbyByIdParams {
-  lobby_id: string | null | void;
+  lobby_id?: string | null | void;
 }
 
 /** 'GetLobbyById' return type */
@@ -452,7 +450,7 @@ export interface IGetLobbyByIdResult {
   latest_match_state: string;
   lobby_creator: string;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   num_of_rounds: number;
   player_two: string | null;
   practice: boolean;
@@ -480,7 +478,7 @@ export const getLobbyById = new PreparedQuery<IGetLobbyByIdParams,IGetLobbyByIdR
 
 /** 'GetUserStats' parameters type */
 export interface IGetUserStatsParams {
-  wallet: string | null | void;
+  wallet?: string | null | void;
 }
 
 /** 'GetUserStats' return type */
@@ -511,8 +509,8 @@ export const getUserStats = new PreparedQuery<IGetUserStatsParams,IGetUserStatsR
 
 /** 'GetBothUserStats' parameters type */
 export interface IGetBothUserStatsParams {
-  wallet: string | null | void;
-  wallet2: string | null | void;
+  wallet?: string | null | void;
+  wallet2?: string | null | void;
 }
 
 /** 'GetBothUserStats' return type */
@@ -545,7 +543,7 @@ export const getBothUserStats = new PreparedQuery<IGetBothUserStatsParams,IGetBo
 
 /** 'GetMatchUserStats' parameters type */
 export interface IGetMatchUserStatsParams {
-  wallet1: string | null | void;
+  wallet1?: string | null | void;
 }
 
 /** 'GetMatchUserStats' return type */
@@ -557,7 +555,7 @@ export interface IGetMatchUserStatsResult {
   latest_match_state: string;
   lobby_creator: string;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   losses: number;
   num_of_rounds: number;
   player_two: string | null;
@@ -600,7 +598,7 @@ export interface IGetRoundMovesParams {
 export interface IGetRoundMovesResult {
   id: number;
   lobby_id: string;
-  move_rps: rock_paper_scissors;
+  move_rps: RockPaperScissors;
   round: number;
   wallet: string;
 }
@@ -626,14 +624,14 @@ export const getRoundMoves = new PreparedQuery<IGetRoundMovesParams,IGetRoundMov
 
 /** 'GetCachedMoves' parameters type */
 export interface IGetCachedMovesParams {
-  lobby_id: string | null | void;
+  lobby_id?: string | null | void;
 }
 
 /** 'GetCachedMoves' return type */
 export interface IGetCachedMovesResult {
   id: number;
   lobby_id: string;
-  move_rps: rock_paper_scissors;
+  move_rps: RockPaperScissors;
   round: number;
   wallet: string;
 }
@@ -668,14 +666,14 @@ export const getCachedMoves = new PreparedQuery<IGetCachedMovesParams,IGetCached
 
 /** 'GetMovesByLobby' parameters type */
 export interface IGetMovesByLobbyParams {
-  lobby_id: string | null | void;
+  lobby_id?: string | null | void;
 }
 
 /** 'GetMovesByLobby' return type */
 export interface IGetMovesByLobbyResult {
   id: number;
   lobby_id: string;
-  move_rps: rock_paper_scissors;
+  move_rps: RockPaperScissors;
   round: number;
   wallet: string;
 }
@@ -701,8 +699,8 @@ export const getMovesByLobby = new PreparedQuery<IGetMovesByLobbyParams,IGetMove
 
 /** 'GetNewLobbiesByUserAndBlockHeight' parameters type */
 export interface IGetNewLobbiesByUserAndBlockHeightParams {
-  block_height: number | null | void;
-  wallet: string | null | void;
+  block_height?: number | null | void;
+  wallet?: string | null | void;
 }
 
 /** 'GetNewLobbiesByUserAndBlockHeight' return type */
@@ -732,7 +730,7 @@ export const getNewLobbiesByUserAndBlockHeight = new PreparedQuery<IGetNewLobbie
 /** 'GetRoundData' parameters type */
 export interface IGetRoundDataParams {
   lobby_id: string;
-  round_number: number | null | void;
+  round_number?: number | null | void;
 }
 
 /** 'GetRoundData' return type */
@@ -765,7 +763,7 @@ export const getRoundData = new PreparedQuery<IGetRoundDataParams,IGetRoundDataR
 
 /** 'GetMatchSeeds' parameters type */
 export interface IGetMatchSeedsParams {
-  lobby_id: string | null | void;
+  lobby_id?: string | null | void;
 }
 
 /** 'GetMatchSeeds' return type */
@@ -802,16 +800,16 @@ export const getMatchSeeds = new PreparedQuery<IGetMatchSeedsParams,IGetMatchSee
 
 /** 'GetFinalState' parameters type */
 export interface IGetFinalStateParams {
-  lobby_id: string | null | void;
+  lobby_id?: string | null | void;
 }
 
 /** 'GetFinalState' return type */
 export interface IGetFinalStateResult {
   game_moves: string;
   lobby_id: string;
-  player_one_result: match_result;
+  player_one_result: MatchResult;
   player_one_wallet: string;
-  player_two_result: match_result;
+  player_two_result: MatchResult;
   player_two_wallet: string;
   total_time: number;
 }

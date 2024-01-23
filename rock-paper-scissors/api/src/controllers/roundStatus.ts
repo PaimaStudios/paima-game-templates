@@ -4,16 +4,16 @@ import { isLeft } from 'fp-ts/Either';
 import { psqlNum } from '../validation.js';
 import type { RoundStatusData } from '@game/utils';
 
-type Response = RoundStatusData | Error;
+type GetRoundStatusResponse = RoundStatusData | RoundStatusError;
 
-interface Error {
+interface RoundStatusError {
   error: 'round not found' | 'lobby not found';
 }
 
 @Route('round_status')
 export class RoundStatusController extends Controller {
   @Get()
-  public async get(@Query() lobbyID: string, @Query() round: number): Promise<Response> {
+  public async get(@Query() lobbyID: string, @Query() round: number): Promise<GetRoundStatusResponse> {
     const pool = requirePool();
     const valRound = psqlNum.decode(round);
     if (isLeft(valRound)) {

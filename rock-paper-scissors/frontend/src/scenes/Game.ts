@@ -9,6 +9,12 @@ type RPSButton = {
   border: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
   type: RPSActions;
 };
+
+function setButtonVisibility(button: RPSButton, visibility: boolean) {
+  button.border.setVisible(visibility);
+  button.image.setVisible(visibility);
+}
+
 export class Game extends Phaser.Scene {
   rocksNames: string[];
   papersNames: string[];
@@ -137,11 +143,12 @@ export class Game extends Phaser.Scene {
     border.setCollideWorldBounds(true);
 
     const button: RPSButton = { image: actionButton, border: border, type };
-    this.setInterationForAccionButton(button);
+    setButtonVisibility(button, false);
+    this.setInteractionForActionButton(button);
     return button;
   }
 
-  setInterationForAccionButton(button: RPSButton) {
+  setInteractionForActionButton(button: RPSButton) {
     let image = '';
     let name = '';
     let text = '';
@@ -215,8 +222,6 @@ export class Game extends Phaser.Scene {
 
   selectType(type: RPSActions) {
     const reset = (a: RPSButton) => {
-      a.image.visible = true;
-      a.border.visible = true;
       a.image.off('pointerup');
       a.image.off('pointerover');
       a.image.off('pointerout');
@@ -236,12 +241,9 @@ export class Game extends Phaser.Scene {
     this.graphicsText.visible = true;
     this.graphicsText2.visible = true;
 
-    this.rock.image.visible = false;
-    this.rock.border.visible = false;
-    this.scissor.image.visible = false;
-    this.scissor.border.visible = false;
-    this.paper.image.visible = false;
-    this.paper.border.visible = false;
+    setButtonVisibility(this.rock, false);
+    setButtonVisibility(this.scissor, false);
+    setButtonVisibility(this.paper, false);
 
     switch (type) {
       case RPSActions.ROCK:
@@ -331,15 +333,9 @@ export class Game extends Phaser.Scene {
     this.graphicsText.visible = false;
     this.graphicsText2.visible = false;
 
-    this.rock.image.visible = true;
-    this.rock.border.visible = true;
-    this.scissor.image.visible = true;
-    this.scissor.border.visible = true;
-    this.paper.image.visible = true;
-    this.paper.border.visible = true;
-    this.setInterationForAccionButton(this.rock);
-    this.setInterationForAccionButton(this.paper);
-    this.setInterationForAccionButton(this.scissor);
+    this.setInteractionForActionButton(this.rock);
+    this.setInteractionForActionButton(this.paper);
+    this.setInteractionForActionButton(this.scissor);
 
     this.rock.image.setScale(0.2);
     this.rock.border.setScale(0.41);
@@ -351,7 +347,7 @@ export class Game extends Phaser.Scene {
 
   updateGlobalMessage() {
     if (this.round === 0) {
-      this.scoreText.setText('Wating for Enemy Commander Player at ' + this.lobbyId);
+      this.scoreText.setText('Waiting for Enemy Commander Player at ' + this.lobbyId);
       return;
     }
 
@@ -401,11 +397,17 @@ Score You ${myScore} - Opponent ${OpponentScore}`
     this.round = lobbyInfo.lobby.current_round;
     this.lobbyInfo = lobbyInfo.lobby;
 
-    // Wating for Playe 2
+    // Waiting for Player 2
     if (this.round === 0) {
       this.updateGlobalMessage();
+      setButtonVisibility(this.rock, false);
+      setButtonVisibility(this.scissor, false);
+      setButtonVisibility(this.paper, false);
       return;
     }
+    setButtonVisibility(this.rock, true);
+    setButtonVisibility(this.scissor, true);
+    setButtonVisibility(this.paper, true);
 
     // Game Ended!
     if (this.lobbyInfo.lobby_state === 'finished') {
@@ -423,9 +425,14 @@ Score You ${myScore} - Opponent ${OpponentScore}`
     // New Round
     // When changing round run executer.
     // When entering round 1 from 0 (waiting on player 2) do not run executer.
-    if (this.round !== prevRound && prevRound !== 0) {
-      const { message, color } = await this.runRoundExecuter(prevRound);
-      this.showAlert(message, color);
+    if (this.round !== prevRound) {
+      if (prevRound !== 0) {
+        const { message, color } = await this.runRoundExecuter(prevRound);
+        this.showAlert(message, color);
+      } else {
+        const horn = this.sound.add('horn', { loop: false });
+        horn.play();
+      }
       this.resetGame();
       this.updateGlobalMessage();
     }
@@ -445,7 +452,7 @@ Score You ${myScore} - Opponent ${OpponentScore}`
       if (this.round === 0) {
         // Do not update timer.
       } else {
-        this.timer.setText(`Time Remaing ${this.lobbyInfo.round_ends_in_blocks * 4} s`);
+        this.timer.setText(`Time Remaining ${this.lobbyInfo.round_ends_in_blocks * 4} s`);
       }
     }
   }

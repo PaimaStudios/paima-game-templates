@@ -5,7 +5,7 @@ import { psqlNum } from '../validation.js';
 import { getAllPaginatedUserLobbies } from '@game/db';
 import type { UserLobby } from '@game/utils';
 
-interface Response {
+interface GetUserLobbiesResponse {
   lobbies: UserLobby[];
 }
 
@@ -16,7 +16,7 @@ export class UserLobbiesController extends Controller {
     @Query() wallet: string,
     @Query() count?: number,
     @Query() page?: number
-  ): Promise<Response> {
+  ): Promise<GetUserLobbiesResponse> {
     const pool = requirePool();
     const valPage = psqlNum.decode(page || 1); // pass 1 if undefined (or 0)
     const valCount = psqlNum.decode(count || 10); // pass 10 if undefined (or 0)

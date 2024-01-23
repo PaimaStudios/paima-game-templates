@@ -1,7 +1,7 @@
 /** Types generated for queries found in "src/queries/update.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
-export type lobby_status = 'active' | 'closed' | 'finished' | 'open';
+import type { LobbyStatus } from '@src/common.js';
 
 /** 'StartMatch' parameters type */
 export interface IStartMatchParams {
@@ -18,7 +18,7 @@ export interface IStartMatchResult {
   latest_match_state: string;
   lobby_creator: string;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   num_of_rounds: number;
   player_two: string | null;
   practice: boolean;
@@ -196,7 +196,7 @@ export const executedRound = new PreparedQuery<IExecutedRoundParams,IExecutedRou
 
 /** 'AddWin' parameters type */
 export interface IAddWinParams {
-  wallet: string | null | void;
+  wallet?: string | null | void;
 }
 
 /** 'AddWin' return type */
@@ -224,7 +224,7 @@ export const addWin = new PreparedQuery<IAddWinParams,IAddWinResult>(addWinIR);
 
 /** 'AddLoss' parameters type */
 export interface IAddLossParams {
-  wallet: string | null | void;
+  wallet?: string | null | void;
 }
 
 /** 'AddLoss' return type */
@@ -252,7 +252,7 @@ export const addLoss = new PreparedQuery<IAddLossParams,IAddLossResult>(addLossI
 
 /** 'AddTie' parameters type */
 export interface IAddTieParams {
-  wallet: string | null | void;
+  wallet?: string | null | void;
 }
 
 /** 'AddTie' return type */

@@ -21,7 +21,7 @@ middleware located `./../middleware/`
 
 ## Env Setup:
 
-.env.development or .env.production must be in `./../../.env.name`
+.env.localhost or .env.mainnet must be in `./../../.env.name`
 
 ## Development
 

@@ -18,8 +18,8 @@
     "web3-utils": "^1.7.3"
   },
   "devDependencies": {
-    "dotenv": "^16.0.3",
-    "esbuild": "^0.15.15",
+    "dotenv": "^16.3.2",
+    "esbuild": "^0.19.11",
     "esbuild-plugin-polyfill-node": "^0.3.0",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",

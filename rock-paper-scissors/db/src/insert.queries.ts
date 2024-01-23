@@ -1,26 +1,24 @@
 /** Types generated for queries found in "src/queries/insert.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
-export type lobby_status = 'active' | 'closed' | 'finished' | 'open';
+import type { LobbyStatus, RockPaperScissors, MatchResult } from '@src/common.js';
 
-export type match_result = 'loss' | 'tie' | 'win';
-
-export type rock_paper_scissors = 'P' | 'R' | 'S';
+export type DateOrString = Date | string;
 
 /** 'CreateLobby' parameters type */
 export interface ICreateLobbyParams {
-  created_at: Date;
+  created_at: DateOrString;
   creation_block_height: number;
-  current_round: number | null | void;
+  current_round?: number | null | void;
   hidden: boolean;
   latest_match_state: string;
   lobby_creator: string;
   lobby_id: string;
-  lobby_state: lobby_status;
-  num_of_rounds: number | null | void;
-  player_two: string | null | void;
+  lobby_state: LobbyStatus;
+  num_of_rounds?: number | null | void;
+  player_two?: string | null | void;
   practice: boolean;
-  round_length: number | null | void;
+  round_length?: number | null | void;
   round_winner: string;
 }
 
@@ -75,7 +73,7 @@ export const createLobby = new PreparedQuery<ICreateLobbyParams,ICreateLobbyResu
 
 /** 'NewRound' parameters type */
 export interface INewRoundParams {
-  execution_block_height: number | null | void;
+  execution_block_height?: number | null | void;
   lobby_id: string;
   round_within_match: number;
   starting_block_height: number;
@@ -112,7 +110,7 @@ export const newRound = new PreparedQuery<INewRoundParams,INewRoundResult>(newRo
 /** 'NewMatchMove' parameters type */
 export interface INewMatchMoveParams {
   lobby_id: string;
-  move_rps: rock_paper_scissors;
+  move_rps: RockPaperScissors;
   round: number;
   wallet: string;
 }
@@ -142,9 +140,9 @@ export const newMatchMove = new PreparedQuery<INewMatchMoveParams,INewMatchMoveR
 export interface INewFinalStateParams {
   game_moves: string;
   lobby_id: string;
-  player_one_result: match_result;
+  player_one_result: MatchResult;
   player_one_wallet: string;
-  player_two_result: match_result;
+  player_two_result: MatchResult;
   player_two_wallet: string;
   total_time: number;
 }

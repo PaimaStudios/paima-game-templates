@@ -1,9 +1,9 @@
 const path = require('path');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const webpack = require('webpack');
-require('dotenv').config({ path: './../../.env.production' });
+require('dotenv').config({ path: `./../../.env.${process.env.NETWORK ?? "localhost"}` });
 
-if (!process.env.CHAIN_URI) throw new Error('Please check the .env.production file');
+if (!process.env.CHAIN_URI) throw new Error('Please check the .env.$NETWORK file');
 
 module.exports = {
   entry: './src/index.ts',

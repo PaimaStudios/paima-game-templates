@@ -4,6 +4,7 @@ import type {
   IGetNewLobbiesByUserAndBlockHeightResult,
   IGetPaginatedUserLobbiesResult,
   IGetUserStatsResult,
+  LobbyStatus,
 } from '@game/db';
 
 import type { IGetBlockHeightsResult } from '@paima/node-sdk/db';
@@ -20,8 +21,6 @@ export interface QueryLobby {
   num_of_rounds: number;
   round_length: number;
 }
-
-export type LobbyStatus = 'open' | 'active' | 'finished' | 'closed';
 
 export interface MatchWinnerResponse {
   match_status?: LobbyStatus;

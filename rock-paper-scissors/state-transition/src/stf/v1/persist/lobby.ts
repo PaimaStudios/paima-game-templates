@@ -1,4 +1,9 @@
-import type { ICloseLobbyParams, IGetLobbyByIdResult, IStartMatchParams } from '@game/db';
+import type {
+  ICloseLobbyParams,
+  IGetLobbyByIdResult,
+  IStartMatchParams,
+  LobbyStatus,
+} from '@game/db';
 import { startMatch } from '@game/db';
 import { createLobby } from '@game/db';
 import { closeLobby } from '@game/db';
@@ -30,7 +35,7 @@ export function persistLobbyCreation(
     practice: inputData.isPractice,
     lobby_creator: player,
     player_two: null,
-    lobby_state: 'open', // as LobbyStatus,
+    lobby_state: 'open' satisfies LobbyStatus,
     round_winner: '',
     latest_match_state: RockPaperScissors.buildInitialState(inputData.numOfRounds),
   };
