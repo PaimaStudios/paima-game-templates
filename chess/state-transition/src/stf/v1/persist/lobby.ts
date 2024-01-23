@@ -3,7 +3,7 @@ import type { IGetLobbyByIdResult, IStartMatchParams, ICloseLobbyParams } from '
 import { createLobby, startMatch, closeLobby, ICreateLobbyParams } from '@chess/db';
 import type Prando from '@paima/sdk/prando';
 import type { WalletAddress } from '@paima/sdk/utils';
-import type { LobbyStatus, Timer } from '@chess/utils';
+import type { Timer } from '@chess/utils';
 import { PRACTICE_BOT_ADDRESS } from '@chess/utils';
 import { Chess } from 'chess.js';
 import { blankStats } from './stats';
@@ -34,7 +34,7 @@ export function persistLobbyCreation(
     lobby_creator: player,
     player_one_iswhite: inputData.playerOneIsWhite,
     player_two: null,
-    lobby_state: 'open' as LobbyStatus,
+    lobby_state: 'open',
     latest_match_state: new Chess().fen(),
   } satisfies ICreateLobbyParams;
 

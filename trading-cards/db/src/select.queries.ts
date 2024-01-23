@@ -1,9 +1,9 @@
 /** Types generated for queries found in "src/queries/select.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
-export type concise_result = 'l' | 't' | 'w';
+import type { LobbyStatus, ConciseResult } from '@src/common.js';
 
-export type lobby_status = 'active' | 'closed' | 'finished' | 'open';
+export type NumberOrString = number | string;
 
 export type numberArray = (number)[];
 
@@ -11,9 +11,9 @@ export type stringArray = (string)[];
 
 /** 'GetPaginatedOpenLobbies' parameters type */
 export interface IGetPaginatedOpenLobbiesParams {
-  count: string | null | void;
-  nft_id: number | null | void;
-  page: string | null | void;
+  count?: NumberOrString | null | void;
+  nft_id?: number | null | void;
+  page?: NumberOrString | null | void;
 }
 
 /** 'GetPaginatedOpenLobbies' return type */
@@ -28,7 +28,7 @@ export interface IGetPaginatedOpenLobbiesResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   practice: boolean;
@@ -59,10 +59,10 @@ export const getPaginatedOpenLobbies = new PreparedQuery<IGetPaginatedOpenLobbie
 
 /** 'SearchPaginatedOpenLobbies' parameters type */
 export interface ISearchPaginatedOpenLobbiesParams {
-  count: string | null | void;
-  nft_id: number | null | void;
-  page: string | null | void;
-  searchQuery: string | null | void;
+  count?: NumberOrString | null | void;
+  nft_id?: number | null | void;
+  page?: NumberOrString | null | void;
+  searchQuery?: string | null | void;
 }
 
 /** 'SearchPaginatedOpenLobbies' return type */
@@ -77,7 +77,7 @@ export interface ISearchPaginatedOpenLobbiesResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   practice: boolean;
@@ -108,8 +108,8 @@ export const searchPaginatedOpenLobbies = new PreparedQuery<ISearchPaginatedOpen
 
 /** 'GetOpenLobbyById' parameters type */
 export interface IGetOpenLobbyByIdParams {
-  nft_id: number | null | void;
-  searchQuery: string | null | void;
+  nft_id?: number | null | void;
+  searchQuery?: string | null | void;
 }
 
 /** 'GetOpenLobbyById' return type */
@@ -124,7 +124,7 @@ export interface IGetOpenLobbyByIdResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   practice: boolean;
@@ -162,7 +162,7 @@ export interface IGetLobbyPlayersResult {
   current_deck: numberArray;
   current_draw: number;
   current_hand: stringArray;
-  current_result: concise_result | null;
+  current_result: ConciseResult | null;
   hit_points: number;
   id: number;
   lobby_id: string;
@@ -205,7 +205,7 @@ export interface IGetRandomLobbyResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   practice: boolean;
@@ -248,7 +248,7 @@ export interface IGetRandomActiveLobbyResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   practice: boolean;
@@ -292,7 +292,7 @@ export interface IGetUserLobbiesResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   practice: boolean;
@@ -324,9 +324,9 @@ export const getUserLobbies = new PreparedQuery<IGetUserLobbiesParams,IGetUserLo
 
 /** 'GetPaginatedUserLobbies' parameters type */
 export interface IGetPaginatedUserLobbiesParams {
-  count: string | null | void;
+  count?: NumberOrString | null | void;
   nft_id: number;
-  page: string | null | void;
+  page?: NumberOrString | null | void;
 }
 
 /** 'GetPaginatedUserLobbies' return type */
@@ -341,7 +341,7 @@ export interface IGetPaginatedUserLobbiesResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   practice: boolean;
@@ -377,9 +377,9 @@ export const getPaginatedUserLobbies = new PreparedQuery<IGetPaginatedUserLobbie
 
 /** 'GetAllPaginatedUserLobbies' parameters type */
 export interface IGetAllPaginatedUserLobbiesParams {
-  count: string | null | void;
+  count?: NumberOrString | null | void;
   nft_id: number;
-  page: string | null | void;
+  page?: NumberOrString | null | void;
 }
 
 /** 'GetAllPaginatedUserLobbies' return type */
@@ -394,7 +394,7 @@ export interface IGetAllPaginatedUserLobbiesResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   practice: boolean;
@@ -445,7 +445,7 @@ export interface IGetActiveLobbiesResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   practice: boolean;
@@ -487,7 +487,7 @@ export interface IGetLobbyByIdResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   practice: boolean;
@@ -548,7 +548,7 @@ export const getMatch = new PreparedQuery<IGetMatchParams,IGetMatchResult>(getMa
 
 /** 'GetUserStats' parameters type */
 export interface IGetUserStatsParams {
-  nft_id: number | null | void;
+  nft_id?: number | null | void;
 }
 
 /** 'GetUserStats' return type */
@@ -579,8 +579,8 @@ export const getUserStats = new PreparedQuery<IGetUserStatsParams,IGetUserStatsR
 
 /** 'GetBothUserStats' parameters type */
 export interface IGetBothUserStatsParams {
-  nft_id_1: number | null | void;
-  nft_id_2: number | null | void;
+  nft_id_1?: number | null | void;
+  nft_id_2?: number | null | void;
 }
 
 /** 'GetBothUserStats' return type */
@@ -695,8 +695,8 @@ export const getMatchMoves = new PreparedQuery<IGetMatchMovesParams,IGetMatchMov
 
 /** 'GetNewLobbiesByUserAndBlockHeight' parameters type */
 export interface IGetNewLobbiesByUserAndBlockHeightParams {
-  block_height: number | null | void;
-  nft_id: number | null | void;
+  block_height?: number | null | void;
+  nft_id?: number | null | void;
 }
 
 /** 'GetNewLobbiesByUserAndBlockHeight' return type */

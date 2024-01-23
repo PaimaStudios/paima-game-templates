@@ -1,12 +1,12 @@
 /** Types generated for queries found in "src/queries/update.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
-export type lobby_status = 'active' | 'closed' | 'finished' | 'open';
+import type { LobbyStatus } from '@src/common.js';
 
 /** 'UpdateLobbyState' parameters type */
 export interface IUpdateLobbyStateParams {
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
 }
 
 /** 'UpdateLobbyState' return type */
@@ -18,7 +18,7 @@ export interface IUpdateLobbyStateQuery {
   result: IUpdateLobbyStateResult;
 }
 
-const updateLobbyStateIR: any = { "usedParamSet": { "lobby_state": true, "lobby_id": true }, "params": [{ "name": "lobby_state", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 33, "b": 45 }] }, { "name": "lobby_id", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 64, "b": 73 }] }], "statement": "UPDATE lobbies\nSET lobby_state = :lobby_state!\nWHERE lobby_id = :lobby_id!" };
+const updateLobbyStateIR: any = {"usedParamSet":{"lobby_state":true,"lobby_id":true},"params":[{"name":"lobby_state","required":true,"transform":{"type":"scalar"},"locs":[{"a":33,"b":45}]},{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":64,"b":73}]}],"statement":"UPDATE lobbies\nSET lobby_state = :lobby_state!\nWHERE lobby_id = :lobby_id!"};
 
 /**
  * Query generated from SQL:
@@ -28,12 +28,12 @@ const updateLobbyStateIR: any = { "usedParamSet": { "lobby_state": true, "lobby_
  * WHERE lobby_id = :lobby_id!
  * ```
  */
-export const updateLobbyState = new PreparedQuery<IUpdateLobbyStateParams, IUpdateLobbyStateResult>(updateLobbyStateIR);
+export const updateLobbyState = new PreparedQuery<IUpdateLobbyStateParams,IUpdateLobbyStateResult>(updateLobbyStateIR);
 
 
 /** 'UpdateLobbyCurrentMatch' parameters type */
 export interface IUpdateLobbyCurrentMatchParams {
-  current_match: number | null | void;
+  current_match?: number | null | void;
   lobby_id: string;
 }
 
@@ -46,7 +46,7 @@ export interface IUpdateLobbyCurrentMatchQuery {
   result: IUpdateLobbyCurrentMatchResult;
 }
 
-const updateLobbyCurrentMatchIR: any = { "usedParamSet": { "current_match": true, "lobby_id": true }, "params": [{ "name": "current_match", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 35, "b": 48 }] }, { "name": "lobby_id", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 67, "b": 76 }] }], "statement": "UPDATE lobbies\nSET current_match = :current_match\nWHERE lobby_id = :lobby_id!" };
+const updateLobbyCurrentMatchIR: any = {"usedParamSet":{"current_match":true,"lobby_id":true},"params":[{"name":"current_match","required":false,"transform":{"type":"scalar"},"locs":[{"a":35,"b":48}]},{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":67,"b":76}]}],"statement":"UPDATE lobbies\nSET current_match = :current_match\nWHERE lobby_id = :lobby_id!"};
 
 /**
  * Query generated from SQL:
@@ -56,12 +56,12 @@ const updateLobbyCurrentMatchIR: any = { "usedParamSet": { "current_match": true
  * WHERE lobby_id = :lobby_id!
  * ```
  */
-export const updateLobbyCurrentMatch = new PreparedQuery<IUpdateLobbyCurrentMatchParams, IUpdateLobbyCurrentMatchResult>(updateLobbyCurrentMatchIR);
+export const updateLobbyCurrentMatch = new PreparedQuery<IUpdateLobbyCurrentMatchParams,IUpdateLobbyCurrentMatchResult>(updateLobbyCurrentMatchIR);
 
 
 /** 'UpdateLobbyCurrentRound' parameters type */
 export interface IUpdateLobbyCurrentRoundParams {
-  current_round: number | null | void;
+  current_round?: number | null | void;
   lobby_id: string;
 }
 
@@ -74,7 +74,7 @@ export interface IUpdateLobbyCurrentRoundQuery {
   result: IUpdateLobbyCurrentRoundResult;
 }
 
-const updateLobbyCurrentRoundIR: any = { "usedParamSet": { "current_round": true, "lobby_id": true }, "params": [{ "name": "current_round", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 35, "b": 48 }] }, { "name": "lobby_id", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 67, "b": 76 }] }], "statement": "UPDATE lobbies\nSET current_round = :current_round\nWHERE lobby_id = :lobby_id!" };
+const updateLobbyCurrentRoundIR: any = {"usedParamSet":{"current_round":true,"lobby_id":true},"params":[{"name":"current_round","required":false,"transform":{"type":"scalar"},"locs":[{"a":35,"b":48}]},{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":67,"b":76}]}],"statement":"UPDATE lobbies\nSET current_round = :current_round\nWHERE lobby_id = :lobby_id!"};
 
 /**
  * Query generated from SQL:
@@ -84,7 +84,7 @@ const updateLobbyCurrentRoundIR: any = { "usedParamSet": { "current_round": true
  * WHERE lobby_id = :lobby_id!
  * ```
  */
-export const updateLobbyCurrentRound = new PreparedQuery<IUpdateLobbyCurrentRoundParams, IUpdateLobbyCurrentRoundResult>(updateLobbyCurrentRoundIR);
+export const updateLobbyCurrentRound = new PreparedQuery<IUpdateLobbyCurrentRoundParams,IUpdateLobbyCurrentRoundResult>(updateLobbyCurrentRoundIR);
 
 
 /** 'UpdateLobbyMatchState' parameters type */
@@ -103,7 +103,7 @@ export interface IUpdateLobbyMatchStateQuery {
   result: IUpdateLobbyMatchStateResult;
 }
 
-const updateLobbyMatchStateIR: any = { "usedParamSet": { "current_turn": true, "current_proper_round": true, "lobby_id": true }, "params": [{ "name": "current_turn", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 37, "b": 50 }] }, { "name": "current_proper_round", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 78, "b": 99 }] }, { "name": "lobby_id", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 118, "b": 127 }] }], "statement": "UPDATE lobbies\nSET \n  current_turn = :current_turn!,\n  current_proper_round = :current_proper_round!\nWHERE lobby_id = :lobby_id!" };
+const updateLobbyMatchStateIR: any = {"usedParamSet":{"current_turn":true,"current_proper_round":true,"lobby_id":true},"params":[{"name":"current_turn","required":true,"transform":{"type":"scalar"},"locs":[{"a":37,"b":50}]},{"name":"current_proper_round","required":true,"transform":{"type":"scalar"},"locs":[{"a":78,"b":99}]},{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":118,"b":127}]}],"statement":"UPDATE lobbies\nSET \n  current_turn = :current_turn!,\n  current_proper_round = :current_proper_round!\nWHERE lobby_id = :lobby_id!"};
 
 /**
  * Query generated from SQL:
@@ -115,16 +115,16 @@ const updateLobbyMatchStateIR: any = { "usedParamSet": { "current_turn": true, "
  * WHERE lobby_id = :lobby_id!
  * ```
  */
-export const updateLobbyMatchState = new PreparedQuery<IUpdateLobbyMatchStateParams, IUpdateLobbyMatchStateResult>(updateLobbyMatchStateIR);
+export const updateLobbyMatchState = new PreparedQuery<IUpdateLobbyMatchStateParams,IUpdateLobbyMatchStateResult>(updateLobbyMatchStateIR);
 
 
 /** 'UpdateLobbyPlayer' parameters type */
 export interface IUpdateLobbyPlayerParams {
   lobby_id: string;
   nft_id: number;
-  points: number | null | void;
-  score: number | null | void;
-  turn: number | null | void;
+  points?: number | null | void;
+  score?: number | null | void;
+  turn?: number | null | void;
 }
 
 /** 'UpdateLobbyPlayer' return type */
@@ -136,7 +136,7 @@ export interface IUpdateLobbyPlayerQuery {
   result: IUpdateLobbyPlayerResult;
 }
 
-const updateLobbyPlayerIR: any = { "usedParamSet": { "points": true, "score": true, "turn": true, "lobby_id": true, "nft_id": true }, "params": [{ "name": "points", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 35, "b": 41 }] }, { "name": "score", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 54, "b": 59 }] }, { "name": "turn", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 71, "b": 75 }] }, { "name": "lobby_id", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 97, "b": 106 }] }, { "name": "nft_id", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 121, "b": 128 }] }], "statement": "UPDATE lobby_player\nSET\n  points = :points,\n  score = :score,\n  turn = :turn\nWHERE \n  lobby_id = :lobby_id! AND nft_id = :nft_id!" };
+const updateLobbyPlayerIR: any = {"usedParamSet":{"points":true,"score":true,"turn":true,"lobby_id":true,"nft_id":true},"params":[{"name":"points","required":false,"transform":{"type":"scalar"},"locs":[{"a":35,"b":41}]},{"name":"score","required":false,"transform":{"type":"scalar"},"locs":[{"a":54,"b":59}]},{"name":"turn","required":false,"transform":{"type":"scalar"},"locs":[{"a":71,"b":75}]},{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":97,"b":106}]},{"name":"nft_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":121,"b":128}]}],"statement":"UPDATE lobby_player\nSET\n  points = :points,\n  score = :score,\n  turn = :turn\nWHERE \n  lobby_id = :lobby_id! AND nft_id = :nft_id!"};
 
 /**
  * Query generated from SQL:
@@ -150,7 +150,7 @@ const updateLobbyPlayerIR: any = { "usedParamSet": { "points": true, "score": tr
  *   lobby_id = :lobby_id! AND nft_id = :nft_id!
  * ```
  */
-export const updateLobbyPlayer = new PreparedQuery<IUpdateLobbyPlayerParams, IUpdateLobbyPlayerResult>(updateLobbyPlayerIR);
+export const updateLobbyPlayer = new PreparedQuery<IUpdateLobbyPlayerParams,IUpdateLobbyPlayerResult>(updateLobbyPlayerIR);
 
 
 /** 'ExecutedRound' parameters type */
@@ -170,7 +170,7 @@ export interface IExecutedRoundQuery {
   result: IExecutedRoundResult;
 }
 
-const executedRoundIR: any = { "usedParamSet": { "execution_block_height": true, "lobby_id": true, "match_within_lobby": true, "round_within_match": true }, "params": [{ "name": "execution_block_height", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 48, "b": 71 }] }, { "name": "lobby_id", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 93, "b": 102 }] }, { "name": "match_within_lobby", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 131, "b": 150 }] }, { "name": "round_within_match", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 179, "b": 198 }] }], "statement": "UPDATE match_round\nSET execution_block_height = :execution_block_height!\nWHERE \n  lobby_id = :lobby_id! AND\n  match_within_lobby = :match_within_lobby! AND\n  round_within_match = :round_within_match!" };
+const executedRoundIR: any = {"usedParamSet":{"execution_block_height":true,"lobby_id":true,"match_within_lobby":true,"round_within_match":true},"params":[{"name":"execution_block_height","required":true,"transform":{"type":"scalar"},"locs":[{"a":48,"b":71}]},{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":93,"b":102}]},{"name":"match_within_lobby","required":true,"transform":{"type":"scalar"},"locs":[{"a":131,"b":150}]},{"name":"round_within_match","required":true,"transform":{"type":"scalar"},"locs":[{"a":179,"b":198}]}],"statement":"UPDATE match_round\nSET execution_block_height = :execution_block_height!\nWHERE \n  lobby_id = :lobby_id! AND\n  match_within_lobby = :match_within_lobby! AND\n  round_within_match = :round_within_match!"};
 
 /**
  * Query generated from SQL:
@@ -183,12 +183,12 @@ const executedRoundIR: any = { "usedParamSet": { "execution_block_height": true,
  *   round_within_match = :round_within_match!
  * ```
  */
-export const executedRound = new PreparedQuery<IExecutedRoundParams, IExecutedRoundResult>(executedRoundIR);
+export const executedRound = new PreparedQuery<IExecutedRoundParams,IExecutedRoundResult>(executedRoundIR);
 
 
 /** 'AddWin' parameters type */
 export interface IAddWinParams {
-  nft_id: number | null | void;
+  nft_id?: number | null | void;
 }
 
 /** 'AddWin' return type */
@@ -200,7 +200,7 @@ export interface IAddWinQuery {
   result: IAddWinResult;
 }
 
-const addWinIR: any = { "usedParamSet": { "nft_id": true }, "params": [{ "name": "nft_id", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 60, "b": 66 }] }], "statement": "UPDATE global_user_state\nSET\nwins = wins + 1\nWHERE nft_id = :nft_id" };
+const addWinIR: any = {"usedParamSet":{"nft_id":true},"params":[{"name":"nft_id","required":false,"transform":{"type":"scalar"},"locs":[{"a":60,"b":66}]}],"statement":"UPDATE global_user_state\nSET\nwins = wins + 1\nWHERE nft_id = :nft_id"};
 
 /**
  * Query generated from SQL:
@@ -211,12 +211,12 @@ const addWinIR: any = { "usedParamSet": { "nft_id": true }, "params": [{ "name":
  * WHERE nft_id = :nft_id
  * ```
  */
-export const addWin = new PreparedQuery<IAddWinParams, IAddWinResult>(addWinIR);
+export const addWin = new PreparedQuery<IAddWinParams,IAddWinResult>(addWinIR);
 
 
 /** 'AddLoss' parameters type */
 export interface IAddLossParams {
-  nft_id: number | null | void;
+  nft_id?: number | null | void;
 }
 
 /** 'AddLoss' return type */
@@ -228,7 +228,7 @@ export interface IAddLossQuery {
   result: IAddLossResult;
 }
 
-const addLossIR: any = { "usedParamSet": { "nft_id": true }, "params": [{ "name": "nft_id", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 64, "b": 70 }] }], "statement": "UPDATE global_user_state\nSET\nlosses = losses + 1\nWHERE nft_id = :nft_id" };
+const addLossIR: any = {"usedParamSet":{"nft_id":true},"params":[{"name":"nft_id","required":false,"transform":{"type":"scalar"},"locs":[{"a":64,"b":70}]}],"statement":"UPDATE global_user_state\nSET\nlosses = losses + 1\nWHERE nft_id = :nft_id"};
 
 /**
  * Query generated from SQL:
@@ -239,12 +239,12 @@ const addLossIR: any = { "usedParamSet": { "nft_id": true }, "params": [{ "name"
  * WHERE nft_id = :nft_id
  * ```
  */
-export const addLoss = new PreparedQuery<IAddLossParams, IAddLossResult>(addLossIR);
+export const addLoss = new PreparedQuery<IAddLossParams,IAddLossResult>(addLossIR);
 
 
 /** 'AddTie' parameters type */
 export interface IAddTieParams {
-  nft_id: number | null | void;
+  nft_id?: number | null | void;
 }
 
 /** 'AddTie' return type */
@@ -256,7 +256,7 @@ export interface IAddTieQuery {
   result: IAddTieResult;
 }
 
-const addTieIR: any = { "usedParamSet": { "nft_id": true }, "params": [{ "name": "nft_id", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 60, "b": 66 }] }], "statement": "UPDATE global_user_state\nSET\nties = ties + 1\nWHERE nft_id = :nft_id" };
+const addTieIR: any = {"usedParamSet":{"nft_id":true},"params":[{"name":"nft_id","required":false,"transform":{"type":"scalar"},"locs":[{"a":60,"b":66}]}],"statement":"UPDATE global_user_state\nSET\nties = ties + 1\nWHERE nft_id = :nft_id"};
 
 /**
  * Query generated from SQL:
@@ -267,6 +267,6 @@ const addTieIR: any = { "usedParamSet": { "nft_id": true }, "params": [{ "name":
  * WHERE nft_id = :nft_id
  * ```
  */
-export const addTie = new PreparedQuery<IAddTieParams, IAddTieResult>(addTieIR);
+export const addTie = new PreparedQuery<IAddTieParams,IAddTieResult>(addTieIR);
 
 

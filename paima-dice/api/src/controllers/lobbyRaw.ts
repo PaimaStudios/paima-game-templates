@@ -1,6 +1,6 @@
 import { Controller, Get, Query, Route } from 'tsoa';
 import { getLobbyById, requirePool } from '@dice/db';
-import type { IGetLobbyByIdResult } from '@dice/db/src/select.queries';
+import type { IGetLobbyByIdResult } from '@dice/db';
 
 interface GetLobbiesRawResponse {
   lobby: IGetLobbyByIdResult | null;

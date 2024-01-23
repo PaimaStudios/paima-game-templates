@@ -3,15 +3,15 @@ import { requirePool, getLobbyById, getMatchSeeds, getLobbyPlayers } from '@dice
 import { isLobbyWithStateProps, type LobbyPlayer, type MatchExecutorData } from '@dice/utils';
 import { psqlInt } from '../validation';
 import { isLeft } from 'fp-ts/lib/Either';
-import { getMatch, getMatchMoves } from '@dice/db/src/select.queries';
+import { getMatch, getMatchMoves } from '@dice/db';
 import { getBlockHeights } from '@paima/node-sdk/db';
 
-type Response = MatchExecutorData | null;
+type GetMatchExecutorResponse = MatchExecutorData | null;
 
 @Route('match_executor')
 export class MatchExecutorController extends Controller {
   @Get()
-  public async get(@Query() lobbyID: string, @Query() matchWithinLobby: number): Promise<Response> {
+  public async get(@Query() lobbyID: string, @Query() matchWithinLobby: number): Promise<GetMatchExecutorResponse> {
     const valMatch = psqlInt.decode(matchWithinLobby);
     if (isLeft(valMatch)) {
       throw new ValidateError({ round: { message: 'invalid number' } }, '');

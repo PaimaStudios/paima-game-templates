@@ -10,6 +10,10 @@ import type { EnvVarDefaults } from 'vite-plugin-environment';
 import { config } from 'dotenv';
 config({ path: `${process.cwd()}/../../.env.${process.env.NETWORK || 'localhost'}` });
 
+// use require here because we need dotenv `config` to run before this is called
+// so we need to avoid `import` statements since they get hoisted (https://github.com/evanw/esbuild/issues/1395)
+const { config: esbuildConfigs } = require('@paima/build-utils/middleware-esbuildconfig.template');
+
 const stdPaimaEnvVars = [
   'NETWORK',
   'CHAIN_URI',
@@ -59,6 +63,7 @@ export default defineConfig({
         // TODO: include the SECURITY_NAMESPACE once we export it
         // https://github.com/PaimaStudios/paima-game-templates/issues/58
         ...esbuildEnvs,
+        ...esbuildConfigs.define,
       },
       // Enable esbuild polyfill plugins
       plugins: [

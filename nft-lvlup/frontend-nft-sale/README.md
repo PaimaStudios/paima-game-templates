@@ -5,7 +5,7 @@ Make sure you read through our `documentation/4 - deploying-your-stateful-nft.md
 This Frontend NFT Sale App is a simple app to showcase buying NFTs from the previously deployed contract. It uses:
 
 - `tailwindcss` for basic styling
-- `typechain` for types generation to interact with the contract
+- `typechain` for types generation to interact with the contract (generated through Hardhat) through `ethers`
 - `wagmi` for the wallet functionality
 
 ## Installation
@@ -24,11 +24,7 @@ To run the app use:
 npm run dev
 ```
 
-This command executes two tasks:
-
-1. `npm run gen-abi-types`: This task generates types used for interaction with the contract, from the JSON files located in the `./src/abis` directory using the TypeChain library.
-
-2. `vite`: This command starts the development server using Vite.
+This command starts the development server using Vite.
 
 The app should open in your default browser, or you can access it at `http://localhost:3000` if it doesn't open automatically.
 

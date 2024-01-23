@@ -14,7 +14,7 @@
 --
 
 
--- recall: migrations need to be repackaged with `npm run pack`
+-- recall: migrations need to be repackaged with `npm run pack` when changed
 INSERT INTO global_world_state (x, y, can_visit, counter) VALUES (0, 0, TRUE, 0);
 INSERT INTO global_world_state (x, y, can_visit, counter) VALUES (0, 1, TRUE, 0);
 INSERT INTO global_world_state (x, y, can_visit, counter) VALUES (0, 2, TRUE, 0);

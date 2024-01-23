@@ -48,6 +48,7 @@ export const buyNft = async (account: string, character: CharacterType) => {
   const tokenPrice = await nativeNftSaleProxyContract.nftPrice();
 
   const provider = getProvider();
+  // https://github.com/ethers-io/ethers.js/discussions/4219#discussioncomment-6375652
   const gasPrice = (await provider.getFeeData()).gasPrice;
 
   const characterNumber = characterToNumberMap[character];

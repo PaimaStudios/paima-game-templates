@@ -3,11 +3,11 @@ import { requirePool, getLobbyById, getRoundMoves } from '@dice/db';
 import { isLeft } from 'fp-ts/Either';
 import { psqlInt } from '../validation.js';
 import type { RoundStatusData } from '@dice/utils';
-import { getRound } from '@dice/db/src/select.queries.js';
+import { getRound } from '@dice/db';
 
-type Response = RoundStatusData | Error;
+type GetRoundStatusResponse = RoundStatusData | GetRoundStatusError;
 
-interface Error {
+interface GetRoundStatusError {
   error: 'round not found' | 'lobby not found';
 }
 
@@ -18,7 +18,7 @@ export class RoundStatusController extends Controller {
     @Query() lobbyID: string,
     @Query() matchWithinLobby: number,
     @Query() roundWithinMatch: number
-  ): Promise<Response> {
+  ): Promise<GetRoundStatusResponse> {
     const valMatch = psqlInt.decode(matchWithinLobby);
     if (isLeft(valMatch)) {
       throw new ValidateError({ matchWithinLobby: { message: 'invalid number' } }, '');

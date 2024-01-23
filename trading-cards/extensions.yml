@@ -13,13 +13,13 @@ extensions:
     type: generic
     contractAddress: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
     startBlockHeight: 0
-    abiPath: "./contracts/evm/abi/@paima/evm-contracts/contracts/AnnotatedMintNft.sol/AnnotatedMintNft.json"
+    abiPath: "./trading-cards/contracts/evm/abi/@paima/evm-contracts/contracts/AnnotatedMintNft.sol/AnnotatedMintNft.json"
     eventSignature: "Transfer(address,address,uint256)"
     scheduledPrefix: tradeTransfer
   - name: "Generic Payment Proxy"
     type: generic
     contractAddress: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6"
     startBlockHeight: 0
-    abiPath: "./contracts/evm/abi/@paima/evm-contracts/contracts/GenericPayment.sol/GenericPayment.json"
+    abiPath: "./trading-cards/contracts/evm/abi/@paima/evm-contracts/contracts/GenericPayment.sol/GenericPayment.json"
     eventSignature: "Pay(uint256,address,string)"
     scheduledPrefix: "generic"

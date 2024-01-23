@@ -4,14 +4,14 @@ import { psqlNum } from '../validation.js';
 import { isLeft } from 'fp-ts/Either';
 import type { NewLobby } from '@chess/utils';
 
-interface Response {
+interface GetUserLobbiesBlockheightResponse {
   lobbies: NewLobby[];
 }
 
 @Route('user_lobbies_blockheight')
 export class UserLobbiesBlockheightController extends Controller {
   @Get()
-  public async get(@Query() wallet: string, @Query() blockHeight: number): Promise<Response> {
+  public async get(@Query() wallet: string, @Query() blockHeight: number): Promise<GetUserLobbiesBlockheightResponse> {
     const pool = requirePool();
     const valBH = psqlNum.decode(blockHeight);
     if (isLeft(valBH)) {

@@ -1,25 +1,25 @@
 /** Types generated for queries found in "src/queries/insert.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
-export type lobby_status = 'active' | 'closed' | 'finished' | 'open';
+import type { LobbyStatus, MatchResult } from '@src/common.js';
 
-export type match_result = 'loss' | 'tie' | 'win';
+export type DateOrString = Date | string;
 
 /** 'CreateLobby' parameters type */
 export interface ICreateLobbyParams {
   bot_difficulty: number;
-  created_at: Date;
+  created_at: DateOrString;
   creation_block_height: number;
-  current_round: number | null | void;
+  current_round?: number | null | void;
   hidden: boolean;
   latest_match_state: string;
   lobby_creator: string;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   num_of_rounds: number;
   play_time_per_player: number;
   player_one_iswhite: boolean;
-  player_two: string | null | void;
+  player_two?: string | null | void;
   practice: boolean;
   round_length: number;
 }
@@ -78,7 +78,7 @@ export const createLobby = new PreparedQuery<ICreateLobbyParams,ICreateLobbyResu
 
 /** 'NewRound' parameters type */
 export interface INewRoundParams {
-  execution_block_height: number | null | void;
+  execution_block_height?: number | null | void;
   lobby_id: string;
   match_state: string;
   player_one_blocks_left: number;
@@ -169,10 +169,10 @@ export interface INewFinalStateParams {
     lobby_id: string,
     player_one_iswhite: boolean,
     player_one_wallet: string,
-    player_one_result: match_result,
+    player_one_result: MatchResult,
     player_one_elapsed_time: number,
     player_two_wallet: string,
-    player_two_result: match_result,
+    player_two_result: MatchResult,
     player_two_elapsed_time: number,
     positions: string
   };

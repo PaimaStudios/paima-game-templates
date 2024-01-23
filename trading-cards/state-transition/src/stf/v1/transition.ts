@@ -3,8 +3,8 @@ import Prando from '@paima/sdk/prando';
 import { SCHEDULED_DATA_ADDRESS, type WalletAddress } from '@paima/sdk/utils';
 import type { IGetLobbyPlayersResult, IGetRoundMovesResult } from '@cards/db';
 import { getLobbyById, getUserStats, getLobbyPlayers, getOwnedNft } from '@cards/db';
-import type { INewCardParams, INewTradeNftParams } from '@cards/db/src/insert.queries.js';
-import { newCard, newTradeNft } from '@cards/db/src/insert.queries.js';
+import type { INewCardParams, INewTradeNftParams } from '@cards/db';
+import { newCard, newTradeNft } from '@cards/db';
 import type {
   LobbyWithStateProps,
   LobbyPlayer,
@@ -61,26 +61,26 @@ import type {
 import { CARD_PACK_PRICE, NFT_NAME, PRACTICE_BOT_NFT_ID } from '@cards/utils';
 import { getBlockHeights, type SQLUpdate } from '@paima/node-sdk/db';
 import { PracticeAI } from './persist/practice-ai';
-import type { IGetRoundResult } from '@cards/db/src/select.queries';
+import type { IGetRoundResult } from '@cards/db';
 import {
   checkOwnedCard,
   getMatch,
   getRound,
   getRoundMoves,
   getTradeNfts,
-} from '@cards/db/src/select.queries';
+} from '@cards/db';
 import crypto from 'crypto';
-import { newCardPack, type INewCardPackParams } from '@cards/db/src/insert.queries';
+import { newCardPack, type INewCardPackParams } from '@cards/db';
 import type {
   IDeleteTradeNftParams,
   ISetTradeNftCardsParams,
   ITransferCardParams,
-} from '@cards/db/src/update.queries';
+} from '@cards/db';
 import {
   deleteTradeNft,
   setTradeNftCards as setTradeNftCardsQuery,
   transferCard,
-} from '@cards/db/src/update.queries';
+} from '@cards/db';
 
 // Create initial player entry after nft mint
 export const mintNft = async (input: NftMintInput): Promise<SQLUpdate[]> => {

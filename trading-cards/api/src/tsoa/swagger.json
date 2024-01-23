@@ -1,4 +1,5 @@
 {
+	"openapi": "3.0.0",
 	"components": {
 		"examples": {},
 		"headers": {},
@@ -6,8 +7,530 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"AccountNftResponse": {
+				"properties": {
+					"nft": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"type": "object"
+			},
+			"SuccessfulResult_AccountNftResponse_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"result": {
+						"$ref": "#/components/schemas/AccountNftResponse"
+					}
+				},
+				"required": [
+					"success",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Pick_FailedResult.Exclude_keyofFailedResult.errorMessage__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							false
+						],
+						"nullable": false
+					},
+					"errorCode": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"success"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Omit_FailedResult.errorMessage_": {
+				"$ref": "#/components/schemas/Pick_FailedResult.Exclude_keyofFailedResult.errorMessage__",
+				"description": "Construct a type with the properties of T except for those in type K."
+			},
+			"ApiResult_AccountNftResponse_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessfulResult_AccountNftResponse_"
+					},
+					{
+						"$ref": "#/components/schemas/Omit_FailedResult.errorMessage_"
+					}
+				]
+			},
+			"IGetOwnedCardsResult": {
+				"description": "'GetOwnedCards' return type",
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"owner_nft_id": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"registry_id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id",
+					"owner_nft_id",
+					"registry_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetCardsResponse": {
+				"properties": {
+					"cards": {
+						"items": {
+							"$ref": "#/components/schemas/IGetOwnedCardsResult"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"cards"
+				],
+				"type": "object"
+			},
+			"SuccessfulResult_GetCardsResponse_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"result": {
+						"$ref": "#/components/schemas/GetCardsResponse"
+					}
+				},
+				"required": [
+					"success",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResult_GetCardsResponse_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessfulResult_GetCardsResponse_"
+					},
+					{
+						"$ref": "#/components/schemas/Omit_FailedResult.errorMessage_"
+					}
+				]
+			},
+			"numberArray": {
+				"items": {
+					"type": "number",
+					"format": "double"
+				},
+				"type": "array"
+			},
+			"IGetBoughtPacksResult": {
+				"description": "'GetBoughtPacks' return type",
+				"properties": {
+					"buyer_nft_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"card_registry_ids": {
+						"$ref": "#/components/schemas/numberArray"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"buyer_nft_id",
+					"card_registry_ids",
+					"id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetPacksResponse": {
+				"properties": {
+					"packs": {
+						"items": {
+							"$ref": "#/components/schemas/IGetBoughtPacksResult"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"packs"
+				],
+				"type": "object"
+			},
+			"SuccessfulResult_GetPacksResponse_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"result": {
+						"$ref": "#/components/schemas/GetPacksResponse"
+					}
+				},
+				"required": [
+					"success",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResult_GetPacksResponse_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessfulResult_GetPacksResponse_"
+					},
+					{
+						"$ref": "#/components/schemas/Omit_FailedResult.errorMessage_"
+					}
+				]
+			},
+			"IGetTradeNftsResult": {
+				"description": "'GetTradeNfts' return type",
+				"properties": {
+					"cards": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/numberArray"
+							}
+						],
+						"nullable": true
+					},
+					"nft_id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"cards",
+					"nft_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetCardsByIdsResult": {
+				"description": "'GetCardsByIds' return type",
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"owner_nft_id": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"registry_id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id",
+					"owner_nft_id",
+					"registry_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Record_string.IGetCardsByIdsResult_": {
+				"properties": {},
+				"additionalProperties": {
+					"$ref": "#/components/schemas/IGetCardsByIdsResult"
+				},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
+			"GetTradeNftsResponse": {
+				"properties": {
+					"cardLookup": {
+						"$ref": "#/components/schemas/Record_string.IGetCardsByIdsResult_"
+					},
+					"tradeNfts": {
+						"items": {
+							"$ref": "#/components/schemas/IGetTradeNftsResult"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"cardLookup",
+					"tradeNfts"
+				],
+				"type": "object"
+			},
+			"SuccessfulResult_GetTradeNftsResponse_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"result": {
+						"$ref": "#/components/schemas/GetTradeNftsResponse"
+					}
+				},
+				"required": [
+					"success",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResult_GetTradeNftsResponse_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessfulResult_GetTradeNftsResponse_"
+					},
+					{
+						"$ref": "#/components/schemas/Omit_FailedResult.errorMessage_"
+					}
+				]
+			},
+			"IGetUserStatsResult": {
+				"description": "'GetUserStats' return type",
+				"properties": {
+					"losses": {
+						"type": "number",
+						"format": "double"
+					},
+					"nft_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"ties": {
+						"type": "number",
+						"format": "double"
+					},
+					"wins": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"losses",
+					"nft_id",
+					"ties",
+					"wins"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserStats": {
+				"$ref": "#/components/schemas/IGetUserStatsResult"
+			},
+			"UserStatsResponse": {
+				"properties": {
+					"stats": {
+						"$ref": "#/components/schemas/UserStats"
+					}
+				},
+				"required": [
+					"stats"
+				],
+				"type": "object"
+			},
+			"SuccessfulResult_UserStatsResponse_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"result": {
+						"$ref": "#/components/schemas/UserStatsResponse"
+					}
+				},
+				"required": [
+					"success",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResult_UserStatsResponse_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessfulResult_UserStatsResponse_"
+					},
+					{
+						"$ref": "#/components/schemas/Omit_FailedResult.errorMessage_"
+					}
+				]
+			},
+			"LobbyStatus": {
+				"type": "string",
+				"enum": [
+					"active",
+					"closed",
+					"finished",
+					"open"
+				]
+			},
+			"IGetLobbyByIdResult": {
+				"description": "'GetLobbyById' return type",
+				"properties": {
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"creation_block_height": {
+						"type": "number",
+						"format": "double"
+					},
+					"current_match": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_proper_round": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_round": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_turn": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"current_tx_event_move": {
+						"type": "string",
+						"nullable": true
+					},
+					"hidden": {
+						"type": "boolean"
+					},
+					"lobby_creator": {
+						"type": "number",
+						"format": "double"
+					},
+					"lobby_id": {
+						"type": "string"
+					},
+					"lobby_state": {
+						"$ref": "#/components/schemas/LobbyStatus"
+					},
+					"max_players": {
+						"type": "number",
+						"format": "double"
+					},
+					"num_of_rounds": {
+						"type": "number",
+						"format": "double"
+					},
+					"practice": {
+						"type": "boolean"
+					},
+					"turn_length": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"created_at",
+					"creation_block_height",
+					"current_match",
+					"current_proper_round",
+					"current_round",
+					"current_turn",
+					"current_tx_event_move",
+					"hidden",
+					"lobby_creator",
+					"lobby_id",
+					"lobby_state",
+					"max_players",
+					"num_of_rounds",
+					"practice",
+					"turn_length"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LobbyRawResponse": {
+				"properties": {
+					"lobby": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/IGetLobbyByIdResult"
+							}
+						],
+						"nullable": true
+					}
+				},
+				"required": [
+					"lobby"
+				],
+				"type": "object"
+			},
+			"SuccessfulResult_LobbyRawResponse_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"result": {
+						"$ref": "#/components/schemas/LobbyRawResponse"
+					}
+				},
+				"required": [
+					"success",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResult_LobbyRawResponse_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessfulResult_LobbyRawResponse_"
+					},
+					{
+						"$ref": "#/components/schemas/Omit_FailedResult.errorMessage_"
+					}
+				]
+			},
 			"Uint8Array": {
-				"description": "A typed array of 8-bit unsigned integer values. The contents are initialized to 0. If the\r\nrequested number of bytes could not be allocated an exception is raised.",
+				"description": "A typed array of 8-bit unsigned integer values. The contents are initialized to 0. If the\nrequested number of bytes could not be allocated an exception is raised.",
 				"properties": {},
 				"type": "object",
 				"additionalProperties": false
@@ -238,15 +761,6 @@
 					}
 				]
 			},
-			"lobby_status": {
-				"type": "string",
-				"enum": [
-					"active",
-					"closed",
-					"finished",
-					"open"
-				]
-			},
 			"Pick_IGetLobbyByIdResult.Exclude_keyofIGetLobbyByIdResult.LobbyStateProps__": {
 				"properties": {
 					"created_at": {
@@ -258,8 +772,7 @@
 						"format": "double"
 					},
 					"current_tx_event_move": {
-						"type": "string",
-						"nullable": true
+						"type": "string"
 					},
 					"hidden": {
 						"type": "boolean"
@@ -272,7 +785,7 @@
 						"type": "string"
 					},
 					"lobby_state": {
-						"$ref": "#/components/schemas/lobby_status"
+						"$ref": "#/components/schemas/LobbyStatus"
 					},
 					"max_players": {
 						"type": "number",
@@ -314,23 +827,19 @@
 				"properties": {
 					"current_match": {
 						"type": "number",
-						"format": "double",
-						"nullable": true
+						"format": "double"
 					},
 					"current_round": {
 						"type": "number",
-						"format": "double",
-						"nullable": true
+						"format": "double"
 					},
 					"current_turn": {
 						"type": "number",
-						"format": "double",
-						"nullable": true
+						"format": "double"
 					},
 					"current_proper_round": {
 						"type": "number",
-						"format": "double",
-						"nullable": true
+						"format": "double"
 					}
 				},
 				"required": [
@@ -362,367 +871,6 @@
 				],
 				"type": "object",
 				"additionalProperties": false
-			},
-			"IGetMatchMovesResult": {
-				"description": "'GetMatchMoves' return type",
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"lobby_id": {
-						"type": "string"
-					},
-					"match_within_lobby": {
-						"type": "number",
-						"format": "double"
-					},
-					"move_within_round": {
-						"type": "number",
-						"format": "double"
-					},
-					"nft_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"round_within_match": {
-						"type": "number",
-						"format": "double"
-					},
-					"serialized_move": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"id",
-					"lobby_id",
-					"match_within_lobby",
-					"move_within_round",
-					"nft_id",
-					"round_within_match",
-					"serialized_move"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ExecutorDataSeed": {
-				"properties": {
-					"seed": {
-						"type": "string"
-					},
-					"block_height": {
-						"type": "number",
-						"format": "double"
-					},
-					"round": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"seed",
-					"block_height",
-					"round"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"MatchExecutorData": {
-				"properties": {
-					"lobby": {
-						"$ref": "#/components/schemas/LobbyState"
-					},
-					"moves": {
-						"items": {
-							"$ref": "#/components/schemas/IGetMatchMovesResult"
-						},
-						"type": "array"
-					},
-					"seeds": {
-						"items": {
-							"$ref": "#/components/schemas/ExecutorDataSeed"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"lobby",
-					"moves",
-					"seeds"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"MatchExecutorResponse": {
-				"allOf": [
-					{
-						"$ref": "#/components/schemas/MatchExecutorData"
-					}
-				],
-				"nullable": true
-			},
-			"SuccessfulResult_MatchExecutorResponse_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"result": {
-						"$ref": "#/components/schemas/MatchExecutorResponse"
-					}
-				},
-				"required": [
-					"success",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"Pick_FailedResult.Exclude_keyofFailedResult.errorMessage__": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							false
-						],
-						"nullable": false
-					},
-					"errorCode": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"success",
-					"errorCode"
-				],
-				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
-			"Omit_FailedResult.errorMessage_": {
-				"$ref": "#/components/schemas/Pick_FailedResult.Exclude_keyofFailedResult.errorMessage__",
-				"description": "Construct a type with the properties of T except for those in type K."
-			},
-			"ApiResult_MatchExecutorResponse_": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/SuccessfulResult_MatchExecutorResponse_"
-					},
-					{
-						"$ref": "#/components/schemas/Omit_FailedResult.errorMessage_"
-					}
-				]
-			},
-			"IGetLobbyByIdResult": {
-				"description": "'GetLobbyById' return type",
-				"properties": {
-					"created_at": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"creation_block_height": {
-						"type": "number",
-						"format": "double"
-					},
-					"current_match": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"current_proper_round": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"current_round": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"current_turn": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"current_tx_event_move": {
-						"type": "string",
-						"nullable": true
-					},
-					"hidden": {
-						"type": "boolean"
-					},
-					"lobby_creator": {
-						"type": "number",
-						"format": "double"
-					},
-					"lobby_id": {
-						"type": "string"
-					},
-					"lobby_state": {
-						"$ref": "#/components/schemas/lobby_status"
-					},
-					"max_players": {
-						"type": "number",
-						"format": "double"
-					},
-					"num_of_rounds": {
-						"type": "number",
-						"format": "double"
-					},
-					"practice": {
-						"type": "boolean"
-					},
-					"turn_length": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"created_at",
-					"creation_block_height",
-					"current_match",
-					"current_proper_round",
-					"current_round",
-					"current_turn",
-					"current_tx_event_move",
-					"hidden",
-					"lobby_creator",
-					"lobby_id",
-					"lobby_state",
-					"max_players",
-					"num_of_rounds",
-					"practice",
-					"turn_length"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"RoundExecutorBackendData": {
-				"properties": {
-					"lobby": {
-						"$ref": "#/components/schemas/IGetLobbyByIdResult"
-					},
-					"moves": {
-						"items": {
-							"$ref": "#/components/schemas/IGetMatchMovesResult"
-						},
-						"type": "array"
-					},
-					"seed": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"lobby",
-					"moves",
-					"seed"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"RoundExecutorResponse": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/RoundExecutorBackendData"
-					},
-					{
-						"properties": {
-							"error": {
-								"type": "string",
-								"enum": [
-									"lobby not found",
-									"bad round number",
-									"round not found",
-									"match not found",
-									"internal error"
-								]
-							}
-						},
-						"required": [
-							"error"
-						],
-						"type": "object"
-					}
-				]
-			},
-			"SuccessfulResult_RoundExecutorResponse_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"result": {
-						"$ref": "#/components/schemas/RoundExecutorResponse"
-					}
-				},
-				"required": [
-					"success",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ApiResult_RoundExecutorResponse_": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/SuccessfulResult_RoundExecutorResponse_"
-					},
-					{
-						"$ref": "#/components/schemas/Omit_FailedResult.errorMessage_"
-					}
-				]
-			},
-			"LobbyRawResponse": {
-				"properties": {
-					"lobby": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/IGetLobbyByIdResult"
-							}
-						],
-						"nullable": true
-					}
-				},
-				"required": [
-					"lobby"
-				],
-				"type": "object"
-			},
-			"SuccessfulResult_LobbyRawResponse_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"result": {
-						"$ref": "#/components/schemas/LobbyRawResponse"
-					}
-				},
-				"required": [
-					"success",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ApiResult_LobbyRawResponse_": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/SuccessfulResult_LobbyRawResponse_"
-					},
-					{
-						"$ref": "#/components/schemas/Omit_FailedResult.errorMessage_"
-					}
-				]
 			},
 			"LobbyStateResponse": {
 				"properties": {
@@ -816,7 +964,7 @@
 						"type": "string"
 					},
 					"lobby_state": {
-						"$ref": "#/components/schemas/lobby_status"
+						"$ref": "#/components/schemas/LobbyStatus"
 					},
 					"max_players": {
 						"type": "number",
@@ -944,7 +1092,7 @@
 						"type": "string"
 					},
 					"lobby_state": {
-						"$ref": "#/components/schemas/lobby_status"
+						"$ref": "#/components/schemas/LobbyStatus"
 					},
 					"max_players": {
 						"type": "number",
@@ -1132,308 +1280,105 @@
 					}
 				]
 			},
-			"AccountNftResponse": {
-				"properties": {
-					"nft": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"type": "object"
-			},
-			"SuccessfulResult_AccountNftResponse_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"result": {
-						"$ref": "#/components/schemas/AccountNftResponse"
-					}
-				},
-				"required": [
-					"success",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ApiResult_AccountNftResponse_": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/SuccessfulResult_AccountNftResponse_"
-					},
-					{
-						"$ref": "#/components/schemas/Omit_FailedResult.errorMessage_"
-					}
-				]
-			},
-			"IGetOwnedCardsResult": {
-				"description": "'GetOwnedCards' return type",
+			"IGetMatchMovesResult": {
+				"description": "'GetMatchMoves' return type",
 				"properties": {
 					"id": {
 						"type": "number",
 						"format": "double"
 					},
-					"owner_nft_id": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
+					"lobby_id": {
+						"type": "string"
 					},
-					"registry_id": {
+					"match_within_lobby": {
 						"type": "number",
 						"format": "double"
+					},
+					"move_within_round": {
+						"type": "number",
+						"format": "double"
+					},
+					"nft_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"round_within_match": {
+						"type": "number",
+						"format": "double"
+					},
+					"serialized_move": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"id",
-					"owner_nft_id",
-					"registry_id"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"GetCardsResponse": {
-				"properties": {
-					"cards": {
-						"items": {
-							"$ref": "#/components/schemas/IGetOwnedCardsResult"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"cards"
-				],
-				"type": "object"
-			},
-			"SuccessfulResult_GetCardsResponse_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"result": {
-						"$ref": "#/components/schemas/GetCardsResponse"
-					}
-				},
-				"required": [
-					"success",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ApiResult_GetCardsResponse_": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/SuccessfulResult_GetCardsResponse_"
-					},
-					{
-						"$ref": "#/components/schemas/Omit_FailedResult.errorMessage_"
-					}
-				]
-			},
-			"numberArray": {
-				"items": {
-					"type": "number",
-					"format": "double"
-				},
-				"type": "array"
-			},
-			"IGetBoughtPacksResult": {
-				"description": "'GetBoughtPacks' return type",
-				"properties": {
-					"buyer_nft_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"card_registry_ids": {
-						"$ref": "#/components/schemas/numberArray"
-					},
-					"id": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"buyer_nft_id",
-					"card_registry_ids",
-					"id"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"GetPacksResponse": {
-				"properties": {
-					"packs": {
-						"items": {
-							"$ref": "#/components/schemas/IGetBoughtPacksResult"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"packs"
-				],
-				"type": "object"
-			},
-			"SuccessfulResult_GetPacksResponse_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"result": {
-						"$ref": "#/components/schemas/GetPacksResponse"
-					}
-				},
-				"required": [
-					"success",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ApiResult_GetPacksResponse_": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/SuccessfulResult_GetPacksResponse_"
-					},
-					{
-						"$ref": "#/components/schemas/Omit_FailedResult.errorMessage_"
-					}
-				]
-			},
-			"IGetTradeNftsResult": {
-				"description": "'GetTradeNfts' return type",
-				"properties": {
-					"cards": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/numberArray"
-							}
-						],
-						"nullable": true
-					},
-					"nft_id": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"cards",
-					"nft_id"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"Record_string.IGetCardsByIdsResult_": {
-				"properties": {},
-				"type": "object",
-				"description": "Construct a type with a set of properties K of type T"
-			},
-			"GetTradeNftsResponse": {
-				"properties": {
-					"cardLookup": {
-						"$ref": "#/components/schemas/Record_string.IGetCardsByIdsResult_"
-					},
-					"tradeNfts": {
-						"items": {
-							"$ref": "#/components/schemas/IGetTradeNftsResult"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"cardLookup",
-					"tradeNfts"
-				],
-				"type": "object"
-			},
-			"SuccessfulResult_GetTradeNftsResponse_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"result": {
-						"$ref": "#/components/schemas/GetTradeNftsResponse"
-					}
-				},
-				"required": [
-					"success",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ApiResult_GetTradeNftsResponse_": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/SuccessfulResult_GetTradeNftsResponse_"
-					},
-					{
-						"$ref": "#/components/schemas/Omit_FailedResult.errorMessage_"
-					}
-				]
-			},
-			"IGetUserStatsResult": {
-				"description": "'GetUserStats' return type",
-				"properties": {
-					"losses": {
-						"type": "number",
-						"format": "double"
-					},
-					"nft_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"ties": {
-						"type": "number",
-						"format": "double"
-					},
-					"wins": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"losses",
+					"lobby_id",
+					"match_within_lobby",
+					"move_within_round",
 					"nft_id",
-					"ties",
-					"wins"
+					"round_within_match",
+					"serialized_move"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"UserStats": {
-				"$ref": "#/components/schemas/IGetUserStatsResult"
-			},
-			"UserStatsResponse": {
+			"ExecutorDataSeed": {
 				"properties": {
-					"stats": {
-						"$ref": "#/components/schemas/UserStats"
+					"seed": {
+						"type": "string"
+					},
+					"block_height": {
+						"type": "number",
+						"format": "double"
+					},
+					"round": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
-					"stats"
+					"seed",
+					"block_height",
+					"round"
 				],
-				"type": "object"
+				"type": "object",
+				"additionalProperties": false
 			},
-			"SuccessfulResult_UserStatsResponse_": {
+			"MatchExecutorData": {
+				"properties": {
+					"lobby": {
+						"$ref": "#/components/schemas/LobbyState"
+					},
+					"moves": {
+						"items": {
+							"$ref": "#/components/schemas/IGetMatchMovesResult"
+						},
+						"type": "array"
+					},
+					"seeds": {
+						"items": {
+							"$ref": "#/components/schemas/ExecutorDataSeed"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"lobby",
+					"moves",
+					"seeds"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MatchExecutorResponse": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MatchExecutorData"
+					}
+				],
+				"nullable": true
+			},
+			"SuccessfulResult_MatchExecutorResponse_": {
 				"properties": {
 					"success": {
 						"type": "boolean",
@@ -1443,7 +1388,7 @@
 						"nullable": false
 					},
 					"result": {
-						"$ref": "#/components/schemas/UserStatsResponse"
+						"$ref": "#/components/schemas/MatchExecutorResponse"
 					}
 				},
 				"required": [
@@ -1453,10 +1398,88 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"ApiResult_UserStatsResponse_": {
+			"ApiResult_MatchExecutorResponse_": {
 				"anyOf": [
 					{
-						"$ref": "#/components/schemas/SuccessfulResult_UserStatsResponse_"
+						"$ref": "#/components/schemas/SuccessfulResult_MatchExecutorResponse_"
+					},
+					{
+						"$ref": "#/components/schemas/Omit_FailedResult.errorMessage_"
+					}
+				]
+			},
+			"RoundExecutorBackendData": {
+				"properties": {
+					"lobby": {
+						"$ref": "#/components/schemas/IGetLobbyByIdResult"
+					},
+					"moves": {
+						"items": {
+							"$ref": "#/components/schemas/IGetMatchMovesResult"
+						},
+						"type": "array"
+					},
+					"seed": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"lobby",
+					"moves",
+					"seed"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RoundExecutorResponse": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/RoundExecutorBackendData"
+					},
+					{
+						"properties": {
+							"error": {
+								"type": "string",
+								"enum": [
+									"lobby not found",
+									"bad round number",
+									"round not found",
+									"match not found",
+									"internal error"
+								]
+							}
+						},
+						"required": [
+							"error"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"SuccessfulResult_RoundExecutorResponse_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"result": {
+						"$ref": "#/components/schemas/RoundExecutorResponse"
+					}
+				},
+				"required": [
+					"success",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResult_RoundExecutorResponse_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessfulResult_RoundExecutorResponse_"
 					},
 					{
 						"$ref": "#/components/schemas/Omit_FailedResult.errorMessage_"
@@ -1475,18 +1498,17 @@
 		},
 		"contact": {}
 	},
-	"openapi": "3.0.0",
 	"paths": {
-		"/executor/match": {
+		"/user/accountNft": {
 			"get": {
-				"operationId": "Match",
+				"operationId": "GetWalletNFT",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ApiResult_MatchExecutorResponse_"
+									"$ref": "#/components/schemas/ApiResult_AccountNftResponse_"
 								}
 							}
 						}
@@ -1496,15 +1518,35 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "lobbyID",
+						"name": "wallet",
 						"required": true,
 						"schema": {
 							"type": "string"
 						}
-					},
+					}
+				]
+			}
+		},
+		"/user/cards": {
+			"get": {
+				"operationId": "GetCards",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResult_GetCardsResponse_"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
 					{
 						"in": "query",
-						"name": "matchWithinLobby",
+						"name": "nftId",
 						"required": true,
 						"schema": {
 							"format": "double",
@@ -1514,16 +1556,16 @@
 				]
 			}
 		},
-		"/executor/round": {
+		"/user/packs": {
 			"get": {
-				"operationId": "Round",
+				"operationId": "GetPacks",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ApiResult_RoundExecutorResponse_"
+									"$ref": "#/components/schemas/ApiResult_GetPacksResponse_"
 								}
 							}
 						}
@@ -1533,24 +1575,65 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "lobbyID",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "matchWithinLobby",
+						"name": "nftId",
 						"required": true,
 						"schema": {
 							"format": "double",
 							"type": "number"
 						}
-					},
+					}
+				]
+			}
+		},
+		"/user/tradeNfts": {
+			"get": {
+				"operationId": "GetTradeNfts",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResult_GetTradeNftsResponse_"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
 					{
 						"in": "query",
-						"name": "roundWithinMatch",
+						"name": "nftId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/user/stats": {
+			"get": {
+				"operationId": "Stats",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResult_UserStatsResponse_"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "nftId",
 						"required": true,
 						"schema": {
 							"format": "double",
@@ -1822,16 +1905,16 @@
 				]
 			}
 		},
-		"/user/accountNft": {
+		"/executor/match": {
 			"get": {
-				"operationId": "GetWalletNFT",
+				"operationId": "Match",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ApiResult_AccountNftResponse_"
+									"$ref": "#/components/schemas/ApiResult_MatchExecutorResponse_"
 								}
 							}
 						}
@@ -1841,35 +1924,15 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "wallet",
+						"name": "lobbyID",
 						"required": true,
 						"schema": {
 							"type": "string"
 						}
-					}
-				]
-			}
-		},
-		"/user/cards": {
-			"get": {
-				"operationId": "GetCards",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResult_GetCardsResponse_"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": [
+					},
 					{
 						"in": "query",
-						"name": "nftId",
+						"name": "matchWithinLobby",
 						"required": true,
 						"schema": {
 							"format": "double",
@@ -1879,16 +1942,16 @@
 				]
 			}
 		},
-		"/user/packs": {
+		"/executor/round": {
 			"get": {
-				"operationId": "GetPacks",
+				"operationId": "Round",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ApiResult_GetPacksResponse_"
+									"$ref": "#/components/schemas/ApiResult_RoundExecutorResponse_"
 								}
 							}
 						}
@@ -1898,65 +1961,24 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "nftId",
+						"name": "lobbyID",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "matchWithinLobby",
 						"required": true,
 						"schema": {
 							"format": "double",
 							"type": "number"
 						}
-					}
-				]
-			}
-		},
-		"/user/tradeNfts": {
-			"get": {
-				"operationId": "GetTradeNfts",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResult_GetTradeNftsResponse_"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": [
+					},
 					{
 						"in": "query",
-						"name": "nftId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/user/stats": {
-			"get": {
-				"operationId": "Stats",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResult_UserStatsResponse_"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "nftId",
+						"name": "roundWithinMatch",
 						"required": true,
 						"schema": {
 							"format": "double",

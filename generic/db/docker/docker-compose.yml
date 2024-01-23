@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   postgres:
-    image: postgres:14
+    image: postgres:16
     container_name: generic-postgres
     environment:
       POSTGRES_USER: postgres

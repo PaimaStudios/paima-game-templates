@@ -1,4 +1,5 @@
 {
+	"openapi": "3.0.0",
 	"components": {
 		"examples": {},
 		"headers": {},
@@ -6,7 +7,7 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"nft_type": {
+			"NftType": {
 				"type": "string",
 				"enum": [
 					"air",
@@ -30,7 +31,7 @@
 						"type": "string"
 					},
 					"type": {
-						"$ref": "#/components/schemas/nft_type"
+						"$ref": "#/components/schemas/NftType"
 					}
 				},
 				"required": [
@@ -69,7 +70,6 @@
 		},
 		"contact": {}
 	},
-	"openapi": "3.0.0",
 	"paths": {
 		"/owned_characters": {
 			"get": {

@@ -16,4 +16,4 @@ npm run build
 
 The compiled middleware will appear in the [packaged](./packaged/) directory.
 
-If you want to deploy your game, we recommend using the `paimaMiddleware.js` which will work inside of browsers automatically. If you would like to do testing or import your generated middleware into an existing JS/TS project, we recommend using `midlleware.js` (both have the same code, just different exports to support both use cases).
+If you want to deploy your game, we recommend using the `paimaMiddleware.js` which will work inside of browsers automatically. If you would like to do testing or import your generated middleware into an existing JS/TS project, we recommend using `middleware.js` (both have the same code, just different exports to support both use cases).

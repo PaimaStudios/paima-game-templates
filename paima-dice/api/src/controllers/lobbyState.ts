@@ -1,10 +1,10 @@
 import { Controller, Get, Query, Route } from 'tsoa';
 import { getLobbyById, getLobbyPlayers, requirePool } from '@dice/db';
 import { isLobbyWithStateProps, type LobbyPlayer, type LobbyState } from '@dice/utils';
-import { getMatch, getRound } from '@dice/db/src/select.queries';
+import { getMatch, getRound } from '@dice/db';
 import { getBlockHeights } from '@paima/node-sdk/db';
 
-interface getLobbyStateResponse {
+interface GetLobbyStateResponse {
   // returns null if missing state properties, use lobbyRaw for any lobby
   lobby: LobbyState | null;
 }
@@ -12,7 +12,7 @@ interface getLobbyStateResponse {
 @Route('lobby_state')
 export class LobbyStateController extends Controller {
   @Get()
-  public async get(@Query() lobbyID: string): Promise<getLobbyStateResponse> {
+  public async get(@Query() lobbyID: string): Promise<GetLobbyStateResponse> {
     const pool = requirePool();
     const [[lobby], rawPlayers] = await Promise.all([
       getLobbyById.run({ lobby_id: lobbyID }, pool),
@@ -34,13 +34,13 @@ export class LobbyStateController extends Controller {
       lobby.current_round === 0
         ? [undefined]
         : await getRound.run(
-          {
-            lobby_id: lobbyID,
-            match_within_lobby: lobby.current_match,
-            round_within_match: lobby.current_round - 1,
-          },
-          pool
-        );
+            {
+              lobby_id: lobbyID,
+              match_within_lobby: lobby.current_match,
+              round_within_match: lobby.current_round - 1,
+            },
+            pool
+          );
 
     const seedBlockHeight =
       lobby.current_round === 0

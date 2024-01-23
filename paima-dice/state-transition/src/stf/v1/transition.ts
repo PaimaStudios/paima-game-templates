@@ -43,8 +43,8 @@ import { NFT_NAME, PRACTICE_BOT_NFT_ID, isLobbyWithStateProps } from '@dice/util
 import { getBlockHeights, type SQLUpdate } from '@paima/node-sdk/db';
 import { PracticeAI } from './persist/practice-ai';
 import { getOwnedNfts } from '@paima/node-sdk/utils-backend';
-import type { IGetRoundResult } from '@dice/db/src/select.queries';
-import { getMatch, getRound, getRoundMoves } from '@dice/db/src/select.queries';
+import type { IGetRoundResult } from '@dice/db';
+import { getMatch, getRound, getRoundMoves } from '@dice/db';
 import type { WalletAddress } from '@paima/sdk/utils';
 
 // Create initial player entry after nft mint

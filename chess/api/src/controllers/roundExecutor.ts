@@ -5,16 +5,16 @@ import { psqlNum } from '../validation.js';
 import type { RoundExecutorData } from '@chess/utils';
 import { getBlockHeights } from '@paima/node-sdk/db';
 
-type Response = RoundExecutorData | Error;
+type GetRoundExecutorResponse = RoundExecutorData | RoundExecutorError;
 
-interface Error {
+interface RoundExecutorError {
   error: 'lobby not found' | 'bad round number' | 'round not found';
 }
 
 @Route('round_executor')
 export class RoundExecutorController extends Controller {
   @Get()
-  public async get(@Query() lobbyID: string, @Query() round: number): Promise<Response> {
+  public async get(@Query() lobbyID: string, @Query() round: number): Promise<GetRoundExecutorResponse> {
     const valRound = psqlNum.decode(round);
     if (isLeft(valRound) || !(round > 0)) {
       throw new ValidateError({ round: { message: 'invalid number' } }, '');

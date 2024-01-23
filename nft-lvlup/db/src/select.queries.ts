@@ -1,7 +1,7 @@
 /** Types generated for queries found in "src/select.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
-export type nft_type = 'air' | 'earth' | 'ether' | 'fire' | 'water';
+import type { NftType } from '@src/common.js';
 
 /** 'GetUserCharacters' parameters type */
 export interface IGetUserCharactersParams {
@@ -13,7 +13,7 @@ export interface IGetUserCharactersResult {
   address: string;
   level: number;
   nft_id: string;
-  type: nft_type;
+  type: NftType;
 }
 
 /** 'GetUserCharacters' query type */

@@ -21,16 +21,16 @@ import {
   updateLobbyCurrentRound,
   updateLobbyMatchState,
   updateLobbyState,
-} from '@cards/db/src/update.queries.js';
+} from '@cards/db';
 import type {
   IUpdateLobbyCurrentMatchParams,
   IUpdateLobbyCurrentRoundParams,
   IUpdateLobbyMatchStateParams,
   IUpdateLobbyStateParams,
-} from '@cards/db/src/update.queries.js';
-import type { INewMatchParams, INewMoveParams } from '@cards/db/src/insert.queries.js';
-import { newMatch, newMove } from '@cards/db/src/insert.queries.js';
-import type { IGetRoundResult } from '@cards/db/src/select.queries.js';
+} from '@cards/db';
+import type { INewMatchParams, INewMoveParams } from '@cards/db';
+import { newMatch, newMove } from '@cards/db';
+import type { IGetRoundResult } from '@cards/db';
 import type Prando from '@paima/sdk/prando';
 import { schedulePracticeMove } from './practice.js';
 import { scheduleStatsUpdate } from './stats.js';

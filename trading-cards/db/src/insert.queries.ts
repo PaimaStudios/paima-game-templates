@@ -1,7 +1,9 @@
 /** Types generated for queries found in "src/queries/insert.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
-export type lobby_status = 'active' | 'closed' | 'finished' | 'open';
+import type { LobbyStatus } from '@src/common.js';
+
+export type DateOrString = Date | string;
 
 export type numberArray = (number)[];
 
@@ -9,12 +11,12 @@ export type stringArray = (string)[];
 
 /** 'CreateLobby' parameters type */
 export interface ICreateLobbyParams {
-  created_at: Date;
+  created_at: DateOrString;
   creation_block_height: number;
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   practice: boolean;
@@ -66,7 +68,7 @@ export const createLobby = new PreparedQuery<ICreateLobbyParams,ICreateLobbyResu
 
 /** 'JoinPlayerToLobby' parameters type */
 export interface IJoinPlayerToLobbyParams {
-  bot_local_deck: stringArray | null | void;
+  bot_local_deck?: stringArray | null | void;
   current_deck: numberArray;
   hit_points: number;
   lobby_id: string;
@@ -153,7 +155,7 @@ export const newMatch = new PreparedQuery<INewMatchParams,INewMatchResult>(newMa
 
 /** 'NewRound' parameters type */
 export interface INewRoundParams {
-  execution_block_height: number | null | void;
+  execution_block_height?: number | null | void;
   lobby_id: string;
   match_within_lobby: number;
   round_within_match: number;

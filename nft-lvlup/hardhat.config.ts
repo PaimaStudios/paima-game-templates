@@ -57,7 +57,8 @@ const config: HardhatUserConfig = {
   typechain: {
     outDir: './contracts/evm/typechain-types',
     target: 'ethers-v6',
-    alwaysGenerateOverloads: true,
+    // https://github.com/dethcrypto/TypeChain/issues/849
+    alwaysGenerateOverloads: false,
   },
 };
 

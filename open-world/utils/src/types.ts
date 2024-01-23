@@ -1,9 +1,10 @@
-import type { IGetBlockDataResult, IGetUserStatsResult, IGetWorldStatsResult } from '@game/db';
+import type { IGetUserStatsResult, IGetWorldStatsResult } from '@game/db';
+import type { IGetBlockHeightsResult } from '@paima/db';
 import type { WalletAddress } from '@paima/sdk/utils';
 
 export interface RoundExecutorData {
   match_state: string;
-  block_data: IGetBlockDataResult;
+  block_data: IGetBlockHeightsResult;
 }
 
 interface ExecutorDataSeed {

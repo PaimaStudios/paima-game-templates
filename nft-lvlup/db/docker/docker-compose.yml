@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   postgres:
-    image: postgres:14
+    image: postgres:16
     container_name: generic-postgres
     environment:
       POSTGRES_USER: postgres
@@ -9,7 +9,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - nft-lvlup-00-db:/var/lib/postgresql/data
+      - nft-lvlup-1705989072993-db:/var/lib/postgresql/data
       - ../migrations/init/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       # Use pg_isready to check postgres is running. Substitute different
@@ -20,4 +20,4 @@ services:
       retries: 5
 
 volumes:
-  nft-lvlup-00-db:
+  nft-lvlup-1705989072993-db:

@@ -2,17 +2,17 @@ import { Controller, Get, Query, Route } from 'tsoa';
 import { getLobbyById, getRoundData, requirePool } from '@chess/db';
 import type { Timer } from '@chess/utils';
 import { updateTimer, type LobbyStateQuery } from '@chess/utils';
-import { getLobbyRounds } from '@chess/db/src/select.queries';
+import { getLobbyRounds } from '@chess/db';
 import { getLatestProcessedBlockHeight } from '@paima/node-sdk/db';
 
-interface Response {
+interface GetLobbyStateResponse {
   lobby: LobbyStateQuery | null;
 }
 
 @Route('lobby_state')
 export class LobbyStateController extends Controller {
   @Get()
-  public async get(@Query() lobbyID: string): Promise<Response> {
+  public async get(@Query() lobbyID: string): Promise<GetLobbyStateResponse> {
     const pool = requirePool();
     const [lobby] = await getLobbyById.run({ lobby_id: lobbyID }, pool);
     if (!lobby) return { lobby: null };

@@ -3,7 +3,7 @@ import { requirePool } from '@dice/db';
 import { isLeft } from 'fp-ts/Either';
 import { psqlNum } from '../validation.js';
 import { getAllPaginatedUserLobbies } from '@dice/db';
-import type { IGetAllPaginatedUserLobbiesResult } from '@dice/db/src/select.queries.js';
+import type { IGetAllPaginatedUserLobbiesResult } from '@dice/db';
 
 interface GetUserLobbiesResponse {
   lobbies: IGetAllPaginatedUserLobbiesResult[];

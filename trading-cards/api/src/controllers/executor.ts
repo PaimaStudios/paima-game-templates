@@ -15,7 +15,7 @@ import {
 } from '@cards/game-logic';
 import { psqlInt } from '../validation';
 import { isLeft } from 'fp-ts/lib/Either';
-import { getMatch, getMatchMoves, getRound, getRoundMoves } from '@cards/db/src/select.queries';
+import { getMatch, getMatchMoves, getRound, getRoundMoves } from '@cards/db';
 import { getBlockHeights } from '@paima/node-sdk/db';
 
 @Route('executor')

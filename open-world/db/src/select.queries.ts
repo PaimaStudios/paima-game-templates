@@ -1,98 +1,9 @@
 /** Types generated for queries found in "src/queries/select.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
-/** 'GetLatestBlockData' parameters type */
-export type IGetLatestBlockDataParams = void;
-
-/** 'GetLatestBlockData' return type */
-export interface IGetLatestBlockDataResult {
-  block_height: number;
-  done: boolean;
-  seed: string;
-}
-
-/** 'GetLatestBlockData' query type */
-export interface IGetLatestBlockDataQuery {
-  params: IGetLatestBlockDataParams;
-  result: IGetLatestBlockDataResult;
-}
-
-const getLatestBlockDataIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT * FROM block_heights \nORDER BY block_height DESC\nLIMIT 1"};
-
-/**
- * Query generated from SQL:
- * ```
- * SELECT * FROM block_heights 
- * ORDER BY block_height DESC
- * LIMIT 1
- * ```
- */
-export const getLatestBlockData = new PreparedQuery<IGetLatestBlockDataParams,IGetLatestBlockDataResult>(getLatestBlockDataIR);
-
-
-/** 'GetLatestProcessedBlockHeight' parameters type */
-export type IGetLatestProcessedBlockHeightParams = void;
-
-/** 'GetLatestProcessedBlockHeight' return type */
-export interface IGetLatestProcessedBlockHeightResult {
-  block_height: number;
-  done: boolean;
-  seed: string;
-}
-
-/** 'GetLatestProcessedBlockHeight' query type */
-export interface IGetLatestProcessedBlockHeightQuery {
-  params: IGetLatestProcessedBlockHeightParams;
-  result: IGetLatestProcessedBlockHeightResult;
-}
-
-const getLatestProcessedBlockHeightIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT * FROM block_heights \nWHERE done IS TRUE\nORDER BY block_height DESC\nLIMIT 1"};
-
-/**
- * Query generated from SQL:
- * ```
- * SELECT * FROM block_heights 
- * WHERE done IS TRUE
- * ORDER BY block_height DESC
- * LIMIT 1
- * ```
- */
-export const getLatestProcessedBlockHeight = new PreparedQuery<IGetLatestProcessedBlockHeightParams,IGetLatestProcessedBlockHeightResult>(getLatestProcessedBlockHeightIR);
-
-
-/** 'GetBlockData' parameters type */
-export interface IGetBlockDataParams {
-  block_height: number | null | void;
-}
-
-/** 'GetBlockData' return type */
-export interface IGetBlockDataResult {
-  block_height: number;
-  done: boolean;
-  seed: string;
-}
-
-/** 'GetBlockData' query type */
-export interface IGetBlockDataQuery {
-  params: IGetBlockDataParams;
-  result: IGetBlockDataResult;
-}
-
-const getBlockDataIR: any = {"usedParamSet":{"block_height":true},"params":[{"name":"block_height","required":false,"transform":{"type":"scalar"},"locs":[{"a":50,"b":62}]}],"statement":"SELECT * FROM block_heights \nWHERE block_height = :block_height"};
-
-/**
- * Query generated from SQL:
- * ```
- * SELECT * FROM block_heights 
- * WHERE block_height = :block_height
- * ```
- */
-export const getBlockData = new PreparedQuery<IGetBlockDataParams,IGetBlockDataResult>(getBlockDataIR);
-
-
 /** 'GetUserStats' parameters type */
 export interface IGetUserStatsParams {
-  wallet: string | null | void;
+  wallet?: string | null | void;
 }
 
 /** 'GetUserStats' return type */

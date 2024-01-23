@@ -10,7 +10,6 @@
   "dependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
-    "@ethersproject/abstract-signer": "^5.7.0",
     "@heroicons/react": "^1.0.6",
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
@@ -24,6 +23,7 @@
     "wagmi": "^2.3.1"
   },
   "devDependencies": {
+    "@paima/build-utils": "2.2.0",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",

@@ -28,7 +28,6 @@ module.exports = [
           "START_BLOCKHEIGHT",
           "BACKEND_URI",
           "WEBSERVER_PORT",
-          "SERVER_ONLY_MODE",
           "NATIVE_PROXY",
           "NFT",
           "CARD_TRADE_NATIVE_PROXY",

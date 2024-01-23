@@ -4,17 +4,17 @@ import { isLeft } from 'fp-ts/Either';
 import { psqlInt } from '../validation.js';
 import type { RoundExecutorBackendData } from '@dice/utils';
 import { getBlockHeights } from '@paima/node-sdk/db';
-import { getMatch, getRound } from '@dice/db/src/select.queries.js';
+import { getMatch, getRound } from '@dice/db';
 
-type Response = RoundExecutorBackendData | Error;
+type GetRoundExecutorResponse = RoundExecutorBackendData | GetRoundExecutorError;
 
-interface Error {
+interface GetRoundExecutorError {
   error:
-  | 'lobby not found'
-  | 'bad round number'
-  | 'round not found'
-  | 'match not found'
-  | 'internal error';
+    | 'lobby not found'
+    | 'bad round number'
+    | 'round not found'
+    | 'match not found'
+    | 'internal error';
 }
 
 @Route('round_executor')
@@ -24,7 +24,7 @@ export class RoundExecutorController extends Controller {
     @Query() lobbyID: string,
     @Query() matchWithinLobby: number,
     @Query() roundWithinMatch: number
-  ): Promise<Response> {
+  ): Promise<GetRoundExecutorResponse> {
     const valMatch = psqlInt.decode(matchWithinLobby);
     if (isLeft(valMatch)) {
       throw new ValidateError({ matchWithinLobby: { message: 'invalid number' } }, '');
@@ -51,13 +51,13 @@ export class RoundExecutorController extends Controller {
       roundWithinMatch === 0
         ? [undefined]
         : await getRound.run(
-          {
-            lobby_id: lobbyID,
-            match_within_lobby: matchWithinLobby,
-            round_within_match: roundWithinMatch - 1,
-          },
-          pool
-        );
+            {
+              lobby_id: lobbyID,
+              match_within_lobby: matchWithinLobby,
+              round_within_match: roundWithinMatch - 1,
+            },
+            pool
+          );
 
     const seedBlockHeight =
       roundWithinMatch === 0

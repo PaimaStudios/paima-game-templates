@@ -14,7 +14,8 @@
     "user": "postgres",
     "password": "postgres",
     "host": "localhost",
-    "port": 54322,
+    "port": 5432,
     "ssl": false
-  }
+  },
+  "typesOverrides": {}
 }

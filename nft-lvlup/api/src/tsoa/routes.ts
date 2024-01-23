@@ -4,13 +4,12 @@
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, HttpStatusCodeLiteral, TsoaResponse, fetchMiddlewares } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { OwnedCharactersController } from './../controllers/ownedCharacters';
-import type { RequestHandler } from 'express';
-import * as express from 'express';
+import type { RequestHandler, Router } from 'express';
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "nft_type": {
+    "NftType": {
         "dataType": "refAlias",
         "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["air"]},{"dataType":"enum","enums":["earth"]},{"dataType":"enum","enums":["ether"]},{"dataType":"enum","enums":["fire"]},{"dataType":"enum","enums":["water"]}],"validators":{}},
     },
@@ -21,7 +20,7 @@ const models: TsoaRoute.Models = {
             "address": {"dataType":"string","required":true},
             "level": {"dataType":"double","required":true},
             "nft_id": {"dataType":"string","required":true},
-            "type": {"ref":"nft_type","required":true},
+            "type": {"ref":"NftType","required":true},
         },
         "additionalProperties": false,
     },
@@ -39,7 +38,7 @@ const validationService = new ValidationService(models);
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
-export function RegisterRoutes(app: express.Router) {
+export function RegisterRoutes(app: Router) {
     // ###########################################################################################################
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
@@ -106,6 +105,7 @@ export function RegisterRoutes(app: express.Router) {
             response.set(name, headers[name]);
         });
         if (data && typeof data.pipe === 'function' && data.readable && typeof data._read === 'function') {
+            response.status(statusCode || 200)
             data.pipe(response);
         } else if (data !== null && data !== undefined) {
             response.status(statusCode || 200).json(data);
@@ -133,6 +133,8 @@ export function RegisterRoutes(app: express.Router) {
                     return request;
                 case 'query':
                     return validationService.ValidateParam(args[key], request.query[name], name, fieldErrors, undefined, {"noImplicitAdditionalProperties":"throw-on-extras"});
+                case 'queries':
+                    return validationService.ValidateParam(args[key], request.query, name, fieldErrors, undefined, {"noImplicitAdditionalProperties":"throw-on-extras"});
                 case 'path':
                     return validationService.ValidateParam(args[key], request.params[name], name, fieldErrors, undefined, {"noImplicitAdditionalProperties":"throw-on-extras"});
                 case 'header':

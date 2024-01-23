@@ -12,8 +12,8 @@ import {
 } from '@cards/game-logic';
 import { persistStartMatch } from './match.js';
 import type { SQLUpdate } from '@paima/node-sdk/db';
-import type { IJoinPlayerToLobbyParams } from '@cards/db/src/insert.queries.js';
-import { joinPlayerToLobby } from '@cards/db/src/insert.queries.js';
+import type { IJoinPlayerToLobbyParams } from '@cards/db/src';
+import { joinPlayerToLobby } from '@cards/db';
 import { PRACTICE_BOT_NFT_ID } from '@cards/utils';
 import crypto from 'crypto';
 

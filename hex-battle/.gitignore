@@ -28,7 +28,6 @@ snapshots
 *.local
 
 .env
-.env.localhost
 .env.mainnet
 .env.testnet
 

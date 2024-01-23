@@ -26,7 +26,7 @@ import {
   getRandomActiveLobby,
   getRound,
   searchPaginatedOpenLobbies,
-} from '@cards/db/src/select.queries';
+} from '@cards/db';
 import { getBlockHeights } from '@paima/node-sdk/db';
 import { isLeft } from 'fp-ts/lib/Either';
 import { psqlNum } from '../validation';

@@ -4,6 +4,7 @@ import type {
   IGetUserStatsResult,
   IGetNewLobbiesByUserAndBlockHeightResult,
   IGetAllPaginatedUserLobbiesResult,
+  LobbyStatus,
 } from '@chess/db';
 import type { WalletAddress } from '@paima/sdk/utils';
 type IGetBlockHeightsResult = {
@@ -11,7 +12,6 @@ type IGetBlockHeightsResult = {
   done: boolean;
   seed: string;
 };
-export type LobbyStatus = 'open' | 'active' | 'finished' | 'closed';
 export type ConciseResult = 'w' | 't' | 'l';
 export type ExpandedResult = 'win' | 'tie' | 'loss';
 export type MatchResult = [ConciseResult, ConciseResult];

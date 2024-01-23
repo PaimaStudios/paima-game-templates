@@ -1,9 +1,7 @@
 /** Types generated for queries found in "src/queries/update.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
-export type concise_result = 'l' | 't' | 'w';
-
-export type lobby_status = 'active' | 'closed' | 'finished' | 'open';
+import type { LobbyStatus, ConciseResult } from '@src/common.js';
 
 export type numberArray = (number)[];
 
@@ -12,7 +10,7 @@ export type stringArray = (string)[];
 /** 'UpdateLobbyState' parameters type */
 export interface IUpdateLobbyStateParams {
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
 }
 
 /** 'UpdateLobbyState' return type */
@@ -39,7 +37,7 @@ export const updateLobbyState = new PreparedQuery<IUpdateLobbyStateParams,IUpdat
 
 /** 'UpdateLobbyCurrentMatch' parameters type */
 export interface IUpdateLobbyCurrentMatchParams {
-  current_match: number | null | void;
+  current_match?: number | null | void;
   lobby_id: string;
 }
 
@@ -67,7 +65,7 @@ export const updateLobbyCurrentMatch = new PreparedQuery<IUpdateLobbyCurrentMatc
 
 /** 'UpdateLobbyCurrentRound' parameters type */
 export interface IUpdateLobbyCurrentRoundParams {
-  current_round: number | null | void;
+  current_round?: number | null | void;
   lobby_id: string;
 }
 
@@ -97,7 +95,7 @@ export const updateLobbyCurrentRound = new PreparedQuery<IUpdateLobbyCurrentRoun
 export interface IUpdateLobbyMatchStateParams {
   current_proper_round: number;
   current_turn: number;
-  current_tx_event_move: string | null | void;
+  current_tx_event_move?: string | null | void;
   lobby_id: string;
 }
 
@@ -132,11 +130,11 @@ export interface IUpdateLobbyPlayerParams {
   current_deck: numberArray;
   current_draw: number;
   current_hand: stringArray;
-  current_result: concise_result | null | void;
+  current_result?: ConciseResult | null | void;
   hit_points: number;
   lobby_id: string;
   nft_id: number;
-  turn: number | null | void;
+  turn?: number | null | void;
 }
 
 /** 'UpdateLobbyPlayer' return type */
@@ -204,7 +202,7 @@ export const executedRound = new PreparedQuery<IExecutedRoundParams,IExecutedRou
 
 /** 'AddWin' parameters type */
 export interface IAddWinParams {
-  nft_id: number | null | void;
+  nft_id?: number | null | void;
 }
 
 /** 'AddWin' return type */
@@ -232,7 +230,7 @@ export const addWin = new PreparedQuery<IAddWinParams,IAddWinResult>(addWinIR);
 
 /** 'AddLoss' parameters type */
 export interface IAddLossParams {
-  nft_id: number | null | void;
+  nft_id?: number | null | void;
 }
 
 /** 'AddLoss' return type */
@@ -260,7 +258,7 @@ export const addLoss = new PreparedQuery<IAddLossParams,IAddLossResult>(addLossI
 
 /** 'AddTie' parameters type */
 export interface IAddTieParams {
-  nft_id: number | null | void;
+  nft_id?: number | null | void;
 }
 
 /** 'AddTie' return type */
@@ -317,7 +315,7 @@ export const setTradeNftCards = new PreparedQuery<ISetTradeNftCardsParams,ISetTr
 /** 'TransferCard' parameters type */
 export interface ITransferCardParams {
   id: number;
-  owner_nft_id: number | null | void;
+  owner_nft_id?: number | null | void;
 }
 
 /** 'TransferCard' return type */

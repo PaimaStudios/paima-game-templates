@@ -1,7 +1,7 @@
 /** Types generated for queries found in "src/queries/update.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
-export type lobby_status = 'active' | 'closed' | 'finished' | 'open';
+import type { LobbyStatus } from '@src/common.js';
 
 /** 'StartMatch' parameters type */
 export interface IStartMatchParams {
@@ -19,7 +19,7 @@ export interface IStartMatchResult {
   latest_match_state: string;
   lobby_creator: string;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   num_of_rounds: number;
   play_time_per_player: number;
   player_one_iswhite: boolean;

@@ -1,14 +1,17 @@
 /** Types generated for queries found in "src/queries/select.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
-export type lobby_status = 'active' | 'closed' | 'finished' | 'open';
+import type { LobbyStatus } from '@src/common.js';
+
+export type NumberOrString = number | string;
 
 /** 'GetPaginatedOpenLobbies' parameters type */
 export interface IGetPaginatedOpenLobbiesParams {
-  count: string | null | void;
-  nft_id: number | null | void;
-  page: string | null | void;
+  count?: NumberOrString | null | void;
+  nft_id?: number | null | void;
+  page?: NumberOrString | null | void;
 }
+
 /** 'GetPaginatedOpenLobbies' return type */
 export interface IGetPaginatedOpenLobbiesResult {
   created_at: Date;
@@ -20,7 +23,7 @@ export interface IGetPaginatedOpenLobbiesResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   play_time_per_player: number;
@@ -34,7 +37,7 @@ export interface IGetPaginatedOpenLobbiesQuery {
   result: IGetPaginatedOpenLobbiesResult;
 }
 
-const getPaginatedOpenLobbiesIR: any = { "usedParamSet": { "nft_id": true, "count": true, "page": true }, "params": [{ "name": "nft_id", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 114, "b": 120 }] }, { "name": "count", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 153, "b": 158 }] }, { "name": "page", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 167, "b": 171 }] }], "statement": "SELECT *\nFROM lobbies\nWHERE lobbies.lobby_state = 'open' AND lobbies.hidden IS FALSE AND lobbies.lobby_creator != :nft_id\nORDER BY created_at DESC\nLIMIT :count\nOFFSET :page" };
+const getPaginatedOpenLobbiesIR: any = {"usedParamSet":{"nft_id":true,"count":true,"page":true},"params":[{"name":"nft_id","required":false,"transform":{"type":"scalar"},"locs":[{"a":114,"b":120}]},{"name":"count","required":false,"transform":{"type":"scalar"},"locs":[{"a":153,"b":158}]},{"name":"page","required":false,"transform":{"type":"scalar"},"locs":[{"a":167,"b":171}]}],"statement":"SELECT *\nFROM lobbies\nWHERE lobbies.lobby_state = 'open' AND lobbies.hidden IS FALSE AND lobbies.lobby_creator != :nft_id\nORDER BY created_at DESC\nLIMIT :count\nOFFSET :page"};
 
 /**
  * Query generated from SQL:
@@ -47,15 +50,15 @@ const getPaginatedOpenLobbiesIR: any = { "usedParamSet": { "nft_id": true, "coun
  * OFFSET :page
  * ```
  */
-export const getPaginatedOpenLobbies = new PreparedQuery<IGetPaginatedOpenLobbiesParams, IGetPaginatedOpenLobbiesResult>(getPaginatedOpenLobbiesIR);
+export const getPaginatedOpenLobbies = new PreparedQuery<IGetPaginatedOpenLobbiesParams,IGetPaginatedOpenLobbiesResult>(getPaginatedOpenLobbiesIR);
 
 
 /** 'SearchPaginatedOpenLobbies' parameters type */
 export interface ISearchPaginatedOpenLobbiesParams {
-  count: string | null | void;
-  nft_id: number | null | void;
-  page: string | null | void;
-  searchQuery: string | null | void;
+  count?: NumberOrString | null | void;
+  nft_id?: number | null | void;
+  page?: NumberOrString | null | void;
+  searchQuery?: string | null | void;
 }
 
 /** 'SearchPaginatedOpenLobbies' return type */
@@ -69,7 +72,7 @@ export interface ISearchPaginatedOpenLobbiesResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   play_time_per_player: number;
@@ -83,7 +86,7 @@ export interface ISearchPaginatedOpenLobbiesQuery {
   result: ISearchPaginatedOpenLobbiesResult;
 }
 
-const searchPaginatedOpenLobbiesIR: any = { "usedParamSet": { "nft_id": true, "searchQuery": true, "count": true, "page": true }, "params": [{ "name": "nft_id", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 114, "b": 120 }] }, { "name": "searchQuery", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 148, "b": 159 }] }, { "name": "count", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 192, "b": 197 }] }, { "name": "page", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 206, "b": 210 }] }], "statement": "SELECT *\nFROM lobbies\nWHERE lobbies.lobby_state = 'open' AND lobbies.hidden IS FALSE AND lobbies.lobby_creator != :nft_id AND lobbies.lobby_id LIKE :searchQuery\nORDER BY created_at DESC\nLIMIT :count\nOFFSET :page" };
+const searchPaginatedOpenLobbiesIR: any = {"usedParamSet":{"nft_id":true,"searchQuery":true,"count":true,"page":true},"params":[{"name":"nft_id","required":false,"transform":{"type":"scalar"},"locs":[{"a":114,"b":120}]},{"name":"searchQuery","required":false,"transform":{"type":"scalar"},"locs":[{"a":148,"b":159}]},{"name":"count","required":false,"transform":{"type":"scalar"},"locs":[{"a":192,"b":197}]},{"name":"page","required":false,"transform":{"type":"scalar"},"locs":[{"a":206,"b":210}]}],"statement":"SELECT *\nFROM lobbies\nWHERE lobbies.lobby_state = 'open' AND lobbies.hidden IS FALSE AND lobbies.lobby_creator != :nft_id AND lobbies.lobby_id LIKE :searchQuery\nORDER BY created_at DESC\nLIMIT :count\nOFFSET :page"};
 
 /**
  * Query generated from SQL:
@@ -96,13 +99,13 @@ const searchPaginatedOpenLobbiesIR: any = { "usedParamSet": { "nft_id": true, "s
  * OFFSET :page
  * ```
  */
-export const searchPaginatedOpenLobbies = new PreparedQuery<ISearchPaginatedOpenLobbiesParams, ISearchPaginatedOpenLobbiesResult>(searchPaginatedOpenLobbiesIR);
+export const searchPaginatedOpenLobbies = new PreparedQuery<ISearchPaginatedOpenLobbiesParams,ISearchPaginatedOpenLobbiesResult>(searchPaginatedOpenLobbiesIR);
 
 
 /** 'GetOpenLobbyById' parameters type */
 export interface IGetOpenLobbyByIdParams {
-  nft_id: number | null | void;
-  searchQuery: string | null | void;
+  nft_id?: number | null | void;
+  searchQuery?: string | null | void;
 }
 
 /** 'GetOpenLobbyById' return type */
@@ -116,7 +119,7 @@ export interface IGetOpenLobbyByIdResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   play_time_per_player: number;
@@ -130,7 +133,7 @@ export interface IGetOpenLobbyByIdQuery {
   result: IGetOpenLobbyByIdResult;
 }
 
-const getOpenLobbyByIdIR: any = { "usedParamSet": { "searchQuery": true, "nft_id": true }, "params": [{ "name": "searchQuery", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 80, "b": 91 }] }, { "name": "nft_id", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 122, "b": 128 }] }], "statement": "SELECT *\nFROM lobbies\nWHERE lobbies.lobby_state = 'open' AND lobbies.lobby_id = :searchQuery AND lobbies.lobby_creator != :nft_id" };
+const getOpenLobbyByIdIR: any = {"usedParamSet":{"searchQuery":true,"nft_id":true},"params":[{"name":"searchQuery","required":false,"transform":{"type":"scalar"},"locs":[{"a":80,"b":91}]},{"name":"nft_id","required":false,"transform":{"type":"scalar"},"locs":[{"a":122,"b":128}]}],"statement":"SELECT *\nFROM lobbies\nWHERE lobbies.lobby_state = 'open' AND lobbies.lobby_id = :searchQuery AND lobbies.lobby_creator != :nft_id"};
 
 /**
  * Query generated from SQL:
@@ -140,7 +143,7 @@ const getOpenLobbyByIdIR: any = { "usedParamSet": { "searchQuery": true, "nft_id
  * WHERE lobbies.lobby_state = 'open' AND lobbies.lobby_id = :searchQuery AND lobbies.lobby_creator != :nft_id
  * ```
  */
-export const getOpenLobbyById = new PreparedQuery<IGetOpenLobbyByIdParams, IGetOpenLobbyByIdResult>(getOpenLobbyByIdIR);
+export const getOpenLobbyById = new PreparedQuery<IGetOpenLobbyByIdParams,IGetOpenLobbyByIdResult>(getOpenLobbyByIdIR);
 
 
 /** 'GetLobbyPlayers' parameters type */
@@ -164,7 +167,7 @@ export interface IGetLobbyPlayersQuery {
   result: IGetLobbyPlayersResult;
 }
 
-const getLobbyPlayersIR: any = { "usedParamSet": { "lobby_id": true }, "params": [{ "name": "lobby_id", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 57, "b": 66 }] }], "statement": "SELECT *\nFROM lobby_player\nWHERE lobby_player.lobby_id = :lobby_id!" };
+const getLobbyPlayersIR: any = {"usedParamSet":{"lobby_id":true},"params":[{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":57,"b":66}]}],"statement":"SELECT *\nFROM lobby_player\nWHERE lobby_player.lobby_id = :lobby_id!"};
 
 /**
  * Query generated from SQL:
@@ -174,7 +177,7 @@ const getLobbyPlayersIR: any = { "usedParamSet": { "lobby_id": true }, "params":
  * WHERE lobby_player.lobby_id = :lobby_id!
  * ```
  */
-export const getLobbyPlayers = new PreparedQuery<IGetLobbyPlayersParams, IGetLobbyPlayersResult>(getLobbyPlayersIR);
+export const getLobbyPlayers = new PreparedQuery<IGetLobbyPlayersParams,IGetLobbyPlayersResult>(getLobbyPlayersIR);
 
 
 /** 'GetRandomLobby' parameters type */
@@ -191,7 +194,7 @@ export interface IGetRandomLobbyResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   play_time_per_player: number;
@@ -205,7 +208,7 @@ export interface IGetRandomLobbyQuery {
   result: IGetRandomLobbyResult;
 }
 
-const getRandomLobbyIR: any = { "usedParamSet": {}, "params": [], "statement": "SELECT *\nFROM lobbies\nWHERE random() < 0.1\nAND lobbies.lobby_state = 'open' AND lobbies.hidden is FALSE\nLIMIT 1" };
+const getRandomLobbyIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT *\nFROM lobbies\nWHERE random() < 0.1\nAND lobbies.lobby_state = 'open' AND lobbies.hidden is FALSE\nLIMIT 1"};
 
 /**
  * Query generated from SQL:
@@ -217,7 +220,7 @@ const getRandomLobbyIR: any = { "usedParamSet": {}, "params": [], "statement": "
  * LIMIT 1
  * ```
  */
-export const getRandomLobby = new PreparedQuery<IGetRandomLobbyParams, IGetRandomLobbyResult>(getRandomLobbyIR);
+export const getRandomLobby = new PreparedQuery<IGetRandomLobbyParams,IGetRandomLobbyResult>(getRandomLobbyIR);
 
 
 /** 'GetRandomActiveLobby' parameters type */
@@ -234,7 +237,7 @@ export interface IGetRandomActiveLobbyResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   play_time_per_player: number;
@@ -248,7 +251,7 @@ export interface IGetRandomActiveLobbyQuery {
   result: IGetRandomActiveLobbyResult;
 }
 
-const getRandomActiveLobbyIR: any = { "usedParamSet": {}, "params": [], "statement": "SELECT * FROM lobbies\nWHERE random() < 0.1\nAND lobbies.lobby_state = 'active'\nLIMIT 1" };
+const getRandomActiveLobbyIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT * FROM lobbies\nWHERE random() < 0.1\nAND lobbies.lobby_state = 'active'\nLIMIT 1"};
 
 /**
  * Query generated from SQL:
@@ -259,7 +262,7 @@ const getRandomActiveLobbyIR: any = { "usedParamSet": {}, "params": [], "stateme
  * LIMIT 1
  * ```
  */
-export const getRandomActiveLobby = new PreparedQuery<IGetRandomActiveLobbyParams, IGetRandomActiveLobbyResult>(getRandomActiveLobbyIR);
+export const getRandomActiveLobby = new PreparedQuery<IGetRandomActiveLobbyParams,IGetRandomActiveLobbyResult>(getRandomActiveLobbyIR);
 
 
 /** 'GetUserLobbies' parameters type */
@@ -278,7 +281,7 @@ export interface IGetUserLobbiesResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   play_time_per_player: number;
@@ -292,7 +295,7 @@ export interface IGetUserLobbiesQuery {
   result: IGetUserLobbiesResult;
 }
 
-const getUserLobbiesIR: any = { "usedParamSet": { "nft_id": true }, "params": [{ "name": "nft_id", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 196, "b": 203 }] }], "statement": "SELECT lobbies.*\nFROM lobbies JOIN lobby_player\n  ON lobbies.lobby_id = lobby_player.lobby_id\nWHERE lobbies.lobby_state != 'finished'\nAND lobbies.lobby_state != 'closed'\nAND lobby_player.nft_id = :nft_id!\nORDER BY created_at DESC" };
+const getUserLobbiesIR: any = {"usedParamSet":{"nft_id":true},"params":[{"name":"nft_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":196,"b":203}]}],"statement":"SELECT lobbies.*\nFROM lobbies JOIN lobby_player\n  ON lobbies.lobby_id = lobby_player.lobby_id\nWHERE lobbies.lobby_state != 'finished'\nAND lobbies.lobby_state != 'closed'\nAND lobby_player.nft_id = :nft_id!\nORDER BY created_at DESC"};
 
 /**
  * Query generated from SQL:
@@ -306,14 +309,14 @@ const getUserLobbiesIR: any = { "usedParamSet": { "nft_id": true }, "params": [{
  * ORDER BY created_at DESC
  * ```
  */
-export const getUserLobbies = new PreparedQuery<IGetUserLobbiesParams, IGetUserLobbiesResult>(getUserLobbiesIR);
+export const getUserLobbies = new PreparedQuery<IGetUserLobbiesParams,IGetUserLobbiesResult>(getUserLobbiesIR);
 
 
 /** 'GetPaginatedUserLobbies' parameters type */
 export interface IGetPaginatedUserLobbiesParams {
-  count: string | null | void;
+  count?: NumberOrString | null | void;
   nft_id: number;
-  page: string | null | void;
+  page?: NumberOrString | null | void;
 }
 
 /** 'GetPaginatedUserLobbies' return type */
@@ -327,7 +330,7 @@ export interface IGetPaginatedUserLobbiesResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   play_time_per_player: number;
@@ -341,7 +344,7 @@ export interface IGetPaginatedUserLobbiesQuery {
   result: IGetPaginatedUserLobbiesResult;
 }
 
-const getPaginatedUserLobbiesIR: any = { "usedParamSet": { "nft_id": true, "count": true, "page": true }, "params": [{ "name": "nft_id", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 203, "b": 210 }] }, { "name": "count", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 269, "b": 274 }] }, { "name": "page", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 283, "b": 287 }] }], "statement": "SELECT lobbies.*\nFROM lobbies JOIN lobby_player\n  ON lobbies.lobby_id = lobby_player.lobby_id\nWHERE \n  lobbies.lobby_state != 'finished' AND\n  lobbies.lobby_state != 'closed' AND\n  lobby_player.nft_id = :nft_id!\nGROUP BY lobbies.lobby_id\nORDER BY created_at DESC\nLIMIT :count\nOFFSET :page" };
+const getPaginatedUserLobbiesIR: any = {"usedParamSet":{"nft_id":true,"count":true,"page":true},"params":[{"name":"nft_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":203,"b":210}]},{"name":"count","required":false,"transform":{"type":"scalar"},"locs":[{"a":269,"b":274}]},{"name":"page","required":false,"transform":{"type":"scalar"},"locs":[{"a":283,"b":287}]}],"statement":"SELECT lobbies.*\nFROM lobbies JOIN lobby_player\n  ON lobbies.lobby_id = lobby_player.lobby_id\nWHERE \n  lobbies.lobby_state != 'finished' AND\n  lobbies.lobby_state != 'closed' AND\n  lobby_player.nft_id = :nft_id!\nGROUP BY lobbies.lobby_id\nORDER BY created_at DESC\nLIMIT :count\nOFFSET :page"};
 
 /**
  * Query generated from SQL:
@@ -359,14 +362,14 @@ const getPaginatedUserLobbiesIR: any = { "usedParamSet": { "nft_id": true, "coun
  * OFFSET :page
  * ```
  */
-export const getPaginatedUserLobbies = new PreparedQuery<IGetPaginatedUserLobbiesParams, IGetPaginatedUserLobbiesResult>(getPaginatedUserLobbiesIR);
+export const getPaginatedUserLobbies = new PreparedQuery<IGetPaginatedUserLobbiesParams,IGetPaginatedUserLobbiesResult>(getPaginatedUserLobbiesIR);
 
 
 /** 'GetAllPaginatedUserLobbies' parameters type */
 export interface IGetAllPaginatedUserLobbiesParams {
-  count: string | null | void;
+  count?: NumberOrString | null | void;
   nft_id: number;
-  page: string | null | void;
+  page?: NumberOrString | null | void;
 }
 
 /** 'GetAllPaginatedUserLobbies' return type */
@@ -380,7 +383,7 @@ export interface IGetAllPaginatedUserLobbiesResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   play_time_per_player: number;
@@ -394,7 +397,7 @@ export interface IGetAllPaginatedUserLobbiesQuery {
   result: IGetAllPaginatedUserLobbiesResult;
 }
 
-const getAllPaginatedUserLobbiesIR: any = { "usedParamSet": { "nft_id": true, "count": true, "page": true }, "params": [{ "name": "nft_id", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 127, "b": 134 }] }, { "name": "count", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 289, "b": 294 }] }, { "name": "page", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 303, "b": 307 }] }], "statement": "SELECT lobbies.*\nFROM \n  lobbies JOIN lobby_player\n    ON lobbies.lobby_id = lobby_player.lobby_id\nWHERE lobby_player.nft_id = :nft_id!\nGROUP BY lobbies.lobby_id\nORDER BY \n  lobby_state = 'active' DESC,\n  lobby_state = 'open' DESC,\n  lobby_state = 'finished' DESC,\n  created_at DESC\nLIMIT :count\nOFFSET :page" };
+const getAllPaginatedUserLobbiesIR: any = {"usedParamSet":{"nft_id":true,"count":true,"page":true},"params":[{"name":"nft_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":127,"b":134}]},{"name":"count","required":false,"transform":{"type":"scalar"},"locs":[{"a":289,"b":294}]},{"name":"page","required":false,"transform":{"type":"scalar"},"locs":[{"a":303,"b":307}]}],"statement":"SELECT lobbies.*\nFROM \n  lobbies JOIN lobby_player\n    ON lobbies.lobby_id = lobby_player.lobby_id\nWHERE lobby_player.nft_id = :nft_id!\nGROUP BY lobbies.lobby_id\nORDER BY \n  lobby_state = 'active' DESC,\n  lobby_state = 'open' DESC,\n  lobby_state = 'finished' DESC,\n  created_at DESC\nLIMIT :count\nOFFSET :page"};
 
 /**
  * Query generated from SQL:
@@ -414,7 +417,7 @@ const getAllPaginatedUserLobbiesIR: any = { "usedParamSet": { "nft_id": true, "c
  * OFFSET :page
  * ```
  */
-export const getAllPaginatedUserLobbies = new PreparedQuery<IGetAllPaginatedUserLobbiesParams, IGetAllPaginatedUserLobbiesResult>(getAllPaginatedUserLobbiesIR);
+export const getAllPaginatedUserLobbies = new PreparedQuery<IGetAllPaginatedUserLobbiesParams,IGetAllPaginatedUserLobbiesResult>(getAllPaginatedUserLobbiesIR);
 
 
 /** 'GetActiveLobbies' parameters type */
@@ -431,7 +434,7 @@ export interface IGetActiveLobbiesResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   play_time_per_player: number;
@@ -445,7 +448,7 @@ export interface IGetActiveLobbiesQuery {
   result: IGetActiveLobbiesResult;
 }
 
-const getActiveLobbiesIR: any = { "usedParamSet": {}, "params": [], "statement": "SELECT * FROM lobbies\nWHERE lobbies.lobby_state = 'active'" };
+const getActiveLobbiesIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT * FROM lobbies\nWHERE lobbies.lobby_state = 'active'"};
 
 /**
  * Query generated from SQL:
@@ -454,7 +457,7 @@ const getActiveLobbiesIR: any = { "usedParamSet": {}, "params": [], "statement":
  * WHERE lobbies.lobby_state = 'active'
  * ```
  */
-export const getActiveLobbies = new PreparedQuery<IGetActiveLobbiesParams, IGetActiveLobbiesResult>(getActiveLobbiesIR);
+export const getActiveLobbies = new PreparedQuery<IGetActiveLobbiesParams,IGetActiveLobbiesResult>(getActiveLobbiesIR);
 
 
 /** 'GetLobbyById' parameters type */
@@ -473,7 +476,7 @@ export interface IGetLobbyByIdResult {
   hidden: boolean;
   lobby_creator: number;
   lobby_id: string;
-  lobby_state: lobby_status;
+  lobby_state: LobbyStatus;
   max_players: number;
   num_of_rounds: number;
   play_time_per_player: number;
@@ -487,7 +490,7 @@ export interface IGetLobbyByIdQuery {
   result: IGetLobbyByIdResult;
 }
 
-const getLobbyByIdIR: any = { "usedParamSet": { "lobby_id": true }, "params": [{ "name": "lobby_id", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 39, "b": 48 }] }], "statement": "SELECT * FROM lobbies\nWHERE lobby_id = :lobby_id!" };
+const getLobbyByIdIR: any = {"usedParamSet":{"lobby_id":true},"params":[{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":39,"b":48}]}],"statement":"SELECT * FROM lobbies\nWHERE lobby_id = :lobby_id!"};
 
 /**
  * Query generated from SQL:
@@ -496,7 +499,7 @@ const getLobbyByIdIR: any = { "usedParamSet": { "lobby_id": true }, "params": [{
  * WHERE lobby_id = :lobby_id!
  * ```
  */
-export const getLobbyById = new PreparedQuery<IGetLobbyByIdParams, IGetLobbyByIdResult>(getLobbyByIdIR);
+export const getLobbyById = new PreparedQuery<IGetLobbyByIdParams,IGetLobbyByIdResult>(getLobbyByIdIR);
 
 
 /** 'GetMatch' parameters type */
@@ -519,7 +522,7 @@ export interface IGetMatchQuery {
   result: IGetMatchResult;
 }
 
-const getMatchIR: any = { "usedParamSet": { "lobby_id": true, "match_within_lobby": true }, "params": [{ "name": "lobby_id", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 46, "b": 55 }] }, { "name": "match_within_lobby", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 84, "b": 103 }] }], "statement": "SELECT * FROM lobby_match\nWHERE \n  lobby_id = :lobby_id! AND\n  match_within_lobby = :match_within_lobby!" };
+const getMatchIR: any = {"usedParamSet":{"lobby_id":true,"match_within_lobby":true},"params":[{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":46,"b":55}]},{"name":"match_within_lobby","required":true,"transform":{"type":"scalar"},"locs":[{"a":84,"b":103}]}],"statement":"SELECT * FROM lobby_match\nWHERE \n  lobby_id = :lobby_id! AND\n  match_within_lobby = :match_within_lobby!"};
 
 /**
  * Query generated from SQL:
@@ -530,12 +533,12 @@ const getMatchIR: any = { "usedParamSet": { "lobby_id": true, "match_within_lobb
  *   match_within_lobby = :match_within_lobby!
  * ```
  */
-export const getMatch = new PreparedQuery<IGetMatchParams, IGetMatchResult>(getMatchIR);
+export const getMatch = new PreparedQuery<IGetMatchParams,IGetMatchResult>(getMatchIR);
 
 
 /** 'GetUserStats' parameters type */
 export interface IGetUserStatsParams {
-  nft_id: number | null | void;
+  nft_id?: number | null | void;
 }
 
 /** 'GetUserStats' return type */
@@ -552,7 +555,7 @@ export interface IGetUserStatsQuery {
   result: IGetUserStatsResult;
 }
 
-const getUserStatsIR: any = { "usedParamSet": { "nft_id": true }, "params": [{ "name": "nft_id", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 47, "b": 53 }] }], "statement": "SELECT * FROM global_user_state\nWHERE nft_id = :nft_id" };
+const getUserStatsIR: any = {"usedParamSet":{"nft_id":true},"params":[{"name":"nft_id","required":false,"transform":{"type":"scalar"},"locs":[{"a":47,"b":53}]}],"statement":"SELECT * FROM global_user_state\nWHERE nft_id = :nft_id"};
 
 /**
  * Query generated from SQL:
@@ -561,13 +564,13 @@ const getUserStatsIR: any = { "usedParamSet": { "nft_id": true }, "params": [{ "
  * WHERE nft_id = :nft_id
  * ```
  */
-export const getUserStats = new PreparedQuery<IGetUserStatsParams, IGetUserStatsResult>(getUserStatsIR);
+export const getUserStats = new PreparedQuery<IGetUserStatsParams,IGetUserStatsResult>(getUserStatsIR);
 
 
 /** 'GetBothUserStats' parameters type */
 export interface IGetBothUserStatsParams {
-  nft_id_1: number | null | void;
-  nft_id_2: number | null | void;
+  nft_id_1?: number | null | void;
+  nft_id_2?: number | null | void;
 }
 
 /** 'GetBothUserStats' return type */
@@ -584,7 +587,7 @@ export interface IGetBothUserStatsQuery {
   result: IGetBothUserStatsResult;
 }
 
-const getBothUserStatsIR: any = { "usedParamSet": { "nft_id_1": true, "nft_id_2": true }, "params": [{ "name": "nft_id_1", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 108, "b": 116 }] }, { "name": "nft_id_2", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 148, "b": 156 }] }], "statement": "SELECT global_user_state.nft_id, wins, losses, ties\nFROM global_user_state\nWHERE global_user_state.nft_id = :nft_id_1\nOR global_user_state.nft_id = :nft_id_2" };
+const getBothUserStatsIR: any = {"usedParamSet":{"nft_id_1":true,"nft_id_2":true},"params":[{"name":"nft_id_1","required":false,"transform":{"type":"scalar"},"locs":[{"a":108,"b":116}]},{"name":"nft_id_2","required":false,"transform":{"type":"scalar"},"locs":[{"a":148,"b":156}]}],"statement":"SELECT global_user_state.nft_id, wins, losses, ties\nFROM global_user_state\nWHERE global_user_state.nft_id = :nft_id_1\nOR global_user_state.nft_id = :nft_id_2"};
 
 /**
  * Query generated from SQL:
@@ -595,7 +598,7 @@ const getBothUserStatsIR: any = { "usedParamSet": { "nft_id_1": true, "nft_id_2"
  * OR global_user_state.nft_id = :nft_id_2
  * ```
  */
-export const getBothUserStats = new PreparedQuery<IGetBothUserStatsParams, IGetBothUserStatsResult>(getBothUserStatsIR);
+export const getBothUserStats = new PreparedQuery<IGetBothUserStatsParams,IGetBothUserStatsResult>(getBothUserStatsIR);
 
 
 /** 'GetRoundMoves' parameters type */
@@ -622,7 +625,7 @@ export interface IGetRoundMovesQuery {
   result: IGetRoundMovesResult;
 }
 
-const getRoundMovesIR: any = { "usedParamSet": { "lobby_id": true, "match_within_lobby": true, "round_within_match": true }, "params": [{ "name": "lobby_id", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 44, "b": 53 }] }, { "name": "match_within_lobby", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 82, "b": 101 }] }, { "name": "round_within_match", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 130, "b": 149 }] }], "statement": "SELECT *\nFROM round_move\nWHERE\n  lobby_id = :lobby_id! AND\n  match_within_lobby = :match_within_lobby! AND\n  round_within_match = :round_within_match!\nORDER BY round_move.move_within_round" };
+const getRoundMovesIR: any = {"usedParamSet":{"lobby_id":true,"match_within_lobby":true,"round_within_match":true},"params":[{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":44,"b":53}]},{"name":"match_within_lobby","required":true,"transform":{"type":"scalar"},"locs":[{"a":82,"b":101}]},{"name":"round_within_match","required":true,"transform":{"type":"scalar"},"locs":[{"a":130,"b":149}]}],"statement":"SELECT *\nFROM round_move\nWHERE\n  lobby_id = :lobby_id! AND\n  match_within_lobby = :match_within_lobby! AND\n  round_within_match = :round_within_match!\nORDER BY round_move.move_within_round"};
 
 /**
  * Query generated from SQL:
@@ -636,7 +639,7 @@ const getRoundMovesIR: any = { "usedParamSet": { "lobby_id": true, "match_within
  * ORDER BY round_move.move_within_round
  * ```
  */
-export const getRoundMoves = new PreparedQuery<IGetRoundMovesParams, IGetRoundMovesResult>(getRoundMovesIR);
+export const getRoundMoves = new PreparedQuery<IGetRoundMovesParams,IGetRoundMovesResult>(getRoundMovesIR);
 
 
 /** 'GetMatchMoves' parameters type */
@@ -662,7 +665,7 @@ export interface IGetMatchMovesQuery {
   result: IGetMatchMovesResult;
 }
 
-const getMatchMovesIR: any = { "usedParamSet": { "lobby_id": true, "match_within_lobby": true }, "params": [{ "name": "lobby_id", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 45, "b": 54 }] }, { "name": "match_within_lobby", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 83, "b": 102 }] }], "statement": "SELECT *\nFROM round_move\nWHERE \n  lobby_id = :lobby_id! AND\n  match_within_lobby = :match_within_lobby!\nORDER BY\n  round_move.round_within_match,\n  round_move.move_within_round" };
+const getMatchMovesIR: any = {"usedParamSet":{"lobby_id":true,"match_within_lobby":true},"params":[{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":45,"b":54}]},{"name":"match_within_lobby","required":true,"transform":{"type":"scalar"},"locs":[{"a":83,"b":102}]}],"statement":"SELECT *\nFROM round_move\nWHERE \n  lobby_id = :lobby_id! AND\n  match_within_lobby = :match_within_lobby!\nORDER BY\n  round_move.round_within_match,\n  round_move.move_within_round"};
 
 /**
  * Query generated from SQL:
@@ -677,13 +680,13 @@ const getMatchMovesIR: any = { "usedParamSet": { "lobby_id": true, "match_within
  *   round_move.move_within_round
  * ```
  */
-export const getMatchMoves = new PreparedQuery<IGetMatchMovesParams, IGetMatchMovesResult>(getMatchMovesIR);
+export const getMatchMoves = new PreparedQuery<IGetMatchMovesParams,IGetMatchMovesResult>(getMatchMovesIR);
 
 
 /** 'GetNewLobbiesByUserAndBlockHeight' parameters type */
 export interface IGetNewLobbiesByUserAndBlockHeightParams {
-  block_height: number | null | void;
-  nft_id: number | null | void;
+  block_height?: number | null | void;
+  nft_id?: number | null | void;
 }
 
 /** 'GetNewLobbiesByUserAndBlockHeight' return type */
@@ -697,7 +700,7 @@ export interface IGetNewLobbiesByUserAndBlockHeightQuery {
   result: IGetNewLobbiesByUserAndBlockHeightResult;
 }
 
-const getNewLobbiesByUserAndBlockHeightIR: any = { "usedParamSet": { "nft_id": true, "block_height": true }, "params": [{ "name": "nft_id", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 51, "b": 57 }] }, { "name": "block_height", "required": false, "transform": { "type": "scalar" }, "locs": [{ "a": 87, "b": 99 }] }], "statement": "SELECT lobby_id FROM lobbies\nWHERE lobby_creator = :nft_id\nAND creation_block_height = :block_height" };
+const getNewLobbiesByUserAndBlockHeightIR: any = {"usedParamSet":{"nft_id":true,"block_height":true},"params":[{"name":"nft_id","required":false,"transform":{"type":"scalar"},"locs":[{"a":51,"b":57}]},{"name":"block_height","required":false,"transform":{"type":"scalar"},"locs":[{"a":87,"b":99}]}],"statement":"SELECT lobby_id FROM lobbies\nWHERE lobby_creator = :nft_id\nAND creation_block_height = :block_height"};
 
 /**
  * Query generated from SQL:
@@ -707,7 +710,7 @@ const getNewLobbiesByUserAndBlockHeightIR: any = { "usedParamSet": { "nft_id": t
  * AND creation_block_height = :block_height
  * ```
  */
-export const getNewLobbiesByUserAndBlockHeight = new PreparedQuery<IGetNewLobbiesByUserAndBlockHeightParams, IGetNewLobbiesByUserAndBlockHeightResult>(getNewLobbiesByUserAndBlockHeightIR);
+export const getNewLobbiesByUserAndBlockHeight = new PreparedQuery<IGetNewLobbiesByUserAndBlockHeightParams,IGetNewLobbiesByUserAndBlockHeightResult>(getNewLobbiesByUserAndBlockHeightIR);
 
 
 /** 'GetRound' parameters type */
@@ -733,7 +736,7 @@ export interface IGetRoundQuery {
   result: IGetRoundResult;
 }
 
-const getRoundIR: any = { "usedParamSet": { "lobby_id": true, "match_within_lobby": true, "round_within_match": true }, "params": [{ "name": "lobby_id", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 46, "b": 55 }] }, { "name": "match_within_lobby", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 84, "b": 103 }] }, { "name": "round_within_match", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 132, "b": 151 }] }], "statement": "SELECT *\nFROM match_round\nWHERE \n  lobby_id = :lobby_id! AND\n  match_within_lobby = :match_within_lobby! AND\n  round_within_match = :round_within_match!" };
+const getRoundIR: any = {"usedParamSet":{"lobby_id":true,"match_within_lobby":true,"round_within_match":true},"params":[{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":46,"b":55}]},{"name":"match_within_lobby","required":true,"transform":{"type":"scalar"},"locs":[{"a":84,"b":103}]},{"name":"round_within_match","required":true,"transform":{"type":"scalar"},"locs":[{"a":132,"b":151}]}],"statement":"SELECT *\nFROM match_round\nWHERE \n  lobby_id = :lobby_id! AND\n  match_within_lobby = :match_within_lobby! AND\n  round_within_match = :round_within_match!"};
 
 /**
  * Query generated from SQL:
@@ -746,7 +749,7 @@ const getRoundIR: any = { "usedParamSet": { "lobby_id": true, "match_within_lobb
  *   round_within_match = :round_within_match!
  * ```
  */
-export const getRound = new PreparedQuery<IGetRoundParams, IGetRoundResult>(getRoundIR);
+export const getRound = new PreparedQuery<IGetRoundParams,IGetRoundResult>(getRoundIR);
 
 
 /** 'GetMatchSeeds' parameters type */
@@ -774,7 +777,7 @@ export interface IGetMatchSeedsQuery {
   result: IGetMatchSeedsResult;
 }
 
-const getMatchSeedsIR: any = { "usedParamSet": { "lobby_id": true, "match_within_lobby": true }, "params": [{ "name": "lobby_id", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 133, "b": 142 }] }, { "name": "match_within_lobby", "required": true, "transform": { "type": "scalar" }, "locs": [{ "a": 171, "b": 190 }] }], "statement": "SELECT *\nFROM match_round JOIN block_heights\n  ON block_heights.block_height = match_round.execution_block_height\nWHERE\n  lobby_id = :lobby_id! AND\n  match_within_lobby = :match_within_lobby!\nORDER BY match_round.round_within_match ASC" };
+const getMatchSeedsIR: any = {"usedParamSet":{"lobby_id":true,"match_within_lobby":true},"params":[{"name":"lobby_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":133,"b":142}]},{"name":"match_within_lobby","required":true,"transform":{"type":"scalar"},"locs":[{"a":171,"b":190}]}],"statement":"SELECT *\nFROM match_round JOIN block_heights\n  ON block_heights.block_height = match_round.execution_block_height\nWHERE\n  lobby_id = :lobby_id! AND\n  match_within_lobby = :match_within_lobby!\nORDER BY match_round.round_within_match ASC"};
 
 /**
  * Query generated from SQL:
@@ -788,6 +791,6 @@ const getMatchSeedsIR: any = { "usedParamSet": { "lobby_id": true, "match_within
  * ORDER BY match_round.round_within_match ASC
  * ```
  */
-export const getMatchSeeds = new PreparedQuery<IGetMatchSeedsParams, IGetMatchSeedsResult>(getMatchSeedsIR);
+export const getMatchSeeds = new PreparedQuery<IGetMatchSeedsParams,IGetMatchSeedsResult>(getMatchSeedsIR);
 
 

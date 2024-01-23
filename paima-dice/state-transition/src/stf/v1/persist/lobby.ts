@@ -6,8 +6,8 @@ import type { LobbyPlayer, LobbyStatus, MatchEnvironment } from '@dice/utils';
 import { PRACTICE_BOT_NFT_ID } from '@dice/utils';
 import { persistStartMatch } from './match.js';
 import type { SQLUpdate } from '@paima/node-sdk/db';
-import type { IJoinPlayerToLobbyParams } from '@dice/db/src/insert.queries.js';
-import { joinPlayerToLobby } from '@dice/db/src/insert.queries.js';
+import type { IJoinPlayerToLobbyParams } from '@dice/db';
+import { joinPlayerToLobby } from '@dice/db';
 
 // Persist creation of a lobby
 export function persistLobbyCreation(
@@ -82,14 +82,14 @@ export function persistLobbyCreation(
     lobbyPlayers.length < lobbyParams.max_players
       ? []
       : persistStartMatch(
-        lobby_id,
-        matchEnvironment,
-        lobbyPlayers,
-        null,
-        lobbyParams.round_length,
-        blockHeight,
-        randomnessGenerator
-      );
+          lobby_id,
+          matchEnvironment,
+          lobbyPlayers,
+          null,
+          lobbyParams.round_length,
+          blockHeight,
+          randomnessGenerator
+        );
 
   console.log(`Created lobby ${lobby_id}`);
   return [

@@ -55,6 +55,8 @@ export default defineConfig({
       // Node.js global to browser globalThis
       define: {
         global: 'globalThis',
+        // TODO: include the SECURITY_NAMESPACE once we export it
+        // https://github.com/PaimaStudios/paima-game-templates/issues/58
         ...esbuildEnvs,
       },
       // Enable esbuild polyfill plugins

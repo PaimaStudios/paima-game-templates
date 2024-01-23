@@ -16,5 +16,8 @@
     "host": "localhost",
     "port": 5432,
     "ssl": false
+  },
+  "typesOverrides": {
+    "lobby_status": "@src/common.js#LobbyStatus"
   }
 }

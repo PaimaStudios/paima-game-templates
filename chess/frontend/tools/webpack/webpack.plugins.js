@@ -24,6 +24,8 @@ module.exports = [
           "BLOCK_TIME",
           "CONTRACT_ADDRESS",
           "START_BLOCKHEIGHT",
+          "BACKEND_URI",
+          "WEBSERVER_PORT",
         ].map((key) => [key, process.env[key]]),
       ),
     ),

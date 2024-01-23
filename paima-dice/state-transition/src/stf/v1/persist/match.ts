@@ -15,16 +15,16 @@ import {
   updateLobbyCurrentRound,
   updateLobbyMatchState,
   updateLobbyState,
-} from '@dice/db/src/update.queries.js';
+} from '@dice/db';
 import type {
   IUpdateLobbyCurrentMatchParams,
   IUpdateLobbyCurrentRoundParams,
   IUpdateLobbyMatchStateParams,
   IUpdateLobbyStateParams,
-} from '@dice/db/src/update.queries.js';
-import type { INewMatchParams, INewMoveParams } from '@dice/db/src/insert.queries.js';
-import { newMatch, newMove } from '@dice/db/src/insert.queries.js';
-import type { IGetRoundResult } from '@dice/db/src/select.queries.js';
+} from '@dice/db';
+import type { INewMatchParams, INewMoveParams } from '@dice/db';
+import { newMatch, newMove } from '@dice/db';
+import type { IGetRoundResult } from '@dice/db';
 import type Prando from '@paima/sdk/prando';
 import { schedulePracticeMove } from './practice.js';
 import { scheduleStatsUpdate } from './stats.js';

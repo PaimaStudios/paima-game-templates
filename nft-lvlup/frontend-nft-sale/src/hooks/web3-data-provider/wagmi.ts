@@ -66,7 +66,7 @@ export function getInjectedWallet(
 }
 
 // todo: will probably want to turn this into a connector as part of a paima-wagmi package
-// but it may be better to implement https://github.com/PaimaStudios/paima-engine/issues/291 instead
+// https://github.com/PaimaStudios/paima-engine/issues/292
 export const paimaConnector = injected({
   target() {
     return {
@@ -77,6 +77,7 @@ export const paimaConnector = injected({
     };
   },
 });
+// TODO: https://github.com/PaimaStudios/paima-engine/issues/292
 export const wagmiConfig = createConfig({
   chains: [supportedChain],
   client({ chain }) {
@@ -88,11 +89,14 @@ export const wagmiConfig = createConfig({
       key: 'nft.characters',
     }),
   }),
-  // we still need to provide a connector even though it's defined in our transport
-  // this is because the chain a dApp connects to is checked to matched the value in `connectors`
-  // in wagmi's `connect` function
-  // connectors are not automatically generated from the client
-  // (wagmi instead does the opposite where transports are generated from connectors if not specified)
+  // start with no connectors since we will inject a connector later once the Paima `userWalletLogin` is done
+  // using
+  // ```ts
+  //     const { connect } = useConnect();
+  //     connect({ connector: paimaConnector });
+  // ```
+  // note: careful connectors are not added automatically even though it's defined in the transport of our client
+  //       wagmi instead does the opposite where transports are generated from connectors if not specified
   connectors: [],
   // we purposely turn off all wallet connection logic
   // this is because Paima will handle connecting the wallet

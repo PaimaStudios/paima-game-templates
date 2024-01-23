@@ -106,7 +106,7 @@
 	"paths": {
 		"/world_state": {
 			"get": {
-				"operationId": "WorldStateGet",
+				"operationId": "Get",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -125,7 +125,7 @@
 		},
 		"/user_stats": {
 			"get": {
-				"operationId": "UserStatsGet",
+				"operationId": "Get",
 				"responses": {
 					"200": {
 						"description": "Ok",
