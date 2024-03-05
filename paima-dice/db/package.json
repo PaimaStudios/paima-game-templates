@@ -6,7 +6,8 @@
   "types": "build/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
+    "clean": "rm -rf tsconfig.tsbuildinfo & rm -rf build",
+    "build": "npm run clean && tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "npx pgtyped -w -c pgtypedconfig.json"
   },
