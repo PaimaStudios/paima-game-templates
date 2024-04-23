@@ -34,6 +34,7 @@
   },
   "name":"example-game",
   "resources":[
+    {"id":{"name":"PaimaMW","path":"extensions/PaimaMW/PaimaMW.yy",},},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
   ],
   "resourceType":"GMProject",
