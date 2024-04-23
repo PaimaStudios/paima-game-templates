@@ -9,7 +9,7 @@
     "initialize": "npm ci && cp .env.example ../.env.localhost && cp extensions.yml ../extensions.yml",
     "pack": "scripts/pack.sh",
     "pack:middleware": "npm run build -w middleware/",
-    "build": "npx tsc --build tsconfig.build.json",
+    "build": "tsc --build tsconfig.build.json",
     "lint": "eslint --ext ts,tsx --ignore-path .gitignore .",
     "lint:fix": "eslint --ext ts,tsx --ignore-path .gitignore --fix .",
     "prettier": "prettier --config .prettierrc --ignore-path .prettierignore --check .",
@@ -20,8 +20,8 @@
     "database:reset": "node change-db.js",
     "compile:api": "npm run compile -w api/",
     "compile:db": "npm run compile -w db/",
-    "chain:start": "rm -rf  ./contracts/evm/ignition/deployments/chain-31337 && npx hardhat node",
-    "chain:deploy": "npx hardhat ignition deploy ./contracts/evm/ignition/modules/deploy.ts --parameters ./contracts/evm/ignition/parameters.json --network ${NETWORK:-localhost}"
+    "chain:start": "rm -rf ./contracts/evm/ignition/deployments/chain-31337 && hardhat node",
+    "chain:deploy": "hardhat ignition deploy ./contracts/evm/ignition/modules/deploy.ts --parameters ./contracts/evm/ignition/parameters.json --network ${NETWORK:-localhost}"
   },
   "workspaces": [
     "./utils",

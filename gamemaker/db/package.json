@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "compile": "npx pgtyped -w -c pgtypedconfig.json"
+    "compile": "pgtyped -w -c pgtypedconfig.json"
   },
   "author": "",
   "license": "ISC",

@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "sh scripts/build.sh",
-    "build:testnet": "cross-env NODE_ENV=testnet sh scripts/build.sh",
+    "build": "scripts/build.sh",
+    "build:testnet": "cross-env NODE_ENV=testnet scripts/build.sh",
     "build:prod": "echo \"Error: no prod environment specified\" && exit 1",
     "lint": "prettier --write '**/*.ts'"
   },
