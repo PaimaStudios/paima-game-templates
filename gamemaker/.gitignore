@@ -33,6 +33,7 @@ snapshots
 
 # Frontend
 gm_cli_*
+/frontend/extensions/PaimaMW/PaimaMW*.js
 
 # recompiled code for standalone purposes
 packaged
