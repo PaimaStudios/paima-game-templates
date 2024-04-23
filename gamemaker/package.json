@@ -7,7 +7,7 @@
   "private": true,
   "scripts": {
     "initialize": "npm ci && cp .env.example ../.env.localhost && cp extensions.yml ../extensions.yml",
-    "pack": "sh scripts/pack.sh",
+    "pack": "scripts/pack.sh",
     "pack:middleware": "npm run build -w middleware/",
     "build": "npx tsc --build tsconfig.build.json",
     "lint": "eslint --ext ts,tsx --ignore-path .gitignore .",

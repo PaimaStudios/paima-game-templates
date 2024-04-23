@@ -1,5 +1,7 @@
+#!/bin/sh
 set -eu
 
+npm run compile:api
 npm run build
 
 BUNDLE_WORKSPACE=api node ./esbuildconfig.cjs
