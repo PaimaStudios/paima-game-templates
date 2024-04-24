@@ -17,16 +17,13 @@ if (mode == 0) {
 }
 
 function activate_button() {
-    // Cheap trick to avoid intermediaries: pass `self` so `.mode` works.
-    // Otherwise we'd have to create a JS object {"mode":N} on the JS side.
-    show_debug_message("userWalletLogin starting...");
+    PaimaMW("pushLog")("Calling userWalletLogin...");
     PaimaMW("userWalletLogin")({"mode": mode})[$"then"](function(result) {
-        show_debug_message("userWalletLogin finished");
         if (result.success) {
-            show_debug_message(" -> success");
+            PaimaMW("pushLog")("userWalletLogin succeeded!");
+            inst_controller.on_wallet_connected(result.result.walletAddress);
         } else {
-            show_debug_message(" -> error #{0}: {1}", result.errorCode, result.errorMessage);
+            PaimaMW("pushLog")("userWalletLogin error #" + string(result.errorCode) + ": " + result.errorMessage);
         }
     });
-    show_debug_message("userWalletLogin started");
 }
