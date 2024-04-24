@@ -18,12 +18,12 @@ if (mode == 0) {
 
 function activate_button() {
     PaimaMW("pushLog")("Calling userWalletLogin...");
-    PaimaMW("userWalletLogin")({"mode": mode})[$"then"](function(result) {
-        if (result.success) {
+    PaimaMW("userWalletLogin")({"mode": mode})[$"then"](function(response) {
+        if (response.success) {
             PaimaMW("pushLog")("userWalletLogin succeeded!");
-            inst_controller.on_wallet_connected(result.result.walletAddress);
+            inst_controller.on_wallet_connected(response.result.walletAddress);
         } else {
-            PaimaMW("pushLog")("userWalletLogin error #" + string(result.errorCode) + ": " + result.errorMessage);
+            PaimaMW("pushLog")("userWalletLogin error #" + string(response.errorCode) + ": " + response.errorMessage);
         }
     });
 }

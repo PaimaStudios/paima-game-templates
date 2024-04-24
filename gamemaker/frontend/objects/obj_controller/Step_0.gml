@@ -1,14 +1,7 @@
 /// @description Controller step
 
 if (timer % 60 == 0) {
-    PaimaMW("getLatestProcessedBlockHeight")()[$"then"](method(self, function (result) {
-        if (result.success) {
-            self.blockHeight = result.result;
-            update_status_label();
-        } else {
-            PaimaMW("pushLog")($"getLatestProcessedBlockHeight error: {result.message}");
-        }
-    }));
+    fetch_block_height();
 }
 
 update_log_label();
