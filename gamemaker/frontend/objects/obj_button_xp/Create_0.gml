@@ -11,7 +11,10 @@ function activate_button() {
             PaimaMW("pushLog")("gainExperience succeeded!");
             inst_controller.fetch_experience();
         } else {
-            PaimaMW("pushLog")("gainExperience error #" + string(response.errorCode) + ": " + response.errorMessage);
+            PaimaMW("pushLog")($"gainExperience error #{response.errorCode}: {response.errorMessage}");
         }
+    }, function(error) {
+        // example: "User rejected the request."
+        PaimaMW("pushLog")($"gainExperience error: {error.message}");
     });
 }

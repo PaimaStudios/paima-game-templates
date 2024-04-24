@@ -2,7 +2,7 @@
 
 walletAddress = "";
 walletStatus = "";
-experience = "";
+experience = -1;
 blockHeight = 0;
 
 timer = 0;
@@ -23,7 +23,9 @@ function update_status_label() {
     inst_state_label.text = $"Block height: {blockHeight}\n";
     if (string_length(walletAddress)) {
         inst_state_label.text += $"Wallet: {string_copy(walletAddress, 0, 22)}\n          {string_copy(walletAddress, 22, 20)}\n";
-        inst_state_label.text += $"Experience: {experience}\n";
+        if (experience >= 0) {
+            inst_state_label.text += $"Experience: {experience}\n";
+        }
     }
 }
 
