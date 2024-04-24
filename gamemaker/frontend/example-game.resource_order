@@ -18,6 +18,7 @@
   ],
   "ResourceOrderSettings":[
     {"name":"PaimaMW","order":16,"path":"extensions/PaimaMW/PaimaMW.yy",},
+    {"name":"obj_button_wallet","order":1,"path":"objects/obj_button_wallet/obj_button_wallet.yy",},
     {"name":"spr_button_green","order":1,"path":"sprites/spr_button_green/spr_button_green.yy",},
   ],
 }

@@ -63,6 +63,7 @@ export function jsToGm(obj: any, target?: any): any {
     }[name];
   } else if (typeof obj === 'object') {
     return new Proxy(obj, JS_TO_GM);
+  } else {
+    return obj;
   }
-  return obj;
 }
