@@ -36,10 +36,12 @@ function gmToJs(obj: any): any {
  */
 const JS_TO_GM: ProxyHandler<object> = {
   get(target, p, receiver) {
-    return jsToGm(Reflect.get(target, String(p).replace(/^gml/, ''), receiver), receiver);
+    if (p === '__yyIsGMLObject')
+      return true;
+    return jsToGm(Reflect.get(target, String(p).replace(/^gml/, ''), receiver), target);
   },
   set(target, p, newValue, receiver) {
-    return jsToGm(Reflect.set(target, String(p).replace(/^gml/, ''), newValue, receiver), receiver);
+    return jsToGm(Reflect.set(target, String(p).replace(/^gml/, ''), newValue, receiver), target);
   },
 };
 /**
@@ -48,18 +50,15 @@ const JS_TO_GM: ProxyHandler<object> = {
  * @param receiver The receiver to bind to, if {@link obj} is a function.
  * @returns
  */
-export function jsToGm(obj: any, receiver?: any): any {
-  if (obj instanceof Promise) {
-    // "then" is a GML keyword, so just return it as a callable function.
-    return jsToGm(obj.then, obj);
-  } else if (obj instanceof Function) {
+export function jsToGm(obj: any, target?: any): any {
+  if (obj instanceof Function) {
     // JS functions must be pre-bound to their receiver.
     const name = `${jsToGm.name}(${obj.name})`;
     return {
       // Ritual to let our dynamic name show up in debuggers.
       [name](_inst: any, _other: any, ...args: any[]) {
         // Ignore first two _inst and _other args that GM always adds.
-        return jsToGm(obj.apply(receiver, args.map(gmToJs)), receiver);
+        return jsToGm(obj.apply(target, args.map(gmToJs)) /* no target here */);
       }
     }[name];
   } else if (typeof obj === 'object') {
