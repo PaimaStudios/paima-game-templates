@@ -17,13 +17,11 @@
   "extensionVersion":"0.0.1",
   "files":[
     {"$GMExtensionFile":"","%Name":"PaimaMW.js","constants":[],"copyToTargets":32,"filename":"PaimaMW.js","final":"","functions":[
-        {"$GMExtensionFunction":"","%Name":"PaimaInit","argCount":0,"args":[],"documentation":"","externalName":"PaimaInit","help":"","hidden":false,"kind":5,"name":"PaimaInit","resourceType":"GMExtensionFunction","resourceVersion":"2.0","returnType":1,},
         {"$GMExtensionFunction":"","%Name":"PaimaMW","argCount":2,"args":[1,1,],"documentation":"","externalName":"PaimaMW","help":"Arg0: JS Middlware function name. Arg1: Gets passed to JS function","hidden":false,"kind":5,"name":"PaimaMW","resourceType":"GMExtensionFunction","resourceVersion":"2.0","returnType":1,},
-        {"$GMExtensionFunction":"","%Name":"PaimaMWSync","argCount":2,"args":[1,1,],"documentation":"","externalName":"PaimaMWSync","help":"","hidden":false,"kind":5,"name":"PaimaMWSync","resourceType":"GMExtensionFunction","resourceVersion":"2.0","returnType":1,},
       ],"init":"","kind":5,"name":"PaimaMW.js","order":[],"origname":"","ProxyFiles":[],"resourceType":"GMExtensionFile","resourceVersion":"2.0","uncompress":false,"usesRunnerInterface":false,},
   ],
   "gradleinject":"",
-  "hasConvertedCodeInjection":false,
+  "hasConvertedCodeInjection":true,
   "helpfile":"",
   "HTML5CodeInjection":"",
   "html5Props":true,
