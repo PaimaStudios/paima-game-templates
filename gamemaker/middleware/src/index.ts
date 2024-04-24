@@ -18,3 +18,4 @@ export * from './types';
 export type * from './types';
 
 export default endpoints;
+export { jsToGm } from './gamemaker';
