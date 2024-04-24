@@ -37,6 +37,7 @@
     {"id":{"name":"PaimaMW","path":"extensions/PaimaMW/PaimaMW.yy",},},
     {"id":{"name":"obj_button_wallet","path":"objects/obj_button_wallet/obj_button_wallet.yy",},},
     {"id":{"name":"obj_button","path":"objects/obj_button/obj_button.yy",},},
+    {"id":{"name":"obj_label","path":"objects/obj_label/obj_label.yy",},},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
     {"id":{"name":"spr_button_green","path":"sprites/spr_button_green/spr_button_green.yy",},},
   ],
