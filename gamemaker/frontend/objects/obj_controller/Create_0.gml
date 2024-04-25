@@ -22,7 +22,12 @@ function update_log_label() {
 function update_status_label() {
     inst_state_label.text = $"Block height: {blockHeight}\n";
     if (string_length(walletAddress)) {
-        inst_state_label.text += $"Wallet: {string_copy(walletAddress, 0, 22)}\n          {string_copy(walletAddress, 22, 20)}\n";
+        inst_state_label.text += $"Wallet: {string_copy(walletAddress, 1, 22)}\n";
+        var i = 1 + 22;
+        while (i <= string_length(walletAddress)) {
+            inst_state_label.text += $"        {string_copy(walletAddress, i, 22)}\n";
+            i += 22;
+        }
         if (experience >= 0) {
             inst_state_label.text += $"Experience: {experience}\n";
         }
