@@ -17,7 +17,7 @@
   "extensionVersion":"0.0.1",
   "files":[
     {"$GMExtensionFile":"","%Name":"PaimaMW.js","constants":[],"copyToTargets":32,"filename":"PaimaMW.js","final":"","functions":[
-        {"$GMExtensionFunction":"","%Name":"PaimaMW","argCount":2,"args":[1,1,],"documentation":"","externalName":"PaimaMW","help":"Arg0: JS Middlware function name. Arg1: Gets passed to JS function","hidden":false,"kind":5,"name":"PaimaMW","resourceType":"GMExtensionFunction","resourceVersion":"2.0","returnType":1,},
+        {"$GMExtensionFunction":"","%Name":"PaimaMW","argCount":2,"args":[1,],"documentation":"","externalName":"PaimaMW","help":"Arg: JS function name. Returns callable function.","hidden":false,"kind":5,"name":"PaimaMW","resourceType":"GMExtensionFunction","resourceVersion":"2.0","returnType":2,},
       ],"init":"","kind":5,"name":"PaimaMW.js","order":[],"origname":"","ProxyFiles":[],"resourceType":"GMExtensionFile","resourceVersion":"2.0","uncompress":false,"usesRunnerInterface":false,},
   ],
   "gradleinject":"",
