@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Open World Game</title>
+    <link rel="stylesheet" href="index.css">
+  </head>
+
+  <body>
+    <div>
+      <div id="actions" style="margin-bottom: 16px;"></div>
+      <table id="mined"></div>
+    </div>
+  </body>
+  <script type="module">
+    import endpoints, { WalletMode } from "./paimaMiddleware.js";
+
+    async function start() {
+      const actionsDiv = document.getElementById("actions");
+      // Get data for wallet and world
+      const wallet = await endpoints.userWalletLogin({
+        mode: WalletMode.EvmInjected,
+        preferBatchedMode: false,
+      });
+      if (!wallet.success) throw new Error("Wallet Error");
+
+      const user = await endpoints.getUserStats(wallet.result.walletAddress);
+      console.log('user', user)
+      if (!user.success) {
+        throw new Error("User Error");
+      }
+      if (!user.stats) {
+        let login = document.createElement("button");
+        login.innerHTML = "Join World";
+        login.onclick = () => {
+          endpoints.joinWorld().then((x) => {
+            if (x.success) {
+              actionsDiv.innerHTML = "<span>Please wait...</span>";
+              setTimeout(() => {
+                window.location.reload();
+              }, 10 * 1000); // wait 10 seconds
+            }
+          });
+        };
+        actionsDiv.appendChild(login);
+        return;
+      }
+
+      let mineButton = document.createElement("button");
+      mineButton.innerHTML = "Mine for diamonds";
+      mineButton.onclick = () => {
+        endpoints.submitMineAttempt().then((x) => {
+          if (x.success) {
+            actionsDiv.innerHTML = "<span>Please wait...</span>";
+            setTimeout(() => {
+              window.location.reload();
+            }, 10 * 1000); // wait 10 seconds
+          }
+        });
+      };
+      actionsDiv.appendChild(mineButton);
+
+      if (user.stats.currentusertokenid > 0) {
+      const table = document.getElementById("mined");
+        const row = table.insertRow(0);
+        let cell = row.insertCell(0);
+        cell.innerHTML = `Token ID`;
+        cell = row.insertCell(1);
+        cell.innerHTML = `Amount`;
+        cell = row.insertCell(2);
+        cell.innerHTML = `Is diamond?`;
+
+        for (let i = 0; i < user.stats.currentusertokenid; i++) {
+          const userToken = (await endpoints.getUserTokenStats(wallet.result.walletAddress, i)).stats[0];
+          console.log('token', userToken)
+          const row = table.insertRow(i + 1);
+          let cell = row.insertCell(0);
+          cell.innerHTML = `${i}`;
+          cell = row.insertCell(1);
+          cell.innerHTML = `${userToken.amount}`;
+          cell = row.insertCell(2);
+          cell.innerHTML = `${userToken.isdiamond ? "YES" : "no"}`;
+        }
+      }
+    }
+
+    start().then((r) => r);
+  </script>
+</html>
