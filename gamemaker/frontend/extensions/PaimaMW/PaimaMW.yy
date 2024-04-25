@@ -44,8 +44,8 @@
   "optionsFile":"options.json",
   "packageId":"",
   "parent":{
-    "name":"example-game",
-    "path":"example-game.yyp",
+    "name":"Extensions",
+    "path":"folders/Extensions.yy",
   },
   "productId":"",
   "resourceType":"GMExtension",
