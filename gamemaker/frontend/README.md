@@ -19,6 +19,8 @@ The JS middleware communicates with the GML game through the GML `PaimaMW` exten
 
 Because the middleware is written in JS targeting browsers, you should use GameMaker's HTML5 export. This requires an account. After selecting the HTML5 export, "Build" > "Run" will build and host the export and open a browser pointing to it.
 
+![Screenshot of selecting HTML5/JavaScript export](html5-export-screenshot.png)
+
 # Command-line builds and deployment
 
 Use `npm run build:frontend` (after packing middleware) to perform a command-line build. This requires having logged in to the GameMaker IDE in order to supply runtime and license files for the HTML5 export. The exported files will be placed in `frontend/gm_cli_build/` and can be treated as static files with no further server configuration.
