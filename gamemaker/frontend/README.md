@@ -15,6 +15,8 @@ When you do any changes to the middleware module you need to make it available f
 
 The JS middleware communicates with the GML game through the GML `PaimaMW` extension function which accepts the name of a middleware export (one of the fields of `export default endpoints` in `middleware/src/index.ts`) and returns a function that can be called with arguments normally. See the frontend GML code for examples. These JS endpoints are then responsible for performing network requests to read from the game node and write to the batcher.
 
+![gm-flow](https://github.com/PaimaStudios/paima-game-templates/assets/2608559/81d3bfb6-2385-4092-9458-728fef411836)
+
 # GameMaker IDE gameplay
 
 Because the middleware is written in JS targeting browsers, you should use GameMaker's HTML5 export. This requires an account. After selecting the HTML5 export, "Build" > "Run" will build and host the export and open a browser pointing to it.
