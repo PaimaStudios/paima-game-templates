@@ -15,6 +15,7 @@ type IGetBlockHeightsResult = {
 export type ConciseResult = 'w' | 't' | 'l';
 export type ExpandedResult = 'win' | 'tie' | 'loss';
 export type MatchResult = [ConciseResult, ConciseResult];
+export { LobbyStatus } from '@chess/db';
 
 export interface MatchWinnerResponse {
   match_status?: LobbyStatus;
