@@ -1,5 +1,7 @@
 # Cards Game Node Template
 
+You can find the document describing the cryptographic technique used for private cards [here](https://docs.google.com/document/d/1FTXbkeUkDAVDI45KWkmQGFHYqPuSQxiX6wW6mYv0FOY/edit)
+
 This documentation provides a basic overview of the template. Each module has its own `README` file with more detailed information.
 
 ## Installation
