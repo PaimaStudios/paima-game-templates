@@ -1,55 +1,48 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Open World Game</title>
-    <link rel="stylesheet" href="index.css">
-  </head>
 
-  <body>
-    <div>
-      <div id="actions" style="margin-bottom: 16px;"></div>
-      <table id="mined"></div>
-    </div>
-  </body>
-  <script type="module">
-    import endpoints, { WalletMode } from "./paimaMiddleware.js";
+<head>
+  <meta charset="utf-8" />
+  <title>Open World Game</title>
+  <link rel="stylesheet" href="index.css">
+</head>
 
-    async function start() {
-      const actionsDiv = document.getElementById("actions");
-      // Get data for wallet and world
-      const wallet = await endpoints.userWalletLogin({
-        mode: WalletMode.EvmInjected,
-        preferBatchedMode: false,
-      });
-      if (!wallet.success) throw new Error("Wallet Error");
+<body>
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+    <div id="actions" style="margin-bottom: 16px;"></div>
+    <table id="mined"></table>
+  </div>
+</body>
+<script type="module">
+  import endpoints, { WalletMode } from "./paimaMiddleware.js";
+  import { ethers } from "./ethers.min.js";
 
-      const user = await endpoints.getUserStats(wallet.result.walletAddress);
-      console.log('user', user)
-      if (!user.success) {
-        throw new Error("User Error");
-      }
-      if (!user.stats) {
-        let login = document.createElement("button");
-        login.innerHTML = "Join World";
-        login.onclick = () => {
-          endpoints.joinWorld().then((x) => {
-            if (x.success) {
-              actionsDiv.innerHTML = "<span>Please wait...</span>";
-              setTimeout(() => {
-                window.location.reload();
-              }, 10 * 1000); // wait 10 seconds
-            }
-          });
-        };
-        actionsDiv.appendChild(login);
-        return;
-      }
+  const ASSET_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+  const DEX_ADDRESS = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
 
-      let mineButton = document.createElement("button");
-      mineButton.innerHTML = "Mine for diamonds";
-      mineButton.onclick = () => {
-        endpoints.submitMineAttempt().then((x) => {
+  async function start() {
+    const actionsDiv = document.getElementById("actions");
+    // Get data for wallet and world
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    const walletAddress = await signer.getAddress();
+
+    const wallet = await endpoints.userWalletLogin({
+      mode: WalletMode.EvmInjected,
+      preferBatchedMode: false,
+    });
+    if (!wallet.success) throw new Error('Wallet Error');
+
+    const user = await endpoints.getUserStats(walletAddress);
+    console.log('user', user)
+    if (!user.success) {
+      throw new Error("User Error");
+    }
+    if (!user.stats) {
+      let login = document.createElement("button");
+      login.innerHTML = "Join World";
+      login.onclick = () => {
+        endpoints.joinWorld().then((x) => {
           if (x.success) {
             actionsDiv.innerHTML = "<span>Please wait...</span>";
             setTimeout(() => {
@@ -58,32 +51,80 @@
           }
         });
       };
-      actionsDiv.appendChild(mineButton);
+      actionsDiv.appendChild(login);
+      return;
+    }
+    const assetContract = new ethers.Contract(ASSET_ADDRESS, [
+      "function balanceOf(address account, uint256 id) view returns (uint256)",
+      "function currentNonce(address user) view returns (uint256)",
+      "function mint(uint256 value, bytes data) public",
+    ], signer);
 
-      if (user.stats.currentusertokenid > 0) {
-      const table = document.getElementById("mined");
-        const row = table.insertRow(0);
-        let cell = row.insertCell(0);
-        cell.innerHTML = `Token ID`;
-        cell = row.insertCell(1);
-        cell.innerHTML = `Amount`;
-        cell = row.insertCell(2);
-        cell.innerHTML = `Is diamond?`;
+    const currentNonce = await assetContract.currentNonce(walletAddress);
 
-        for (let i = 0; i < user.stats.currentusertokenid; i++) {
-          const userToken = (await endpoints.getUserTokenStats(wallet.result.walletAddress, i)).stats[0];
-          console.log('token', userToken)
-          const row = table.insertRow(i + 1);
-          let cell = row.insertCell(0);
-          cell.innerHTML = `${i}`;
-          cell = row.insertCell(1);
-          cell.innerHTML = `${userToken.amount}`;
-          cell = row.insertCell(2);
-          cell.innerHTML = `${userToken.isdiamond ? "YES" : "no"}`;
+    let mineButton = document.createElement("button");
+    mineButton.innerHTML = "Mine for diamonds";
+    mineButton.onclick = () => {
+      endpoints.submitMineAttempt().then((x) => {
+        if (x.success) {
+          actionsDiv.innerHTML = "<span>Please wait...</span>";
+          setTimeout(() => {
+            window.location.reload();
+          }, 10 * 1000); // wait 10 seconds
         }
+      });
+    };
+    actionsDiv.appendChild(mineButton);
+
+    if (user.stats.currentusertokenid > 0) {
+      const table = document.getElementById("mined");
+      const row = table.insertRow(0);
+      let cell = row.insertCell(0);
+      cell.innerHTML = `Token ID`;
+      cell = row.insertCell(1);
+      cell.innerHTML = `Amount`;
+      cell = row.insertCell(2);
+      cell.innerHTML = `Is diamond?`;
+      cell = row.insertCell(3);
+      cell.innerHTML = `Mint ERC1155`;
+
+      for (let i = 0; i < user.stats.currentusertokenid; i++) {
+        const userToken = (await endpoints.getUserTokenStats(walletAddress, i)).stats[0];
+        console.log('token', userToken)
+        const row = table.insertRow(i + 1);
+        let cell = row.insertCell(0);
+        cell.innerHTML = `${i}`;
+        cell = row.insertCell(1);
+        cell.innerHTML = `${userToken.amount}`;
+        cell = row.insertCell(2);
+        cell.innerHTML = `${userToken.isdiamond ? "YES" : "no"}`;
+        cell = row.insertCell(3);
+        const mintButton = document.createElement("button");
+        if (currentNonce < i) {
+          mintButton.innerHTML = "Mint above first";
+          mintButton.disabled = true;
+        } else if (currentNonce == i) {
+          mintButton.innerHTML = "Mint";
+          mintButton.onclick = () => {
+            assetContract.mint(userToken.amount, "0x").then((x) => {
+              if (x) {
+                actionsDiv.innerHTML = "<span>Please wait...</span>";
+                setTimeout(() => {
+                  window.location.reload();
+                }, 10 * 1000); // wait 10 seconds
+              }
+            });
+          };
+        } else {
+          mintButton.innerHTML = "Minted";
+          mintButton.disabled = true;
+        }
+        cell.appendChild(mintButton);
       }
     }
+  }
 
-    start().then((r) => r);
-  </script>
+  start().then((r) => r);
+</script>
+
 </html>

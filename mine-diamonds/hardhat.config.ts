@@ -40,7 +40,10 @@ const config: HardhatUserConfig = {
     },
   },
   dependencyCompiler: {
-    paths: ['@paima/evm-contracts/contracts/PaimaL2Contract.sol'],
+    paths: [
+      '@paima/evm-contracts/contracts/PaimaL2Contract.sol',
+      '@paima/evm-contracts/contracts/token/InverseAppProjected1155.sol',
+    ],
   },
   abiExporter: {
     path: './contracts/evm/abi',
