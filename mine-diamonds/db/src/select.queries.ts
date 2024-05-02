@@ -62,3 +62,65 @@ const getUserTokenStatsIR: any = {"usedParamSet":{"wallet":true,"userTokenId":tr
 export const getUserTokenStats = new PreparedQuery<IGetUserTokenStatsParams,IGetUserTokenStatsResult>(getUserTokenStatsIR);
 
 
+/** 'GetUserAssetStats' parameters type */
+export interface IGetUserAssetStatsParams {
+  userTokenId?: number | null | void;
+  wallet?: string | null | void;
+}
+
+/** 'GetUserAssetStats' return type */
+export interface IGetUserAssetStatsResult {
+  amount: number;
+  assettokenid: number;
+  usertokenid: number;
+  wallet: string;
+}
+
+/** 'GetUserAssetStats' query type */
+export interface IGetUserAssetStatsQuery {
+  params: IGetUserAssetStatsParams;
+  result: IGetUserAssetStatsResult;
+}
+
+const getUserAssetStatsIR: any = {"usedParamSet":{"wallet":true,"userTokenId":true},"params":[{"name":"wallet","required":false,"transform":{"type":"scalar"},"locs":[{"a":47,"b":53}]},{"name":"userTokenId","required":false,"transform":{"type":"scalar"},"locs":[{"a":73,"b":84}]}],"statement":"SELECT * FROM asset_token_state\nWHERE wallet = :wallet AND userTokenId = :userTokenId"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * SELECT * FROM asset_token_state
+ * WHERE wallet = :wallet AND userTokenId = :userTokenId
+ * ```
+ */
+export const getUserAssetStats = new PreparedQuery<IGetUserAssetStatsParams,IGetUserAssetStatsResult>(getUserAssetStatsIR);
+
+
+/** 'GetUserValidMintedAssets' parameters type */
+export interface IGetUserValidMintedAssetsParams {
+  wallet?: string | null | void;
+}
+
+/** 'GetUserValidMintedAssets' return type */
+export interface IGetUserValidMintedAssetsResult {
+  amount: number;
+  assettokenid: number;
+}
+
+/** 'GetUserValidMintedAssets' query type */
+export interface IGetUserValidMintedAssetsQuery {
+  params: IGetUserValidMintedAssetsParams;
+  result: IGetUserValidMintedAssetsResult;
+}
+
+const getUserValidMintedAssetsIR: any = {"usedParamSet":{"wallet":true},"params":[{"name":"wallet","required":false,"transform":{"type":"scalar"},"locs":[{"a":185,"b":191}]}],"statement":"SELECT a.assetTokenId, a.amount FROM asset_token_state as a JOIN user_token_state as u\nON a.wallet = u.wallet AND a.userTokenId = u.userTokenId AND a.amount = u.amount\nWHERE a.wallet = :wallet AND u.isDiamond = TRUE"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * SELECT a.assetTokenId, a.amount FROM asset_token_state as a JOIN user_token_state as u
+ * ON a.wallet = u.wallet AND a.userTokenId = u.userTokenId AND a.amount = u.amount
+ * WHERE a.wallet = :wallet AND u.isDiamond = TRUE
+ * ```
+ */
+export const getUserValidMintedAssets = new PreparedQuery<IGetUserValidMintedAssetsParams,IGetUserValidMintedAssetsResult>(getUserValidMintedAssetsIR);
+
+

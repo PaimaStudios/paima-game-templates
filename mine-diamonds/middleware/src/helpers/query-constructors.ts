@@ -19,6 +19,23 @@ export function backendQueryUserTokenStats(wallet: WalletAddress, userTokenId: n
   return buildBackendQuery(endpoint, options);
 }
 
+export function backendQueryUserAssetStats(wallet: WalletAddress, userTokenId: number): string {
+  const endpoint = 'user_asset_state';
+  const options = {
+    wallet,
+    userTokenId,
+  };
+  return buildBackendQuery(endpoint, options);
+}
+
+export function backendQueryUserValidMintedAssets(wallet: WalletAddress): string {
+  const endpoint = 'user_valid_minted_assets';
+  const options = {
+    wallet,
+  };
+  return buildBackendQuery(endpoint, options);
+}
+
 export function backendQueryRoundExecutor(lobbyID: string, round: number): string {
   const endpoint = 'round_executor';
   const options = {

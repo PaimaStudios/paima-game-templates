@@ -4,11 +4,23 @@ import type { ParsedSubmittedInput } from './types';
 const myGrammar = `
         joinWorld              = j|
         submitMineAttempt      = m|
+        orderCreated           = oc|payload
+        assetMinted            = am|payload
 `;
 
 const parserCommands = {
   joinWorld: {},
   submitMineAttempt: {},
+  orderCreated: {
+    payload: (_: string, input: string) => {
+      return JSON.parse(input);
+    },
+  },
+  assetMinted: {
+    payload: (_: string, input: string) => {
+      return JSON.parse(input);
+    },
+  },
 };
 
 const myParser = new PaimaParser(myGrammar, parserCommands);

@@ -8,8 +8,10 @@ import { buildMatchExecutor, buildRoundExecutor } from '../helpers/executors';
 import {
   backendQueryMatchExecutor,
   backendQueryRoundExecutor,
+  backendQueryUserAssetStats,
   backendQueryUserStats,
   backendQueryUserTokenStats,
+  backendQueryUserValidMintedAssets,
 } from '../helpers/query-constructors';
 import type { MatchExecutor, PackedUserStats, PackedUserTokenStats, RoundExecutor } from '../types';
 import type { MatchState, TickEvent } from '@game/game-logic';
@@ -128,9 +130,61 @@ async function getUserTokenStats(
   }
 }
 
+async function getUserAssetStats(
+  walletAddress: string,
+  userTokenId: number
+): Promise<PackedUserTokenStats | FailedResult> {
+  const errorFxn = buildEndpointErrorFxn('getUserAssetStats');
+
+  let res: Response;
+  try {
+    const query = backendQueryUserAssetStats(walletAddress, userTokenId);
+    res = await fetch(query);
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
+  }
+
+  try {
+    const j = (await res.json()) as { stats: UserTokenStats };
+    return {
+      success: true,
+      stats: j.stats,
+    };
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
+  }
+}
+
+async function getUserValidMintedAssets(
+  walletAddress: string,
+  userTokenId: number
+): Promise<PackedUserTokenStats | FailedResult> {
+  const errorFxn = buildEndpointErrorFxn('getUserValidMintedAssets');
+
+  let res: Response;
+  try {
+    const query = backendQueryUserValidMintedAssets(walletAddress);
+    res = await fetch(query);
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
+  }
+
+  try {
+    const j = (await res.json()) as { stats: UserTokenStats };
+    return {
+      success: true,
+      stats: j.stats,
+    };
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
+  }
+}
+
 export const queryEndpoints = {
   getUserStats,
   getUserTokenStats,
+  getUserAssetStats,
+  getUserValidMintedAssets,
   getRoundExecutor,
   getMatchExecutor,
 };

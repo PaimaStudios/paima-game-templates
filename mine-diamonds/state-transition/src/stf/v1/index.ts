@@ -4,7 +4,7 @@ import parse from './parser.js';
 import type Prando from '@paima/sdk/prando';
 import type { SubmittedChainData } from '@paima/sdk/utils';
 import type { SQLUpdate } from '@paima/node-sdk/db';
-import { joinWorld, submitMineAttempt } from './persist/global.js';
+import { joinWorld, submitMineAttempt, orderCreated, assetMinted } from './persist/global.js';
 
 // entrypoint for your state machine
 export default async function (
@@ -24,6 +24,10 @@ export default async function (
       return joinWorld(user, blockHeight, input, randomnessGenerator);
     case 'submitMineAttempt':
       return submitMineAttempt(user, blockHeight, input, randomnessGenerator);
+    case 'orderCreated':
+      return orderCreated(user, blockHeight, input, randomnessGenerator);
+    case 'assetMinted':
+      return assetMinted(user, blockHeight, input, randomnessGenerator);
     default:
       return [];
   }

@@ -71,3 +71,43 @@ const createUserTokenStateIR: any = {"usedParamSet":{"wallet":true,"amount":true
 export const createUserTokenState = new PreparedQuery<ICreateUserTokenStateParams,ICreateUserTokenStateResult>(createUserTokenStateIR);
 
 
+/** 'CreateAssetTokenState' parameters type */
+export interface ICreateAssetTokenStateParams {
+  amount: number;
+  assetTokenId: number;
+  userTokenId: number;
+  wallet: string;
+}
+
+/** 'CreateAssetTokenState' return type */
+export type ICreateAssetTokenStateResult = void;
+
+/** 'CreateAssetTokenState' query type */
+export interface ICreateAssetTokenStateQuery {
+  params: ICreateAssetTokenStateParams;
+  result: ICreateAssetTokenStateResult;
+}
+
+const createAssetTokenStateIR: any = {"usedParamSet":{"assetTokenId":true,"wallet":true,"userTokenId":true,"amount":true},"params":[{"name":"assetTokenId","required":true,"transform":{"type":"scalar"},"locs":[{"a":95,"b":108}]},{"name":"wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":113,"b":120}]},{"name":"userTokenId","required":true,"transform":{"type":"scalar"},"locs":[{"a":125,"b":137}]},{"name":"amount","required":true,"transform":{"type":"scalar"},"locs":[{"a":142,"b":149}]}],"statement":"INSERT INTO asset_token_state (\n  assetTokenId,\n  wallet,\n  userTokenId,\n  amount\n) VALUES (\n  :assetTokenId!,\n  :wallet!,\n  :userTokenId!,\n  :amount!\n)\nON CONFLICT(assetTokenId)\nDO NOTHING"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * INSERT INTO asset_token_state (
+ *   assetTokenId,
+ *   wallet,
+ *   userTokenId,
+ *   amount
+ * ) VALUES (
+ *   :assetTokenId!,
+ *   :wallet!,
+ *   :userTokenId!,
+ *   :amount!
+ * )
+ * ON CONFLICT(assetTokenId)
+ * DO NOTHING
+ * ```
+ */
+export const createAssetTokenState = new PreparedQuery<ICreateAssetTokenStateParams,ICreateAssetTokenStateResult>(createAssetTokenStateIR);
+
+

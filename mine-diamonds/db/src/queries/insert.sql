@@ -25,3 +25,20 @@ INSERT INTO user_token_state (
 )
 ON CONFLICT (wallet, userTokenId)
 DO NOTHING;
+
+/*
+  @name create_asset_token_state
+*/
+INSERT INTO asset_token_state (
+  assetTokenId,
+  wallet,
+  userTokenId,
+  amount
+) VALUES (
+  :assetTokenId!,
+  :wallet!,
+  :userTokenId!,
+  :amount!
+)
+ON CONFLICT(assetTokenId)
+DO NOTHING;

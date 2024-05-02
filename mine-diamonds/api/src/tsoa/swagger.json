@@ -7,6 +7,43 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"IGetUserValidMintedAssetsResult": {
+				"description": "'GetUserValidMintedAssets' return type",
+				"properties": {
+					"amount": {
+						"type": "number",
+						"format": "double"
+					},
+					"assettokenid": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"amount",
+					"assettokenid"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserValidMintedAssets": {
+				"$ref": "#/components/schemas/IGetUserValidMintedAssetsResult"
+			},
+			"GetUserValidMintedAssetsResponse": {
+				"properties": {
+					"stats": {
+						"items": {
+							"$ref": "#/components/schemas/UserValidMintedAssets"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"stats"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"IGetUserTokenStatsResult": {
 				"description": "'GetUserTokenStats' return type",
 				"properties": {
@@ -84,6 +121,52 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"IGetUserAssetStatsResult": {
+				"description": "'GetUserAssetStats' return type",
+				"properties": {
+					"amount": {
+						"type": "number",
+						"format": "double"
+					},
+					"assettokenid": {
+						"type": "number",
+						"format": "double"
+					},
+					"usertokenid": {
+						"type": "number",
+						"format": "double"
+					},
+					"wallet": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"amount",
+					"assettokenid",
+					"usertokenid",
+					"wallet"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserAssetStats": {
+				"$ref": "#/components/schemas/IGetUserAssetStatsResult"
+			},
+			"GetUserAssetStateResponse": {
+				"properties": {
+					"stats": {
+						"items": {
+							"$ref": "#/components/schemas/UserAssetStats"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"stats"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -98,6 +181,34 @@
 		"contact": {}
 	},
 	"paths": {
+		"/user_valid_minted_assets": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetUserValidMintedAssetsResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "wallet",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/user_token_state": {
 			"get": {
 				"operationId": "Get",
@@ -158,6 +269,43 @@
 						"required": true,
 						"schema": {
 							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/user_asset_state": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetUserAssetStateResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "wallet",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "userTokenId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
 						}
 					}
 				]
