@@ -8,7 +8,7 @@
 </head>
 
 <body>
-  <div style="display: flex; flex-direction: column; gap: 16px;">
+  <div style="display: flex; flex-direction: column; gap: 16px; align-items: center;">
     <h1>Mine and trade diamonds!</h1>
     <div id="actions" style="margin-bottom: 16px;"></div>
     <table id="mined">
@@ -19,7 +19,7 @@
         <th>Mint ERC1155</th>
       </tr>
     </table>
-    <h1 style="padding-top: 24px; border-top: solid black;">DEX</h1>
+    <h1 style="padding-top: 24px; border-top: solid black; width: 100%; text-align: center;">DEX</h1>
     <h2>Your valid minted diamonds you can sell</h2>
     <table id="userValidAssets">
       <tr>
@@ -99,6 +99,7 @@
 
         cell = row.insertCell(3);
         let mintButton = document.createElement("button");
+        mintButton.style.setProperty("width", "100%");
         if (i > nextNonce) {
           mintButton.innerHTML = "Mint above first";
           mintButton.disabled = true;
@@ -131,6 +132,7 @@
       cell = row.insertCell(2);
       const sellButton = document.createElement("button");
       sellButton.innerHTML = isApproved ? "Sell" : "Approve to sell";
+      sellButton.style.setProperty("width", "100%");
       sellButton.onclick = () => {
         if (!isApproved) {
           sellButton.innerHTML = "Confirm and wait...";
