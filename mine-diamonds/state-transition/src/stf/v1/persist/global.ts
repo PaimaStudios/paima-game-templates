@@ -10,21 +10,7 @@ import type {
 import { createAssetTokenState, createGlobalUserState } from '@game/db';
 import { createUserTokenState } from '@game/db';
 import { updateUserStateCurrentTokenId } from '@game/db';
-import type {
-  AssetMintedInput,
-  JoinWorldInput,
-  OrderCreatedInput,
-  SubmitMineAttemptInput,
-} from '../types';
-
-export function joinWorld(
-  player: WalletAddress,
-  blockHeight: number,
-  inputData: JoinWorldInput,
-  randomnessGenerator: Prando
-): SQLUpdate[] {
-  return [persistNewUser(player)];
-}
+import type { AssetMintedInput, OrderCreatedInput, SubmitMineAttemptInput } from '../types';
 
 export function submitMineAttempt(
   player: WalletAddress,
@@ -33,6 +19,7 @@ export function submitMineAttempt(
   randomnessGenerator: Prando
 ): SQLUpdate[] {
   return [
+    persistNewUser(player),
     persistMineAttempt(
       player,
       randomnessGenerator.nextInt(1, 10),

@@ -2,7 +2,6 @@ import { PaimaParser } from '@paima/sdk/concise';
 import type { ParsedSubmittedInput } from './types';
 
 const myGrammar = `
-        joinWorld              = j|
         submitMineAttempt      = m|
         orderCreated           = oc|payload
         assetMinted            = am|payload

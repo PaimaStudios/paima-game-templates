@@ -20,7 +20,7 @@
       </tr>
     </table>
     <h1 style="padding-top: 24px; border-top: solid black;">DEX</h1>
-    <h2>Your (minted) diamonds you can sell</h2>
+    <h2>Your valid minted diamonds you can sell</h2>
     <table id="userValidAssets">
       <tr>
         <th>Asset token ID</th>
@@ -28,7 +28,7 @@
         <th>Create sell order</th>
       </tr>
     </table>
-    <h2>Existing (valid) sell orders</h2>
+    <h2>Existing valid sell orders</h2>
     <table id="orders"></table>
   </div>
 </body>
@@ -55,22 +55,6 @@
     const user = await endpoints.getUserStats(walletAddress);
     if (!user.success) {
       throw new Error("User Error");
-    }
-    if (!user.stats) {
-      let login = document.createElement("button");
-      login.innerHTML = "Join World";
-      login.onclick = () => {
-        endpoints.joinWorld().then((x) => {
-          if (x.success) {
-            actionsDiv.innerHTML = "<span>Please wait...</span>";
-            setTimeout(() => {
-              window.location.reload();
-            }, 10 * 1000); // wait 10 seconds
-          }
-        });
-      };
-      actionsDiv.appendChild(login);
-      return;
     }
     const assetContract = new ethers.Contract(ASSET_ADDRESS, [
       "function balanceOf(address account, uint256 id) view returns (uint256)",
@@ -101,7 +85,7 @@
     };
     actionsDiv.appendChild(mineButton);
 
-    if (user.stats.currentusertokenid > 1) {
+    if (user?.stats?.currentusertokenid > 1) {
       const table = document.getElementById("mined");
       for (let i = 1; i < user.stats.currentusertokenid; i++) {
         const userToken = (await endpoints.getUserTokenStats(walletAddress, i)).stats[0];

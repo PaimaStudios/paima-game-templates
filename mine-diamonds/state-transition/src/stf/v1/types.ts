@@ -1,16 +1,11 @@
 export type ParsedSubmittedInput =
   | InvalidInput
-  | JoinWorldInput
   | SubmitMineAttemptInput
   | OrderCreatedInput
   | AssetMintedInput;
 
 export interface InvalidInput {
   input: 'invalidString';
-}
-
-export interface JoinWorldInput {
-  input: 'joinWorld';
 }
 
 export interface SubmitMineAttemptInput {
