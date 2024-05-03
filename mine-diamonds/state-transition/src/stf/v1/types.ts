@@ -2,6 +2,7 @@ export type ParsedSubmittedInput =
   | InvalidInput
   | SubmitMineAttemptInput
   | OrderCreatedInput
+  | OrderCancelledInput
   | AssetMintedInput
   | AssetTransferredInput
   | OrderFilledInput;
@@ -22,6 +23,14 @@ export interface OrderCreatedInput {
     assetId: string;
     assetAmount: string;
     pricePerAsset: string;
+  };
+}
+
+export interface OrderCancelledInput {
+  input: 'orderCancelled';
+  payload: {
+    seller: string;
+    id: string;
   };
 }
 

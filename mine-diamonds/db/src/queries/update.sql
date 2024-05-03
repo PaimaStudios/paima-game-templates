@@ -10,6 +10,12 @@ SET amount = amount - :delta!
 WHERE orderId = :orderId!
 ;
 
+/* @name cancelDexOrder */
+UPDATE dex_order
+SET amount = 0
+WHERE orderId = :orderId!
+;
+
 /* @name updateAssetOwnership */
 UPDATE asset_token_ownership
 SET amount = amount + :delta!

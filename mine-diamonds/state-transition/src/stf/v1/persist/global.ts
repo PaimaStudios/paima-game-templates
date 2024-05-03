@@ -2,6 +2,7 @@ import type { SQLUpdate } from '@paima/node-sdk/db';
 import type Prando from '@paima/sdk/prando';
 import type { WalletAddress } from '@paima/sdk/utils';
 import type {
+  ICancelDexOrderParams,
   ICreateAssetOwnershipParams,
   ICreateAssetTokenStateParams,
   ICreateDexOrderParams,
@@ -12,6 +13,7 @@ import type {
   IUpdateUserStateCurrentTokenIdParams,
 } from '@game/db';
 import {
+  cancelDexOrder,
   createAssetOwnership,
   createAssetTokenState,
   createDexOrder,
@@ -24,6 +26,7 @@ import { updateUserStateCurrentTokenId } from '@game/db';
 import type {
   AssetMintedInput,
   AssetTransferredInput,
+  OrderCancelledInput,
   OrderCreatedInput,
   OrderFilledInput,
 } from '../types';
@@ -52,12 +55,13 @@ export function orderCreated(inputData: OrderCreatedInput): SQLUpdate[] {
   ];
 }
 
+export function orderCancelled(inputData: OrderCancelledInput): SQLUpdate[] {
+  return [persistOrderCancelled(Number(inputData.payload.id))];
+}
+
 export function orderFilled(inputData: OrderFilledInput): SQLUpdate[] {
   return [
-    persistOrderFilled(
-      Number(inputData.payload.orderId),
-      Number(inputData.payload.assetAmount)
-    ),
+    persistOrderFilled(Number(inputData.payload.orderId), Number(inputData.payload.assetAmount)),
   ];
 }
 
@@ -154,10 +158,13 @@ function persistOrderCreated(
   return [createDexOrder, params];
 }
 
-function persistOrderFilled(
-  orderId: number,
-  delta: number
-): SQLUpdate {
+function persistOrderCancelled(orderId: number): SQLUpdate {
+  const params: ICancelDexOrderParams = { orderId };
+
+  return [cancelDexOrder, params];
+}
+
+function persistOrderFilled(orderId: number, delta: number): SQLUpdate {
   const params: IUpdateDexOrderParams = { orderId, delta };
 
   return [updateDexOrder, params];

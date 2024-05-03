@@ -56,6 +56,33 @@ const updateDexOrderIR: any = {"usedParamSet":{"delta":true,"orderId":true},"par
 export const updateDexOrder = new PreparedQuery<IUpdateDexOrderParams,IUpdateDexOrderResult>(updateDexOrderIR);
 
 
+/** 'CancelDexOrder' parameters type */
+export interface ICancelDexOrderParams {
+  orderId: number;
+}
+
+/** 'CancelDexOrder' return type */
+export type ICancelDexOrderResult = void;
+
+/** 'CancelDexOrder' query type */
+export interface ICancelDexOrderQuery {
+  params: ICancelDexOrderParams;
+  result: ICancelDexOrderResult;
+}
+
+const cancelDexOrderIR: any = {"usedParamSet":{"orderId":true},"params":[{"name":"orderId","required":true,"transform":{"type":"scalar"},"locs":[{"a":48,"b":56}]}],"statement":"UPDATE dex_order\nSET amount = 0\nWHERE orderId = :orderId!"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * UPDATE dex_order
+ * SET amount = 0
+ * WHERE orderId = :orderId!
+ * ```
+ */
+export const cancelDexOrder = new PreparedQuery<ICancelDexOrderParams,ICancelDexOrderResult>(cancelDexOrderIR);
+
+
 /** 'UpdateAssetOwnership' parameters type */
 export interface IUpdateAssetOwnershipParams {
   assetTokenId: number;

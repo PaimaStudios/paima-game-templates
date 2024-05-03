@@ -39,7 +39,8 @@
         <th>Order ID</th>
         <th>Amount</th>
         <th>Price per diamond (ETH)</th>
-        <th>Buy</th>
+        <th>Seller</th>
+        <th>Buy / Cancel</th>
       </tr>
     </table>
   </div>
@@ -76,6 +77,7 @@
       "function setApprovalForAll(address operator, bool approved) public",
     ], signer);
     const dexContract = new ethers.Contract(DEX_ADDRESS, [
+      "function cancelSellOrder(uint256 orderId) public",
       "function createSellOrder(uint256 assetId, uint256 assetAmount, uint256 pricePerAsset) public",
       "function fillOrdersExactEth(uint256 minimumAsset, uint256[] memory orderIds) public payable"
     ], signer);
@@ -180,6 +182,8 @@
       ordersTable.innerHTML = "No valid sell orders available. Be the first!";
     } else {
       for (const order of dexOrders) {
+        const isSeller = order.seller.toLowerCase() === walletAddress.toLowerCase();
+        console.log('isOwner', order.orderid, isSeller, order.seller, walletAddress)
         const row = ordersTable.insertRow();
         let cell = row.insertCell(0);
         cell.innerHTML = `${order.orderid}`;
@@ -188,15 +192,24 @@
         cell = row.insertCell(2);
         cell.innerHTML = `${ethers.formatEther(order.price)}`;
         cell = row.insertCell(3);
+        cell.innerHTML = isSeller ? 'You' : `${order.seller.substring(0, 6)}...${order.seller.substring(order.seller.length - 4)}`;
+        cell = row.insertCell(4);
         const buyButton = document.createElement("button");
-        buyButton.innerHTML = "Buy";
+        buyButton.innerHTML = isSeller ? "Cancel" : "Buy";
         buyButton.style.setProperty("width", "100%");
         buyButton.onclick = () => {
           buyButton.innerHTML = "Confirm and wait...";
           buyButton.disabled = true;
-          dexContract.fillOrdersExactEth(order.amount, [order.orderid], { value: BigInt(order.price) * BigInt(order.amount) }).then((x) => {
-            window.location.reload();
-          });
+          if (isSeller) {
+            dexContract.cancelSellOrder(order.orderid).then((x) => {
+              window.location.reload();
+            });
+          } else {
+
+            dexContract.fillOrdersExactEth(order.amount, [order.orderid], { value: BigInt(order.price) * BigInt(order.amount) }).then((x) => {
+              window.location.reload();
+            });
+          }
         };
         cell.appendChild(buyButton);
       }
