@@ -30,7 +30,8 @@ export const updateUserStateCurrentTokenId = new PreparedQuery<IUpdateUserStateC
 
 /** 'UpdateDexOrder' parameters type */
 export interface IUpdateDexOrderParams {
-  amount: number;
+  delta: number;
+  orderId: number;
 }
 
 /** 'UpdateDexOrder' return type */
@@ -42,13 +43,14 @@ export interface IUpdateDexOrderQuery {
   result: IUpdateDexOrderResult;
 }
 
-const updateDexOrderIR: any = {"usedParamSet":{"amount":true},"params":[{"name":"amount","required":true,"transform":{"type":"scalar"},"locs":[{"a":30,"b":37}]}],"statement":"UPDATE dex_order\nSET amount = :amount!"};
+const updateDexOrderIR: any = {"usedParamSet":{"delta":true,"orderId":true},"params":[{"name":"delta","required":true,"transform":{"type":"scalar"},"locs":[{"a":39,"b":45}]},{"name":"orderId","required":true,"transform":{"type":"scalar"},"locs":[{"a":63,"b":71}]}],"statement":"UPDATE dex_order\nSET amount = amount - :delta!\nWHERE orderId = :orderId!"};
 
 /**
  * Query generated from SQL:
  * ```
  * UPDATE dex_order
- * SET amount = :amount!
+ * SET amount = amount - :delta!
+ * WHERE orderId = :orderId!
  * ```
  */
 export const updateDexOrder = new PreparedQuery<IUpdateDexOrderParams,IUpdateDexOrderResult>(updateDexOrderIR);

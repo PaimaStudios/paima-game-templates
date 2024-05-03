@@ -3,7 +3,8 @@ export type ParsedSubmittedInput =
   | SubmitMineAttemptInput
   | OrderCreatedInput
   | AssetMintedInput
-  | AssetTransferredInput;
+  | AssetTransferredInput
+  | OrderFilledInput;
 
 export interface InvalidInput {
   input: 'invalidString';
@@ -19,6 +20,17 @@ export interface OrderCreatedInput {
     seller: string;
     orderId: string;
     assetId: string;
+    assetAmount: string;
+    pricePerAsset: string;
+  };
+}
+
+export interface OrderFilledInput {
+  input: 'orderFilled';
+  payload: {
+    seller: string;
+    orderId: string;
+    buyer: string;
     assetAmount: string;
     pricePerAsset: string;
   };

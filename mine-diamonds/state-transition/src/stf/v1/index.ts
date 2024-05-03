@@ -9,6 +9,7 @@ import {
   orderCreated,
   assetMinted,
   assetTransferred,
+  orderFilled,
 } from './persist/global.js';
 
 // entrypoint for your state machine
@@ -29,6 +30,8 @@ export default async function (
       return submitMineAttempt(user, randomnessGenerator);
     case 'orderCreated':
       return orderCreated(input);
+    case 'orderFilled':
+      return orderFilled(input);
     case 'assetMinted':
       return assetMinted(input);
     case 'assetTransferred':

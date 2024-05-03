@@ -9,7 +9,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - mine-diamonds-1714739751336-db:/var/lib/postgresql/data
+      - mine-diamonds-1714741817061-db:/var/lib/postgresql/data
       - ../migrations/init/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       # Use pg_isready to check postgres is running. Substitute different
@@ -20,4 +20,4 @@ services:
       retries: 5
 
 volumes:
-  mine-diamonds-1714739751336-db:
+  mine-diamonds-1714741817061-db:

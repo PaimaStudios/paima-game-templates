@@ -4,6 +4,7 @@ import type { ParsedSubmittedInput } from './types';
 const myGrammar = `
         submitMineAttempt      = m|
         orderCreated           = oc|payload
+        orderFilled            = of|payload
         assetMinted            = am|payload
         assetTransferred       = at|payload
 `;
@@ -12,6 +13,11 @@ const parserCommands = {
   joinWorld: {},
   submitMineAttempt: {},
   orderCreated: {
+    payload: (_: string, input: string) => {
+      return JSON.parse(input);
+    },
+  },
+  orderFilled: {
     payload: (_: string, input: string) => {
       return JSON.parse(input);
     },

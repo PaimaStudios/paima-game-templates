@@ -11,7 +11,7 @@
   <div style="display: flex; flex-direction: column; gap: 16px; align-items: center;">
     <h1>Mine and trade diamonds!</h1>
     <p>Try to mine minerals. If you are lucky enough to find diamonds, you can then sell them on the DEX below!</p>
-    <div id="actions" style="margin-bottom: 16px;"></div>
+    <button id="mineButton" style="margin-bottom: 16px;">Mine for diamonds</button>
     <table id="mined" style="display: none;">
       <tr>
         <th>User nonce</th>
@@ -49,7 +49,6 @@
   const DEX_ADDRESS = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
 
   async function start() {
-    const actionsDiv = document.getElementById("actions");
     // Get data for wallet and world
     const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = await provider.getSigner();
@@ -80,8 +79,7 @@
     const nextNonce = await assetContract.currentNonce(walletAddress) + 1n;
     const isApproved = await assetContract.isApprovedForAll(walletAddress, DEX_ADDRESS);
 
-    let mineButton = document.createElement("button");
-    mineButton.innerHTML = "Mine for diamonds";
+    let mineButton = document.getElementById("mineButton");
     mineButton.onclick = () => {
       endpoints.submitMineAttempt().then((x) => {
         if (x.success) {
@@ -93,7 +91,6 @@
         }
       });
     };
-    actionsDiv.appendChild(mineButton);
 
     if (user?.stats?.currentusertokenid > 1) {
       const table = document.getElementById("mined");

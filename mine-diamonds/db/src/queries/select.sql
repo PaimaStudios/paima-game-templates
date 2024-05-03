@@ -24,5 +24,5 @@ WHERE o.wallet = :user AND u.isDiamond = TRUE AND o.amount <> '0'
 
 /* @name getDexOrders */
 SELECT * FROM dex_order
-WHERE amount <> '0'
+WHERE amount > 0
 ;

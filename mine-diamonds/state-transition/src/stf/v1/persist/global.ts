@@ -8,6 +8,7 @@ import type {
   ICreateGlobalUserStateParams,
   ICreateUserTokenStateParams,
   IUpdateAssetOwnershipParams,
+  IUpdateDexOrderParams,
   IUpdateUserStateCurrentTokenIdParams,
 } from '@game/db';
 import {
@@ -16,10 +17,16 @@ import {
   createDexOrder,
   createGlobalUserState,
   updateAssetOwnership,
+  updateDexOrder,
 } from '@game/db';
 import { createUserTokenState } from '@game/db';
 import { updateUserStateCurrentTokenId } from '@game/db';
-import type { AssetMintedInput, AssetTransferredInput, OrderCreatedInput } from '../types';
+import type {
+  AssetMintedInput,
+  AssetTransferredInput,
+  OrderCreatedInput,
+  OrderFilledInput,
+} from '../types';
 
 export function submitMineAttempt(player: WalletAddress, randomnessGenerator: Prando): SQLUpdate[] {
   return [
@@ -41,6 +48,15 @@ export function orderCreated(inputData: OrderCreatedInput): SQLUpdate[] {
       Number(inputData.payload.assetId),
       Number(inputData.payload.orderId),
       inputData.payload.pricePerAsset
+    ),
+  ];
+}
+
+export function orderFilled(inputData: OrderFilledInput): SQLUpdate[] {
+  return [
+    persistOrderFilled(
+      Number(inputData.payload.orderId),
+      Number(inputData.payload.assetAmount)
     ),
   ];
 }
@@ -136,4 +152,13 @@ function persistOrderCreated(
   const params: ICreateDexOrderParams = { amount, assetTokenId, orderId, price, seller };
 
   return [createDexOrder, params];
+}
+
+function persistOrderFilled(
+  orderId: number,
+  delta: number
+): SQLUpdate {
+  const params: IUpdateDexOrderParams = { orderId, delta };
+
+  return [updateDexOrder, params];
 }

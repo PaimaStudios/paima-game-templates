@@ -145,13 +145,13 @@ export interface IGetDexOrdersQuery {
   result: IGetDexOrdersResult;
 }
 
-const getDexOrdersIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT * FROM dex_order\nWHERE amount <> '0'"};
+const getDexOrdersIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT * FROM dex_order\nWHERE amount > 0"};
 
 /**
  * Query generated from SQL:
  * ```
  * SELECT * FROM dex_order
- * WHERE amount <> '0'
+ * WHERE amount > 0
  * ```
  */
 export const getDexOrders = new PreparedQuery<IGetDexOrdersParams,IGetDexOrdersResult>(getDexOrdersIR);
