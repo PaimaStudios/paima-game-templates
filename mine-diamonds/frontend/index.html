@@ -8,10 +8,12 @@
 </head>
 
 <body>
-  <div style="display: flex; flex-direction: column; gap: 16px; align-items: center;">
+  <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
     <h1>Mine and trade diamonds!</h1>
+    <span>Connected wallet: <span id="walletAddress"></span></span>
     <p>Try to mine minerals. If you are lucky enough to find diamonds, you can then sell them on the DEX below!</p>
     <button id="mineButton" style="margin-bottom: 16px;">Mine for diamonds</button>
+    <h3>Your mining history</h3>
     <table id="mined" style="display: none;">
       <tr>
         <th>User nonce</th>
@@ -22,6 +24,7 @@
     </table>
     <hr style="width: 100%;">
     <h1 style="padding-top: 24px; width: 100%; text-align: center;">DEX</h1>
+    <p>You can trade valid minted diamonds here!</p>
     <h2>Your valid minted diamonds you can sell</h2>
     <table id="userValidAssets" style="display: none;">
       <tr>
@@ -53,6 +56,7 @@
     const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = await provider.getSigner();
     const walletAddress = await signer.getAddress();
+    document.getElementById('walletAddress').innerHTML = walletAddress;
 
     const wallet = await endpoints.userWalletLogin({
       mode: WalletMode.EvmInjected,
@@ -92,12 +96,12 @@
       });
     };
 
+    const minedTable = document.getElementById("mined");
+    minedTable.style.setProperty("display", "table");
     if (user?.stats?.currentusertokenid > 1) {
-      const table = document.getElementById("mined");
-      table.style.setProperty("display", "table");
       for (let i = 1; i < user.stats.currentusertokenid; i++) {
         const userToken = (await endpoints.getUserTokenStats(walletAddress, i)).stats[0];
-        const row = table.insertRow(i);
+        const row = minedTable.insertRow(i);
         let cell = row.insertCell(0);
         cell.innerHTML = `${i}`;
         cell = row.insertCell(1);
@@ -126,6 +130,8 @@
         }
         cell.appendChild(mintButton);
       }
+    } else {
+      minedTable.innerHTML = 'You have not mined any minerals yet. Try mining some!';
     }
 
     const userValidAssets = (await endpoints.getUserValidMintedAssets(walletAddress)).stats;
