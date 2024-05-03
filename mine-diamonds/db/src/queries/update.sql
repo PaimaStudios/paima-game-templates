@@ -6,6 +6,11 @@ WHERE wallet = :wallet!
 
 /* @name updateDexOrder */
 UPDATE dex_order
-SET amount = :newAmount!
-WHERE orderId = :orderId!
+SET amount = :amount!
+;
+
+/* @name updateAssetOwnership */
+UPDATE asset_token_ownership
+SET amount = amount + :delta!
+WHERE wallet = :wallet! AND assetTokenId = :assetTokenId!
 ;

@@ -19,19 +19,19 @@ export function backendQueryUserTokenStats(wallet: WalletAddress, userTokenId: n
   return buildBackendQuery(endpoint, options);
 }
 
-export function backendQueryUserAssetStats(wallet: WalletAddress, userTokenId: number): string {
+export function backendQueryUserAssetStats(user: WalletAddress, userTokenId: number): string {
   const endpoint = 'user_asset_state';
   const options = {
-    wallet,
+    user,
     userTokenId,
   };
   return buildBackendQuery(endpoint, options);
 }
 
-export function backendQueryUserValidMintedAssets(wallet: WalletAddress): string {
+export function backendQueryUserValidMintedAssets(user: WalletAddress): string {
   const endpoint = 'user_valid_minted_assets';
   const options = {
-    wallet,
+    user,
   };
   return buildBackendQuery(endpoint, options);
 }

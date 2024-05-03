@@ -2,7 +2,8 @@ export type ParsedSubmittedInput =
   | InvalidInput
   | SubmitMineAttemptInput
   | OrderCreatedInput
-  | AssetMintedInput;
+  | AssetMintedInput
+  | AssetTransferredInput;
 
 export interface InvalidInput {
   input: 'invalidString';
@@ -30,5 +31,16 @@ export interface AssetMintedInput {
     minter: string;
     userTokenId: number;
     value: number;
+  };
+}
+
+export interface AssetTransferredInput {
+  input: 'assetTransferred';
+  payload: {
+    operator: string;
+    from: string;
+    to: string;
+    id: string;
+    value: string;
   };
 }

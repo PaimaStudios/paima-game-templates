@@ -4,7 +4,12 @@ import parse from './parser.js';
 import type Prando from '@paima/sdk/prando';
 import type { SubmittedChainData } from '@paima/sdk/utils';
 import type { SQLUpdate } from '@paima/node-sdk/db';
-import { submitMineAttempt, orderCreated, assetMinted } from './persist/global.js';
+import {
+  submitMineAttempt,
+  orderCreated,
+  assetMinted,
+  assetTransferred,
+} from './persist/global.js';
 
 // entrypoint for your state machine
 export default async function (
@@ -26,6 +31,8 @@ export default async function (
       return orderCreated(input);
     case 'assetMinted':
       return assetMinted(input);
+    case 'assetTransferred':
+      return assetTransferred(input);
     default:
       return [];
   }

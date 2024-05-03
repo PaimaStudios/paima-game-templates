@@ -31,16 +31,31 @@ DO NOTHING;
 */
 INSERT INTO asset_token_state (
   assetTokenId,
-  wallet,
+  minter,
   userTokenId,
   amount
 ) VALUES (
   :assetTokenId!,
-  :wallet!,
+  :minter!,
   :userTokenId!,
   :amount!
 )
 ON CONFLICT(assetTokenId)
+DO NOTHING;
+
+/*
+  @name create_asset_ownership
+*/
+INSERT INTO asset_token_ownership (
+  wallet,
+  assetTokenId,
+  amount
+) VALUES (
+  :wallet!,
+  :assetTokenId!,
+  :amount!
+)
+ON CONFLICT(wallet, assetTokenId)
 DO NOTHING;
 
 /*

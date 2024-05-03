@@ -1,8 +1,6 @@
 /** Types generated for queries found in "src/queries/insert.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
-export type NumberOrString = number | string;
-
 /** 'CreateGlobalUserState' parameters type */
 export interface ICreateGlobalUserStateParams {
   wallet: string;
@@ -77,8 +75,8 @@ export const createUserTokenState = new PreparedQuery<ICreateUserTokenStateParam
 export interface ICreateAssetTokenStateParams {
   amount: number;
   assetTokenId: number;
+  minter: string;
   userTokenId: number;
-  wallet: string;
 }
 
 /** 'CreateAssetTokenState' return type */
@@ -90,19 +88,19 @@ export interface ICreateAssetTokenStateQuery {
   result: ICreateAssetTokenStateResult;
 }
 
-const createAssetTokenStateIR: any = {"usedParamSet":{"assetTokenId":true,"wallet":true,"userTokenId":true,"amount":true},"params":[{"name":"assetTokenId","required":true,"transform":{"type":"scalar"},"locs":[{"a":95,"b":108}]},{"name":"wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":113,"b":120}]},{"name":"userTokenId","required":true,"transform":{"type":"scalar"},"locs":[{"a":125,"b":137}]},{"name":"amount","required":true,"transform":{"type":"scalar"},"locs":[{"a":142,"b":149}]}],"statement":"INSERT INTO asset_token_state (\n  assetTokenId,\n  wallet,\n  userTokenId,\n  amount\n) VALUES (\n  :assetTokenId!,\n  :wallet!,\n  :userTokenId!,\n  :amount!\n)\nON CONFLICT(assetTokenId)\nDO NOTHING"};
+const createAssetTokenStateIR: any = {"usedParamSet":{"assetTokenId":true,"minter":true,"userTokenId":true,"amount":true},"params":[{"name":"assetTokenId","required":true,"transform":{"type":"scalar"},"locs":[{"a":95,"b":108}]},{"name":"minter","required":true,"transform":{"type":"scalar"},"locs":[{"a":113,"b":120}]},{"name":"userTokenId","required":true,"transform":{"type":"scalar"},"locs":[{"a":125,"b":137}]},{"name":"amount","required":true,"transform":{"type":"scalar"},"locs":[{"a":142,"b":149}]}],"statement":"INSERT INTO asset_token_state (\n  assetTokenId,\n  minter,\n  userTokenId,\n  amount\n) VALUES (\n  :assetTokenId!,\n  :minter!,\n  :userTokenId!,\n  :amount!\n)\nON CONFLICT(assetTokenId)\nDO NOTHING"};
 
 /**
  * Query generated from SQL:
  * ```
  * INSERT INTO asset_token_state (
  *   assetTokenId,
- *   wallet,
+ *   minter,
  *   userTokenId,
  *   amount
  * ) VALUES (
  *   :assetTokenId!,
- *   :wallet!,
+ *   :minter!,
  *   :userTokenId!,
  *   :amount!
  * )
@@ -113,9 +111,46 @@ const createAssetTokenStateIR: any = {"usedParamSet":{"assetTokenId":true,"walle
 export const createAssetTokenState = new PreparedQuery<ICreateAssetTokenStateParams,ICreateAssetTokenStateResult>(createAssetTokenStateIR);
 
 
+/** 'CreateAssetOwnership' parameters type */
+export interface ICreateAssetOwnershipParams {
+  amount: number;
+  assetTokenId: number;
+  wallet: string;
+}
+
+/** 'CreateAssetOwnership' return type */
+export type ICreateAssetOwnershipResult = void;
+
+/** 'CreateAssetOwnership' query type */
+export interface ICreateAssetOwnershipQuery {
+  params: ICreateAssetOwnershipParams;
+  result: ICreateAssetOwnershipResult;
+}
+
+const createAssetOwnershipIR: any = {"usedParamSet":{"wallet":true,"assetTokenId":true,"amount":true},"params":[{"name":"wallet","required":true,"transform":{"type":"scalar"},"locs":[{"a":84,"b":91}]},{"name":"assetTokenId","required":true,"transform":{"type":"scalar"},"locs":[{"a":96,"b":109}]},{"name":"amount","required":true,"transform":{"type":"scalar"},"locs":[{"a":114,"b":121}]}],"statement":"INSERT INTO asset_token_ownership (\n  wallet,\n  assetTokenId,\n  amount\n) VALUES (\n  :wallet!,\n  :assetTokenId!,\n  :amount!\n)\nON CONFLICT(wallet, assetTokenId)\nDO NOTHING"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * INSERT INTO asset_token_ownership (
+ *   wallet,
+ *   assetTokenId,
+ *   amount
+ * ) VALUES (
+ *   :wallet!,
+ *   :assetTokenId!,
+ *   :amount!
+ * )
+ * ON CONFLICT(wallet, assetTokenId)
+ * DO NOTHING
+ * ```
+ */
+export const createAssetOwnership = new PreparedQuery<ICreateAssetOwnershipParams,ICreateAssetOwnershipResult>(createAssetOwnershipIR);
+
+
 /** 'CreateDexOrder' parameters type */
 export interface ICreateDexOrderParams {
-  amount: NumberOrString;
+  amount: number;
   assetTokenId: number;
   orderId: number;
   price: string;

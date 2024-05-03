@@ -20,7 +20,8 @@
         <th>Mint ERC1155</th>
       </tr>
     </table>
-    <h1 style="padding-top: 24px; border-top: solid black; width: 100%; text-align: center;">DEX</h1>
+    <hr style="width: 100%;">
+    <h1 style="padding-top: 24px; width: 100%; text-align: center;">DEX</h1>
     <h2>Your valid minted diamonds you can sell</h2>
     <table id="userValidAssets" style="display: none;">
       <tr>
@@ -137,6 +138,7 @@
       table.innerHTML = "You don't have any valid minted diamonds. Mine and mint them!";
     } else {
       for (const asset of userValidAssets) {
+        if (asset.amount == 0) continue;
         const row = table.insertRow();
         let cell = row.insertCell(0);
         cell.innerHTML = `${asset.assettokenid}`;

@@ -133,19 +133,23 @@
 						"type": "number",
 						"format": "double"
 					},
+					"minter": {
+						"type": "string"
+					},
+					"owner": {
+						"type": "string"
+					},
 					"usertokenid": {
 						"type": "number",
 						"format": "double"
-					},
-					"wallet": {
-						"type": "string"
 					}
 				},
 				"required": [
 					"amount",
 					"assettokenid",
-					"usertokenid",
-					"wallet"
+					"minter",
+					"owner",
+					"usertokenid"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -184,8 +188,7 @@
 						"format": "double"
 					},
 					"price": {
-						"type": "number",
-						"format": "double"
+						"type": "string"
 					},
 					"seller": {
 						"type": "string"
@@ -251,7 +254,7 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "wallet",
+						"name": "user",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -344,7 +347,7 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "wallet",
+						"name": "user",
 						"required": true,
 						"schema": {
 							"type": "string"

@@ -5,6 +5,7 @@ const myGrammar = `
         submitMineAttempt      = m|
         orderCreated           = oc|payload
         assetMinted            = am|payload
+        assetTransferred       = at|payload
 `;
 
 const parserCommands = {
@@ -16,6 +17,11 @@ const parserCommands = {
     },
   },
   assetMinted: {
+    payload: (_: string, input: string) => {
+      return JSON.parse(input);
+    },
+  },
+  assetTransferred: {
     payload: (_: string, input: string) => {
       return JSON.parse(input);
     },

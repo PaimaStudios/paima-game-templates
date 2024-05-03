@@ -64,16 +64,16 @@ export const getUserTokenStats = new PreparedQuery<IGetUserTokenStatsParams,IGet
 
 /** 'GetUserAssetStats' parameters type */
 export interface IGetUserAssetStatsParams {
+  user?: string | null | void;
   userTokenId?: number | null | void;
-  wallet?: string | null | void;
 }
 
 /** 'GetUserAssetStats' return type */
 export interface IGetUserAssetStatsResult {
   amount: number;
   assettokenid: number;
+  minter: string;
   usertokenid: number;
-  wallet: string;
 }
 
 /** 'GetUserAssetStats' query type */
@@ -82,13 +82,13 @@ export interface IGetUserAssetStatsQuery {
   result: IGetUserAssetStatsResult;
 }
 
-const getUserAssetStatsIR: any = {"usedParamSet":{"wallet":true,"userTokenId":true},"params":[{"name":"wallet","required":false,"transform":{"type":"scalar"},"locs":[{"a":47,"b":53}]},{"name":"userTokenId","required":false,"transform":{"type":"scalar"},"locs":[{"a":73,"b":84}]}],"statement":"SELECT * FROM asset_token_state\nWHERE wallet = :wallet AND userTokenId = :userTokenId"};
+const getUserAssetStatsIR: any = {"usedParamSet":{"user":true,"userTokenId":true},"params":[{"name":"user","required":false,"transform":{"type":"scalar"},"locs":[{"a":47,"b":51}]},{"name":"userTokenId","required":false,"transform":{"type":"scalar"},"locs":[{"a":71,"b":82}]}],"statement":"SELECT * FROM asset_token_state\nWHERE minter = :user AND userTokenId = :userTokenId"};
 
 /**
  * Query generated from SQL:
  * ```
  * SELECT * FROM asset_token_state
- * WHERE wallet = :wallet AND userTokenId = :userTokenId
+ * WHERE minter = :user AND userTokenId = :userTokenId
  * ```
  */
 export const getUserAssetStats = new PreparedQuery<IGetUserAssetStatsParams,IGetUserAssetStatsResult>(getUserAssetStatsIR);
@@ -96,7 +96,7 @@ export const getUserAssetStats = new PreparedQuery<IGetUserAssetStatsParams,IGet
 
 /** 'GetUserValidMintedAssets' parameters type */
 export interface IGetUserValidMintedAssetsParams {
-  wallet?: string | null | void;
+  user?: string | null | void;
 }
 
 /** 'GetUserValidMintedAssets' return type */
@@ -111,14 +111,17 @@ export interface IGetUserValidMintedAssetsQuery {
   result: IGetUserValidMintedAssetsResult;
 }
 
-const getUserValidMintedAssetsIR: any = {"usedParamSet":{"wallet":true},"params":[{"name":"wallet","required":false,"transform":{"type":"scalar"},"locs":[{"a":185,"b":191}]}],"statement":"SELECT a.assetTokenId, a.amount FROM asset_token_state as a JOIN user_token_state as u\nON a.wallet = u.wallet AND a.userTokenId = u.userTokenId AND a.amount = u.amount\nWHERE a.wallet = :wallet AND u.isDiamond = TRUE"};
+const getUserValidMintedAssetsIR: any = {"usedParamSet":{"user":true},"params":[{"name":"user","required":false,"transform":{"type":"scalar"},"locs":[{"a":252,"b":256}]}],"statement":"SELECT o.assetTokenId, o.amount FROM asset_token_ownership as o\nJOIN asset_token_state as a\nON o.assetTokenId = a.assetTokenId\nJOIN user_token_state as u\nON a.minter = u.wallet AND a.userTokenId = u.userTokenId AND a.amount = u.amount\nWHERE o.wallet = :user AND u.isDiamond = TRUE AND o.amount <> '0'"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT a.assetTokenId, a.amount FROM asset_token_state as a JOIN user_token_state as u
- * ON a.wallet = u.wallet AND a.userTokenId = u.userTokenId AND a.amount = u.amount
- * WHERE a.wallet = :wallet AND u.isDiamond = TRUE
+ * SELECT o.assetTokenId, o.amount FROM asset_token_ownership as o
+ * JOIN asset_token_state as a
+ * ON o.assetTokenId = a.assetTokenId
+ * JOIN user_token_state as u
+ * ON a.minter = u.wallet AND a.userTokenId = u.userTokenId AND a.amount = u.amount
+ * WHERE o.wallet = :user AND u.isDiamond = TRUE AND o.amount <> '0'
  * ```
  */
 export const getUserValidMintedAssets = new PreparedQuery<IGetUserValidMintedAssetsParams,IGetUserValidMintedAssetsResult>(getUserValidMintedAssetsIR);
@@ -129,7 +132,7 @@ export type IGetDexOrdersParams = void;
 
 /** 'GetDexOrders' return type */
 export interface IGetDexOrdersResult {
-  amount: string;
+  amount: number;
   assettokenid: number;
   orderid: number;
   price: string;

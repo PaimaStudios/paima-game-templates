@@ -13,15 +13,22 @@ CREATE TABLE user_token_state (
 
 CREATE TABLE asset_token_state (
   assetTokenId INTEGER PRIMARY KEY,
-  wallet TEXT NOT NULL,
+  minter TEXT NOT NULL,
   userTokenId INTEGER NOT NULL,
   amount INTEGER NOT NULL
+);
+
+CREATE TABLE asset_token_ownership (
+  wallet TEXT NOT NULL,
+  assetTokenId INTEGER NOT NULL,
+  amount INTEGER NOT NULL,
+  PRIMARY KEY (wallet, assetTokenId)
 );
 
 CREATE TABLE dex_order (
   orderId INTEGER PRIMARY KEY,
   seller TEXT NOT NULL,
   assetTokenId INTEGER NOT NULL,
-  amount BIGINT NOT NULL,
-  price VARCHAR(78) NOT NULL
+  amount INTEGER NOT NULL,
+  price TEXT NOT NULL
 );

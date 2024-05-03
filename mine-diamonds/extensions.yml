@@ -13,3 +13,10 @@ extensions:
     abiPath: "./mine-diamonds/abis/InverseAppProjected1155.json"
     eventSignature: "Minted(uint256,address,uint256,uint256)"
     scheduledPrefix: "am"
+  - name: "InverseAppProjected1155"
+    type: "generic"
+    contractAddress: "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    startBlockHeight: 0
+    abiPath: "./mine-diamonds/abis/InverseAppProjected1155.json"
+    eventSignature: "TransferSingle(address,address,address,uint256,uint256)"
+    scheduledPrefix: "at"

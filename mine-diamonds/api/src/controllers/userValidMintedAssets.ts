@@ -9,10 +9,10 @@ interface GetUserValidMintedAssetsResponse {
 @Route('user_valid_minted_assets')
 export class UserValidMintedAssetsController extends Controller {
   @Get()
-  public async get(@Query() wallet: string): Promise<GetUserValidMintedAssetsResponse> {
+  public async get(@Query() user: string): Promise<GetUserValidMintedAssetsResponse> {
     const pool = requirePool();
-    wallet = wallet.toLowerCase();
-    const stats = await getUserValidMintedAssets.run({ wallet }, pool);
+    user = user.toLowerCase();
+    const stats = await getUserValidMintedAssets.run({ user }, pool);
     return { stats };
   }
 }

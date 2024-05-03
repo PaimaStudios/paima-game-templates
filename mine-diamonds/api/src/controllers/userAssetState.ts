@@ -10,12 +10,12 @@ interface GetUserAssetStateResponse {
 export class UserAssetStateController extends Controller {
   @Get()
   public async get(
-    @Query() wallet: string,
+    @Query() user: string,
     @Query() userTokenId: number
   ): Promise<GetUserAssetStateResponse> {
     const pool = requirePool();
-    wallet = wallet.toLowerCase();
-    const stats = await getUserAssetStats.run({ wallet, userTokenId }, pool);
+    user = user.toLowerCase();
+    const stats = await getUserAssetStats.run({ user, userTokenId }, pool);
     return { stats };
   }
 }

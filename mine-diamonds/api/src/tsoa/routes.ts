@@ -90,8 +90,9 @@ const models: TsoaRoute.Models = {
         "properties": {
             "amount": {"dataType":"double","required":true},
             "assettokenid": {"dataType":"double","required":true},
+            "minter": {"dataType":"string","required":true},
+            "owner": {"dataType":"string","required":true},
             "usertokenid": {"dataType":"double","required":true},
-            "wallet": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -115,7 +116,7 @@ const models: TsoaRoute.Models = {
             "amount": {"dataType":"double","required":true},
             "assettokenid": {"dataType":"double","required":true},
             "orderid": {"dataType":"double","required":true},
-            "price": {"dataType":"double","required":true},
+            "price": {"dataType":"string","required":true},
             "seller": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
@@ -150,7 +151,7 @@ export function RegisterRoutes(app: Router) {
 
             function UserValidMintedAssetsController_get(request: any, response: any, next: any) {
             const args = {
-                    wallet: {"in":"query","name":"wallet","required":true,"dataType":"string"},
+                    user: {"in":"query","name":"user","required":true,"dataType":"string"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -226,7 +227,7 @@ export function RegisterRoutes(app: Router) {
 
             function UserAssetStateController_get(request: any, response: any, next: any) {
             const args = {
-                    wallet: {"in":"query","name":"wallet","required":true,"dataType":"string"},
+                    user: {"in":"query","name":"user","required":true,"dataType":"string"},
                     userTokenId: {"in":"query","name":"userTokenId","required":true,"dataType":"double"},
             };
 
