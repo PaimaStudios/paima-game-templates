@@ -17,3 +17,11 @@ CREATE TABLE asset_token_state (
   userTokenId INTEGER NOT NULL,
   amount INTEGER NOT NULL
 );
+
+CREATE TABLE dex_order (
+  orderId INTEGER PRIMARY KEY,
+  seller TEXT NOT NULL,
+  assetTokenId INTEGER NOT NULL,
+  amount BIGINT NOT NULL,
+  price VARCHAR(78) NOT NULL
+);

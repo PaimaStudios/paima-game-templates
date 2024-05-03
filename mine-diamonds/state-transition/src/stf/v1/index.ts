@@ -21,11 +21,11 @@ export default async function (
 
   switch (input.input) {
     case 'submitMineAttempt':
-      return submitMineAttempt(user, blockHeight, input, randomnessGenerator);
+      return submitMineAttempt(user, randomnessGenerator);
     case 'orderCreated':
-      return orderCreated(user, blockHeight, input, randomnessGenerator);
+      return orderCreated(input);
     case 'assetMinted':
-      return assetMinted(user, blockHeight, input, randomnessGenerator);
+      return assetMinted(input);
     default:
       return [];
   }

@@ -14,6 +14,13 @@ export interface SubmitMineAttemptInput {
 
 export interface OrderCreatedInput {
   input: 'orderCreated';
+  payload: {
+    seller: string;
+    orderId: string;
+    assetId: string;
+    assetAmount: string;
+    pricePerAsset: string;
+  };
 }
 
 export interface AssetMintedInput {

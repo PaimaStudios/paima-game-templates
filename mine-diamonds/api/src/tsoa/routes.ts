@@ -10,6 +10,8 @@ import { UserTokenStateController } from './../controllers/userTokenState';
 import { UserStatsController } from './../controllers/userStats';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UserAssetStateController } from './../controllers/userAssetState';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { DexOrdersController } from './../controllers/dexOrders';
 import type { RequestHandler, Router } from 'express';
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -103,6 +105,31 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "stats": {"dataType":"array","array":{"dataType":"refAlias","ref":"UserAssetStats"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IGetDexOrdersResult": {
+        "dataType": "refObject",
+        "properties": {
+            "amount": {"dataType":"double","required":true},
+            "assettokenid": {"dataType":"double","required":true},
+            "orderid": {"dataType":"double","required":true},
+            "price": {"dataType":"double","required":true},
+            "seller": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "DexOrder": {
+        "dataType": "refAlias",
+        "type": {"ref":"IGetDexOrdersResult","validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GetDexOrdersResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "stats": {"dataType":"array","array":{"dataType":"refAlias","ref":"DexOrder"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -210,6 +237,30 @@ export function RegisterRoutes(app: Router) {
                 validatedArgs = getValidatedArgs(args, request, response);
 
                 const controller = new UserAssetStateController();
+
+
+              const promise = controller.get.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/dex_orders',
+            ...(fetchMiddlewares<RequestHandler>(DexOrdersController)),
+            ...(fetchMiddlewares<RequestHandler>(DexOrdersController.prototype.get)),
+
+            function DexOrdersController_get(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new DexOrdersController();
 
 
               const promise = controller.get.apply(controller, validatedArgs as any);

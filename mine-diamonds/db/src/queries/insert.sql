@@ -42,3 +42,22 @@ INSERT INTO asset_token_state (
 )
 ON CONFLICT(assetTokenId)
 DO NOTHING;
+
+/*
+  @name create_dex_order
+*/
+INSERT INTO dex_order (
+  orderId,
+  seller,
+  assetTokenId,
+  amount,
+  price
+) VALUES (
+  :orderId!,
+  :seller!,
+  :assetTokenId!,
+  :amount!,
+  :price!
+)
+ON CONFLICT(orderId)
+DO NOTHING;

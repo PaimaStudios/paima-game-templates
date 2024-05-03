@@ -1,11 +1,20 @@
 import type { FailedResult, Result } from '@paima/sdk/mw-core';
 import { PaimaMiddlewareErrorCode } from '@paima/sdk/mw-core';
 
-import type { MatchExecutorData, RoundExecutorData, UserStats, UserTokenStats } from '@game/utils';
+import type {
+  DexOrder,
+  MatchExecutorData,
+  RoundExecutorData,
+  UserAssetStats,
+  UserStats,
+  UserTokenStats,
+  UserValidMintedAssets,
+} from '@game/utils';
 
 import { buildEndpointErrorFxn, MiddlewareErrorCode } from '../errors';
 import { buildMatchExecutor, buildRoundExecutor } from '../helpers/executors';
 import {
+  backendQueryDexOrders,
   backendQueryMatchExecutor,
   backendQueryRoundExecutor,
   backendQueryUserAssetStats,
@@ -13,7 +22,15 @@ import {
   backendQueryUserTokenStats,
   backendQueryUserValidMintedAssets,
 } from '../helpers/query-constructors';
-import type { MatchExecutor, PackedUserStats, PackedUserTokenStats, RoundExecutor } from '../types';
+import type {
+  MatchExecutor,
+  PackedDexOrdersStats,
+  PackedUserAssetStats,
+  PackedUserStats,
+  PackedUserTokenStats,
+  PackedUserValidMintedAssetsStats,
+  RoundExecutor,
+} from '../types';
 import type { MatchState, TickEvent } from '@game/game-logic';
 
 async function getRoundExecutor(
@@ -133,7 +150,7 @@ async function getUserTokenStats(
 async function getUserAssetStats(
   walletAddress: string,
   userTokenId: number
-): Promise<PackedUserTokenStats | FailedResult> {
+): Promise<PackedUserAssetStats | FailedResult> {
   const errorFxn = buildEndpointErrorFxn('getUserAssetStats');
 
   let res: Response;
@@ -145,7 +162,7 @@ async function getUserAssetStats(
   }
 
   try {
-    const j = (await res.json()) as { stats: UserTokenStats };
+    const j = (await res.json()) as { stats: UserAssetStats };
     return {
       success: true,
       stats: j.stats,
@@ -156,9 +173,8 @@ async function getUserAssetStats(
 }
 
 async function getUserValidMintedAssets(
-  walletAddress: string,
-  userTokenId: number
-): Promise<PackedUserTokenStats | FailedResult> {
+  walletAddress: string
+): Promise<PackedUserValidMintedAssetsStats | FailedResult> {
   const errorFxn = buildEndpointErrorFxn('getUserValidMintedAssets');
 
   let res: Response;
@@ -170,7 +186,29 @@ async function getUserValidMintedAssets(
   }
 
   try {
-    const j = (await res.json()) as { stats: UserTokenStats };
+    const j = (await res.json()) as { stats: UserValidMintedAssets };
+    return {
+      success: true,
+      stats: j.stats,
+    };
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
+  }
+}
+
+async function getDexOrders(): Promise<PackedDexOrdersStats | FailedResult> {
+  const errorFxn = buildEndpointErrorFxn('getDexOrders');
+
+  let res: Response;
+  try {
+    const query = backendQueryDexOrders();
+    res = await fetch(query);
+  } catch (err) {
+    return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
+  }
+
+  try {
+    const j = (await res.json()) as { stats: DexOrder };
     return {
       success: true,
       stats: j.stats,
@@ -185,6 +223,7 @@ export const queryEndpoints = {
   getUserTokenStats,
   getUserAssetStats,
   getUserValidMintedAssets,
+  getDexOrders,
   getRoundExecutor,
   getMatchExecutor,
 };

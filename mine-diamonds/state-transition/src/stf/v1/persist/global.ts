@@ -3,47 +3,41 @@ import type Prando from '@paima/sdk/prando';
 import type { WalletAddress } from '@paima/sdk/utils';
 import type {
   ICreateAssetTokenStateParams,
+  ICreateDexOrderParams,
   ICreateGlobalUserStateParams,
   ICreateUserTokenStateParams,
   IUpdateUserStateCurrentTokenIdParams,
 } from '@game/db';
-import { createAssetTokenState, createGlobalUserState } from '@game/db';
+import { createAssetTokenState, createDexOrder, createGlobalUserState } from '@game/db';
 import { createUserTokenState } from '@game/db';
 import { updateUserStateCurrentTokenId } from '@game/db';
 import type { AssetMintedInput, OrderCreatedInput, SubmitMineAttemptInput } from '../types';
 
-export function submitMineAttempt(
-  player: WalletAddress,
-  blockHeight: number,
-  inputData: SubmitMineAttemptInput,
-  randomnessGenerator: Prando
-): SQLUpdate[] {
+export function submitMineAttempt(player: WalletAddress, randomnessGenerator: Prando): SQLUpdate[] {
   return [
     persistNewUser(player),
     persistMineAttempt(
       player,
       randomnessGenerator.nextInt(1, 10),
-      randomnessGenerator.nextInt(0, 1) === 0
+      randomnessGenerator.nextInt(1, 10) <= 7
     ),
     persistUpdateUserStateCurrentTokenId(player),
   ];
 }
 
-export function orderCreated(
-  player: WalletAddress,
-  blockHeight: number,
-  inputData: OrderCreatedInput,
-  randomnessGenerator: Prando
-): SQLUpdate[] {
-  return [];
+export function orderCreated(inputData: OrderCreatedInput): SQLUpdate[] {
+  return [
+    persistOrderCreated(
+      inputData.payload.seller.toLowerCase(),
+      inputData.payload.assetAmount,
+      Number(inputData.payload.assetId),
+      Number(inputData.payload.orderId),
+      inputData.payload.pricePerAsset
+    ),
+  ];
 }
 
-export function assetMinted(
-  player: WalletAddress,
-  blockHeight: number,
-  inputData: AssetMintedInput,
-  randomnessGenerator: Prando
-): SQLUpdate[] {
+export function assetMinted(inputData: AssetMintedInput): SQLUpdate[] {
   return [
     persistAssetMinted(
       inputData.payload.minter.toLowerCase(),
@@ -80,4 +74,16 @@ function persistAssetMinted(
   const params: ICreateAssetTokenStateParams = { wallet, userTokenId, assetTokenId, amount };
 
   return [createAssetTokenState, params];
+}
+
+function persistOrderCreated(
+  seller: WalletAddress,
+  amount: number | string,
+  assetTokenId: number,
+  orderId: number,
+  price: string
+): SQLUpdate {
+  const params: ICreateDexOrderParams = { amount, assetTokenId, orderId, price, seller };
+
+  return [createDexOrder, params];
 }

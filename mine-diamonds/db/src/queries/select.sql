@@ -18,3 +18,8 @@ SELECT a.assetTokenId, a.amount FROM asset_token_state as a JOIN user_token_stat
 ON a.wallet = u.wallet AND a.userTokenId = u.userTokenId AND a.amount = u.amount
 WHERE a.wallet = :wallet AND u.isDiamond = TRUE
 ;
+
+/* @name getDexOrders */
+SELECT * FROM dex_order
+WHERE amount <> '0'
+;

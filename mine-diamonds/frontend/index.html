@@ -10,8 +10,9 @@
 <body>
   <div style="display: flex; flex-direction: column; gap: 16px; align-items: center;">
     <h1>Mine and trade diamonds!</h1>
+    <p>Try to mine minerals. If you are lucky enough to find diamonds, you can then sell them on the DEX below!</p>
     <div id="actions" style="margin-bottom: 16px;"></div>
-    <table id="mined">
+    <table id="mined" style="display: none;">
       <tr>
         <th>User nonce</th>
         <th>Amount</th>
@@ -21,7 +22,7 @@
     </table>
     <h1 style="padding-top: 24px; border-top: solid black; width: 100%; text-align: center;">DEX</h1>
     <h2>Your valid minted diamonds you can sell</h2>
-    <table id="userValidAssets">
+    <table id="userValidAssets" style="display: none;">
       <tr>
         <th>Asset token ID</th>
         <th>Amount</th>
@@ -29,7 +30,14 @@
       </tr>
     </table>
     <h2>Existing valid sell orders</h2>
-    <table id="orders"></table>
+    <table id="orders" style="display: none;">
+      <tr>
+        <th>Order ID</th>
+        <th>Amount</th>
+        <th>Price per diamond (ETH)</th>
+        <th>Buy</th>
+      </tr>
+    </table>
   </div>
 </body>
 <script type="module">
@@ -65,6 +73,7 @@
     ], signer);
     const dexContract = new ethers.Contract(DEX_ADDRESS, [
       "function createSellOrder(uint256 assetId, uint256 assetAmount, uint256 pricePerAsset) public",
+      "function fillOrdersExactEth(uint256 minimumAsset, uint256[] memory orderIds) public payable"
     ], signer);
 
     const nextNonce = await assetContract.currentNonce(walletAddress) + 1n;
@@ -87,6 +96,7 @@
 
     if (user?.stats?.currentusertokenid > 1) {
       const table = document.getElementById("mined");
+      table.style.setProperty("display", "table");
       for (let i = 1; i < user.stats.currentusertokenid; i++) {
         const userToken = (await endpoints.getUserTokenStats(walletAddress, i)).stats[0];
         const row = table.insertRow(i);
@@ -120,38 +130,71 @@
       }
     }
 
-    const userValidAssets = await endpoints.getUserValidMintedAssets(walletAddress);
-
+    const userValidAssets = (await endpoints.getUserValidMintedAssets(walletAddress)).stats;
     const table = document.getElementById("userValidAssets");
-    for (const asset of userValidAssets.stats) {
-      const row = table.insertRow();
-      let cell = row.insertCell(0);
-      cell.innerHTML = `${asset.assettokenid}`;
-      cell = row.insertCell(1);
-      cell.innerHTML = `${asset.amount}`;
-      cell = row.insertCell(2);
-      const sellButton = document.createElement("button");
-      sellButton.innerHTML = isApproved ? "Sell" : "Approve to sell";
-      sellButton.style.setProperty("width", "100%");
-      sellButton.onclick = () => {
-        if (!isApproved) {
+    table.style.setProperty("display", "table");
+    if (userValidAssets.length === 0) {
+      table.innerHTML = "You don't have any valid minted diamonds. Mine and mint them!";
+    } else {
+      for (const asset of userValidAssets) {
+        const row = table.insertRow();
+        let cell = row.insertCell(0);
+        cell.innerHTML = `${asset.assettokenid}`;
+        cell = row.insertCell(1);
+        cell.innerHTML = `${asset.amount}`;
+        cell = row.insertCell(2);
+        const sellButton = document.createElement("button");
+        sellButton.innerHTML = isApproved ? "Sell" : "Approve to sell";
+        sellButton.style.setProperty("width", "100%");
+        sellButton.onclick = () => {
+          if (!isApproved) {
+            sellButton.innerHTML = "Confirm and wait...";
+            sellButton.disabled = true;
+            assetContract.setApprovalForAll(DEX_ADDRESS, true).then((x) => {
+              window.location.reload();
+            });
+            return;
+          }
+
+          const price = prompt("Enter price per diamond (in ETH)");
+          if (!price) return;
           sellButton.innerHTML = "Confirm and wait...";
           sellButton.disabled = true;
-          assetContract.setApprovalForAll(DEX_ADDRESS, true).then((x) => {
+          dexContract.createSellOrder(asset.assettokenid, asset.amount, ethers.parseEther(price)).then((x) => {
             window.location.reload();
           });
-          return;
-        }
+        };
+        cell.appendChild(sellButton);
+      }
+    }
 
-        const price = prompt("Enter price per diamond");
-        if (!price) return;
-        sellButton.innerHTML = "Confirm and wait...";
-        sellButton.disabled = true;
-        dexContract.createSellOrder(asset.assettokenid, asset.amount, ethers.parseUnits(price)).then((x) => {
-          window.location.reload();
-        });
-      };
-      cell.appendChild(sellButton);
+    const dexOrders = (await endpoints.getDexOrders()).stats;
+    const ordersTable = document.getElementById("orders");
+    ordersTable.style.setProperty("display", "table");
+    if (dexOrders.length === 0) {
+      ordersTable.innerHTML = "No valid sell orders available. Be the first!";
+    } else {
+      for (const order of dexOrders) {
+        const row = ordersTable.insertRow();
+        let cell = row.insertCell(0);
+        cell.innerHTML = `${order.orderid}`;
+        cell = row.insertCell(1);
+        cell.innerHTML = `${order.amount}`;
+        cell = row.insertCell(2);
+        cell.innerHTML = `${ethers.formatEther(order.price)}`;
+        cell = row.insertCell(3);
+        const buyButton = document.createElement("button");
+        buyButton.innerHTML = "Buy";
+        buyButton.style.setProperty("width", "100%");
+        buyButton.onclick = () => {
+          buyButton.innerHTML = "Confirm and wait...";
+          buyButton.disabled = true;
+          dexContract.fillOrdersExactEth(order.amount, [order.orderid], { value: BigInt(order.price) * BigInt(order.amount) }).then((x) => {
+            window.location.reload();
+          });
+        };
+        cell.appendChild(buyButton);
+      }
     }
   }
 

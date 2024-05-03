@@ -36,6 +36,12 @@ export function backendQueryUserValidMintedAssets(wallet: WalletAddress): string
   return buildBackendQuery(endpoint, options);
 }
 
+export function backendQueryDexOrders(): string {
+  const endpoint = 'dex_orders';
+  const options = {};
+  return buildBackendQuery(endpoint, options);
+}
+
 export function backendQueryRoundExecutor(lobbyID: string, round: number): string {
   const endpoint = 'round_executor';
   const options = {

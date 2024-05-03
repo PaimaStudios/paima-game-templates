@@ -1,6 +1,8 @@
 /** Types generated for queries found in "src/queries/insert.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
+export type NumberOrString = number | string;
+
 /** 'CreateGlobalUserState' parameters type */
 export interface ICreateGlobalUserStateParams {
   wallet: string;
@@ -109,5 +111,48 @@ const createAssetTokenStateIR: any = {"usedParamSet":{"assetTokenId":true,"walle
  * ```
  */
 export const createAssetTokenState = new PreparedQuery<ICreateAssetTokenStateParams,ICreateAssetTokenStateResult>(createAssetTokenStateIR);
+
+
+/** 'CreateDexOrder' parameters type */
+export interface ICreateDexOrderParams {
+  amount: NumberOrString;
+  assetTokenId: number;
+  orderId: number;
+  price: string;
+  seller: string;
+}
+
+/** 'CreateDexOrder' return type */
+export type ICreateDexOrderResult = void;
+
+/** 'CreateDexOrder' query type */
+export interface ICreateDexOrderQuery {
+  params: ICreateDexOrderParams;
+  result: ICreateDexOrderResult;
+}
+
+const createDexOrderIR: any = {"usedParamSet":{"orderId":true,"seller":true,"assetTokenId":true,"amount":true,"price":true},"params":[{"name":"orderId","required":true,"transform":{"type":"scalar"},"locs":[{"a":92,"b":100}]},{"name":"seller","required":true,"transform":{"type":"scalar"},"locs":[{"a":105,"b":112}]},{"name":"assetTokenId","required":true,"transform":{"type":"scalar"},"locs":[{"a":117,"b":130}]},{"name":"amount","required":true,"transform":{"type":"scalar"},"locs":[{"a":135,"b":142}]},{"name":"price","required":true,"transform":{"type":"scalar"},"locs":[{"a":147,"b":153}]}],"statement":"INSERT INTO dex_order (\n  orderId,\n  seller,\n  assetTokenId,\n  amount,\n  price\n) VALUES (\n  :orderId!,\n  :seller!,\n  :assetTokenId!,\n  :amount!,\n  :price!\n)\nON CONFLICT(orderId)\nDO NOTHING"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * INSERT INTO dex_order (
+ *   orderId,
+ *   seller,
+ *   assetTokenId,
+ *   amount,
+ *   price
+ * ) VALUES (
+ *   :orderId!,
+ *   :seller!,
+ *   :assetTokenId!,
+ *   :amount!,
+ *   :price!
+ * )
+ * ON CONFLICT(orderId)
+ * DO NOTHING
+ * ```
+ */
+export const createDexOrder = new PreparedQuery<ICreateDexOrderParams,ICreateDexOrderResult>(createDexOrderIR);
 
 

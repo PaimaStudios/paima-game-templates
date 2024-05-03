@@ -124,3 +124,33 @@ const getUserValidMintedAssetsIR: any = {"usedParamSet":{"wallet":true},"params"
 export const getUserValidMintedAssets = new PreparedQuery<IGetUserValidMintedAssetsParams,IGetUserValidMintedAssetsResult>(getUserValidMintedAssetsIR);
 
 
+/** 'GetDexOrders' parameters type */
+export type IGetDexOrdersParams = void;
+
+/** 'GetDexOrders' return type */
+export interface IGetDexOrdersResult {
+  amount: string;
+  assettokenid: number;
+  orderid: number;
+  price: string;
+  seller: string;
+}
+
+/** 'GetDexOrders' query type */
+export interface IGetDexOrdersQuery {
+  params: IGetDexOrdersParams;
+  result: IGetDexOrdersResult;
+}
+
+const getDexOrdersIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT * FROM dex_order\nWHERE amount <> '0'"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * SELECT * FROM dex_order
+ * WHERE amount <> '0'
+ * ```
+ */
+export const getDexOrders = new PreparedQuery<IGetDexOrdersParams,IGetDexOrdersResult>(getDexOrdersIR);
+
+

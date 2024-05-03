@@ -1,4 +1,5 @@
 import type {
+  IGetDexOrdersResult,
   IGetUserAssetStatsResult,
   IGetUserStatsResult,
   IGetUserTokenStatsResult,
@@ -39,3 +40,5 @@ export type UserTokenStats = IGetUserTokenStatsResult;
 export type UserAssetStats = IGetUserAssetStatsResult;
 
 export type UserValidMintedAssets = IGetUserValidMintedAssetsResult;
+
+export type DexOrder = IGetDexOrdersResult;
