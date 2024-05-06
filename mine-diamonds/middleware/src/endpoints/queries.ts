@@ -1,104 +1,29 @@
-import type { FailedResult, Result } from '@paima/sdk/mw-core';
+import type { FailedResult } from '@paima/sdk/mw-core';
 import { PaimaMiddlewareErrorCode } from '@paima/sdk/mw-core';
 
 import type {
   DexOrder,
-  MatchExecutorData,
-  RoundExecutorData,
   UserAssetStats,
   UserStats,
   UserTokenStats,
   UserValidMintedAssets,
 } from '@game/utils';
 
-import { buildEndpointErrorFxn, MiddlewareErrorCode } from '../errors';
-import { buildMatchExecutor, buildRoundExecutor } from '../helpers/executors';
+import { buildEndpointErrorFxn } from '../errors';
 import {
   backendQueryDexOrders,
-  backendQueryMatchExecutor,
-  backendQueryRoundExecutor,
   backendQueryUserAssetStats,
   backendQueryUserStats,
   backendQueryUserTokenStats,
   backendQueryUserValidMintedAssets,
 } from '../helpers/query-constructors';
 import type {
-  MatchExecutor,
   PackedDexOrdersStats,
   PackedUserAssetStats,
   PackedUserStats,
   PackedUserTokenStats,
   PackedUserValidMintedAssetsStats,
-  RoundExecutor,
 } from '../types';
-import type { MatchState, TickEvent } from '@game/game-logic';
-
-async function getRoundExecutor(
-  lobbyId: string,
-  roundNumber: number
-): Promise<Result<RoundExecutor<MatchState, TickEvent>>> {
-  const errorFxn = buildEndpointErrorFxn('getRoundExecutor');
-
-  // Retrieve data:
-  let res: Response;
-  try {
-    const query = backendQueryRoundExecutor(lobbyId, roundNumber);
-    res = await fetch(query);
-  } catch (err) {
-    return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
-  }
-
-  let data: RoundExecutorData;
-  try {
-    data = (await res.json()) as RoundExecutorData;
-  } catch (err) {
-    return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
-  }
-
-  // Process data:
-  try {
-    const executor = buildRoundExecutor(data, roundNumber);
-    return {
-      success: true,
-      result: executor,
-    };
-  } catch (err) {
-    return errorFxn(MiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR, err);
-  }
-}
-
-async function getMatchExecutor(
-  lobbyId: string
-): Promise<Result<MatchExecutor<MatchState, TickEvent>>> {
-  const errorFxn = buildEndpointErrorFxn('getMatchExecutor');
-
-  // Retrieve data:
-  let res: Response;
-  try {
-    const query = backendQueryMatchExecutor(lobbyId);
-    res = await fetch(query);
-  } catch (err) {
-    return errorFxn(PaimaMiddlewareErrorCode.ERROR_QUERYING_BACKEND_ENDPOINT, err);
-  }
-
-  let data: MatchExecutorData;
-  try {
-    data = (await res.json()) as MatchExecutorData;
-  } catch (err) {
-    return errorFxn(PaimaMiddlewareErrorCode.INVALID_RESPONSE_FROM_BACKEND, err);
-  }
-
-  // Process data:
-  try {
-    const executor = buildMatchExecutor(data);
-    return {
-      success: true,
-      result: executor,
-    };
-  } catch (err) {
-    return errorFxn(MiddlewareErrorCode.UNABLE_TO_BUILD_EXECUTOR, err);
-  }
-}
 
 async function getUserStats(walletAddress: string): Promise<PackedUserStats | FailedResult> {
   const errorFxn = buildEndpointErrorFxn('getUserStats');
@@ -224,6 +149,4 @@ export const queryEndpoints = {
   getUserAssetStats,
   getUserValidMintedAssets,
   getDexOrders,
-  getRoundExecutor,
-  getMatchExecutor,
 };

@@ -1,7 +1,7 @@
 {
   "name": "@game/middleware",
   "version": "1.0.0",
-  "description": "Middleware for OpenWorld game, to be imported into any frontend",
+  "description": "Middleware for MineDiamonds, to be imported into any frontend",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "type": "module",
@@ -15,7 +15,6 @@
   "keywords": [],
   "author": "PaimaStudios",
   "dependencies": {
-    "@game/game-logic": "1.0.0",
     "@game/utils": "1.0.0"
   },
   "devDependencies": {

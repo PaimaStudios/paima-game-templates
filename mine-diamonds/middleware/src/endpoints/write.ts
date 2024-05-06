@@ -7,7 +7,6 @@ import {
 } from '@paima/sdk/mw-core';
 
 import { buildEndpointErrorFxn } from '../errors';
-import { ENV } from '@paima/sdk/utils';
 
 const getUserWallet = (errorFxn: EndpointErrorFxn): Result<string> => {
   try {
@@ -43,27 +42,6 @@ async function submitMineAttempt(): Promise<OldResult> {
   }
 }
 
-async function joinWorld(): Promise<OldResult> {
-  const errorFxn = buildEndpointErrorFxn('joinWorld');
-
-  const query = getUserWallet(errorFxn);
-  if (!query.success) return query;
-
-  const conciseBuilder = builder.initialize(undefined);
-  conciseBuilder.setPrefix('j');
-  try {
-    const result = await postConciselyEncodedData(conciseBuilder.build());
-    if (result.success) {
-      return { success: true, message: '' };
-    } else {
-      return errorFxn(PaimaMiddlewareErrorCode.ERROR_POSTING_TO_CHAIN);
-    }
-  } catch (err) {
-    return errorFxn(PaimaMiddlewareErrorCode.ERROR_POSTING_TO_CHAIN, err);
-  }
-}
-
 export const writeEndpoints = {
-  joinWorld,
   submitMineAttempt,
 };

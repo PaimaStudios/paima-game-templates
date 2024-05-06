@@ -1,4 +1,4 @@
-# OpenWorld Game Node Template
+# MineDiamonds Game Node Template
 
 This documentation provides a basic overview of the template. Each module has its own `README` file with more detailed information.
 
@@ -105,6 +105,17 @@ You can set the `NETWORK` variable if you want to load a custom config for your 
 ```
 NETWORK=localhost ./paima-engine-linux run
 ```
+
+## Front-end
+
+Navigate to the `frontend` folder and run:
+
+```
+npm i
+npm run start
+```
+
+Then visit `http://127.0.0.1:8000`
 
 ## Documentation
 

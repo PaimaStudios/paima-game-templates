@@ -1,7 +1,7 @@
 {
   "name": "@game/utils",
   "version": "1.0.0",
-  "description": "Helper library for Paima OpenWorld",
+  "description": "Helper library for Paima MineDiamonds",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "type": "module",

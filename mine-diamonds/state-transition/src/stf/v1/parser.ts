@@ -11,7 +11,6 @@ const myGrammar = `
 `;
 
 const parserCommands = {
-  joinWorld: {},
   submitMineAttempt: {},
   orderCreated: {
     payload: (_: string, input: string) => {
