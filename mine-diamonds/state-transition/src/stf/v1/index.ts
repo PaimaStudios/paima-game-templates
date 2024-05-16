@@ -2,7 +2,7 @@ import type { Pool } from 'pg';
 
 import parse from './parser.js';
 import type Prando from '@paima/sdk/prando';
-import type { SubmittedChainData } from '@paima/sdk/utils';
+import { SCHEDULED_DATA_ADDRESS, type SubmittedChainData } from '@paima/sdk/utils';
 import type { SQLUpdate } from '@paima/node-sdk/db';
 import {
   submitMineAttempt,
@@ -30,14 +30,44 @@ export default async function (
     case 'submitMineAttempt':
       return submitMineAttempt(user, randomnessGenerator);
     case 'orderCreated':
+      if (inputData.realAddress !== SCHEDULED_DATA_ADDRESS) {
+        console.log(
+          `WARNING: Scheduled Events can only be called from paima-engine. Called by ${JSON.stringify(inputData)}`
+        );
+        return [];
+      }
       return orderCreated(input);
     case 'orderCancelled':
+      if (inputData.realAddress !== SCHEDULED_DATA_ADDRESS) {
+        console.log(
+          `WARNING: Scheduled Events can only be called from paima-engine. Called by ${JSON.stringify(inputData)}`
+        );
+        return [];
+      }
       return orderCancelled(input);
     case 'orderFilled':
+      if (inputData.realAddress !== SCHEDULED_DATA_ADDRESS) {
+        console.log(
+          `WARNING: Scheduled Events can only be called from paima-engine. Called by ${JSON.stringify(inputData)}`
+        );
+        return [];
+      }
       return orderFilled(input);
     case 'assetMinted':
+      if (inputData.realAddress !== SCHEDULED_DATA_ADDRESS) {
+        console.log(
+          `WARNING: Scheduled Events can only be called from paima-engine. Called by ${JSON.stringify(inputData)}`
+        );
+        return [];
+      }
       return assetMinted(input);
     case 'assetTransferred':
+      if (inputData.realAddress !== SCHEDULED_DATA_ADDRESS) {
+        console.log(
+          `WARNING: Scheduled Events can only be called from paima-engine. Called by ${JSON.stringify(inputData)}`
+        );
+        return [];
+      }
       return assetTransferred(input);
     default:
       return [];
