@@ -12,6 +12,6 @@ It also exports a series of SQL queries, compiled by the `pgtyped` library.
 
 [pgTyped](https://github.com/adelsz/pgtyped) generates type safe SQL queries to run on a nodeJS application.
 
-To use it you must write up the queries in `sql` files annotated in pgTyped's custom syntax, and run the CLI. The CLI can be run with `npm run compile`.
+To use it you must write up the queries in `sql` files annotated in pgTyped's custom syntax, and run the CLI.
 
-The pgTyped compiler requires a json configuration file, `pgtypedconfig.json` in this repo. The compiler requires a local database with a working schema to validate the queries before compilation. The config file in this repo uses my personal setup, please change to your local setup before compiling yourself.
+The CLI can be run with `npm run watch`, which will use Docker to run a temporary Postgres database initialized with `migrations/up.sql` and then watch for query changes. Ctrl+C and restart to reflect changes to `init.sql`.

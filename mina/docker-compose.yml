@@ -49,8 +49,8 @@ services:
     volumes:
       # Don't mount the database as a volume, just let it die, because we have
       # to rebuild it any time hardhat restarts from block #0 anyways.
-      - "./backend/db/migrations/init/init.sql:/docker-entrypoint-initdb.d/tarochi-backend-init.sql"
-      - "./backend/db/migrations/init/batcher.sql:/docker-entrypoint-initdb.d/paima-batcher-up.sql"
+      - "./db/migrations/init/init.sql:/docker-entrypoint-initdb.d/tarochi-backend-init.sql"
+      - "./db/migrations/init/batcher.sql:/docker-entrypoint-initdb.d/paima-batcher-up.sql"
     healthcheck:
       # Use pg_isready to check postgres is running.
       test: pg_isready -U postgres -p 5432
