@@ -52,12 +52,16 @@
   const ASSET_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
   const DEX_ADDRESS = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
 
+  function formatAddress(addr) {
+    return addr.substring(0, 6) + '...' + addr.substring(addr.length - 4);
+  }
+
   async function start() {
     // Get data for wallet and world
     const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = await provider.getSigner();
     const walletAddress = await signer.getAddress();
-    document.getElementById('walletAddress').innerHTML = walletAddress;
+    document.getElementById('walletAddress').innerHTML = formatAddress(walletAddress);
 
     const wallet = await endpoints.userWalletLogin({
       mode: WalletMode.EvmInjected,
@@ -192,12 +196,13 @@
         cell = row.insertCell(2);
         cell.innerHTML = `${ethers.formatEther(order.price)}`;
         cell = row.insertCell(3);
-        cell.innerHTML = isSeller ? 'You' : `${order.seller.substring(0, 6)}...${order.seller.substring(order.seller.length - 4)}`;
+        cell.innerHTML = isSeller ? 'You' : `${formatAddress(order.seller)}`;
         cell = row.insertCell(4);
         const buyButton = document.createElement("button");
         buyButton.innerHTML = isSeller ? "Cancel" : "Buy";
         buyButton.style.setProperty("width", "100%");
         buyButton.onclick = () => {
+          const buyButtonPreviousHtml = buyButton.innerHTML;
           buyButton.innerHTML = "Confirm and wait...";
           buyButton.disabled = true;
           if (isSeller) {
@@ -205,11 +210,27 @@
               window.location.reload();
             });
           } else {
-
-            dexContract.fillOrdersExactEth(order.amount, [order.orderid], { value: BigInt(order.price) * BigInt(order.amount) }).then((x) => {
+            const amount = prompt(`Enter how many diamond you want to buy (max ${order.amount})`);
+            if (!amount) {
+              buyButton.innerHTML = buyButtonPreviousHtml;
+              buyButton.disabled = false;
+              return;
+            }
+            if (amount > order.amount) {
+              alert('You exceeded the max amount!')
+              buyButton.innerHTML = buyButtonPreviousHtml;
+              buyButton.disabled = false;
+              return;
+            }
+            dexContract.fillOrdersExactEth(amount, [order.orderid], { value: BigInt(order.price) * BigInt(amount) }).then((x) => {
               window.location.reload();
+            }).catch((e) => {
+              console.error(e);
+              buyButton.innerHTML = buyButtonPreviousHtml;
+              buyButton.disabled = false;
             });
           }
+
         };
         cell.appendChild(buyButton);
       }
