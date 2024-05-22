@@ -9,10 +9,10 @@
     "scripts": {
       "initialize": "npm ci && cp .env.example ../.env.localhost && cp extensions.yml ../extensions.yml",
       "pack": "scripts/pack.sh",
-      "pack:middleware": "npm run -w middleware/ build",
+      "pack:middleware": "npm run -w middleware/ build --",
       "compile": "npm run compile:api && npm run compile:db",
-      "compile:api": "npm run -w api/ compile",
-      "compile:db": "npm run -w db/ compile",
+      "compile:api": "npm run -w api/ compile --",
+      "compile:db": "npm run -w db/ compile --",
       "build": "npm run compile && tsc --build tsconfig.build.json && npm run -w contracts/mina/ build",
       "lint": "eslint --ext ts,tsx --ignore-path .gitignore .",
       "lint:fix": "npm run lint -- --fix",
@@ -21,7 +21,9 @@
       "test": "NODE_OPTIONS=--experimental-vm-modules DOTENV_CONFIG_PATH=../.env.localhost jest",
       "test:watch": "npm test -- --watch",
       "prestart": "docker compose up --wait",
-      "start": "true"
+      "start": "true",
+      "database:up": "docker compose up --wait hardhat database",
+      "database:reset": "docker compose down -v hardhat database"
     },
     "workspaces": [
       "./contracts/mina",

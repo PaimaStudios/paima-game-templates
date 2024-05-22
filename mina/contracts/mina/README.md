@@ -12,13 +12,8 @@ npm run build
 
 ```sh
 npm run test
-npm run testw # watch mode
-```
-
-## How to run coverage
-
-```sh
-npm run coverage
+npm run test:watch  # watch mode: re-run tests on edit
+npm run test:coverage  # save coverage report
 ```
 
 ## License

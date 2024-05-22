@@ -1,4 +1,4 @@
-# Generic Game Node Template
+# Mina integration Game Node Template
 
 This documentation provides a basic overview of the template. Each module has its own `README` file with more detailed information.
 
@@ -55,32 +55,40 @@ Feel free to use examples written in the file for initial testing.
 
 ## Contracts
 
-1. Start a local network using `npm run chain:start`
-2. `npm run chain:deploy`
+1. Start an EVM local network (Hardhat) using `docker compose up hardhat`. Contracts will be automatically deployed.
+2. Start a Mina local network (Lightnet) using `docker compose up mina`.
+    1.
 
 ## Development
 
-To reflect changes in the `API`, use the following command to regenerate all `tsoa` routes:
+To reflect changes in the API, use the following command to regenerate all `tsoa` routes:
 
 ```
 npm run compile:api
 ```
 
-If there are any changes to the DB schema or queries, start the `pgtyped` watcher process using the following command. It will regenerate all the DB types used in the project:
+If there are any changes to the DB schema or queries, run `pgtyped` using the following command. It will regenerate all the DB types used in the project:
 
 ```
 npm run compile:db
+npm run compile:db -- -w  # to run in watch mode
 ```
 
-To speed up the development cycle you can at any time completely reset the database and start syncing from the latest blockheight. Run this command, that will modify your `.env.localhost` and `docker-compose.yml` files:
+To speed up the development cycle you can at any time completely reset the EVM and database and start from a fresh local chain:
 
 ```
 npm run database:reset
 ```
 
+The Mina Lightnet node is not included because of its long startup time. To reset everything:
+
+```
+docker compose down
+```
+
 ## Production
 
-To start the database, run the command:
+To start the database in the background, run the command:
 
 ```
 npm run database:up
