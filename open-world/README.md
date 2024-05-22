@@ -114,4 +114,4 @@ If you've got this far you're probably already familiar with our documentation. 
 ./paima-engine-linux docs
 ```
 
-Or you can visit our [Paima Documentation Website](docs.paimastudios.com) at any time.
+Or you can visit our [Paima Documentation Website](https://docs.paimastudios.com) at any time.
