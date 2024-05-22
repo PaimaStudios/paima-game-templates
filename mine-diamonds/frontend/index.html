@@ -25,6 +25,10 @@
     <hr style="width: 100%;">
     <h1 style="padding-top: 24px; width: 100%; text-align: center;">DEX</h1>
     <p>You can trade valid minted diamonds here!</p>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span>Lowest price right now (ETH):</span>
+      <span id="lowestPriceEth"></span>
+    </div>
     <h2>Your valid minted diamonds you can sell</h2>
     <table id="userValidAssets" style="display: none;">
       <tr>
@@ -33,6 +37,18 @@
         <th>Create sell order</th>
       </tr>
     </table>
+    <h2>Bulk buy</h2>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 300px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;">
+        <span>Buy amount: </span>
+        <input id="bulkBuyInput" type="number" min="0" style="text-align: right; flex-grow: 1;"></input>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;">
+        <span>Total ETH to pay:</span>
+        <span id="bulkBuyTotalEth"></span>
+      </div>
+      <button id="bulkBuyButton" style="align-self: flex-end;" disabled>Execute bulk buy</button>
+    </div>
     <h2>Existing valid sell orders</h2>
     <table id="orders" style="display: none;">
       <tr>
@@ -83,7 +99,8 @@
     const dexContract = new ethers.Contract(DEX_ADDRESS, [
       "function cancelSellOrder(uint256 orderId) public",
       "function createSellOrder(uint256 assetId, uint256 assetAmount, uint256 pricePerAsset) public",
-      "function fillOrdersExactEth(uint256 minimumAsset, uint256[] memory orderIds) public payable"
+      "function fillOrdersExactEth(uint256 minimumAsset, uint256[] memory orderIds) public payable",
+      "function fillOrdersExactAsset(uint256 assetAmount, uint256[] memory orderIds) public payable"
     ], signer);
 
     const nextNonce = await assetContract.currentNonce(walletAddress) + 1n;
@@ -180,6 +197,50 @@
     }
 
     const dexOrders = (await endpoints.getDexOrders()).stats;
+    const lowestPriceEth = document.getElementById("lowestPriceEth");
+    lowestPriceEth.innerHTML = dexOrders?.length > 0 ? ethers.formatEther(dexOrders[0].price) : "N/A";
+
+    let bulkBuyOrders = [];
+    let bulkBuyEth = BigInt(0);
+    const bulkBuyInput = document.getElementById("bulkBuyInput");
+    const bulkBuyButton = document.getElementById("bulkBuyButton");
+    let maxAmount = dexOrders.reduce((prev, curr) => prev + curr.amount, 0);
+    bulkBuyInput.max = maxAmount;
+    bulkBuyInput.oninput = () => {
+      if (bulkBuyInput.value > maxAmount) {
+        bulkBuyInput.value = maxAmount;
+      }
+      if (bulkBuyInput.value > 0) {
+        bulkBuyButton.disabled = false;
+      } else {
+        bulkBuyButton.disabled = true;
+      }
+      bulkBuyEth = BigInt(0);
+      bulkBuyOrders = [];
+      let remainingAmount = BigInt(bulkBuyInput.value);
+      for (const order of dexOrders) {
+        console.log('o', order)
+        const buyAmount = BigInt(order.amount < remainingAmount ? order.amount : remainingAmount);
+        remainingAmount -= buyAmount;
+        bulkBuyEth += BigInt(order.price) * buyAmount;
+        bulkBuyOrders.push(order);
+      }
+      document.getElementById("bulkBuyTotalEth").innerHTML = ethers.formatEther(bulkBuyEth);
+    }
+
+    bulkBuyButton.onclick = () => {
+      const bulkBuyButtonPreviousHtml = bulkBuyButton.innerHTML;
+      bulkBuyButton.innerHTML = "Confirm and wait...";
+      bulkBuyButton.disabled = true;
+      dexContract.fillOrdersExactAsset(BigInt(bulkBuyInput.value), bulkBuyOrders.map((o) => o.orderid), { value: bulkBuyEth }).then((x) => {
+        window.location.reload();
+      }).catch((e) => {
+        console.error(e);
+        bulkBuyButton.innerHTML = bulkBuyButtonPreviousHtml;
+        bulkBuyButton.disabled = false;
+      });
+    };
+
     const ordersTable = document.getElementById("orders");
     ordersTable.style.setProperty("display", "table");
     if (dexOrders.length === 0) {
