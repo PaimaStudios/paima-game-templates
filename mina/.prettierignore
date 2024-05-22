@@ -6,3 +6,6 @@ lib
 dist
 
 packaged
+contracts/evm/abi
+contracts/evm/artifacts
+contracts/evm/cache
