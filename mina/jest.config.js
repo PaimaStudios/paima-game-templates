@@ -8,7 +8,6 @@ export default {
   coveragePathIgnorePatterns: [...ignorePaths],
   testPathIgnorePatterns: [...ignorePaths],
   setupFiles: ['dotenv/config'],
-  setupFilesAfterEnv: ['<rootDir>/jestSetup.ts'],
   transform: {
     '^.+\\.ts$': [
       'ts-jest',
