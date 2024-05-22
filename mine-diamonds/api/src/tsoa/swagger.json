@@ -136,9 +136,6 @@
 					"minter": {
 						"type": "string"
 					},
-					"owner": {
-						"type": "string"
-					},
 					"usertokenid": {
 						"type": "number",
 						"format": "double"
@@ -148,7 +145,6 @@
 					"amount",
 					"assettokenid",
 					"minter",
-					"owner",
 					"usertokenid"
 				],
 				"type": "object",

@@ -91,7 +91,6 @@ const models: TsoaRoute.Models = {
             "amount": {"dataType":"double","required":true},
             "assettokenid": {"dataType":"double","required":true},
             "minter": {"dataType":"string","required":true},
-            "owner": {"dataType":"string","required":true},
             "usertokenid": {"dataType":"double","required":true},
         },
         "additionalProperties": false,
