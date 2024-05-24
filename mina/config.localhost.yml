@@ -1,6 +1,0 @@
-# https://docs.paimastudios.com/home/react-to-events/funnel-types/mina-funnel
-Mina:
-  type: mina
-  archiveConnetionString: 'postgresql://postgres:postgres@localhost:54325/archive'
-  confirmationDepth: 15  # in number of blocks
-  delay: 3600  # in seconds

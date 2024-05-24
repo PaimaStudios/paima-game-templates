@@ -2,13 +2,13 @@ extensions:
   # https://docs.paimastudios.com/home/react-to-events/primitive-catalogue/mina/generic
   - name: "mina generic event"
     type: "mina-event-generic"
-    address: "B62qoP3xe9zZJmBDacZPL8roBivpVKhAiDNtpAM9RCAW579JnJo1ZL2"
+    address: "B62qpwRxuV4vYFT8QLnrmB67FaKQemy54QH2XuBTyErr9wDDpLHTmQy"
     startBlockHeight: 0
     scheduledPrefix: "mge"
     network: 'Mina'
   - name: "mina generic action"
     type: "mina-action-generic"
-    address: "B62qoP3xe9zZJmBDacZPL8roBivpVKhAiDNtpAM9RCAW579JnJo1ZL2"
+    address: "B62qpwRxuV4vYFT8QLnrmB67FaKQemy54QH2XuBTyErr9wDDpLHTmQy"
     startBlockHeight: 0
     scheduledPrefix: "mga"
     network: 'Mina'

@@ -1,0 +1,19 @@
+# Main chain
+evm:
+  type: 'evm-main'
+  chainUri: 'http://localhost:8545'
+  chainId: 31337
+  chainCurrencyName: 'Test Hardhat Tokens'
+  chainCurrencySymbol: 'TEST'
+  chainCurrencyDecimals: 18
+  chainExplorerUri: ''
+  funnelBlockGroupSize: 100
+  presyncStepSize: 1000
+  paimaL2ContractAddress: '0x5FbDB2315678afecb367f032d93F642f64180aa3'
+
+# https://docs.paimastudios.com/home/react-to-events/funnel-types/mina-funnel
+Mina:
+  type: mina
+  archiveConnectionString: 'postgresql://postgres:postgres@localhost:54325/archive'
+  confirmationDepth: 15  # in number of blocks
+  delay: 3600  # in seconds
