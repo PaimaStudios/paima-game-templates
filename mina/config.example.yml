@@ -15,5 +15,5 @@ evm:
 Mina:
   type: mina
   archiveConnectionString: 'postgresql://postgres:postgres@localhost:54325/archive'
-  confirmationDepth: 15  # in number of blocks
-  delay: 3600  # in seconds
+  confirmationDepth: 1  # in number of blocks; maybe something like 15 for real network
+  delay: 10  # in seconds; maybe something like 3600 (one hour) for real network

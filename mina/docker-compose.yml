@@ -13,6 +13,7 @@ services:
       NETWORK_TYPE: single-node
       PROOF_LEVEL: none
       LOG_LEVEL: Info
+      RUN_ARCHIVE_NODE: true
     ports:
       - 3085:3085  # Mina GraphQL
       - 54325:5432  # archive postgres, remapped to not conflict with host pg

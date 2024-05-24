@@ -20,8 +20,8 @@
       "prettier:fix": "npm run prettier -- --write",
       "test": "NODE_OPTIONS=--experimental-vm-modules DOTENV_CONFIG_PATH=../.env.localhost jest",
       "test:watch": "npm test -- --watch",
-      "prestart": "docker compose up --wait",
-      "start": "true",
+      "prestart": "npm run build && docker compose up --wait",
+      "start": "node contracts/mina/build/src/run.js",
       "database:up": "docker compose up --wait hardhat database",
       "database:reset": "docker compose down -v hardhat database"
     },
