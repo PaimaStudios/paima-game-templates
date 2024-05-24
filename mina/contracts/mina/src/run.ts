@@ -54,11 +54,17 @@ try {
   // --------------------------------------------------------------------------
   // Deploy the contract to that address if it's not already there
 
-  const fetchAccountResult = await fetchAccount({ publicKey: zkApp.address });
+  let fetchAccountResult;
+  try {
+    fetchAccountResult = await fetchAccount({ publicKey: zkApp.address });
+  } catch (err) {
+    // Work around fetchAccount bug(?) where it throws instead of returning an error code.
+    fetchAccountResult = { account: undefined, error: err };
+  }
   if (fetchAccountResult.account) {
-    console.log('Contract appears to be deployed:', fetchAccountResult.account);
+    console.log('Contract appears to exist already. Not redeploying.');
   } else {
-    console.log('Contract appears not to exist:', fetchAccountResult.error);
+    console.log('Contract appears not to exist.', fetchAccountResult.error);
 
     try {
       console.log('Deploying contract: preparing...');
