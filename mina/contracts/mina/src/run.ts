@@ -13,6 +13,7 @@ import { Sudoku, SudokuZkApp } from './sudoku.js';
 import { cloneSudoku, generateSudoku, solveSudoku } from './sudoku-lib.js';
 import { AccountUpdate, Lightnet, Mina, PrivateKey, PublicKey, fetchAccount } from 'o1js';
 
+console.log('Event names:', Object.keys(SudokuZkApp.events));
 console.log('Compiling SudokuZkApp...');
 await SudokuZkApp.compile();
 
