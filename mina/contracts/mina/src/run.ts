@@ -22,11 +22,10 @@ const MINA_TO_RAW_FEE = 1_000_000_000;
 // ----------------------------------------------------------------------------
 // Connect to Lightnet
 const lightnetAccountManagerEndpoint = 'http://localhost:8181';
-const lightnet = Mina.Network({
+Mina.setActiveInstance(Mina.Network({
   mina: 'http://localhost:8080/graphql',
   lightnetAccountManager: lightnetAccountManagerEndpoint,
-});
-Mina.setActiveInstance(lightnet);
+}));
 
 let lightnetAccount;
 try {
@@ -34,7 +33,7 @@ try {
   const { publicKey: sender, privateKey: senderKey } = lightnetAccount;
 
   await Mina.waitForFunding(sender.toBase58());
-  console.log('Sender balance:', lightnet.getAccount(sender).balance.toBigInt());
+  console.log('Sender balance:', Mina.activeInstance.getAccount(sender).balance.toBigInt());
 
   // ----------------------------------------------------------------------------
   // Initialize our SudokuZkApp instance pointing to the preordained address.
@@ -52,51 +51,75 @@ try {
   const zkApp = new SudokuZkApp(zkAppAddress);
 
   // --------------------------------------------------------------------------
-  // Deploy a random Sudoku puzzle to said address
-  const sudoku = generateSudoku(0.5);
-  try {
-    console.log('Deploying contract: preparing...');
-    const tx = await Mina.transaction(
-      {
-        sender,
-        fee: 0.01 * MINA_TO_RAW_FEE,
-      },
-      async () => {
-        AccountUpdate.fundNewAccount(sender);
-        await zkApp.deploy();
-        await zkApp.update(Sudoku.from(sudoku));
-      }
-    );
-    console.log('Deploying contract: proving...');
-    await tx.prove();
+  // Deploy the contract to that address if it's not already there
 
-    console.log('Deploying contract: signing and sending...');
+  const fetchAccountResult = await fetchAccount({ publicKey: zkApp.address });
+  if (fetchAccountResult.account) {
+    console.log('Contract appears to be deployed:', fetchAccountResult.account);
+  } else {
+    console.log('Contract appears not to exist:', fetchAccountResult.error);
 
-    /**
-     * note: this tx needs to be signed with `tx.sign()`, because `deploy` uses `requireSignature()` under the hood,
-     * so one of the account updates in this tx has to be authorized with a signature (vs proof).
-     * this is necessary for the deploy tx because the initial permissions for all account fields are "signature".
-     * (but `deploy()` changes some of those permissions to "proof" and adds the verification key that enables proofs.
-     * that's why we don't need `tx.sign()` for the later transactions.)
-     */
-    const pending = await tx.sign([zkAppPrivateKey, senderKey]).send();
-    console.log('Deploying contract: waiting for confirmation...');
-    console.log('Included:', await pending.wait());
-  } catch (err) {
-    console.error(err);
-    console.log('Error deploying contract; trying the rest anyways...');
+    try {
+      console.log('Deploying contract: preparing...');
+      const tx = await Mina.transaction(
+        {
+          sender,
+          fee: 0.01 * MINA_TO_RAW_FEE,
+        },
+        async () => {
+          AccountUpdate.fundNewAccount(sender);
+          await zkApp.deploy();
+        }
+      );
+      console.log('Deploying contract: proving...');
+      await tx.prove();
+
+      console.log('Deploying contract: signing and sending...');
+
+      /**
+       * note: this tx needs to be signed with `tx.sign()`, because `deploy` uses `requireSignature()` under the hood,
+       * so one of the account updates in this tx has to be authorized with a signature (vs proof).
+       * this is necessary for the deploy tx because the initial permissions for all account fields are "signature".
+       * (but `deploy()` changes some of those permissions to "proof" and adds the verification key that enables proofs.
+       * that's why we don't need `tx.sign()` for the later transactions.)
+       */
+      const pending = await tx.sign([zkAppPrivateKey, senderKey]).send();
+      console.log('Deploying contract: waiting for confirmation...');
+      console.log('Included:', await pending.wait());
+    } catch (err) {
+      console.error(err);
+      console.log('Error deploying contract; trying the rest anyways...');
+    }
   }
 
   // --------------------------------------------------------------------------
-  // Interact with the deployed contract
+  // Reset the puzzle
+
+  const sudoku = generateSudoku(0.5);
+  {
+    console.log('Resetting puzzle: preparing...');
+    const tx = await Mina.transaction({
+      sender,
+      fee: 0.01 * MINA_TO_RAW_FEE,
+    }, async () => {
+      await zkApp.update(Sudoku.from(sudoku));
+    });
+    console.log('Resetting puzzle: proving...');
+    await tx.prove();
+    console.log('Resetting puzzle: signing and sending...');
+    const pending = await tx.sign([senderKey]).send();
+    console.log('Resetting puzzle: waiting for confirmation...');
+    console.log('Included:', await pending.wait());
+  }
 
   await fetchAccount({ publicKey: zkApp.address });
   console.log('Is the sudoku solved?', zkApp.isSolved.get().toBoolean());
 
   let solution = solveSudoku(sudoku);
-  if (solution === undefined) throw Error('cannot happen');
+  if (solution === undefined) throw Error('Failed to solve randomly generated puzzle');
 
-  // submit a wrong solution
+  // --------------------------------------------------------------------------
+  // Submit a wrong solution
   let noSolution = cloneSudoku(solution);
   noSolution[0][0] = (noSolution[0][0] % 9) + 1;
 
@@ -117,7 +140,8 @@ try {
   await fetchAccount({ publicKey: zkApp.address });
   console.log('Is the sudoku solved?', zkApp.isSolved.get().toBoolean());
 
-  // submit the actual solution
+  // --------------------------------------------------------------------------
+  // Submit the actual solution
   {
     console.log('Submitting solution: preparing...');
     const tx = await Mina.transaction({

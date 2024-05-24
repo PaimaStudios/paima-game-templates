@@ -8,6 +8,9 @@ import {
   Poseidon,
   Struct,
   Provable,
+  FlexibleProvablePure,
+  Reducer,
+  PublicKey,
 } from 'o1js';
 
 export { Sudoku, SudokuZkApp };
@@ -28,6 +31,13 @@ class SudokuZkApp extends SmartContract {
   @state(Field) sudokuHash = State<Field>();
   @state(Bool) isSolved = State<Bool>();
 
+  events = {
+    "puzzle-reset": Field,
+    "puzzle-solved": Field,
+  };
+
+  reducer = Reducer({ actionType: PublicKey });
+
   /**
    * by making this a `@method`, we ensure that a proof is created for the state initialization.
    * alternatively (and, more efficiently), we could have used `super.init()` inside `update()` below,
@@ -41,6 +51,8 @@ class SudokuZkApp extends SmartContract {
   @method async update(sudokuInstance: Sudoku) {
     this.sudokuHash.set(sudokuInstance.hash());
     this.isSolved.set(Bool(false));
+    // example event: announce when the puzzle is reset
+    this.emitEvent("puzzle-reset", sudokuInstance.hash());
   }
 
   @method async submitSolution(
@@ -105,6 +117,10 @@ class SudokuZkApp extends SmartContract {
 
     // all checks passed => the sudoku is solved!
     this.isSolved.set(Bool(true));
+    // example event: announce when the puzzle is solved, but not the solution itself
+    this.emitEvent("puzzle-solved", sudokuInstance.hash());
+    // example action: track the set of all accounts that have ever solved a puzzle
+    this.reducer.dispatch(this.sender.getAndRequireSignature());
   }
 }
 
