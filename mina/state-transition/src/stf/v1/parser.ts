@@ -2,12 +2,24 @@ import type { InvalidInput } from '@game/utils';
 import { PaimaParser } from '@paima/sdk/concise';
 import type { ParsedSubmittedInput } from './types';
 
-const myGrammar = `gainedExperience = xp|*address|experience`;
+const myGrammar = `
+  gainedExperience = xp|*address|experience
+  sudokuEvent = mge|data
+  sudokuAction = mga|data
+`;
+
+const PaimaParser_JSON = (keyName: string, input: string) => JSON.parse(input);
 
 const parserCommands = {
   gainedExperience: {
     address: PaimaParser.WalletAddress(),
     experience: PaimaParser.NumberParser(1, 5),
+  },
+  sudokuEvent: {
+    data: PaimaParser_JSON,
+  },
+  sudokuAction: {
+    data: PaimaParser_JSON,
   },
 };
 
