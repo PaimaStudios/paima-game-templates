@@ -1,0 +1,12 @@
+{
+  "name": "paima-farcaster-hackathon",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {},
+  "author": "",
+  "description": "",
+  "devDependencies": {
+    "@frames.js/debugger": "^0.2.12",
+    "typescript": "^5.4.5"
+  }
+}
