@@ -1,0 +1,15 @@
+{
+  "name": "@game/frontend",
+  "version": "1.0.0",
+  "author": "PaimaStudios",
+  "type": "module",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "tsc --build",
+    "start": "npm run build && node build/index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "frames.js": "^0.16.4"
+  }
+}
