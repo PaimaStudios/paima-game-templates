@@ -1,11 +1,12 @@
 import express from 'express';
-import { button, redirect, transaction } from 'frames.js/core';
+import { button, error, redirect, transaction } from 'frames.js/core';
 import { createFrames } from 'frames.js/express';
 import { Abi, createPublicClient, encodeFunctionData, getContract, http } from 'viem';
 import { anvil } from 'viem/chains';
 import paimaL2Abi from '@paima/evm-contracts/abi/PaimaL2Contract.json' with { type: 'json' };
 import { voronoi_svg } from './voronoi.js';
 import { Resvg } from '@resvg/resvg-js';
+import { closest_color } from './colorlist.js';
 
 const app = express();
 const frames = createFrames();
@@ -81,7 +82,13 @@ app.post(
 
     const text = ctx.message?.inputText;
     if (text) {
-      weights[text] = (weights[text] ?? 0) + 1;
+      const result = closest_color(text);
+      console.log(text, result);
+      if (result.distance <= text.length / 2) {
+        weights[result.color] = (weights[result.color] ?? 0) + 1;
+      } else {
+        return error(`Unknown color "${text.toLowerCase()}". Maybe try "${result.name}"?`);
+      }
     }
 
     return {
