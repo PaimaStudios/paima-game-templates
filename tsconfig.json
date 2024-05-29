@@ -1,6 +1,8 @@
 {
   "files": [],
   "references": [
-    { "path": "./frontend" },
+    { "path": "./db" },
+    { "path": "./api" },
+    { "path": "./state-transition" }
   ]
 }

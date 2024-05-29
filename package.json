@@ -12,6 +12,8 @@
     "typescript": "^5.4.5"
   },
   "workspaces": [
-    "frontend"
+    "./db",
+    "./api",
+    "./state-transition"
   ]
 }
