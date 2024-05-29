@@ -77,6 +77,13 @@ app.post(
   }
 )
 
+/*
 const port = 3000;
 const server = app.listen(port);
 console.log(`http://localhost:${port}`);
+// */
+
+//*
+import { voronoi_svg } from './voronoi.js';
+voronoi_svg("seed2", { "#00007f": 2, "#e01010": 1, "#007f20": 10, "#ffff00": 2, "#ee82ee": 1, "#FF7F00": 1, "#FF9966": 1 , "#6A0DAD": 1 });
+// */
