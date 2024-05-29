@@ -1,27 +1,30 @@
 import express from 'express';
-import { button, transaction } from 'frames.js/core';
+import { button, redirect, transaction } from 'frames.js/core';
 import { createFrames } from 'frames.js/express';
-
 import { Abi, createPublicClient, encodeFunctionData, getContract, http } from 'viem';
 import { anvil } from 'viem/chains';
 import paimaL2Abi from '@paima/evm-contracts/abi/PaimaL2Contract.json' with { type: 'json' };
+import { voronoi_svg } from './voronoi.js';
+import { Resvg } from '@resvg/resvg-js';
 
 const app = express();
 const frames = createFrames();
 
 app.use(express.static('static'));
 
+const weights: Record<string, number> = {};
+
 app.all(
   '/',
   frames(async ctx => {
     return {
-      image: new URL('/tarochi.jpg', ctx.url).toString(),
+      image: new URL('/1.png', ctx.url).toString(),
+      textInput: 'Contribute a color!',
       buttons: [
         button({
-          action: 'tx',
-          label: 'TX',
-          target: '/txdata',
-          post_url: '/',
+          action: 'post',
+          label: 'Paint!',
+          target: '/post_color',
         }),
         button({
           action: 'link',
@@ -71,19 +74,49 @@ app.post(
   })
 );
 app.post(
-  '/txok',
+  '/post_color',
+  frames(async ctx => {
+    // TODO: Would have to verify here because we're taking action based on a POST.
+    // But this is just temporary test code so it should be OK.
+
+    const text = ctx.message?.inputText;
+    if (text) {
+      weights[text] = (weights[text] ?? 0) + 1;
+    }
+
+    return {
+      image: new URL('/1.png?' + Math.random(), ctx.url).toString(),
+      textInput: 'Contribute a color!',
+      buttons: [
+        button({
+          action: 'post',
+          label: 'Paint!',
+          target: '/post_color',
+        }),
+        button({
+          action: 'link',
+          label: 'Meme',
+          target: 'https://example.com',
+        }),
+      ],
+    };
+  })
+);
+app.get(
+  '/1.png',
   async (req, res) => {
-    console.log(req);
+    const svg = voronoi_svg("seed2", weights);
+    const pngBytes = new Resvg(svg).render().asPng();
+
+    res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.header('Pragma', 'no-cache');
+    res.header('Expires', '0');
+
+    res.contentType('image/png');
+    res.send(pngBytes);
   }
 )
 
-/*
 const port = 3000;
 const server = app.listen(port);
 console.log(`http://localhost:${port}`);
-// */
-
-//*
-import { voronoi_svg } from './voronoi.js';
-voronoi_svg("seed2", { "#00007f": 2, "#e01010": 1, "#007f20": 10, "#ffff00": 2, "#ee82ee": 1, "#FF7F00": 1, "#FF9966": 1 , "#6A0DAD": 1 });
-// */

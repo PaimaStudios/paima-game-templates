@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@paima/evm-contracts": "^3.0.0",
+    "@resvg/resvg-js": "^2.6.2",
     "express": "^4.19.2",
     "frames.js": "^0.16.4",
     "viem": "^2.13.1",
