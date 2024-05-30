@@ -1,6 +1,5 @@
 import type { IGetUserResult, IUpsertUserParams } from '@game/db';
 import { upsertUser } from '@game/db';
-import { calculateProgress } from '@game/game-logic';
 import type { SQLUpdate } from '@paima/node-sdk/db';
 
 // this file deals with receiving blockchain data input and outputting SQL updates (imported from pgTyped output of our SQL files)
@@ -14,7 +13,7 @@ export function persistUserUpdate(
   const userParams: IUpsertUserParams = {
     stats: {
       wallet: wallet.toLowerCase(),
-      experience: calculateProgress(user.experience, gainedXP),
+      experience: user.experience + gainedXP,
     },
   };
   return [upsertUser, userParams];

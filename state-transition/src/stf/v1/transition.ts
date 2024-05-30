@@ -2,7 +2,7 @@ import type { IGetUserResult } from '@game/db';
 import { getUser } from '@game/db';
 import type { SQLUpdate } from '@paima/node-sdk/db';
 import type { Pool } from 'pg';
-import type { GainExperienceInput } from './types';
+import type { GainExperienceInput } from './types.js';
 import { persistUserUpdate } from './persist';
 
 // State transition when a gain experience input is processed

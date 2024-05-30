@@ -1,6 +1,5 @@
-import type { InvalidInput } from '@game/utils';
 import { PaimaParser } from '@paima/sdk/concise';
-import type { ParsedSubmittedInput } from './types';
+import type { InvalidInput, ParsedSubmittedInput } from './types.js';
 
 const myGrammar = `gainedExperience = xp|*address|experience`;
 

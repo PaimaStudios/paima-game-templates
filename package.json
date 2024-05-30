@@ -4,6 +4,7 @@
   "author": "PaimaStudios",
   "main": "index.js",
   "scripts": {
+    "prebuild": "npm run --ws prebuild",
     "build": "tsc --build",
     "start": "npm -w frontend start & frames"
   },

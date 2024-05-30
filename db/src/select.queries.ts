@@ -3,7 +3,7 @@ import { PreparedQuery } from '@pgtyped/runtime';
 
 /** 'GetUser' parameters type */
 export interface IGetUserParams {
-  wallet: string | null | void;
+  wallet?: string | null | void;
 }
 
 /** 'GetUser' return type */

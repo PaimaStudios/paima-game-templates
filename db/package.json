@@ -6,13 +6,14 @@
   "types": "build/index.d.ts",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "compile": "npx pgtyped -w -c pgtypedconfig.json"
+    "prebuild": "./docker-with.sh pgtyped -c pgtypedconfig.json",
+    "build": "tsc --build"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@pgtyped/runtime": "2.3.0",
+    "@paima/node-sdk": "^2.4.0",
     "pg": "^8.10.0"
   },
   "devDependencies": {
