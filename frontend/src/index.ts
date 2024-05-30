@@ -20,17 +20,27 @@ app.all(
   frames(async ctx => {
     return {
       image: new URL('/1.png', ctx.url).toString(),
+      buttons: [
+        button({
+          action: 'post',
+          label: 'See full canvas...',
+          target: '/1',
+        }),
+      ],
+    };
+  })
+);
+app.post(
+  '/1',
+  frames(async ctx => {
+    return {
+      image: new URL('/1.png?' + Math.random(), ctx.url).toString(),
       textInput: 'Contribute a color!',
       buttons: [
         button({
           action: 'post',
           label: 'Paint!',
           target: '/post_color',
-        }),
-        button({
-          action: 'link',
-          label: 'Meme',
-          target: 'https://example.com',
         }),
       ],
     };
@@ -91,6 +101,13 @@ app.post(
       }
     }
 
+    const embedUrl = new URL('/' + Math.random(), ctx.url);
+    // https://docs.farcaster.xyz/reference/warpcast/cast-composer-intents#warpcast-cast-intents
+    const linkUrl = new URL('https://warpcast.com/~/compose');
+    linkUrl.searchParams.append('text', 'Contribute your color to my canvas, powered by Paima Engine');
+    linkUrl.searchParams.append('embeds[]', embedUrl.toString());
+    console.log(linkUrl);
+
     return {
       image: new URL('/1.png?' + Math.random(), ctx.url).toString(),
       textInput: 'Contribute a color!',
@@ -102,9 +119,9 @@ app.post(
         }),
         button({
           action: 'link',
-          label: 'Meme',
-          target: 'https://example.com',
-        }),
+          label: 'Start your own canvas',
+          target: linkUrl.toString(),  // Must use toString or the library mangles the URL
+        })
       ],
     };
   })
