@@ -4,6 +4,7 @@
   "author": "PaimaStudios",
   "main": "index.js",
   "scripts": {
+    "initialize": "npm ci && cp .env.example .env.localhost",
     "prebuild": "npm run --ws prebuild",
     "build": "tsc --build",
     "postbuild": "scripts/pack.sh"
@@ -17,6 +18,7 @@
   "workspaces": [
     "./db",
     "./api",
-    "./state-transition"
+    "./state-transition",
+    "./contracts/evm"
   ]
 }

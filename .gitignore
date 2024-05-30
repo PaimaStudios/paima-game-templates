@@ -28,12 +28,12 @@ snapshots
 *.local
 
 .env
-.env.mainnet
-.env.testnet
+.env.*
+# .env.example was explicitly `git add`ed, so not ignored
 
 # Frontend
 build.zip
 WebGL
 
 # recompiled code for standalone purposes
-packaged/*
+packaged/
