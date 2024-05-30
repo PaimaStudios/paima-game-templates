@@ -13,10 +13,16 @@
   "license": "ISC",
   "dependencies": {
     "@game/db": "1.0.0",
+    "@paima/evm-contracts": "^3.0.0",
+    "@resvg/resvg-js": "^2.6.2",
     "express": "^4.19.2",
-    "tsoa": "^6.0.1"
+    "frames.js": "^0.16.4",
+    "tsoa": "^6.0.1",
+    "viem": "^2.13.1",
+    "voronoi-diagram": "^1.0.1"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21"
+    "@types/express": "^4.17.21",
+    "@types/voronoi-diagram": "^1.0.4"
   }
 }

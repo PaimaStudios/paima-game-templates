@@ -6,10 +6,12 @@
   "scripts": {
     "prebuild": "npm run --ws prebuild",
     "build": "tsc --build",
-    "start": "npm -w frontend start & frames"
+    "postbuild": "scripts/pack.sh"
   },
   "devDependencies": {
     "@frames.js/debugger": "^0.2.12",
+    "@paima/build-utils": "^2.3.0",
+    "esbuild": "^0.19.11",
     "typescript": "^5.4.5"
   },
   "workspaces": [

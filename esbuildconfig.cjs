@@ -5,10 +5,17 @@ const {
 
 const { config, outFiles, workspace } = generateConfig(
   "api",
-  "state-transition",
+  "state-transition"
 );
-esbuild.build(config);
+esbuild.build({
+  ...config,
+  sourcemap: true,
+  loader: {
+    ...config.loader,
+    ".node": "file",
+  },
+});
 
 console.log(
-  `\x1b[32m${workspace}\x1b[0m bundled to packaged/${outFiles[workspace]}`,
+  `\x1b[32m${workspace}\x1b[0m bundled to packaged/${outFiles[workspace]}`
 );
