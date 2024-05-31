@@ -6,7 +6,10 @@
   },
   "private": true,
   "scripts": {
-    "prebuild": ""
+    "prebuild": "hardhat compile"
+  },
+  "exports": {
+    "./CanvasGame": "./abi/solidity/CanvasGame.sol/CanvasGame.ts"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition-viem": "^0.15.1",

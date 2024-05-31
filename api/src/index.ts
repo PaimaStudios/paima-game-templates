@@ -2,12 +2,34 @@ import { Router } from 'express';
 import { RegisterRoutes } from './tsoa/routes.js';
 import { button, error, redirect, transaction } from 'frames.js/core';
 import { createFrames } from 'frames.js/express';
-import { Abi, createPublicClient, encodeFunctionData, getContract, http } from 'viem';
+import { Abi, createPublicClient, encodeFunctionData, getContract, http, toHex } from 'viem';
 import { anvil } from 'viem/chains';
 import paimaL2Abi from '@paima/evm-contracts/abi/PaimaL2Contract.json' with { type: 'json' };
+import canvasGameAbi from '@game/evm/CanvasGame';
 import { Resvg } from '@resvg/resvg-js';
 import { closest_color } from './colorlist.js';
 import { voronoi_svg } from './voronoi.js';
+
+const chain = anvil;
+const chainId = `eip115:${chain.id}`;
+
+const paimaL2 = {
+  abi: paimaL2Abi as Abi,
+  address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+} as const;
+
+const canvasGame = {
+  abi: canvasGameAbi as unknown as Abi,
+  address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
+} as const;
+
+console.log(paimaL2.abi.length);
+console.log(canvasGame.abi.length);
+
+const publicClient = createPublicClient({
+  chain: anvil,
+  transport: http(),
+});
 
 export default function registerApiRoutes(app: Router) {
   RegisterRoutes(app);
@@ -16,47 +38,133 @@ export default function registerApiRoutes(app: Router) {
 
   const weights: Record<string, number> = {};
 
-  app.all(
-    '/',
-    frames(async ctx => {
+  app.get('/:canvas(\\d+)', async (req, res, next) => {
+    return frames(async ctx => {
       return {
-        image: new URL('/1.png', ctx.url).toString(),
+        image: new URL(`/${req.params.canvas}.png`, ctx.url).toString(),
         buttons: [
           button({
             action: 'post',
             label: 'See full canvas...',
-            target: '/1',
+            target: `/${req.params.canvas}`,
           }),
         ],
       };
-    })
-  );
-  app.post(
-    '/1',
-    frames(async ctx => {
+    })(req, res, next);
+  });
+  app.get('/:canvas(\\d+).png', async (req, res) => {
+    let localWeights = weights;
+    if (typeof req.query.add === 'string') {
+      localWeights = Object.fromEntries(Object.entries(weights));
+      localWeights[req.query.add] = (localWeights[req.query.add] ?? 0) + 1;
+    }
+
+    const svg = voronoi_svg(req.params.canvas, localWeights);
+    const pngBytes = new Resvg(svg).render().asPng();
+
+    res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.header('Pragma', 'no-cache');
+    res.header('Expires', '0');
+
+    res.contentType('image/png');
+    res.send(pngBytes);
+  });
+  app.post('/:canvas(\\d+)', async (req, res, next) => {
+    return frames(async ctx => {
+      console.log('/:canvas wait=', req.query.wait);
+      const canFork = true; // TODO
+
+      const forkButton = canFork
+        ? [
+            button({
+              label: 'Fork!',
+              action: 'tx',
+              target: `/${req.params.canvas}/fork_tx`,
+            }),
+          ]
+        : [];
+
       return {
-        image: new URL('/1.png?' + Math.random(), ctx.url).toString(),
+        image: new URL(
+          `/${req.params.canvas}.png?${Math.random()}` + Math.random(),
+          ctx.url
+        ).toString(),
         textInput: 'Contribute a color!',
         buttons: [
           button({
+            label: 'Preview...',
             action: 'post',
-            label: 'Paint!',
-            target: '/post_color',
+            target: `/${req.params.canvas}/preview`,
+          }),
+          ...forkButton,
+        ],
+      };
+    })(req, res, next);
+  });
+  app.post('/:canvas(\\d+)/preview', async (req, res, next) => {
+    return frames(async ctx => {
+      // TODO: Would have to verify here because we're taking action based on a POST.
+      // But this is just temporary test code so it should be OK.
+
+      const text = ctx.message?.inputText;
+      let color: string;
+      if (text) {
+        const result = closest_color(text);
+        if (result.distance <= text.length / 2) {
+          color = result.color;
+        } else {
+          return error(`Unknown color "${text.toLowerCase()}". Maybe try "${result.name}"?`);
+        }
+      } else {
+        return error('Type a color to contribute!');
+      }
+
+      /*
+        const embedUrl = new URL('/' + Math.random(), ctx.url);
+        // https://docs.farcaster.xyz/reference/warpcast/cast-composer-intents#warpcast-cast-intents
+        const linkUrl = new URL('https://warpcast.com/~/compose');
+        linkUrl.searchParams.append('text', 'Contribute your color to my canvas, powered by Paima Engine');
+        linkUrl.searchParams.append('embeds[]', embedUrl.toString());
+        */
+
+      return {
+        image: new URL(
+          `/${req.params.canvas}.png?add=${encodeURIComponent(color)}&' + ${Math.random()}`,
+          ctx.url
+        ).toString(),
+        textInput: 'Try a different color...',
+        buttons: [
+          button({
+            action: 'post',
+            label: 'Preview...',
+            target: `/${req.params.canvas}/preview`,
+          }),
+          button({
+            action: 'tx',
+            label: 'Paint it!',
+            target: `/${req.params.canvas}/paint_tx?add=${encodeURIComponent(color)}`,
+            post_url: `/${req.params.canvas}?wait=1`,
           }),
         ],
       };
-    })
-  );
-  app.post(
-    '/txdata',
-    frames(async ctx => {
-      const ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+    })(req, res, next);
+  });
+  app.post('/:canvas(\\d+)/paint_tx', async (req, res, next) => {
+    return frames(async ctx => {
+      const canvas = Number(req.params.canvas);
+      const color = req.query.add;
+      if (isNaN(canvas) || typeof color !== 'string' || !/^#[0-9a-f]{6}$/.test(color)) {
+        return error('Invalid input');
+      }
 
       // Encode paimaSubmitGameInput call
       const calldata = encodeFunctionData({
-        abi: paimaL2Abi,
-        functionName: 'paimaSubmitGameInput',
-        args: ['48656c6c6f'],  // Hello
+        abi: canvasGame.abi,
+        functionName: 'paint',
+        args: [
+          canvas,
+          parseInt(color.substring(1), 16),
+        ],
       });
 
       // Query the contract to learn how much the fee is
@@ -65,84 +173,51 @@ export default function registerApiRoutes(app: Router) {
         transport: http(),
       });
       const paimaL2 = getContract({
-        address: ADDRESS,
-        abi: paimaL2Abi,
+        address: canvasGame.address,
+        abi: canvasGame.abi,
         client: publicClient,
       });
       const fee = await paimaL2.read.fee([]);
 
       // Return the transaction object to the user
+      console.log('returning tx object from /paint_tx');
       return transaction({
-        //chainId: "eip155:42161", // Arbitrum One
-        chainId: "eip155:31337", // Hardhat/Anvil (localhost)
-        method: "eth_sendTransaction",
+        chainId,
+        method: 'eth_sendTransaction',
         params: {
-          abi: paimaL2Abi as Abi,
-          to: ADDRESS, // PaimaL2Contract
+          abi: canvasGame.abi,
+          to: canvasGame.address,
           data: calldata,
           value: String(fee),
-        }
+        },
       });
-    })
-  );
-  app.post(
-    '/post_color',
-    frames(async ctx => {
-      // TODO: Would have to verify here because we're taking action based on a POST.
-      // But this is just temporary test code so it should be OK.
-
-      const text = ctx.message?.inputText;
-      if (text) {
-        const result = closest_color(text);
-        console.log(text, result);
-        if (result.distance <= text.length / 2) {
-          weights[result.color] = (weights[result.color] ?? 0) + 1;
-        } else {
-          return error(`Unknown color "${text.toLowerCase()}". Maybe try "${result.name}"?`);
-        }
+    })(req, res, next);
+  });
+  app.post('/:canvas(\\d+)/fork_tx', async (req, res, next) => {
+    return frames(async ctx => {
+      const canvas = Number(req.params.canvas);
+      if (isNaN(canvas)) {
+        return error('Invalid input');
       }
 
-      const embedUrl = new URL('/' + Math.random(), ctx.url);
-      // https://docs.farcaster.xyz/reference/warpcast/cast-composer-intents#warpcast-cast-intents
-      const linkUrl = new URL('https://warpcast.com/~/compose');
-      linkUrl.searchParams.append('text', 'Contribute your color to my canvas, powered by Paima Engine');
-      linkUrl.searchParams.append('embeds[]', embedUrl.toString());
+      // Encode call
+      const calldata = encodeFunctionData({
+        abi: canvasGame.abi,
+        functionName: 'fork',
+        args: [canvas],
+      });
 
-      return {
-        image: new URL('/1.png?' + Math.random(), ctx.url).toString(),
-        textInput: 'Contribute a color!',
-        buttons: [
-          button({
-            action: 'post',
-            label: 'Try a different color...',
-            target: '/post_color',
-          }),
-          button({
-            action: 'tx',
-            label: 'Save it!',
-            target: '/txdata',
-          }),
-          button({
-            action: 'link',
-            label: 'Start your own canvas',
-            target: linkUrl.toString(),  // Must use toString or the library mangles the URL
-          })
-        ],
-      };
-    })
-  );
-  app.get(
-    '/1.png',
-    async (req, res) => {
-      const svg = voronoi_svg("seed2", weights);
-      const pngBytes = new Resvg(svg).render().asPng();
-
-      res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
-      res.header('Pragma', 'no-cache');
-      res.header('Expires', '0');
-
-      res.contentType('image/png');
-      res.send(pngBytes);
-    }
-  );
+      // Return the transaction object to the user
+      console.log('returning tx object from /fork_tx');
+      return transaction({
+        chainId,
+        method: 'eth_sendTransaction',
+        params: {
+          abi: canvasGame.abi,
+          to: canvasGame.address,
+          data: calldata,
+        },
+      });
+    })(req, res, next);
+  });
 }

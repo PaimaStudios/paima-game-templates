@@ -23,4 +23,5 @@ COPY \
     tsconfig.base.json \
     ./
 WORKDIR /src/contracts/evm
+RUN npx hardhat compile
 ENTRYPOINT [ "npx", "hardhat", "node", "--hostname", "0.0.0.0" ]

@@ -11,15 +11,20 @@ contract CanvasGame is Ownable {
 
     uint256 public fee = 100; // in wei
 
-    event NewCanvas(address indexed canvasOwner, uint256 baseCanvas);
+    event NewCanvas(address indexed canvasOwner, uint256 id, uint256 copyFrom);
     event Paint(address indexed contributor, uint256 canvas, uint24 color);
 
     constructor(address initialOwner)
         Ownable(initialOwner)
     {
-        uint256 newIndex = canvasOwner.length;
-        canvasOwner.push(initialOwner);
-        // No emit NewCanvas. Readers are just supposed to know.
+        _newCanvas(initialOwner, 0);
+        _newCanvas(initialOwner, 0);
+    }
+
+    function _newCanvas(address owner, uint256 copyFrom) private {
+        uint256 id = canvasOwner.length;
+        canvasOwner.push(owner);
+        emit NewCanvas(owner, id, copyFrom);
     }
 
     function paint(uint256 canvas, uint24 color) public payable {
@@ -37,6 +42,13 @@ contract CanvasGame is Ownable {
     function fork(uint256 canvas) public {
         require(canvas < canvasOwner.length, "Canvas ID must exist");
         //require() previous paint() call
-        emit NewCanvas(msg.sender, canvas);
+        _newCanvas(msg.sender, canvas);
+    }
+
+    function withdraw() public {
+        require(rewards[msg.sender] > 0, "Nothing to withdraw");
+        uint256 amount = rewards[msg.sender];
+        payable(msg.sender).transfer(amount);
+        delete rewards[msg.sender];
     }
 }

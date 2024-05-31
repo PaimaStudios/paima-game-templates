@@ -7,7 +7,8 @@
     "initialize": "npm ci && cp .env.example .env.localhost",
     "prebuild": "npm run --ws prebuild",
     "build": "tsc --build",
-    "postbuild": "scripts/pack.sh"
+    "postbuild": "scripts/pack.sh",
+    "start": "paima-engine run"
   },
   "devDependencies": {
     "@frames.js/debugger": "^0.2.12",

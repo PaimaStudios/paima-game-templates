@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@game/db": "1.0.0",
+    "@game/evm": "1.0.0",
     "@paima/evm-contracts": "^3.0.0",
     "@resvg/resvg-js": "^2.6.2",
     "express": "^4.19.2",
