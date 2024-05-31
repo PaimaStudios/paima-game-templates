@@ -6,7 +6,6 @@
   "types": "build/index.d.ts",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "DOTENV_CONFIG_PATH=../.env.localhost node --require dotenv/config --experimental-specifier-resolution=node build/index.js"
   },
   "author": "",
