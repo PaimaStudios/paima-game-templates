@@ -1,7 +1,7 @@
 import voronoi from 'voronoi-diagram';
 import { cyrb128, sfc32 } from './rng.js';
 
-export function voronoi_svg(seed: string, weights: { [color: string]: number }): string {
+export function voronoi_svg(seed: string, inputColors: string[]): string {
   const h = 800;
   const w = h * 1.91;
 
@@ -16,15 +16,15 @@ export function voronoi_svg(seed: string, weights: { [color: string]: number }):
     for (let j = 0; j < 6; ++j) {
       color += '0123456789abcdef'[Math.floor(baseRand() * 16)];
     }
-    const rand = (rands[color] = sfc32(...cyrb128(seed + color)));
+    const rand = (rands[color] ??= sfc32(...cyrb128(seed + color)));
     points.push([baseRand() * w, baseRand() * h]);
     colors.push(color);
   }
 
-  // Add weights
-  for (const [color, weight] of Object.entries(weights)) {
-    const rand = (rands[color] = sfc32(...cyrb128(seed + color)));
-    for (let i = 0; i < weight * 3; ++i) {
+  // Add input colors
+  for (const color of inputColors) {
+    const rand = (rands[color] ??= sfc32(...cyrb128(seed + color)));
+    for (let i = 0; i < 3; ++i) {
       points.push([rand() * w, rand() * h]);
       colors.push(color);
     }

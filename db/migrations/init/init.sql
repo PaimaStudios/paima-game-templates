@@ -1,13 +1,11 @@
--- Generic paima engine table, that can't be modified
-CREATE TABLE block_heights ( 
-  block_height INTEGER PRIMARY KEY,
-  seed TEXT NOT NULL,
-  done BOOLEAN NOT NULL DEFAULT false
+CREATE TABLE canvas (
+  id INTEGER NOT NULL PRIMARY KEY,
+  owner TEXT NOT NULL
 );
 
--- Extend the schema to fit your needs
-
-CREATE TABLE users (
-  wallet TEXT NOT NULL PRIMARY KEY,
-  experience INTEGER NOT NULL DEFAULT 0
+CREATE TABLE paint (
+  canvas_id INTEGER NOT NULL,
+  color TEXT NOT NULL,
+  painter TEXT NOT NULL,
+  txid TEXT
 );

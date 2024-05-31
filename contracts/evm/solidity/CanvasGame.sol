@@ -9,7 +9,7 @@ contract CanvasGame is Ownable {
 
     mapping(address => uint256) public rewards;
 
-    uint256 public fee = 100; // in wei
+    uint256 public fee = 0.00002651 ether; // about $0.10 USD at time of writing
 
     event NewCanvas(address indexed canvasOwner, uint256 id, uint256 copyFrom);
     event Paint(address indexed contributor, uint256 canvas, uint24 color);

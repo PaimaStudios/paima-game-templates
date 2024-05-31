@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { RegisterRoutes } from './tsoa/routes.js';
 import { button, error, redirect, transaction } from 'frames.js/core';
 import { createFrames } from 'frames.js/express';
 import { Abi, createPublicClient, encodeFunctionData, getContract, http, toHex } from 'viem';
@@ -9,6 +8,7 @@ import canvasGameAbi from '@game/evm/CanvasGame';
 import { Resvg } from '@resvg/resvg-js';
 import { closest_color } from './colorlist.js';
 import { voronoi_svg } from './voronoi.js';
+import { getColors, requirePool } from '@game/db';
 
 const chain = anvil;
 const chainId = `eip155:${chain.id}`;
@@ -31,11 +31,7 @@ const canvasGame = getContract({
 });
 
 export default function registerApiRoutes(app: Router) {
-  RegisterRoutes(app);
-
   const frames = createFrames();
-
-  const weights: Record<string, number> = {};
 
   app.get('/:canvas(\\d+)', async (req, res, next) => {
     return frames(async ctx => {
@@ -52,13 +48,20 @@ export default function registerApiRoutes(app: Router) {
     })(req, res, next);
   });
   app.get('/:canvas(\\d+).png', async (req, res) => {
-    let localWeights = weights;
-    if (typeof req.query.add === 'string') {
-      localWeights = Object.fromEntries(Object.entries(weights));
-      localWeights[req.query.add] = (localWeights[req.query.add] ?? 0) + 1;
+    const canvas = Number(req.params.canvas);
+    if (isNaN(canvas)) {
+      return error('Invalid input');
     }
 
-    const svg = voronoi_svg(req.params.canvas, localWeights);
+    const db = requirePool();
+    const colorResult = await getColors.run({ canvas_id: canvas }, db);
+    const colors = colorResult.map(x => x.color);
+
+    if (typeof req.query.add === 'string' && /^#[0-9a-f]{6}$/.test(req.query.add)) {
+      colors.push(req.query.add);
+    }
+
+    const svg = voronoi_svg(req.params.canvas, colors);
     const pngBytes = new Resvg(svg).render().asPng();
 
     res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
