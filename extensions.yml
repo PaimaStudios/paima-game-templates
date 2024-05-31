@@ -1,1 +1,15 @@
-extensions: []
+extensions:
+  - name: CanvasGame NewCanvas
+    type: generic
+    contractAddress: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
+    startBlockHeight: 1
+    abiPath: packaged/CanvasGame.json
+    eventSignature: NewCanvas(address,uint256,uint256)
+    scheduledPrefix: fork
+  - name: CanvasGame Paint
+    type: generic
+    contractAddress: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
+    startBlockHeight: 1
+    abiPath: packaged/CanvasGame.json
+    eventSignature: Paint(address,uint256,uint24)
+    scheduledPrefix: paint
