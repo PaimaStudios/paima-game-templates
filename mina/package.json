@@ -10,7 +10,7 @@
       "initialize": "npm ci && cp .env.example ../.env.localhost && cp extensions.yml ../extensions.yml && cp config.example.yml ../config.localhost.yml",
       "pack": "scripts/pack.sh",
       "pack:middleware": "npm run -w middleware/ build --",
-      "compile": "npm run compile:api && npm run compile:db",
+      "compile": "npm run compile:db && npm run -w db build && npm run compile:api",
       "compile:api": "npm run -w api/ compile --",
       "compile:db": "npm run -w db/ compile --",
       "build": "npm run compile && tsc --build tsconfig.build.json && npm run -w contracts/mina/ build",
