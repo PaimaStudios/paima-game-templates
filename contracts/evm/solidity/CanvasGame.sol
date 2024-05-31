@@ -17,8 +17,10 @@ contract CanvasGame is Ownable {
     constructor(address initialOwner)
         Ownable(initialOwner)
     {
-        _newCanvas(initialOwner, 0);
-        _newCanvas(initialOwner, 0);
+        // Generate 16 seed canvases. If id == copyFrom, it's a seed canvas.
+        for (uint256 id = 0; id < 16; ++id) {
+            _newCanvas(initialOwner, id);
+        }
     }
 
     function _newCanvas(address owner, uint256 copyFrom) private {

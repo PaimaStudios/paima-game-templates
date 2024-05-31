@@ -11,24 +11,23 @@ import { closest_color } from './colorlist.js';
 import { voronoi_svg } from './voronoi.js';
 
 const chain = anvil;
-const chainId = `eip115:${chain.id}`;
-
-const paimaL2 = {
-  abi: paimaL2Abi as Abi,
-  address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
-} as const;
-
-const canvasGame = {
-  abi: canvasGameAbi as unknown as Abi,
-  address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
-} as const;
-
-console.log(paimaL2.abi.length);
-console.log(canvasGame.abi.length);
+const chainId = `eip155:${chain.id}`;
 
 const publicClient = createPublicClient({
-  chain: anvil,
+  chain,
   transport: http(),
+});
+
+const paimaL2 = getContract({
+  abi: paimaL2Abi as Abi,
+  address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+  client: publicClient,
+});
+
+const canvasGame = getContract({
+  abi: canvasGameAbi as unknown as Abi,
+  address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
+  client: publicClient,
 });
 
 export default function registerApiRoutes(app: Router) {
@@ -168,16 +167,7 @@ export default function registerApiRoutes(app: Router) {
       });
 
       // Query the contract to learn how much the fee is
-      const publicClient = createPublicClient({
-        chain: anvil,
-        transport: http(),
-      });
-      const paimaL2 = getContract({
-        address: canvasGame.address,
-        abi: canvasGame.abi,
-        client: publicClient,
-      });
-      const fee = await paimaL2.read.fee([]);
+      const fee = await canvasGame.read.fee([]);
 
       // Return the transaction object to the user
       console.log('returning tx object from /paint_tx');
