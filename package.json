@@ -13,6 +13,7 @@
     "@frames.js/debugger": "^0.2.12",
     "@paima/build-utils": "^2.3.0",
     "esbuild": "^0.19.11",
+    "prettier": "^3.2.5",
     "typescript": "^5.4.5"
   },
   "workspaces": [
