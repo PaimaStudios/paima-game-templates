@@ -107,7 +107,6 @@ export default function registerApiRoutes(app: Router) {
       const linkUrl = new URL('https://warpcast.com/~/compose');
       linkUrl.searchParams.append('text', 'Contribute your color to my canvas, powered by Paima Engine');
       linkUrl.searchParams.append('embeds[]', embedUrl.toString());
-      console.log(linkUrl);
 
       return {
         image: new URL('/1.png?' + Math.random(), ctx.url).toString(),
@@ -115,8 +114,13 @@ export default function registerApiRoutes(app: Router) {
         buttons: [
           button({
             action: 'post',
-            label: 'Paint!',
+            label: 'Try a different color...',
             target: '/post_color',
+          }),
+          button({
+            action: 'tx',
+            label: 'Save it!',
+            target: '/txdata',
           }),
           button({
             action: 'link',

@@ -14,6 +14,15 @@ esbuild.build({
     ...config.loader,
     ".node": "file",
   },
+  inject: [
+    ...config.inject ?? [],
+    './import_meta_url.js',
+  ],
+  define: {
+    ...config.define,
+    "import.meta.url": 'import_meta_url'
+  },
+  assetNames: '[name]',
 });
 
 console.log(

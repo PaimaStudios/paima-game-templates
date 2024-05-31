@@ -7,7 +7,8 @@
   "type": "module",
   "scripts": {
     "prebuild": "tsoa spec-and-routes",
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "start": "node build/standalone.js"
   },
   "author": "",
   "license": "ISC",

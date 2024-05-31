@@ -4,7 +4,8 @@
     "rootDir": "src",
     "outDir": "build",
     "experimentalDecorators": true, /* Enable experimental support for TC39 stage 2 draft decorators. */
-    "module": "ESNext"
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
   },
   "include": ["src/**/*", "src/**/*.json"],
   "references": [{ "path": "../db" }]
