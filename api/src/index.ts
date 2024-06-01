@@ -8,7 +8,7 @@ import canvasGameAbi from '@game/evm/CanvasGame';
 import { Resvg } from '@resvg/resvg-js';
 import { closest_color } from './colorlist.js';
 import { voronoi_svg } from './voronoi.js';
-import { getColors, requirePool } from '@game/db';
+import { getColors, getPaintByTx, requirePool } from '@game/db';
 
 const chain = anvil;
 const chainId = `eip155:${chain.id}`;
@@ -73,18 +73,29 @@ export default function registerApiRoutes(app: Router) {
   });
   app.post('/:canvas(\\d+)', async (req, res, next) => {
     return frames(async ctx => {
-      console.log('/:canvas wait=', req.query.wait);
-      const canFork = true; // TODO
+      const db = requirePool();
 
-      const forkButton = canFork
-        ? [
-            button({
-              label: 'Fork!',
-              action: 'tx',
-              target: `/${req.params.canvas}/fork_tx`,
-            }),
-          ]
-        : [];
+      // No need to validate the message because this is just a convenience
+      let canFork = false;
+      const txid = ctx.message?.transactionId;
+      if (req.query.wait && txid) {
+        console.log('Waiting for', txid);
+        const start = new Date().valueOf();
+        while (new Date().valueOf() < start + 4_000) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          const rows = await getPaintByTx.run({ txid }, db);
+          if (rows.length > 0) {
+            canFork = true;
+            break;
+          }
+        }
+        console.log('Waiting took', new Date().valueOf() - start, 'ms, succeeded =', canFork);
+      }
+
+      if (!canFork) {
+        // TODO
+        canFork = true;
+      }
 
       return {
         image: new URL(
@@ -98,7 +109,15 @@ export default function registerApiRoutes(app: Router) {
             action: 'post',
             target: `/${req.params.canvas}/preview`,
           }),
-          ...forkButton,
+          ...(canFork
+            ? [
+                button({
+                  label: 'Fork!',
+                  action: 'tx',
+                  target: `/${req.params.canvas}/fork_tx`,
+                }),
+              ]
+            : []),
         ],
       };
     })(req, res, next);
@@ -163,17 +182,13 @@ export default function registerApiRoutes(app: Router) {
       const calldata = encodeFunctionData({
         abi: canvasGame.abi,
         functionName: 'paint',
-        args: [
-          canvas,
-          parseInt(color.substring(1), 16),
-        ],
+        args: [canvas, parseInt(color.substring(1), 16)],
       });
 
       // Query the contract to learn how much the fee is
       const fee = await canvasGame.read.fee([]);
 
       // Return the transaction object to the user
-      console.log('returning tx object from /paint_tx');
       return transaction({
         chainId,
         method: 'eth_sendTransaction',
@@ -201,7 +216,6 @@ export default function registerApiRoutes(app: Router) {
       });
 
       // Return the transaction object to the user
-      console.log('returning tx object from /fork_tx');
       return transaction({
         chainId,
         method: 'eth_sendTransaction',
