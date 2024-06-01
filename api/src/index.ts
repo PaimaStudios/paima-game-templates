@@ -13,6 +13,7 @@ import {
   getCanvasByTx,
   getColors,
   getPaintByTx,
+  getPainter,
   requirePool,
 } from '@game/db';
 
@@ -91,6 +92,7 @@ export default function registerApiRoutes(app: Router) {
           await new Promise(resolve => setTimeout(resolve, 100));
           const rows = await getPaintByTx.run({ txid }, db);
           if (rows.length > 0) {
+            // TODO: canFork should be false if they've already forked
             canFork = true;
             break;
           }
@@ -98,10 +100,7 @@ export default function registerApiRoutes(app: Router) {
         console.log('Waiting took', new Date().valueOf() - start, 'ms, succeeded =', canFork);
       }
 
-      if (!canFork) {
-        // TODO
-        canFork = true;
-      }
+      // No way to just learn the user's wallet address willy-nilly here, so presume canFork = false.
 
       return {
         image: new URL(`/${req.params.canvas}.png?${Math.random()}`, ctx.url).toString(),

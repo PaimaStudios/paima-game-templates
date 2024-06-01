@@ -5,9 +5,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract CanvasGame is Ownable {
     address[] public canvasOwner;
-    //address[][] public contributor;
-
-    mapping(address => uint256) public rewards;
+    mapping(uint256 => mapping(address => bool)) private painted;
+    mapping(uint256 => mapping(address => bool)) private forked;
+    mapping(address => uint256) private rewards;
 
     uint256 public fee = 0.00002651 ether; // about $0.10 USD at time of writing
 
@@ -38,12 +38,16 @@ contract CanvasGame is Ownable {
         rewards[owner()] += contractOwnerReward;
         rewards[canvasOwner[canvas]] += canvasOwnerReward;
 
+        painted[canvas][msg.sender] = true;
+
         emit Paint(msg.sender, canvas, color);
     }
 
     function fork(uint256 canvas) public {
         require(canvas < canvasOwner.length, "Canvas ID must exist");
-        //require() previous paint() call
+        require(painted[canvas][msg.sender], "Must have painted to this canvas before");
+        require(!forked[canvas][msg.sender], "Must not have forked this canvas already");
+        forked[canvas][msg.sender] = true;
         _newCanvas(msg.sender, canvas);
     }
 

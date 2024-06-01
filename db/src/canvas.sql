@@ -23,3 +23,8 @@ WHERE canvas_id = :canvas_id!;
 /* @name getPaintByTx */
 SELECT * FROM paint
 WHERE txid = :txid!;
+
+/* @name getPainter */
+SELECT * FROM paint
+WHERE canvas_id = :canvas_id
+AND painter = :painter!;
