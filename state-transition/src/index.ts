@@ -5,21 +5,18 @@ import type { SQLUpdate } from '@paima/node-sdk/db';
 import type { Pool } from 'pg';
 import { clonePaint, insertCanvas, insertPaint, sqlUpdate } from '@game/db';
 
-export default function gameStateTransitionRouter(_blockHeight: number) {
+export default function gameStateTransitionRouter(blockHeight: number) {
   return async function gameStateTransitionV1(
     inputData: STFSubmittedData,
-    _blockHeight: number,
-    _randomnessGenerator: Prando,
-    dbConn: Pool
+    blockHeight: number,
+    randomnessGenerator: Prando,
+    db: Pool
   ): Promise<SQLUpdate[]> {
-    console.log('inputData =', inputData);
-
     const expanded = parse(inputData.inputData);
     if (isInvalid(expanded)) {
-      console.warn(`Invalid input string`);
+      console.warn('Invalid input string:', inputData.inputData);
       return [];
     }
-    console.log('expanded =', expanded);
 
     switch (expanded.input) {
       case 'fork':
@@ -44,16 +41,23 @@ async function newCanvas(
   const id = Number(body.id);
   const copyFrom = Number(body.copyFrom);
 
-  result.push(sqlUpdate(insertCanvas, { id, owner: body.canvasOwner }));
+  if (!inputData.scheduledTxHash) {
+    return [];
+  }
+  result.push(
+    sqlUpdate(insertCanvas, { id, owner: body.canvasOwner, txid: inputData.scheduledTxHash })
+  );
 
   if (id == copyFrom) {
     // seed canvas
+    console.log('Seed canvas', id);
     for (let i = 0; i < 3; ++i) {
       //const color = '#' + Math.floor(Math.random() * 0x1000000).toString(16).padStart(6, '0');
       //result.push(sqlUpdate());
     }
   } else {
     // fork
+    console.log('Fork canvas', id, 'from', copyFrom, 'by', body.canvasOwner);
     result.push(sqlUpdate(clonePaint, { source: copyFrom, destination: id }));
   }
 
@@ -67,6 +71,7 @@ async function paint(
   const result = [];
   const canvas = Number(body.canvas);
   const color = '#' + Number(body.color).toString(16).padStart(6, '0');
+  console.log('Paint', color, 'on', canvas, 'by', body.contributor);
 
   result.push(
     sqlUpdate(insertPaint, {

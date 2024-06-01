@@ -1,6 +1,10 @@
 /* @name insertCanvas */
-INSERT INTO canvas (id, owner)
-VALUES (:id!, :owner!);
+INSERT INTO canvas (id, owner, txid)
+VALUES (:id!, :owner!, :txid!);
+
+/* @name getCanvasByTx */
+SELECT * FROM canvas
+WHERE txid = :txid!;
 
 /* @name insertPaint */
 INSERT INTO paint (canvas_id, color, painter, txid)

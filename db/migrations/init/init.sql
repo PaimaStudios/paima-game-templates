@@ -1,6 +1,7 @@
 CREATE TABLE canvas (
   id INTEGER NOT NULL PRIMARY KEY,
-  owner TEXT NOT NULL
+  owner TEXT NOT NULL,
+  txid TEXT
 );
 
 CREATE TABLE paint (

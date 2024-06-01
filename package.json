@@ -8,6 +8,7 @@
     "prebuild": "npm run --ws prebuild",
     "build": "tsc --build",
     "postbuild": "scripts/pack.sh",
+    "prestart": "docker compose up --wait",
     "start": "paima-engine run"
   },
   "devDependencies": {

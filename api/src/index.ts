@@ -8,7 +8,13 @@ import canvasGameAbi from '@game/evm/CanvasGame';
 import { Resvg } from '@resvg/resvg-js';
 import { closest_color } from './colorlist.js';
 import { voronoi_svg } from './voronoi.js';
-import { getColors, getPaintByTx, requirePool } from '@game/db';
+import {
+  IGetCanvasByTxResult,
+  getCanvasByTx,
+  getColors,
+  getPaintByTx,
+  requirePool,
+} from '@game/db';
 
 const chain = anvil;
 const chainId = `eip155:${chain.id}`;
@@ -81,7 +87,7 @@ export default function registerApiRoutes(app: Router) {
       if (req.query.wait && txid) {
         console.log('Waiting for', txid);
         const start = new Date().valueOf();
-        while (new Date().valueOf() < start + 4_000) {
+        while (new Date().valueOf() < start + 5_000) {
           await new Promise(resolve => setTimeout(resolve, 100));
           const rows = await getPaintByTx.run({ txid }, db);
           if (rows.length > 0) {
@@ -98,10 +104,7 @@ export default function registerApiRoutes(app: Router) {
       }
 
       return {
-        image: new URL(
-          `/${req.params.canvas}.png?${Math.random()}` + Math.random(),
-          ctx.url
-        ).toString(),
+        image: new URL(`/${req.params.canvas}.png?${Math.random()}`, ctx.url).toString(),
         textInput: 'Contribute a color!',
         buttons: [
           button({
@@ -115,6 +118,7 @@ export default function registerApiRoutes(app: Router) {
                   label: 'Fork!',
                   action: 'tx',
                   target: `/${req.params.canvas}/fork_tx`,
+                  post_url: `/fork_ok`,
                 }),
               ]
             : []),
@@ -141,16 +145,11 @@ export default function registerApiRoutes(app: Router) {
       }
 
       /*
-        const embedUrl = new URL('/' + Math.random(), ctx.url);
-        // https://docs.farcaster.xyz/reference/warpcast/cast-composer-intents#warpcast-cast-intents
-        const linkUrl = new URL('https://warpcast.com/~/compose');
-        linkUrl.searchParams.append('text', 'Contribute your color to my canvas, powered by Paima Engine');
-        linkUrl.searchParams.append('embeds[]', embedUrl.toString());
-        */
+       */
 
       return {
         image: new URL(
-          `/${req.params.canvas}.png?add=${encodeURIComponent(color)}&' + ${Math.random()}`,
+          `/${req.params.canvas}.png?add=${encodeURIComponent(color)}&${Math.random()}`,
           ctx.url
         ).toString(),
         textInput: 'Try a different color...',
@@ -225,6 +224,58 @@ export default function registerApiRoutes(app: Router) {
           data: calldata,
         },
       });
+    })(req, res, next);
+  });
+  app.post('/fork_ok', async (req, res, next) => {
+    return frames(async ctx => {
+      const db = requirePool();
+
+      const txid = ctx.message?.transactionId;
+      if (!txid) {
+        return error('Expected a transactionId to confirm');
+      }
+
+      let rows: IGetCanvasByTxResult[] = [];
+      const start = new Date().valueOf();
+      while (new Date().valueOf() < start + 5_000) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        rows = await getCanvasByTx.run({ txid }, db);
+        if (rows.length > 0) {
+          break;
+        }
+      }
+      console.log('Waiting took', new Date().valueOf() - start, 'ms, succeeded =', rows.length);
+
+      if (!rows.length) {
+        return error("Transaction didn't clear in time");
+      }
+
+      const canvas = rows[0].id;
+
+      const embedUrl = new URL(`/${canvas}`, ctx.url);
+      // https://docs.farcaster.xyz/reference/warpcast/cast-composer-intents#warpcast-cast-intents
+      const linkUrl = new URL('https://warpcast.com/~/compose');
+      linkUrl.searchParams.append(
+        'text',
+        'Contribute your color to my canvas, powered by Paima Engine'
+      );
+      linkUrl.searchParams.append('embeds[]', embedUrl.toString());
+
+      return {
+        image: new URL(`/${canvas}.png?${Math.random()}`, ctx.url).toString(),
+        buttons: [
+          button({
+            label: 'Post so others can paint!',
+            action: 'link',
+            target: linkUrl.toString(),
+          }),
+          button({
+            label: 'Download',
+            action: 'link',
+            target: `/${canvas}.png?${Math.random()}`,
+          }),
+        ],
+      };
     })(req, res, next);
   });
 }
