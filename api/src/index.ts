@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { button, error, redirect, transaction } from 'frames.js/core';
 import { createFrames } from 'frames.js/express';
 import { Abi, createPublicClient, encodeFunctionData, getContract, http, toHex } from 'viem';
-import { anvil } from 'viem/chains';
+import * as viemChains from 'viem/chains';
 import paimaL2Abi from '@paima/evm-contracts/abi/PaimaL2Contract.json' with { type: 'json' };
 import canvasGameAbi from '@game/evm/CanvasGame';
 import { Resvg } from '@resvg/resvg-js';
@@ -21,7 +21,15 @@ import {
 } from '@game/db';
 import { farcasterHubContext } from 'frames.js/middleware';
 
-const chain = anvil;
+function requireEnv(key: string): string {
+  const v = process.env[key];
+  if (!v) {
+    throw new Error('Missing env var ' + key);
+  }
+  return v;
+}
+
+const chain = (viemChains as any as Record<string, viemChains.Chain>)[requireEnv('VIEM_CHAIN')];
 const chainId = `eip155:${chain.id}`;
 
 const publicClient = createPublicClient({
@@ -31,26 +39,27 @@ const publicClient = createPublicClient({
 
 const paimaL2 = getContract({
   abi: paimaL2Abi as Abi,
-  address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+  address: requireEnv('CONTRACT_ADDRESS') as any,
   client: publicClient,
 });
 
 const canvasGame = getContract({
   abi: canvasGameAbi as unknown as Abi,
-  address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
+  address: requireEnv('CANVASGAME_CONTRACT_ADDRESS') as any,
   client: publicClient,
 });
 
 const seedColorWeight = 1;
 const paintWeight = 3;
 
-const aboutUrl = 'https://github.com/PaimaStudios/farcaster-hackathon#readme';
+const aboutUrl = requireEnv('ABOUT_URL');
+const farcasterHubUrl = requireEnv('FARCASTER_HUB_URL');
 
 export default function registerApiRoutes(app: Router) {
   const frames = createFrames({
     middleware: [
       farcasterHubContext({
-        hubHttpUrl: 'http://localhost:3010/hub',
+        hubHttpUrl: farcasterHubUrl,
       }),
     ],
   });
