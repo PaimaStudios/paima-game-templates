@@ -44,7 +44,7 @@ const canvasGame = getContract({
 const seedColorWeight = 1;
 const paintWeight = 3;
 
-const aboutUrl = 'https://github.com/PaimaStudios/farcaster-hackathon';
+const aboutUrl = 'https://github.com/PaimaStudios/farcaster-hackathon#readme';
 
 export default function registerApiRoutes(app: Router) {
   const frames = createFrames({
@@ -68,6 +68,11 @@ export default function registerApiRoutes(app: Router) {
             action: 'post',
             label: 'See full canvas...',
             target: `/${req.params.canvas}`,
+          }),
+          button({
+            action: 'link',
+            label: 'About',
+            target: aboutUrl,
           }),
         ],
       };
