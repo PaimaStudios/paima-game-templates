@@ -45,6 +45,10 @@ const paintWeight = 3;
 export default function registerApiRoutes(app: Router) {
   const frames = createFrames();
 
+  app.get('/', async (req, res) => {
+    res.redirect('https://github.com/PaimaStudios/farcaster-hackathon');
+  });
+
   app.get('/:canvas(\\d+)', async (req, res, next) => {
     return frames(async ctx => {
       return {
@@ -117,7 +121,7 @@ export default function registerApiRoutes(app: Router) {
       // Can only paint if not full. Optimistic UI check; the contract enforces this.
       const paintCount = (await getPaintCount.run({ canvas_id: canvas }, db))[0].count;
       const paintLimit = (await canvasGame.read.paintLimit([])) as number;
-      const canPaint = paintCount ?? 0 < paintLimit;
+      const canPaint = (paintCount ?? 0) < paintLimit;
 
       return {
         image: new URL(`/${req.params.canvas}.png?${Math.random()}`, ctx.url).toString(),
