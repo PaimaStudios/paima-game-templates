@@ -199,18 +199,16 @@ export default function registerApiRoutes(app: Router) {
       // have to verify the frame action: https://framesjs.org/guides/security
       // But this route doesn't actually modify anything, just show a preview.
 
-      const text = ctx.message?.inputText;
-      let color: string;
-      if (text) {
-        const result = closest_color(text);
-        if (result.distance <= text.length / 2) {
-          color = result.color;
-        } else {
-          return error(`Unknown color "${text.toLowerCase()}". Maybe try "${result.name}"?`);
-        }
-      } else {
+      const text = ctx.message?.inputText?.trim().toLowerCase();
+      if (!text) {
         return error('Type a color to contribute!');
       }
+
+      const result = closest_color(text);
+      if (result.distance > text.length / 2) {
+        return error(`Unknown color "${text}". Maybe try "${result.name}"?`);
+      }
+      const color = result.color;
 
       return {
         image: new URL(
@@ -226,7 +224,7 @@ export default function registerApiRoutes(app: Router) {
           }),
           button({
             action: 'tx',
-            label: 'Paint it!',
+            label: `Paint ${result.name}!`,
             target: `/${req.params.canvas}/paint_tx?add=${encodeURIComponent(color)}`,
             post_url: `/${req.params.canvas}?wait=1`,
           }),
