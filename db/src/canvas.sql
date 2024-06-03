@@ -6,6 +6,10 @@ VALUES (:id!, :owner!, :copy_from, :txid!);
 SELECT * FROM canvas
 WHERE txid = :txid!;
 
+/* @name getCanvasById */
+SELECT * FROM canvas
+WHERE id = :id!;
+
 /* @name insertPaint */
 INSERT INTO paint (canvas_id, color, painter, txid)
 VALUES (:canvas_id!, :color!, :painter, :txid);

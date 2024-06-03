@@ -10,6 +10,7 @@ import { closest_color } from './colorlist.js';
 import { voronoi_svg } from './voronoi.js';
 import {
   IGetCanvasByTxResult,
+  getCanvasById,
   getCanvasByTx,
   getColors,
   getPaintByTx,
@@ -89,6 +90,10 @@ export default function registerApiRoutes(app: Router) {
     return frames(async ctx => {
       const db = requirePool();
       const canvas = Number(req.params.canvas);
+      // Canvas must exist. Optimistic UI check; the contract enforces this.
+      if (isNaN(canvas) || !(await getCanvasById.run({ id: canvas }, db)).length) {
+        return error('Canvas does not exist');
+      }
 
       // No need to validate the message because this is just a convenience
       let canFork = false;
@@ -109,7 +114,7 @@ export default function registerApiRoutes(app: Router) {
       }
       // No way to just learn the user's wallet address willy-nilly here, so presume canFork = false.
 
-      // Can only paint if not full
+      // Can only paint if not full. Optimistic UI check; the contract enforces this.
       const paintCount = (await getPaintCount.run({ canvas_id: canvas }, db))[0].count;
       const paintLimit = (await canvasGame.read.paintLimit([])) as number;
       const canPaint = paintCount ?? 0 < paintLimit;
@@ -160,9 +165,6 @@ export default function registerApiRoutes(app: Router) {
         return error('Type a color to contribute!');
       }
 
-      /*
-       */
-
       return {
         image: new URL(
           `/${req.params.canvas}.png?add=${encodeURIComponent(color)}&${Math.random()}`,
@@ -187,10 +189,16 @@ export default function registerApiRoutes(app: Router) {
   });
   app.post('/:canvas(\\d+)/paint_tx', async (req, res, next) => {
     return frames(async ctx => {
+      const db = requirePool();
       const canvas = Number(req.params.canvas);
       const color = req.query.add;
-      if (isNaN(canvas) || typeof color !== 'string' || !/^#[0-9a-f]{6}$/.test(color)) {
-        return error('Invalid input');
+      // Canvas must exist. Optimistic UI check; the contract enforces this.
+      if (isNaN(canvas) || !(await getCanvasById.run({ id: canvas }, db)).length) {
+        return error('Canvas does not exist');
+      }
+      // The contract accepts a uint24 rather than a string, so no enforcement needed.
+      if (typeof color !== 'string' || !/^#[0-9a-f]{6}$/.test(color)) {
+        return error('Invalid color');
       }
 
       // Encode paimaSubmitGameInput call
@@ -218,9 +226,11 @@ export default function registerApiRoutes(app: Router) {
   });
   app.post('/:canvas(\\d+)/fork_tx', async (req, res, next) => {
     return frames(async ctx => {
+      const db = requirePool();
       const canvas = Number(req.params.canvas);
-      if (isNaN(canvas)) {
-        return error('Invalid input');
+      // Canvas must exist. Optimistic UI check; the contract enforces this.
+      if (isNaN(canvas) || !(await getCanvasById.run({ id: canvas }, db)).length) {
+        return error('Canvas does not exist');
       }
 
       // Encode call
