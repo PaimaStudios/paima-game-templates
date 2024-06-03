@@ -1,0 +1,23 @@
+{
+  "name": "@game/db",
+  "version": "1.0.0",
+  "description": "Database functions for Paima Studios [GAME_NAME]",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "prebuild": "./docker-with.sh pgtyped -c pgtypedconfig.json",
+    "build": "tsc --build"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@pgtyped/runtime": "2.3.0",
+    "@paima/node-sdk": "^2.4.0",
+    "pg": "^8.10.0"
+  },
+  "devDependencies": {
+    "@pgtyped/cli": "^2.3.0",
+    "@types/pg": "^8.10.9"
+  }
+}

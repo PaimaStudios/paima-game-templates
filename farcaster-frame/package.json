@@ -1,0 +1,28 @@
+{
+  "name": "paima-farcaster-hackathon",
+  "version": "1.0.0",
+  "author": "PaimaStudios",
+  "main": "index.js",
+  "scripts": {
+    "initialize": "npm ci && cp .env.example .env.localhost",
+    "prebuild": "npm run --ws prebuild",
+    "build": "tsc --build",
+    "postbuild": "scripts/pack.sh",
+    "prestart": "docker compose up --wait",
+    "start": "paima-engine run",
+    "debugger": "frames -u http://localhost:3333/0"
+  },
+  "devDependencies": {
+    "@frames.js/debugger": "^0.2.12",
+    "@paima/build-utils": "^2.3.0",
+    "esbuild": "^0.19.11",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5"
+  },
+  "workspaces": [
+    "./db",
+    "./api",
+    "./state-transition",
+    "./contracts/evm"
+  ]
+}
