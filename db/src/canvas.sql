@@ -20,6 +20,11 @@ WHERE canvas_id = :source!;
 SELECT color, painter FROM paint
 WHERE canvas_id = :canvas_id!;
 
+/* @name getPaintCount */
+SELECT count(*)::INTEGER AS count FROM paint
+WHERE canvas_id = :canvas_id!
+AND painter IS NOT NULL;
+
 /* @name getPaintByTx */
 SELECT * FROM paint
 WHERE txid = :txid!;

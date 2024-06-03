@@ -13,6 +13,7 @@ import {
   getCanvasByTx,
   getColors,
   getPaintByTx,
+  getPaintCount,
   getPainter,
   requirePool,
 } from '@game/db';
@@ -66,7 +67,9 @@ export default function registerApiRoutes(app: Router) {
     const db = requirePool();
     const colorResult = await getColors.run({ canvas_id: canvas }, db);
     // Colors by a human are triple-painted, seed colors are single-painted.
-    const colors = colorResult.flatMap(x => Array(x.painter ? paintWeight : seedColorWeight).fill(x.color));
+    const colors = colorResult.flatMap(x =>
+      Array(x.painter ? paintWeight : seedColorWeight).fill(x.color)
+    );
 
     if (typeof req.query.add === 'string' && /^#[0-9a-f]{6}$/.test(req.query.add)) {
       colors.push(...Array(paintWeight).fill(req.query.add));
@@ -85,6 +88,7 @@ export default function registerApiRoutes(app: Router) {
   app.post('/:canvas(\\d+)', async (req, res, next) => {
     return frames(async ctx => {
       const db = requirePool();
+      const canvas = Number(req.params.canvas);
 
       // No need to validate the message because this is just a convenience
       let canFork = false;
@@ -103,18 +107,26 @@ export default function registerApiRoutes(app: Router) {
         }
         console.log('Waiting took', new Date().valueOf() - start, 'ms, succeeded =', canFork);
       }
-
       // No way to just learn the user's wallet address willy-nilly here, so presume canFork = false.
+
+      // Can only paint if not full
+      const paintCount = (await getPaintCount.run({ canvas_id: canvas }, db))[0].count;
+      const paintLimit = (await canvasGame.read.paintLimit([])) as number;
+      const canPaint = paintCount ?? 0 < paintLimit;
 
       return {
         image: new URL(`/${req.params.canvas}.png?${Math.random()}`, ctx.url).toString(),
-        textInput: 'Contribute a color!',
+        textInput: canPaint ? 'Contribute a color!' : undefined,
         buttons: [
-          button({
-            label: 'Preview...',
-            action: 'post',
-            target: `/${req.params.canvas}/preview`,
-          }),
+          ...(canPaint
+            ? [
+                button({
+                  label: 'Preview...',
+                  action: 'post',
+                  target: `/${req.params.canvas}/preview`,
+                }),
+              ]
+            : []),
           ...(canFork
             ? [
                 button({

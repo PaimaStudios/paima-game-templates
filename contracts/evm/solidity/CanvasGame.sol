@@ -4,12 +4,15 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract CanvasGame is Ownable {
+    uint256 public fee = 0.00002651 ether; // about $0.10 USD at time of writing
+    uint256 public paintLimit = 48;
+
     address[] public canvasOwner;
+    mapping(uint256 => uint256) private paintCount;
     mapping(uint256 => mapping(address => bool)) private painted;
     mapping(uint256 => mapping(address => bool)) private forked;
-    mapping(address => uint256) private rewards;
 
-    uint256 public fee = 0.00002651 ether; // about $0.10 USD at time of writing
+    mapping(address => uint256) private rewards;
 
     event NewCanvas(address indexed canvasOwner, uint256 id, uint256 copyFrom);
     event Paint(address indexed contributor, uint256 canvas, uint24 color);
@@ -32,6 +35,7 @@ contract CanvasGame is Ownable {
     function paint(uint256 canvas, uint24 color) public payable {
         require(msg.value >= fee, "Sufficient fee required to paint");
         require(canvas < canvasOwner.length, "Canvas ID must exist");
+        require(paintCount[canvas] < paintLimit, "Canvas must not be full");
 
         uint256 contractOwnerReward = msg.value / 10;
         uint256 canvasOwnerReward = msg.value - contractOwnerReward;
@@ -39,6 +43,7 @@ contract CanvasGame is Ownable {
         rewards[canvasOwner[canvas]] += canvasOwnerReward;
 
         painted[canvas][msg.sender] = true;
+        paintCount[canvas] += 1;
 
         emit Paint(msg.sender, canvas, color);
     }
