@@ -37,6 +37,9 @@ const canvasGame = getContract({
   client: publicClient,
 });
 
+const seedColorWeight = 1;
+const paintWeight = 3;
+
 export default function registerApiRoutes(app: Router) {
   const frames = createFrames();
 
@@ -62,10 +65,11 @@ export default function registerApiRoutes(app: Router) {
 
     const db = requirePool();
     const colorResult = await getColors.run({ canvas_id: canvas }, db);
-    const colors = colorResult.map(x => x.color);
+    // Colors by a human are triple-painted, seed colors are single-painted.
+    const colors = colorResult.flatMap(x => Array(x.painter ? paintWeight : seedColorWeight).fill(x.color));
 
     if (typeof req.query.add === 'string' && /^#[0-9a-f]{6}$/.test(req.query.add)) {
-      colors.push(req.query.add);
+      colors.push(...Array(paintWeight).fill(req.query.add));
     }
 
     const svg = voronoi_svg(canvas, colors);

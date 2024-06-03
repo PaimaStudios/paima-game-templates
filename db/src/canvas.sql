@@ -17,7 +17,7 @@ FROM paint
 WHERE canvas_id = :source!;
 
 /* @name getColors */
-SELECT color FROM paint
+SELECT color, painter FROM paint
 WHERE canvas_id = :canvas_id!;
 
 /* @name getPaintByTx */

@@ -12,10 +12,8 @@ export function voronoi_svg(canvasId: number, inputColors: string[]): string {
   // Add input colors
   for (const color of inputColors) {
     const rand = (rands[color] ??= rngForColor(canvasId, color));
-    for (let i = 0; i < 3; ++i) {
-      points.push([rand() * w, rand() * h]);
-      colors.push(color);
-    }
+    points.push([rand() * w, rand() * h]);
+    colors.push(color);
   }
 
   points.push([-1 * w, -1 * h], [-1 * w, 2 * h], [2 * w, 2 * h], [2 * w, -1 * h]);
