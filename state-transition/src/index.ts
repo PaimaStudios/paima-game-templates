@@ -3,7 +3,7 @@ import type Prando from '@paima/sdk/prando';
 import type { STFSubmittedData } from '@paima/sdk/utils';
 import type { SQLUpdate } from '@paima/node-sdk/db';
 import type { Pool } from 'pg';
-import { clonePaint, insertCanvas, insertPaint, sqlUpdate } from '@game/db';
+import { clonePaint, insertCanvas, insertPaint, rngForCanvas, sqlUpdate } from '@game/db';
 
 export default function gameStateTransitionRouter(blockHeight: number) {
   return async function gameStateTransitionV1(
@@ -45,15 +45,26 @@ async function newCanvas(
     return [];
   }
   result.push(
-    sqlUpdate(insertCanvas, { id, owner: body.canvasOwner, txid: inputData.scheduledTxHash })
+    sqlUpdate(insertCanvas, {
+      id,
+      owner: body.canvasOwner,
+      copy_from: id == copyFrom ? null : copyFrom,
+      txid: inputData.scheduledTxHash,
+    })
   );
 
   if (id == copyFrom) {
     // seed canvas
     console.log('Seed canvas', id);
+    const rand = rngForCanvas(id);
     for (let i = 0; i < 3; ++i) {
-      //const color = '#' + Math.floor(Math.random() * 0x1000000).toString(16).padStart(6, '0');
-      //result.push(sqlUpdate());
+      let color = '#';
+      for (let j = 0; j < 6; ++j) {
+        color += '0123456789abcdef'[Math.floor(rand() * 16)];
+      }
+      result.push(
+        sqlUpdate(insertPaint, { canvas_id: id, color, txid: inputData.scheduledTxHash })
+      );
     }
   } else {
     // fork

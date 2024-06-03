@@ -68,7 +68,7 @@ export default function registerApiRoutes(app: Router) {
       colors.push(req.query.add);
     }
 
-    const svg = voronoi_svg(req.params.canvas, colors);
+    const svg = voronoi_svg(canvas, colors);
     const pngBytes = new Resvg(svg).render().asPng();
 
     res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
@@ -127,8 +127,9 @@ export default function registerApiRoutes(app: Router) {
   });
   app.post('/:canvas(\\d+)/preview', async (req, res, next) => {
     return frames(async ctx => {
-      // TODO: Would have to verify here because we're taking action based on a POST.
-      // But this is just temporary test code so it should be OK.
+      // If we were doing anything serious in response to a mere POST, we'd
+      // have to verify the frame action: https://framesjs.org/guides/security
+      // But this route doesn't actually modify anything, just show a preview.
 
       const text = ctx.message?.inputText;
       let color: string;

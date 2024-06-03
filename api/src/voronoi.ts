@@ -1,7 +1,7 @@
 import voronoi from 'voronoi-diagram';
-import { cyrb128, sfc32 } from './rng.js';
+import { rngForColor } from '@game/db';
 
-export function voronoi_svg(seed: string, inputColors: string[]): string {
+export function voronoi_svg(canvasId: number, inputColors: string[]): string {
   const h = 800;
   const w = h * 1.91;
 
@@ -9,21 +9,9 @@ export function voronoi_svg(seed: string, inputColors: string[]): string {
   const colors = [];
   const rands: Record<string, () => number> = {};
 
-  // Add seed colors
-  const baseRand = sfc32(...cyrb128(seed));
-  for (let i = 0; i < 3; ++i) {
-    let color = '#';
-    for (let j = 0; j < 6; ++j) {
-      color += '0123456789abcdef'[Math.floor(baseRand() * 16)];
-    }
-    const rand = (rands[color] ??= sfc32(...cyrb128(seed + color)));
-    points.push([baseRand() * w, baseRand() * h]);
-    colors.push(color);
-  }
-
   // Add input colors
   for (const color of inputColors) {
-    const rand = (rands[color] ??= sfc32(...cyrb128(seed + color)));
+    const rand = (rands[color] ??= rngForColor(canvasId, color));
     for (let i = 0; i < 3; ++i) {
       points.push([rand() * w, rand() * h]);
       colors.push(color);
