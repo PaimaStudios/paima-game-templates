@@ -2,6 +2,7 @@ CREATE TABLE canvas (
   id INTEGER NOT NULL PRIMARY KEY,
   owner TEXT NOT NULL,
   copy_from INTEGER,
+  seed TEXT NOT NULL,
   txid TEXT
 );
 

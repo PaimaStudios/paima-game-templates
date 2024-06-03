@@ -80,7 +80,7 @@ export default function registerApiRoutes(app: Router) {
       colors.push(...Array(paintWeight).fill(req.query.add));
     }
 
-    const svg = voronoi_svg(canvas, colors);
+    const svg = voronoi_svg(canvasData.seed, colors);
     const pngBytes = new Resvg(svg).render().asPng();
 
     res.header('Cache-Control', 'no-cache, no-store, must-revalidate');

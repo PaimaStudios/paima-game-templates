@@ -1,6 +1,6 @@
 /* @name insertCanvas */
-INSERT INTO canvas (id, owner, copy_from, txid)
-VALUES (:id!, :owner!, :copy_from, :txid!);
+INSERT INTO canvas (id, owner, copy_from, seed, txid)
+VALUES (:id!, :owner!, :copy_from, :seed!, :txid!);
 
 /* @name getCanvasByTx */
 SELECT * FROM canvas

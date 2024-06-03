@@ -3,7 +3,7 @@ import type Prando from '@paima/sdk/prando';
 import type { STFSubmittedData } from '@paima/sdk/utils';
 import type { SQLUpdate } from '@paima/node-sdk/db';
 import type { Pool } from 'pg';
-import { clonePaint, insertCanvas, insertPaint, rngForCanvas, sqlUpdate } from '@game/db';
+import { clonePaint, getCanvasById, insertCanvas, insertPaint, rngForCanvas, sqlUpdate } from '@game/db';
 
 export default function gameStateTransitionRouter(blockHeight: number) {
   return async function gameStateTransitionV1(
@@ -20,7 +20,7 @@ export default function gameStateTransitionRouter(blockHeight: number) {
 
     switch (expanded.input) {
       case 'fork':
-        return await newCanvas(inputData, expanded.body);
+        return await newCanvas(inputData, expanded.body, db);
       case 'paint':
         return await paint(inputData, expanded.body);
       default:
@@ -35,7 +35,8 @@ function assertNever(value: never): never {
 
 async function newCanvas(
   inputData: STFSubmittedData,
-  body: { canvasOwner: string; id: string; copyFrom: string }
+  body: { canvasOwner: string; id: string; copyFrom: string },
+  db: Pool
 ): Promise<SQLUpdate[]> {
   const result = [];
   const id = Number(body.id);
@@ -44,18 +45,21 @@ async function newCanvas(
   if (!inputData.scheduledTxHash) {
     return [];
   }
-  result.push(
-    sqlUpdate(insertCanvas, {
-      id,
-      owner: body.canvasOwner,
-      copy_from: id == copyFrom ? null : copyFrom,
-      txid: inputData.scheduledTxHash,
-    })
-  );
 
   if (id == copyFrom) {
     // seed canvas
     console.log('Seed canvas', id);
+
+    result.push(
+      sqlUpdate(insertCanvas, {
+        id,
+        owner: body.canvasOwner,
+        copy_from: id == copyFrom ? null : copyFrom,
+        seed: `${id}`,
+        txid: inputData.scheduledTxHash,
+      })
+    );
+
     const rand = rngForCanvas(id);
     for (let i = 0; i < 3; ++i) {
       let color = '#';
@@ -69,6 +73,19 @@ async function newCanvas(
   } else {
     // fork
     console.log('Fork canvas', id, 'from', copyFrom, 'by', body.canvasOwner);
+
+    const basedOn = (await getCanvasById.run({ id: copyFrom }, db))[0];
+
+    result.push(
+      sqlUpdate(insertCanvas, {
+        id,
+        owner: body.canvasOwner,
+        copy_from: id == copyFrom ? null : copyFrom,
+        seed: basedOn.seed,
+        txid: inputData.scheduledTxHash,
+      })
+    );
+
     result.push(sqlUpdate(clonePaint, { source: copyFrom, destination: id }));
   }
 
