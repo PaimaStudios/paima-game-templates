@@ -51,6 +51,7 @@ contract CanvasGame is Ownable {
     function fork(uint256 canvas) public {
         require(canvas < canvasOwner.length, "Canvas ID must exist");
         require(painted[canvas][msg.sender], "Must have painted to this canvas before");
+        require(canvasOwner[canvas] != msg.sender, "Must not fork your own canvas");
         require(!forked[canvas][msg.sender], "Must not have forked this canvas already");
         forked[canvas][msg.sender] = true;
         _newCanvas(msg.sender, canvas);
