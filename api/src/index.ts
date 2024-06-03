@@ -10,6 +10,7 @@ import { closest_color } from './colorlist.js';
 import { voronoi_svg } from './voronoi.js';
 import {
   IGetCanvasByTxResult,
+  getCanvasActions,
   getCanvasById,
   getCanvasByTx,
   getColors,
@@ -18,6 +19,7 @@ import {
   getPainter,
   requirePool,
 } from '@game/db';
+import { farcasterHubContext } from 'frames.js/middleware';
 
 const chain = anvil;
 const chainId = `eip155:${chain.id}`;
@@ -42,11 +44,19 @@ const canvasGame = getContract({
 const seedColorWeight = 1;
 const paintWeight = 3;
 
+const aboutUrl = 'https://github.com/PaimaStudios/farcaster-hackathon';
+
 export default function registerApiRoutes(app: Router) {
-  const frames = createFrames();
+  const frames = createFrames({
+    middleware: [
+      farcasterHubContext({
+        hubHttpUrl: 'http://localhost:3010/hub',
+      }),
+    ],
+  });
 
   app.get('/', async (req, res) => {
-    res.redirect('https://github.com/PaimaStudios/farcaster-hackathon');
+    res.redirect(aboutUrl);
   });
 
   app.get('/:canvas(\\d+)', async (req, res, next) => {
@@ -64,12 +74,14 @@ export default function registerApiRoutes(app: Router) {
     })(req, res, next);
   });
   app.get('/:canvas(\\d+).png', async (req, res) => {
+    const db = requirePool();
+
     const canvas = Number(req.params.canvas);
-    if (isNaN(canvas)) {
-      return error('Invalid input');
+    const canvasData = (await getCanvasById.run({ id: canvas }, db))[0];
+    if (isNaN(canvas) || !canvasData) {
+      return error('Canvas does not exist');
     }
 
-    const db = requirePool();
     const colorResult = await getColors.run({ canvas_id: canvas }, db);
     // Colors by a human are triple-painted, seed colors are single-painted.
     const colors = colorResult.flatMap(x =>
@@ -95,28 +107,49 @@ export default function registerApiRoutes(app: Router) {
       const db = requirePool();
       const canvas = Number(req.params.canvas);
       // Canvas must exist. Optimistic UI check; the contract enforces this.
-      if (isNaN(canvas) || !(await getCanvasById.run({ id: canvas }, db)).length) {
+      const canvasData = (await getCanvasById.run({ id: canvas }, db))[0];
+      if (isNaN(canvas) || !canvasData) {
         return error('Canvas does not exist');
+      }
+      if (!ctx.message?.isValid) {
+        return error('Hub rejected message signature');
       }
 
       // No need to validate the message because this is just a convenience
-      let canFork = false;
       const txid = ctx.message?.transactionId;
       if (req.query.wait && txid) {
+        let waitingSucceeded = false;
         console.log('Waiting for', txid);
         const start = new Date().valueOf();
         while (new Date().valueOf() < start + 5_000) {
           await new Promise(resolve => setTimeout(resolve, 100));
           const rows = await getPaintByTx.run({ txid }, db);
           if (rows.length > 0) {
-            // TODO: canFork should be false if they've already forked
-            canFork = true;
+            waitingSucceeded = true;
             break;
           }
         }
-        console.log('Waiting took', new Date().valueOf() - start, 'ms, succeeded =', canFork);
+        console.log(
+          'Waiting took',
+          new Date().valueOf() - start,
+          'ms, succeeded =',
+          waitingSucceeded
+        );
       }
-      // No way to just learn the user's wallet address willy-nilly here, so presume canFork = false.
+
+      // Based on the user's addresses, can they withdraw and/or fork?
+      const addresses = new Set([
+        ctx.message?.requesterCustodyAddress,
+        ...(ctx.message?.requesterVerifiedAddresses ?? []),
+      ].filter(x => x));
+      const canFork = (await getCanvasActions.run({ id: canvas, addresses: [...addresses] }, db))[0].can_fork;
+      let totalRewards = 0n;
+      for (const address of addresses) {
+        const rewards = (await canvasGame.read.rewards([address])) as bigint;
+        console.log('rewards for', address, 'is', rewards);
+        totalRewards += rewards;
+      }
+      const canWithdraw = totalRewards > 0n;
 
       // Can only paint if not full. Optimistic UI check; the contract enforces this.
       const paintCount = (await getPaintCount.run({ canvas_id: canvas }, db))[0].count;
@@ -143,6 +176,16 @@ export default function registerApiRoutes(app: Router) {
                   action: 'tx',
                   target: `/${req.params.canvas}/fork_tx`,
                   post_url: `/fork_ok`,
+                }),
+              ]
+            : []),
+          ...(canWithdraw
+            ? [
+                button({
+                  label: 'Withdraw',
+                  action: 'tx',
+                  target: `/withdraw_tx`,
+                  post_url: `/${req.params.canvas}`,
                 }),
               ]
             : []),
@@ -306,6 +349,27 @@ export default function registerApiRoutes(app: Router) {
           }),
         ],
       };
+    })(req, res, next);
+  });
+  app.post('/withdraw_tx', async (req, res, next) => {
+    return frames(async ctx => {
+      // Encode call
+      const calldata = encodeFunctionData({
+        abi: canvasGame.abi,
+        functionName: 'withdraw',
+        args: [],
+      });
+
+      // Return the transaction object to the user
+      return transaction({
+        chainId,
+        method: 'eth_sendTransaction',
+        params: {
+          abi: canvasGame.abi,
+          to: canvasGame.address,
+          data: calldata,
+        },
+      });
     })(req, res, next);
   });
 }

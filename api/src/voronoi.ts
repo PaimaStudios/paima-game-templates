@@ -1,7 +1,7 @@
 import voronoi from 'voronoi-diagram';
 import { rngForColor } from '@game/db';
 
-export function voronoi_svg(canvasId: number, inputColors: string[]): string {
+export function voronoi_svg(seed: string, inputColors: string[]): string {
   const h = 800;
   const w = h * 1.91;
 
@@ -11,7 +11,7 @@ export function voronoi_svg(canvasId: number, inputColors: string[]): string {
 
   // Add input colors
   for (const color of inputColors) {
-    const rand = (rands[color] ??= rngForColor(canvasId, color));
+    const rand = (rands[color] ??= rngForColor(seed, color));
     points.push([rand() * w, rand() * h]);
     colors.push(color);
   }

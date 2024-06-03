@@ -10,6 +10,18 @@ WHERE txid = :txid!;
 SELECT * FROM canvas
 WHERE id = :id!;
 
+/* @name getCanvasActions
+   @param addresses -> (...)
+*/
+SELECT
+    -- canFork = not owner, has painted, and hasn't already forked
+    owner NOT IN :addresses
+        AND (SELECT COUNT(*) FROM paint WHERE canvas_id = :id AND painter IN :addresses) > 0
+        AND (SELECT COUNT(*) FROM canvas WHERE copy_from = :id AND owner IN :addresses) = 0
+    AS can_fork
+FROM canvas
+WHERE id = :id;
+
 /* @name insertPaint */
 INSERT INTO paint (canvas_id, color, painter, txid)
 VALUES (:canvas_id!, :color!, :painter, :txid);

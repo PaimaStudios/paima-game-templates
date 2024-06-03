@@ -16,6 +16,6 @@ export function rngForCanvas(canvasId: number): () => number {
   return sfc32(...cyrb128(`${canvasId}`));
 }
 
-export function rngForColor(canvasId: number, color: string): () => number {
-  return sfc32(...cyrb128(`${canvasId}${color}`));
+export function rngForColor(seed: string, color: string): () => number {
+  return sfc32(...cyrb128(`${seed}${color}`));
 }
