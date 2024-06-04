@@ -55,6 +55,8 @@ const paintWeight = 3;
 const aboutUrl = requireEnv('ABOUT_URL');
 const farcasterHubUrl = requireEnv('FARCASTER_HUB_URL');
 
+const rootUrl = 'https://farcaster.paimastudios.com';
+
 export default function registerApiRoutes(app: Router) {
   const frames = createFrames({
     middleware: [
@@ -71,12 +73,15 @@ export default function registerApiRoutes(app: Router) {
   app.get('/:canvas(\\d+)', async (req, res, next) => {
     return frames(async ctx => {
       return {
-        image: new URL(`/${req.params.canvas}.png`, ctx.url).toString(),
+        image: new URL(
+          `/${req.params.canvas}.png?${Math.random()}`,
+          rootUrl
+        ).toString(),
         buttons: [
           button({
             action: 'post',
             label: 'See full canvas...',
-            target: `/${req.params.canvas}`,
+            target: new URL(`/${req.params.canvas}`, rootUrl).toString(),
           }),
           button({
             action: 'link',
@@ -171,7 +176,10 @@ export default function registerApiRoutes(app: Router) {
       const canPaint = (paintCount ?? 0) < paintLimit;
 
       return {
-        image: new URL(`/${req.params.canvas}.png?${Math.random()}`, ctx.url).toString(),
+        image: new URL(
+          `/${req.params.canvas}.png?${Math.random()}`,
+          rootUrl
+        ).toString(),
         textInput: canPaint ? 'Contribute a color!' : undefined,
         buttons: [
           ...(canPaint
@@ -179,7 +187,7 @@ export default function registerApiRoutes(app: Router) {
                 button({
                   label: 'Preview...',
                   action: 'post',
-                  target: `/${req.params.canvas}/preview`,
+                  target: new URL(`/${req.params.canvas}/preview`, rootUrl).toString(),
                 }),
               ]
             : []),
@@ -188,8 +196,8 @@ export default function registerApiRoutes(app: Router) {
                 button({
                   label: 'Fork!',
                   action: 'tx',
-                  target: `/${req.params.canvas}/fork_tx`,
-                  post_url: `/fork_ok`,
+                  target: new URL(`/${req.params.canvas}/fork_tx`, rootUrl).toString(),
+                  post_url: new URL(`/fork_ok`, rootUrl).toString(),
                 }),
               ]
             : []),
@@ -198,8 +206,8 @@ export default function registerApiRoutes(app: Router) {
                 button({
                   label: 'Withdraw',
                   action: 'tx',
-                  target: `/withdraw_tx`,
-                  post_url: `/${req.params.canvas}`,
+                  target: new URL(`/withdraw_tx`, rootUrl).toString(),
+                  post_url: new URL(`/${req.params.canvas}`, rootUrl).toString(),
                 }),
               ]
             : []),
@@ -227,20 +235,20 @@ export default function registerApiRoutes(app: Router) {
       return {
         image: new URL(
           `/${req.params.canvas}.png?add=${encodeURIComponent(color)}&${Math.random()}`,
-          ctx.url
+          rootUrl
         ).toString(),
         textInput: 'Try a different color...',
         buttons: [
           button({
             action: 'post',
             label: 'Preview...',
-            target: `/${req.params.canvas}/preview`,
+            target: new URL(`/${req.params.canvas}/preview`, rootUrl).toString(),
           }),
           button({
             action: 'tx',
             label: `Paint ${result.name}!`,
-            target: `/${req.params.canvas}/paint_tx?add=${encodeURIComponent(color)}`,
-            post_url: `/${req.params.canvas}?wait=1`,
+            target: new URL(`/${req.params.canvas}/paint_tx?add=${encodeURIComponent(color)}`, rootUrl).toString(),
+            post_url: new URL(`/${req.params.canvas}?wait=1`, rootUrl).toString(),
           }),
         ],
       };
@@ -337,7 +345,7 @@ export default function registerApiRoutes(app: Router) {
 
       const canvas = rows[0].id;
 
-      const embedUrl = new URL(`/${canvas}`, ctx.url);
+      const embedUrl = new URL(`/${canvas}`, rootUrl);
       // https://docs.farcaster.xyz/reference/warpcast/cast-composer-intents#warpcast-cast-intents
       const linkUrl = new URL('https://warpcast.com/~/compose');
       linkUrl.searchParams.append(
@@ -347,7 +355,10 @@ export default function registerApiRoutes(app: Router) {
       linkUrl.searchParams.append('embeds[]', embedUrl.toString());
 
       return {
-        image: new URL(`/${canvas}.png?${Math.random()}`, ctx.url).toString(),
+        image: new URL(
+          `/${canvas}.png?${Math.random()}`,
+          rootUrl
+        ).toString(),
         buttons: [
           button({
             label: 'Post so others can paint!',
@@ -357,7 +368,7 @@ export default function registerApiRoutes(app: Router) {
           button({
             label: 'Download',
             action: 'link',
-            target: `/${canvas}.png?${Math.random()}`,
+            target: new URL(`/${canvas}.png?${Math.random()}`, rootUrl).toString(),
           }),
         ],
       };
