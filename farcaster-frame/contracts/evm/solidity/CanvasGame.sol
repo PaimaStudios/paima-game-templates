@@ -13,7 +13,7 @@ contract CanvasGame is Ownable {
     mapping(uint256 canvasId => mapping(address user => bool hasPainted)) private painted;
     mapping(uint256 canvasId => mapping(address user => bool hasForked)) private forked;
 
-    mapping(address => uint256) public rewards;
+    mapping(address user => uint256 value) public rewards;
 
     event NewCanvas(address indexed canvasOwner, uint256 id, uint256 copyFrom);
     event Paint(address indexed contributor, uint256 canvas, uint24 color);
@@ -39,9 +39,9 @@ contract CanvasGame is Ownable {
     }
 
     function paint(uint256 canvas, uint24 color) public payable {
-        if (!(msg.value >= fee)) revert InsufficientFee();//msg.value, fee); // Sufficient fee required to paint
-        if (!(canvas < canvasOwner.length)) revert CanvasDoesNotExist();//canvas, canvasOwner.length); // Canvas ID must exist
-        if (!(paintCount[canvas] < paintLimit)) revert CanvasFull();//canvas, paintLimit); // Canvas must not be full
+        if (msg.value < fee) revert InsufficientFee();//msg.value, fee); // Sufficient fee required to paint
+        if (canvas >= canvasOwner.length) revert CanvasDoesNotExist();//canvas, canvasOwner.length); // Canvas ID must exist
+        if (paintCount[canvas] >= paintLimit) revert CanvasFull();//canvas, paintLimit); // Canvas must not be full
 
         uint256 contractOwnerReward = msg.value / 10;
         uint256 canvasOwnerReward = msg.value - contractOwnerReward;
@@ -55,10 +55,10 @@ contract CanvasGame is Ownable {
     }
 
     function fork(uint256 canvas) public {
-        if (!(canvas < canvasOwner.length)) revert CanvasDoesNotExist();//canvas, canvasOwner.length); // Canvas ID must exist
-        if (!(painted[canvas][msg.sender])) revert InvalidFork();//canvas); // Must not have painted to this canvas before
-        if (!(canvasOwner[canvas] != msg.sender)) revert InvalidFork();//canvas); // Must not fork your own canvas
-        if (!(!forked[canvas][msg.sender])) revert InvalidFork();//canvas); // Must not have forked this canvas already
+        if (canvas >= canvasOwner.length) revert CanvasDoesNotExist();//canvas, canvasOwner.length); // Canvas ID must exist
+        if (!painted[canvas][msg.sender]) revert InvalidFork();//canvas); // Must have painted to this canvas before
+        if (canvasOwner[canvas] == msg.sender) revert InvalidFork();//canvas); // Must not fork your own canvas
+        if (forked[canvas][msg.sender]) revert InvalidFork();//canvas); // Must not have forked this canvas already
         forked[canvas][msg.sender] = true;
         _newCanvas(msg.sender, canvas);
     }
