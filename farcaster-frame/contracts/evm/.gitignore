@@ -1,0 +1,6 @@
+# hardhat
+artifacts/
+cache/
+abi/
+ignition/deployments/
+contracts.stamp
