@@ -130,9 +130,6 @@ export default function registerApiRoutes(app: Router) {
       if (isNaN(canvas) || !canvasData) {
         return error('Canvas does not exist');
       }
-      if (!ctx.message?.isValid) {
-        return error('Hub rejected message signature');
-      }
 
       // No need to validate the message because this is just a convenience
       const txid = ctx.message?.transactionId;
@@ -156,19 +153,28 @@ export default function registerApiRoutes(app: Router) {
         );
       }
 
-      // Based on the user's addresses, can they withdraw and/or fork?
-      const addresses = new Set([
-        ctx.message?.requesterCustodyAddress,
-        ...(ctx.message?.requesterVerifiedAddresses ?? []),
-      ].filter(x => x));
-      const canFork = (await getCanvasActions.run({ id: canvas, addresses: [...addresses] }, db))[0].can_fork;
-      let totalRewards = 0n;
-      for (const address of addresses) {
-        const rewards = (await canvasGame.read.rewards([address])) as bigint;
-        console.log('rewards for', address, 'is', rewards);
-        totalRewards += rewards;
+      let canFork = false;
+      let canWithdraw = false;
+
+      if (ctx.message?.isValid) {
+        // Based on the user's addresses, can they withdraw and/or fork?
+        const addresses = new Set(
+          [
+            ctx.message?.requesterCustodyAddress,
+            ...(ctx.message?.requesterVerifiedAddresses ?? []),
+          ].filter(x => x)
+        );
+        canFork =
+          (await getCanvasActions.run({ id: canvas, addresses: [...addresses] }, db))[0]
+            ?.can_fork ?? false;
+        let totalRewards = 0n;
+        for (const address of addresses) {
+          const rewards = (await canvasGame.read.rewards([address])) as bigint;
+          console.log('rewards for', address, 'is', rewards);
+          totalRewards += rewards;
+        }
+        canWithdraw = totalRewards > 0n;
       }
-      const canWithdraw = totalRewards > 0n;
 
       // Can only paint if not full. Optimistic UI check; the contract enforces this.
       const paintCount = (await getPaintCount.run({ canvas_id: canvas }, db))[0].count;
