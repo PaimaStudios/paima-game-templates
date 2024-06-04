@@ -55,7 +55,7 @@ const paintWeight = 3;
 const aboutUrl = requireEnv('ABOUT_URL');
 const farcasterHubUrl = requireEnv('FARCASTER_HUB_URL');
 
-const rootUrl = 'https://farcaster.paimastudios.com';
+const rootUrl = requireEnv('GAME_NODE_URI');
 
 export default function registerApiRoutes(app: Router) {
   const frames = createFrames({
