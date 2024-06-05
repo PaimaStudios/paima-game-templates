@@ -133,8 +133,8 @@ export default function registerApiRoutes(app: Router) {
 
       // No need to validate the message because this is just a convenience
       const txid = ctx.message?.transactionId;
+      let waitingSucceeded = false;
       if (req.query.wait && txid) {
-        let waitingSucceeded = false;
         console.log('Waiting for', txid);
         const start = new Date().valueOf();
         while (new Date().valueOf() < start + 5_000) {
@@ -164,13 +164,13 @@ export default function registerApiRoutes(app: Router) {
             ...(ctx.message?.requesterVerifiedAddresses ?? []),
           ].filter(x => x)
         );
-        canFork =
-          (await getCanvasActions.run({ id: canvas, addresses: [...addresses] }, db))[0]
-            ?.can_fork ?? false;
+        const actions = await getCanvasActions.run({ id: canvas, addresses: [...addresses] }, db);
+        canFork = (actions[0]?.can_fork ?? false) /* should be unnecessary but DB is screwing with us, let Paint->Fork flow work */ || waitingSucceeded;
+        console.log('id=', canvas, 'addresses=', addresses, 'canFork=', canFork, 'actions=', actions);
         let totalRewards = 0n;
         for (const address of addresses) {
           const rewards = (await canvasGame.read.rewards([address])) as bigint;
-          console.log('rewards for', address, 'is', rewards);
+          console.log('rewards for', address, 'is', rewards, 'canFork:', canFork);
           totalRewards += rewards;
         }
         canWithdraw = totalRewards > 0n;
