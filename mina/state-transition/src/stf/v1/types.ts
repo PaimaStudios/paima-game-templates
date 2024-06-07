@@ -1,13 +1,4 @@
 import type { InvalidInput } from '@game/utils';
-import type { WalletAddress } from '@paima/sdk/utils';
-
-export type InputTypes = 'xp';
-
-export interface GainExperienceInput {
-  input: 'gainedExperience';
-  address: WalletAddress;
-  experience: number;
-}
 
 export type MinaDescriptor = [index: string, value: string];
 
@@ -29,4 +20,4 @@ export interface SudokuAction {
   };
 }
 
-export type ParsedSubmittedInput = GainExperienceInput | SudokuEvent | SudokuAction | InvalidInput;
+export type ParsedSubmittedInput = SudokuEvent | SudokuAction | InvalidInput;

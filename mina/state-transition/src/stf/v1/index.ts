@@ -3,7 +3,6 @@ import type Prando from '@paima/sdk/prando';
 import type { SubmittedChainData } from '@paima/sdk/utils';
 import type { SQLUpdate } from '@paima/node-sdk/db';
 import type { Pool } from 'pg';
-import { gainExperience } from './transition.js';
 
 // Todo: it'd be nice to import this from the contracts project, but this
 // brings an indirect dependency on "plonk_wasm_bg.wasm".
@@ -26,9 +25,6 @@ export default async function (
   console.log(`Input string parsed as: ${expanded.input}`);
 
   switch (expanded.input) {
-    case 'gainedExperience':
-      return gainExperience(expanded, dbConn);
-
     case 'sudokuEvent':
       for (const [index, value] of expanded.data.data) {
         const eventName = SudokuZkApp_events_keys[Number(index)];
