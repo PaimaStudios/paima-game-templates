@@ -1,0 +1,64 @@
+# Up:
+#   docker compose up --build
+# Interact with Hardhat:
+#   docker compose exec hardhat npx hardhat interact --network localhost
+# Interact with database:
+#   docker compose exec database psql
+
+services:
+  # Mina lightnet node.
+  mina:
+    image: o1labs/mina-local-network:berkeley-latest-lightnet
+    environment:
+      NETWORK_TYPE: single-node
+      PROOF_LEVEL: none
+      LOG_LEVEL: Info
+      RUN_ARCHIVE_NODE: true
+    ports:
+      - 3085:3085  # Mina GraphQL
+      - 54325:5432  # archive postgres, remapped to not conflict with host pg
+      - 8080:8080
+      - 8181:8181
+      - 8282:8282
+    healthcheck:
+      # based on defaults for https://github.com/o1-labs/wait-for-mina-network-action
+      test: curl -g 'http://localhost:3085/graphql?query={syncStatus}' | grep -q SYNCED
+      interval: 10s
+      retries: 60
+  # Hardhat.
+  hardhat:
+    build:
+      context: .
+      target: hardhat
+    healthcheck:
+      # Check that the port is open and the contracts were deployed
+      test: |
+        set -e
+        stat contracts.stamp
+        netstat -ltn | grep -c 8545
+      start_period: 30s
+      start_interval: 1s
+    ports:
+      - "8545:8545"
+  # Combined postgres for backend and batcher. Just mix them all up for now.
+  # If this is a problem we can create a 2nd db+user or a 2nd entire process.
+  database:
+    image: postgres:16
+    environment:
+      PGUSER: postgres  # for psql
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      # Don't mount the database as a volume, just let it die, because we have
+      # to rebuild it any time hardhat restarts from block #0 anyways.
+      - "./db/migrations/init/init.sql:/docker-entrypoint-initdb.d/tarochi-backend-init.sql"
+      - "./db/migrations/init/batcher.sql:/docker-entrypoint-initdb.d/paima-batcher-up.sql"
+    healthcheck:
+      # Use pg_isready to check postgres is running.
+      test: pg_isready -U postgres -p 5432
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+      start_interval: 1s
+    ports:
+      - "54321:5432"
