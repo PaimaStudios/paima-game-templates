@@ -33,7 +33,7 @@ class SudokuZkApp extends SmartContract {
   static events = {
     "puzzle-reset": Field,
     "puzzle-solved": Field,
-    "test": Field,
+    "puzzle-state": Field,
   } as const;
   events = SudokuZkApp.events;
 
@@ -54,7 +54,8 @@ class SudokuZkApp extends SmartContract {
     this.isSolved.set(Bool(false));
     // example event: announce when the puzzle is reset
     this.emitEvent("puzzle-reset", sudokuInstance.hash());
-    this.emitEvent("test", Field(1234));
+    // a second event is somewhat redundant, but it illustrates multiple events
+    this.emitEvent("puzzle-state", Field(1234));
   }
 
   @method async submitSolution(
@@ -121,7 +122,8 @@ class SudokuZkApp extends SmartContract {
     this.isSolved.set(Bool(true));
     // example event: announce when the puzzle is solved, but not the solution itself
     this.emitEvent("puzzle-solved", sudokuInstance.hash());
-    this.emitEvent("test", Field(5678));
+    // a second event is somewhat redundant, but it illustrates multiple events
+    this.emitEvent("puzzle-state", Field(5678));
     // example action: track the set of all accounts that have ever solved a puzzle
     this.reducer.dispatch(this.sender.getAndRequireSignature());
   }

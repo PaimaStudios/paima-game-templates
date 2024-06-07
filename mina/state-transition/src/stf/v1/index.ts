@@ -7,7 +7,7 @@ import { gainExperience } from './transition.js';
 
 // Todo: it'd be nice to import this from the contracts project, but this
 // brings an indirect dependency on "plonk_wasm_bg.wasm".
-const SudokuZkApp_events_keys = ['puzzle-reset', 'puzzle-solved', 'test'];
+const SudokuZkApp_events_keys = ['puzzle-reset', 'puzzle-solved', 'puzzle-state'];
 
 // entrypoint for your state machine
 export default async function (
