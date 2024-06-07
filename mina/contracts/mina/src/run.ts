@@ -38,7 +38,7 @@ try {
 
   // ----------------------------------------------------------------------------
   // Initialize our SudokuZkApp instance pointing to the preordained address.
-  // In a real project,
+  // In a real project, DON'T hardcode keys.
 
   const zkAppPrivateKey = PrivateKey.fromBase58(
     'EKFDbNM9k1ZTzYQCoUmqUSrBLoLLGzLtYJADP4P8ivxZnjNqUGGB'
