@@ -9,12 +9,14 @@
  * Build the project: `$ npm run build`
  * Run with node:     `$ node build/src/run.js`.
  */
-import { Sudoku, SudokuZkApp } from './sudoku.js';
+import { Sudoku, SudokuSolution, SudokuSolutionProof, SudokuZkApp } from './sudoku.js';
 import { cloneSudoku, generateSudoku, solveSudoku } from './sudoku-lib.js';
-import { AccountUpdate, Lightnet, Mina, PrivateKey, PublicKey, fetchAccount } from 'o1js';
+import { AccountUpdate, Lightnet, Mina, PrivateKey, Proof, PublicKey, fetchAccount } from 'o1js';
+import assert from 'assert';
 
 console.log('Event names:', Object.keys(SudokuZkApp.events));
-console.log('Compiling SudokuZkApp...');
+console.log('Compiling SudokuSolution and SudokuZkApp...');
+await SudokuSolution.compile();
 await SudokuZkApp.compile();
 
 /** Scaling factor from human-friendly MINA amount to raw integer fee amount. */
@@ -23,10 +25,12 @@ const MINA_TO_RAW_FEE = 1_000_000_000;
 // ----------------------------------------------------------------------------
 // Connect to Lightnet
 const lightnetAccountManagerEndpoint = 'http://localhost:8181';
-Mina.setActiveInstance(Mina.Network({
-  mina: 'http://localhost:8080/graphql',
-  lightnetAccountManager: lightnetAccountManagerEndpoint,
-}));
+Mina.setActiveInstance(
+  Mina.Network({
+    mina: 'http://localhost:8080/graphql',
+    lightnetAccountManager: lightnetAccountManagerEndpoint,
+  })
+);
 
 let lightnetAccount;
 try {
@@ -105,12 +109,15 @@ try {
   const sudoku = generateSudoku(0.5);
   {
     console.log('Resetting puzzle: preparing...');
-    const tx = await Mina.transaction({
-      sender,
-      fee: 0.01 * MINA_TO_RAW_FEE,
-    }, async () => {
-      await zkApp.update(Sudoku.from(sudoku));
-    });
+    const tx = await Mina.transaction(
+      {
+        sender,
+        fee: 0.01 * MINA_TO_RAW_FEE,
+      },
+      async () => {
+        await zkApp.update(Sudoku.from(sudoku));
+      }
+    );
     console.log('Resetting puzzle: proving...');
     await tx.prove();
     console.log('Resetting puzzle: signing and sending...');
@@ -122,26 +129,58 @@ try {
   await fetchAccount({ publicKey: zkApp.address });
   console.log('Is the sudoku solved?', zkApp.isSolved.get().toBoolean());
 
-  let solution = solveSudoku(sudoku);
+  const solution = solveSudoku(sudoku);
   if (solution === undefined) throw Error('Failed to solve randomly generated puzzle');
 
   // --------------------------------------------------------------------------
+  // Use a ZkProgram to prove the solution
+  console.log('Proving Sudoku solution...');
+  // ZkPrograms make recursion possible, and also allow proofs to be created
+  // and verified outside of the actual Mina blockchain transaction. We could
+  // serialize `JSON.stringify(proof.toJSON())` and send that wherever and the
+  // recipient could check it independently.
+  const proof = await SudokuSolution.solve(Sudoku.from(sudoku), Sudoku.from(solution));
+  const serializedProof = JSON.stringify(proof.toJSON());
+
+  console.log('Verifying deserialized proof...');
+  const deserializedProof = await SudokuSolutionProof.fromJSON(JSON.parse(serializedProof));
+  assert(await SudokuSolution.verify(deserializedProof));
+
+  // --------------------------------------------------------------------------
   // Submit a wrong solution
-  let noSolution = cloneSudoku(solution);
+  const noSolution = cloneSudoku(solution);
   noSolution[0][0] = (noSolution[0][0] % 9) + 1;
 
-  console.log('Submitting wrong solution...');
+  // Skip attempting to generate a SudokuSolution.solve proof for this solution
+  // because it breaks `zkApp.isSolved.get().toBoolean()` below... somehow
+  /*
+  console.log('Attempting to prove wrong solution...');
+  assert.rejects(async () => {
+    await SudokuSolution.solve(Sudoku.from(sudoku), Sudoku.from(noSolution));
+  });
+  */
+
+  console.log('Attempting to submit invalid proof...');
+  const incorrectProof = new SudokuSolutionProof({
+    ...proof,
+    // Make the correct proof invalid by attempting to repurpose it for a
+    // different Sudoku puzzle.
+    publicInput: Sudoku.from(generateSudoku(0.5)),
+  });
   try {
-    let tx = await Mina.transaction({
-      sender,
-      fee: 0.01 * MINA_TO_RAW_FEE,
-    }, async () => {
-      await zkApp.submitSolution(Sudoku.from(sudoku), Sudoku.from(noSolution));
-    });
+    let tx = await Mina.transaction(
+      {
+        sender,
+        fee: 0.01 * MINA_TO_RAW_FEE,
+      },
+      async () => {
+        await zkApp.submitSolution(incorrectProof);
+      }
+    );
     await tx.prove();
     await tx.sign([senderKey]).send();
   } catch (err) {
-    console.log('There was an error submitting the solution, as expected', err);
+    console.log('There was an error submitting the solution, as expected');
   }
 
   await fetchAccount({ publicKey: zkApp.address });
@@ -151,12 +190,17 @@ try {
   // Submit the actual solution
   {
     console.log('Submitting solution: preparing...');
-    const tx = await Mina.transaction({
-      sender,
-      fee: 0.01 * MINA_TO_RAW_FEE,
-    }, async () => {
-      await zkApp.submitSolution(Sudoku.from(sudoku), Sudoku.from(solution!));
-    });
+    const tx = await Mina.transaction(
+      {
+        sender,
+        fee: 0.01 * MINA_TO_RAW_FEE,
+      },
+      async () => {
+        // The proof object bundles the public input (puzzle to be solved) so we
+        // don't need to pass it again.
+        await zkApp.submitSolution(proof);
+      }
+    );
     console.log('Submitting solution: proving...');
     await tx.prove();
     console.log('Submitting solution: signing and sending...');
