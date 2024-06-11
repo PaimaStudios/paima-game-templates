@@ -1,0 +1,160 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"IGetWorldStatsResult": {
+				"description": "'GetWorldStats' return type",
+				"properties": {
+					"can_visit": {
+						"type": "boolean"
+					},
+					"counter": {
+						"type": "number",
+						"format": "double"
+					},
+					"x": {
+						"type": "number",
+						"format": "double"
+					},
+					"y": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"can_visit",
+					"counter",
+					"x",
+					"y"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"WorldStats": {
+				"$ref": "#/components/schemas/IGetWorldStatsResult"
+			},
+			"GetWorldStateResponse": {
+				"properties": {
+					"stats": {
+						"items": {
+							"$ref": "#/components/schemas/WorldStats"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"stats"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetUserStatsResult": {
+				"description": "'GetUserStats' return type",
+				"properties": {
+					"wallet": {
+						"type": "string"
+					},
+					"x": {
+						"type": "number",
+						"format": "double"
+					},
+					"y": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"wallet",
+					"x",
+					"y"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserStats": {
+				"$ref": "#/components/schemas/IGetUserStatsResult"
+			},
+			"GetUserStatsResponse": {
+				"properties": {
+					"stats": {
+						"$ref": "#/components/schemas/UserStats"
+					}
+				},
+				"required": [
+					"stats"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "@game/api",
+		"version": "1.0.0",
+		"description": "Webserver REST API for the middleware to interact with game node.",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/world_state": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetWorldStateResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/user_stats": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetUserStatsResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "wallet",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

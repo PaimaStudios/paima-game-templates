@@ -1,0 +1,17 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "sourceMap": true /* Create source map files for emitted JavaScript files. */,
+    "rootDir": "src",
+    "outDir": "build"
+  },
+  "include": ["src/**/*"],
+  "references": [
+    {
+      "path": "../utils"
+    },
+    {
+      "path": "../db"
+    }
+  ]
+}
