@@ -55,6 +55,8 @@ const paintWeight = 3;
 const aboutUrl = requireEnv('ABOUT_URL');
 const farcasterHubUrl = requireEnv('FARCASTER_HUB_URL');
 
+const rootUrl = requireEnv('GAME_NODE_URI');
+
 export default function registerApiRoutes(app: Router) {
   const frames = createFrames({
     middleware: [
@@ -71,12 +73,15 @@ export default function registerApiRoutes(app: Router) {
   app.get('/:canvas(\\d+)', async (req, res, next) => {
     return frames(async ctx => {
       return {
-        image: new URL(`/${req.params.canvas}.png`, ctx.url).toString(),
+        image: new URL(
+          `/${req.params.canvas}.png?${Math.random()}`,
+          rootUrl
+        ).toString(),
         buttons: [
           button({
             action: 'post',
             label: 'See full canvas...',
-            target: `/${req.params.canvas}`,
+            target: new URL(`/${req.params.canvas}`, rootUrl).toString(),
           }),
           button({
             action: 'link',
@@ -125,14 +130,11 @@ export default function registerApiRoutes(app: Router) {
       if (isNaN(canvas) || !canvasData) {
         return error('Canvas does not exist');
       }
-      if (!ctx.message?.isValid) {
-        return error('Hub rejected message signature');
-      }
 
       // No need to validate the message because this is just a convenience
       const txid = ctx.message?.transactionId;
+      let waitingSucceeded = false;
       if (req.query.wait && txid) {
-        let waitingSucceeded = false;
         console.log('Waiting for', txid);
         const start = new Date().valueOf();
         while (new Date().valueOf() < start + 5_000) {
@@ -151,19 +153,28 @@ export default function registerApiRoutes(app: Router) {
         );
       }
 
-      // Based on the user's addresses, can they withdraw and/or fork?
-      const addresses = new Set([
-        ctx.message?.requesterCustodyAddress,
-        ...(ctx.message?.requesterVerifiedAddresses ?? []),
-      ].filter(x => x));
-      const canFork = (await getCanvasActions.run({ id: canvas, addresses: [...addresses] }, db))[0].can_fork;
-      let totalRewards = 0n;
-      for (const address of addresses) {
-        const rewards = (await canvasGame.read.rewards([address])) as bigint;
-        console.log('rewards for', address, 'is', rewards);
-        totalRewards += rewards;
+      let canFork = false;
+      let canWithdraw = false;
+
+      if (ctx.message?.isValid) {
+        // Based on the user's addresses, can they withdraw and/or fork?
+        const addresses = new Set(
+          [
+            ctx.message?.requesterCustodyAddress,
+            ...(ctx.message?.requesterVerifiedAddresses ?? []),
+          ].filter(x => x)
+        );
+        const actions = await getCanvasActions.run({ id: canvas, addresses: [...addresses] }, db);
+        canFork = (actions[0]?.can_fork ?? false) /* should be unnecessary but DB is screwing with us, let Paint->Fork flow work */ || waitingSucceeded;
+        console.log('id=', canvas, 'addresses=', addresses, 'canFork=', canFork, 'actions=', actions);
+        let totalRewards = 0n;
+        for (const address of addresses) {
+          const rewards = (await canvasGame.read.rewards([address])) as bigint;
+          console.log('rewards for', address, 'is', rewards, 'canFork:', canFork);
+          totalRewards += rewards;
+        }
+        canWithdraw = totalRewards > 0n;
       }
-      const canWithdraw = totalRewards > 0n;
 
       // Can only paint if not full. Optimistic UI check; the contract enforces this.
       const paintCount = (await getPaintCount.run({ canvas_id: canvas }, db))[0].count;
@@ -171,7 +182,10 @@ export default function registerApiRoutes(app: Router) {
       const canPaint = (paintCount ?? 0) < paintLimit;
 
       return {
-        image: new URL(`/${req.params.canvas}.png?${Math.random()}`, ctx.url).toString(),
+        image: new URL(
+          `/${req.params.canvas}.png?${Math.random()}`,
+          rootUrl
+        ).toString(),
         textInput: canPaint ? 'Contribute a color!' : undefined,
         buttons: [
           ...(canPaint
@@ -179,7 +193,7 @@ export default function registerApiRoutes(app: Router) {
                 button({
                   label: 'Preview...',
                   action: 'post',
-                  target: `/${req.params.canvas}/preview`,
+                  target: new URL(`/${req.params.canvas}/preview`, rootUrl).toString(),
                 }),
               ]
             : []),
@@ -188,8 +202,8 @@ export default function registerApiRoutes(app: Router) {
                 button({
                   label: 'Fork!',
                   action: 'tx',
-                  target: `/${req.params.canvas}/fork_tx`,
-                  post_url: `/fork_ok`,
+                  target: new URL(`/${req.params.canvas}/fork_tx`, rootUrl).toString(),
+                  post_url: new URL(`/fork_ok`, rootUrl).toString(),
                 }),
               ]
             : []),
@@ -198,8 +212,8 @@ export default function registerApiRoutes(app: Router) {
                 button({
                   label: 'Withdraw',
                   action: 'tx',
-                  target: `/withdraw_tx`,
-                  post_url: `/${req.params.canvas}`,
+                  target: new URL(`/withdraw_tx`, rootUrl).toString(),
+                  post_url: new URL(`/${req.params.canvas}`, rootUrl).toString(),
                 }),
               ]
             : []),
@@ -227,20 +241,20 @@ export default function registerApiRoutes(app: Router) {
       return {
         image: new URL(
           `/${req.params.canvas}.png?add=${encodeURIComponent(color)}&${Math.random()}`,
-          ctx.url
+          rootUrl
         ).toString(),
         textInput: 'Try a different color...',
         buttons: [
           button({
             action: 'post',
             label: 'Preview...',
-            target: `/${req.params.canvas}/preview`,
+            target: new URL(`/${req.params.canvas}/preview`, rootUrl).toString(),
           }),
           button({
             action: 'tx',
             label: `Paint ${result.name}!`,
-            target: `/${req.params.canvas}/paint_tx?add=${encodeURIComponent(color)}`,
-            post_url: `/${req.params.canvas}?wait=1`,
+            target: new URL(`/${req.params.canvas}/paint_tx?add=${encodeURIComponent(color)}`, rootUrl).toString(),
+            post_url: new URL(`/${req.params.canvas}?wait=1`, rootUrl).toString(),
           }),
         ],
       };
@@ -337,7 +351,7 @@ export default function registerApiRoutes(app: Router) {
 
       const canvas = rows[0].id;
 
-      const embedUrl = new URL(`/${canvas}`, ctx.url);
+      const embedUrl = new URL(`/${canvas}`, rootUrl);
       // https://docs.farcaster.xyz/reference/warpcast/cast-composer-intents#warpcast-cast-intents
       const linkUrl = new URL('https://warpcast.com/~/compose');
       linkUrl.searchParams.append(
@@ -347,7 +361,10 @@ export default function registerApiRoutes(app: Router) {
       linkUrl.searchParams.append('embeds[]', embedUrl.toString());
 
       return {
-        image: new URL(`/${canvas}.png?${Math.random()}`, ctx.url).toString(),
+        image: new URL(
+          `/${canvas}.png?${Math.random()}`,
+          rootUrl
+        ).toString(),
         buttons: [
           button({
             label: 'Post so others can paint!',
@@ -357,7 +374,7 @@ export default function registerApiRoutes(app: Router) {
           button({
             label: 'Download',
             action: 'link',
-            target: `/${canvas}.png?${Math.random()}`,
+            target: new URL(`/${canvas}.png?${Math.random()}`, rootUrl).toString(),
           }),
         ],
       };
