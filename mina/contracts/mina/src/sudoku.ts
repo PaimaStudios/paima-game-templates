@@ -134,6 +134,32 @@ export class SudokuZkApp extends SmartContract {
   }
 
   @method async submitSolution(
+    sudokuInstance: Sudoku,
+    solutionInstance: Sudoku,
+  ) {
+    // When we're passed the puzzle and solution directly, do the *equivalent*
+    // of SudokuSolution.solve, but without requiring the caller to actually
+    // generate a separate proof.
+    await SudokuSolution.rawMethods.solve(sudokuInstance, solutionInstance);
+
+    // finally, we check that the sudoku is the one that was originally deployed
+    let sudokuHash = this.sudokuHash.getAndRequireEquals();
+
+    sudokuInstance
+      .hash()
+      .assertEquals(sudokuHash, 'sudoku matches the one committed on-chain');
+
+    // all checks passed => the sudoku is solved!
+    this.isSolved.set(Bool(true));
+    // example event: announce when the puzzle is solved, but not the solution itself
+    this.emitEvent("puzzle-solved", sudokuInstance.hash());
+    // a second event is somewhat redundant, but it illustrates multiple events
+    this.emitEvent("puzzle-state", Field(5678));
+    // example action: track the set of all accounts that have ever solved a puzzle
+    this.reducer.dispatch(this.sender.getAndRequireSignature());
+  }
+
+  @method async submitSolutionProof(
     proof: SudokuSolutionProof,
   ) {
     // Verify the proof first. Note that structuring this method as accepting a

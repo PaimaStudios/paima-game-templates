@@ -10,7 +10,7 @@ describe('sudoku', () => {
     sender: Mina.TestPublicKey,
     senderKey: PrivateKey;
 
-  beforeAll(async() => {
+  it('compiles', async () => {
     await SudokuSolution.compile();
     await SudokuZkApp.compile();
   });
@@ -37,7 +37,7 @@ describe('sudoku', () => {
     let tx = await Mina.transaction(sender, async () => {
       let zkApp = new SudokuZkApp(zkAppAddress);
       let proof = await SudokuSolution.solve(Sudoku.from(sudoku), Sudoku.from(solution));
-      await zkApp.submitSolution(proof);
+      await zkApp.submitSolutionProof(proof);
     });
     await tx.prove();
     await tx.sign([senderKey]).send();
@@ -58,17 +58,11 @@ describe('sudoku', () => {
     await expect(async () => {
       let tx = await Mina.transaction(sender, async () => {
         let zkApp = new SudokuZkApp(zkAppAddress);
-        let proof = await SudokuSolution.solve(Sudoku.from(sudoku), Sudoku.from(noSolution));
-        await zkApp.submitSolution(proof);
+        await zkApp.submitSolution(Sudoku.from(sudoku), Sudoku.from(noSolution));
       });
       await tx.prove();
       await tx.sign([senderKey]).send();
-    }).rejects.toThrow();
-    // Unfortunately, ZkProgram proof failure gives a message like:
-    //   the permutation was not constructed correctly: final value
-    // instead of the nice assertion failure:
-    //   array contains the numbers 1...9"
-    // that the method body actually throws.
+    }).rejects.toThrow(/array contains the numbers 1...9/);
 
     let isSolved = zkApp.isSolved.get().toBoolean();
     expect(isSolved).toBe(false);

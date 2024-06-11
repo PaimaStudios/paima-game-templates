@@ -174,7 +174,7 @@ try {
         fee: 0.01 * MINA_TO_RAW_FEE,
       },
       async () => {
-        await zkApp.submitSolution(incorrectProof);
+        await zkApp.submitSolutionProof(incorrectProof);
       }
     );
     await tx.prove();
@@ -198,7 +198,7 @@ try {
       async () => {
         // The proof object bundles the public input (puzzle to be solved) so we
         // don't need to pass it again.
-        await zkApp.submitSolution(proof);
+        await zkApp.submitSolutionProof(proof);
       }
     );
     console.log('Submitting solution: proving...');
