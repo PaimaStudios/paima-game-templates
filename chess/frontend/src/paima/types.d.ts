@@ -1,5 +1,6 @@
 import type { Hash } from '@paima/sdk/utils';
-import type { BaseRoundStatus, LobbyState, LobbyStateQuery, LobbyStatus, NewLobby, UserLobby, UserStats } from '@chess/utils';
+import type { BaseRoundStatus, LobbyState, LobbyStateQuery, NewLobby, UserLobby, UserStats } from '@chess/utils';
+import type { LobbyStatus } from '@chess/db';
 export interface RoundEnd {
     blocks: number;
     seconds: number;

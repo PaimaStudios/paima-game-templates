@@ -16,7 +16,8 @@ const wallets = [
   "EVM Self-sequence",
   "Algorand",
   "Polkadot",
-  "Cardano"
+  "Cardano",
+  "Mina",
 ] as const;
 
 type WalletType = typeof wallets[number];
@@ -62,6 +63,7 @@ const Login: React.FC = () => {
         Cardano: { mode: WalletMode.Cardano },
         Polkadot: { mode: WalletMode.Polkadot },
         Algorand: { mode: WalletMode.Algorand },
+        Mina: { mode: WalletMode.Mina }
       });
     }
     getWallets();

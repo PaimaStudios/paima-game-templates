@@ -119,7 +119,7 @@ const LobbyList: React.FC<Props> = ({
                       fullWidth
                       onClick={() => onLobbySelect(lobby)}
                     >
-                      {actionMap[lobby.lobby_state]}
+                      {actionMap[lobby.lobby_state as LobbyStatus]}
                     </Button>
                   }
                 />

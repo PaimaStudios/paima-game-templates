@@ -25,8 +25,6 @@ export class SearchOpenLobbiesController extends Controller {
     if (searchQuery.length < MIN_SEARCH_LENGTH || searchQuery.length > LOBBY_ID_LENGTH)
       return emptyResponse;
 
-    wallet = wallet.toLowerCase();
-
     if (searchQuery.length == LOBBY_ID_LENGTH) {
       const lobbies = await getOpenLobbyById.run({ searchQuery, wallet }, pool);
       return { lobbies };
