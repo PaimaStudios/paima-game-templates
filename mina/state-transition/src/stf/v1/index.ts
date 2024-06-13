@@ -6,7 +6,7 @@ import type { Pool } from 'pg';
 import { SudokuZkApp, SudokuSolution, SudokuSolutionProof } from '@game/mina-contracts';
 
 const SudokuZkApp_events_keys = Object.keys(SudokuZkApp.events);
-const compilePromise = SudokuSolution.compile();
+let compiled = false;
 
 // entrypoint for your state machine
 export default async function (
@@ -42,8 +42,14 @@ export default async function (
         ...expanded.data,
         proof: `<${expanded.data.proof.length} base64 chars>`,
       });
+      if (!compiled) {
+        console.log('First-time compiling...');
+        // forceRecompile or else hang: https://github.com/o1-labs/o1js/issues/1411
+        await SudokuSolution.compile({ forceRecompile: true });
+        compiled = true;
+      }
       const proof = await SudokuSolutionProof.fromJSON(expanded.data);
-      await compilePromise;
+      console.log('Verifying...');
       const verifies = await SudokuSolution.verify(proof);
       console.log('Verifies:', verifies, verifies ? '- all good' : '- uh oh, something went wrong');
       return [];
