@@ -1,3 +1,1 @@
-import { SudokuZkApp } from './sudoku.js';
-
-export { SudokuZkApp };
+export { Sudoku, SudokuSolution, SudokuSolutionProof, SudokuZkApp } from './sudoku.js';

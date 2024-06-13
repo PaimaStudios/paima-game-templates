@@ -13,10 +13,12 @@
   "dependencies": {
     "@game/db": "1.0.0",
     "@game/game-logic": "1.0.0",
+    "@game/mina-contracts": "0.1.0",
     "@game/utils": "1.0.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "o1js": "^1.3.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

@@ -3,10 +3,10 @@ import type Prando from '@paima/sdk/prando';
 import type { SubmittedChainData } from '@paima/sdk/utils';
 import type { SQLUpdate } from '@paima/node-sdk/db';
 import type { Pool } from 'pg';
+import { SudokuZkApp, SudokuSolution, SudokuSolutionProof } from '@game/mina-contracts';
 
-// Todo: it'd be nice to import this from the contracts project, but this
-// brings an indirect dependency on "plonk_wasm_bg.wasm".
-const SudokuZkApp_events_keys = ['puzzle-reset', 'puzzle-solved', 'puzzle-state'];
+const SudokuZkApp_events_keys = Object.keys(SudokuZkApp.events);
+const compilePromise = SudokuSolution.compile();
 
 // entrypoint for your state machine
 export default async function (
@@ -15,8 +15,7 @@ export default async function (
   _randomnessGenerator: Prando,
   dbConn: Pool
 ): Promise<SQLUpdate[]> {
-  console.log(inputData, 'parsing input data');
-  console.log(`Processing input string: ${inputData.inputData}`);
+  console.log('Parsing input data', inputData);
   const expanded = parse(inputData.inputData);
   if (isInvalid(expanded)) {
     console.log(`Invalid input string`);
@@ -38,11 +37,22 @@ export default async function (
       }
       return [];
 
+    case 'sudokuProof':
+      console.log('Sudoku proof:', {
+        ...expanded.data,
+        proof: `<${expanded.data.proof.length} base64 chars>`,
+      });
+      const proof = await SudokuSolutionProof.fromJSON(expanded.data);
+      await compilePromise;
+      const verifies = await SudokuSolution.verify(proof);
+      console.log('Verifies:', verifies, verifies ? '- all good' : '- uh oh, something went wrong');
+      return [];
+
     default:
       assertNever(expanded);
   }
 }
 
 function assertNever(value: never): never {
-  throw new Error("Unhandled discriminated union member: " + JSON.stringify(value));
+  throw new Error('Unhandled discriminated union member: ' + JSON.stringify(value));
 }
