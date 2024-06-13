@@ -11,8 +11,12 @@
  */
 import { Sudoku, SudokuSolution, SudokuSolutionProof, SudokuZkApp } from './sudoku.js';
 import { cloneSudoku, generateSudoku, solveSudoku } from './sudoku-lib.js';
-import { AccountUpdate, Lightnet, Mina, PrivateKey, Proof, PublicKey, fetchAccount } from 'o1js';
+import { AccountUpdate, Lightnet, Mina, PrivateKey, PublicKey, fetchAccount } from 'o1js';
+import { Abi, createPublicClient, createTestClient, createWalletClient, encodeFunctionData, getContract, http, toHex, walletActions } from 'viem';
+import { anvil } from 'viem/chains';
+import paimaL2Abi from '@paima/evm-contracts/abi/PaimaL2Contract.json' with { type: 'json' };
 import assert from 'assert';
+import { privateKeyToAccount } from 'viem/accounts';
 
 console.log('Event names:', Object.keys(SudokuZkApp.events));
 console.log('Compiling SudokuSolution and SudokuZkApp...');
@@ -34,6 +38,51 @@ Mina.setActiveInstance(
 
 let lightnetAccount;
 try {
+  const sudoku = generateSudoku(0.5);
+  const solution = solveSudoku(sudoku);
+  if (solution === undefined) throw Error('Failed to solve randomly generated puzzle');
+
+  // --------------------------------------------------------------------------
+  // Use a ZkProgram to prove the solution
+  console.log('Proving Sudoku solution...');
+  // ZkPrograms make recursion possible, and also allow proofs to be created
+  // and verified outside of the actual Mina blockchain transaction. We could
+  // serialize `JSON.stringify(proof.toJSON())` and send that wherever and the
+  // recipient could check it independently.
+  const proof = await SudokuSolution.solve(Sudoku.from(sudoku), Sudoku.from(solution));
+  const serializedProof = JSON.stringify(proof.toJSON());
+
+  console.log('serializedProof.length =', serializedProof.length);
+
+  console.log('Verifying deserialized proof...');
+  const deserializedProof = await SudokuSolutionProof.fromJSON(JSON.parse(serializedProof));
+  assert(await SudokuSolution.verify(deserializedProof));
+
+  // --------------------------------------------------------------------------
+  console.log('Posting proof to PaimaL2Contract');
+  {
+    const publicClient = createWalletClient({
+      // This is one of Hardhat's well-known test private keys.
+      account: privateKeyToAccount('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'),
+      chain: anvil,
+      transport: http(),
+    });
+
+    const paimaL2 = getContract({
+      abi: paimaL2Abi,
+      address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',  // Good for localhost only
+      client: publicClient,
+    });
+
+    const hash = await paimaL2.write.paimaSubmitGameInput([toHex(`sp|${serializedProof}`)], {
+      value: 1n,
+      gas: 1000000n,
+    });
+    console.log('Submitted hash:', hash);
+  }
+
+  // ----------------------------------------------------------------------------
+  // Connect to localhost Lightnet
   lightnetAccount = await Lightnet.acquireKeyPair({ lightnetAccountManagerEndpoint });
   const { publicKey: sender, privateKey: senderKey } = lightnetAccount;
 
@@ -106,7 +155,6 @@ try {
   // --------------------------------------------------------------------------
   // Reset the puzzle
 
-  const sudoku = generateSudoku(0.5);
   {
     console.log('Resetting puzzle: preparing...');
     const tx = await Mina.transaction(
@@ -128,23 +176,6 @@ try {
 
   await fetchAccount({ publicKey: zkApp.address });
   console.log('Is the sudoku solved?', zkApp.isSolved.get().toBoolean());
-
-  const solution = solveSudoku(sudoku);
-  if (solution === undefined) throw Error('Failed to solve randomly generated puzzle');
-
-  // --------------------------------------------------------------------------
-  // Use a ZkProgram to prove the solution
-  console.log('Proving Sudoku solution...');
-  // ZkPrograms make recursion possible, and also allow proofs to be created
-  // and verified outside of the actual Mina blockchain transaction. We could
-  // serialize `JSON.stringify(proof.toJSON())` and send that wherever and the
-  // recipient could check it independently.
-  const proof = await SudokuSolution.solve(Sudoku.from(sudoku), Sudoku.from(solution));
-  const serializedProof = JSON.stringify(proof.toJSON());
-
-  console.log('Verifying deserialized proof...');
-  const deserializedProof = await SudokuSolutionProof.fromJSON(JSON.parse(serializedProof));
-  assert(await SudokuSolution.verify(deserializedProof));
 
   // --------------------------------------------------------------------------
   // Submit a wrong solution
