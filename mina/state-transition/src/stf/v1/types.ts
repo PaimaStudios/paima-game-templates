@@ -1,4 +1,5 @@
 import type { InvalidInput } from '@game/utils';
+import { JsonProof } from 'o1js';
 
 export type MinaDescriptor = [index: string, value: string];
 
@@ -20,4 +21,9 @@ export interface SudokuAction {
   };
 }
 
-export type ParsedSubmittedInput = SudokuEvent | SudokuAction | InvalidInput;
+export interface SudokuProof {
+  input: 'sudokuProof';
+  data: JsonProof;
+}
+
+export type ParsedSubmittedInput = SudokuEvent | SudokuAction | SudokuProof | InvalidInput;
