@@ -11,17 +11,19 @@
  */
 import { Sudoku, SudokuSolution, SudokuSolutionProof, SudokuZkApp } from './sudoku.js';
 import { cloneSudoku, generateSudoku, solveSudoku } from './sudoku-lib.js';
-import { AccountUpdate, Lightnet, Mina, PrivateKey, PublicKey, fetchAccount } from 'o1js';
-import { Abi, createPublicClient, createTestClient, createWalletClient, encodeFunctionData, getContract, http, toHex, walletActions } from 'viem';
+import { AccountUpdate, EcdsaSignature, Encoding, ForeignCurve, Lightnet, Mina, PrivateKey, PublicKey, UInt8, fetchAccount } from 'o1js';
+import { Abi, createPublicClient, createTestClient, createWalletClient, encodeFunctionData, getAddress, getContract, http, toHex, walletActions } from 'viem';
 import { anvil } from 'viem/chains';
 import paimaL2Abi from '@paima/evm-contracts/abi/PaimaL2Contract.json' with { type: 'json' };
 import assert from 'assert';
-import { privateKeyToAccount } from 'viem/accounts';
+import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { DelegateProof, Ecdsa, Secp256k1 } from './delegate.js';
 
 console.log('Event names:', Object.keys(SudokuZkApp.events));
-console.log('Compiling SudokuSolution and SudokuZkApp...');
+console.log('Compiling ...');
 await SudokuSolution.compile();
 await SudokuZkApp.compile();
+await DelegateProof.compile();
 
 /** Scaling factor from human-friendly MINA amount to raw integer fee amount. */
 const MINA_TO_RAW_FEE = 1_000_000_000;
@@ -38,6 +40,39 @@ Mina.setActiveInstance(
 
 let lightnetAccount;
 try {
+  // ----------------------------------------------------------------------------
+
+  const privateKey = generatePrivateKey();
+  const viemAccount = privateKeyToAccount(privateKey);
+  const message = 'hello, world';
+  const messageBytes = new TextEncoder().encode(message);
+  const hexSignature = await viemAccount.signMessage({ message: { raw: messageBytes } });
+  //const messageBytes = message.toB
+
+  console.log(JSON.stringify(messageBytes));
+  console.log(hexSignature);
+  console.log(viemAccount.publicKey);
+
+  console.log('DelegateProof...');
+  console.time('DelegateProof');
+  const delegateProof = await DelegateProof.meme(
+    [
+      ...new TextEncoder().encode('\x19Ethereum Signed Message:\n'),
+      ...new TextEncoder().encode(`${messageBytes.length}`),
+      ...messageBytes,
+    ].map(x => new UInt8(x)),
+    Ecdsa.fromHex(hexSignature),
+    Secp256k1.from({
+      x: BigInt('0x' + viemAccount.publicKey.substring(4, 4 + 64)),
+      y: BigInt('0x' + viemAccount.publicKey.substring(4 + 64, 4 + 64 + 64)),
+    })
+  );
+  console.timeEnd('DelegateProof');
+  console.time('Verify');
+  console.log(await DelegateProof.verify(delegateProof));
+  console.timeEnd('Verify');
+
+  // ----------------------------------------------------------------------------
   const sudoku = generateSudoku(0.5);
   const solution = solveSudoku(sudoku);
   if (solution === undefined) throw Error('Failed to solve randomly generated puzzle');
