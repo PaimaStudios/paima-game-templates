@@ -12,18 +12,13 @@ import {
   PublicKey,
   ZkProgram,
   MerkleMap,
-  EcdsaSignature,
-  Keccak,
   createEcdsa,
   createForeignCurve,
   Crypto,
-  ForeignCurve,
   Bytes,
-  UInt64,
-  UInt8
+  UInt8,
+  MerkleMapWitness,
 } from 'o1js';
-import { createBytes } from 'o1js/dist/node/lib/provable/bytes';
-import { keccak256 } from 'viem';
 
 
 export class Secp256k1 extends createForeignCurve(Crypto.CurveParams.Secp256k1) {}
@@ -151,3 +146,140 @@ export const NoOpProgram = ZkProgram({
     }
   }
 });
+
+
+function hashMinaPubKey(minaKey: PublicKey): Field {
+  return Poseidon.hashWithPrefix("delegate EVM to Mina", minaKey.toFields());
+}
+
+function hashEthAddress(ethAddress: Secp256k1): Field {
+  return Poseidon.hash([
+    ...ethAddress.x.toFields(),
+    ...ethAddress.y.toFields(),
+  ]);
+}
+
+export class WitnessPair extends Struct({
+  outerWitness: MerkleMapWitness,
+  innerWitness: MerkleMapWitness,
+}) {}
+
+export class TwoTier {
+  outerMap = new MerkleMap();
+  innerMaps = new Map<bigint, MerkleMap>();
+
+  delegate(order: DelegationOrder): WitnessPair | undefined {
+    const outerKey = hashEthAddress(order.signer);
+    const innerKey = hashMinaPubKey(order.target);
+
+    const innerMap = this.innerMaps.get(outerKey.toBigInt()) ?? new MerkleMap();
+    if (innerMap.get(innerKey).equals(1).toBoolean())
+      return undefined;
+
+    innerMap.set(innerKey, Field(1));
+
+    const newInnerRoot = innerMap.getRoot();
+    this.outerMap.set(outerKey, newInnerRoot);
+
+    return new WitnessPair({
+      outerWitness: this.outerMap.getWitness(outerKey),
+      innerWitness: innerMap.getWitness(innerKey),
+    });
+  }
+
+  check(order: DelegationOrder): WitnessPair | undefined {
+    const outerKey = hashEthAddress(order.signer);
+    const innerKey = hashMinaPubKey(order.target);
+
+    const innerMap = this.innerMaps.get(outerKey.toBigInt());
+    if (!innerMap)
+      return undefined;
+
+    if (innerMap.get(innerKey).equals(0).toBoolean())
+      return undefined;
+
+    return new WitnessPair({
+      outerWitness: this.outerMap.getWitness(outerKey),
+      innerWitness: innerMap.getWitness(innerKey),
+    });
+  }
+}
+
+
+const emptyMapRoot = new MerkleMap().getRoot();
+
+
+export class DelegationZkApp extends SmartContract {
+  @state(Field) treeRoot = State<Field>(emptyMapRoot);
+
+  reducer = Reducer({ actionType: DelegationOrder });
+
+  @method async delegate(
+    order: DelegationOrder,
+    evmSignature: Ecdsa,
+    pair: WitnessPair,
+  ) {
+    Provable.log('target', order.target.toFields());
+
+    // Firstly, check EVM signature.
+    const fullMessage = Bytes.from([
+      ...utf8(ethereumPrefix),
+      ...utf8(String(innerLength)),
+      ...utf8(delegationPrefix),
+      // TODO: does this break the circuit?
+      ...encodeKey(order.target),
+    ]);
+    evmSignature.verifyV2(Bytes.from(fullMessage), order.signer).assertTrue();
+
+    // Assert that the witnesses match our idea of the old (0, false) value.
+    const [oldInnerRoot, innerKey] = pair.innerWitness.computeRootAndKey(Field(0));
+    // If the old inner tree was empty, it was 0 in the outer tree, not its real root.
+    const oldOuterValue = Provable.if(oldInnerRoot.equals(emptyMapRoot), Field(0), oldInnerRoot);
+    const [oldOuterRoot, outerKey] = pair.outerWitness.computeRootAndKey(oldOuterValue);
+    innerKey.assertEquals(hashMinaPubKey(order.target));
+    outerKey.assertEquals(hashEthAddress(order.signer));
+    this.treeRoot.getAndRequireEquals().assertEquals(oldOuterRoot);
+
+    // Update to the new (1, true) value.
+    const [newInnerRoot,] = pair.innerWitness.computeRootAndKey(Field(1));
+    const [newOuterRoot,] = pair.outerWitness.computeRootAndKey(newInnerRoot);
+    this.treeRoot.set(newOuterRoot);
+
+    this.emitEvent("delegate", order);
+  }
+
+  @method async check(
+    order: DelegationOrder,
+    pair: WitnessPair,
+  ) {
+    Provable.log('target', order.target.toFields());
+
+    // Assert that the witnesses match our idea of the (1, true) value.
+    const [innerRoot, innerKey] = pair.innerWitness.computeRootAndKey(Field(1));
+    const [outerRoot, outerKey] = pair.outerWitness.computeRootAndKey(innerRoot);
+    innerKey.assertEquals(hashMinaPubKey(order.target));
+    outerKey.assertEquals(hashEthAddress(order.signer));
+    this.treeRoot.getAndRequireEquals().assertEquals(outerRoot);
+  }
+}
+
+export class UsesDelegationZkApp extends SmartContract {
+  @method async viaRecursiveProof(
+    proof: DelegateProof,
+  ) {
+    proof.publicInput.target.assertEquals(this.sender.getAndRequireSignature());
+
+    proof.verify();
+  }
+
+  @method async viaFriendContract(
+    friendAddr: PublicKey,
+    order: DelegationOrder,
+    pair: WitnessPair,
+  ) {
+    order.target.assertEquals(this.sender.getAndRequireSignature());
+
+    const friend = new DelegationZkApp(friendAddr);
+    await friend.check(order, pair);
+  }
+}

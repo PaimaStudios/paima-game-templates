@@ -11,13 +11,13 @@
  */
 import { Sudoku, SudokuSolution, SudokuSolutionProof, SudokuZkApp } from './sudoku.js';
 import { cloneSudoku, generateSudoku, solveSudoku } from './sudoku-lib.js';
-import { AccountUpdate, EcdsaSignature, Encoding, ForeignCurve, Lightnet, Mina, PrivateKey, PublicKey, UInt8, fetchAccount } from 'o1js';
+import { AccountUpdate, EcdsaSignature, Encoding, ForeignCurve, Lightnet, MerkleMap, MerkleTree, Mina, PrivateKey, Provable, PublicKey, UInt8, fetchAccount } from 'o1js';
 import { Abi, createPublicClient, createTestClient, createWalletClient, encodeFunctionData, getAddress, getContract, http, toHex, walletActions } from 'viem';
 import { anvil } from 'viem/chains';
 import paimaL2Abi from '@paima/evm-contracts/abi/PaimaL2Contract.json' with { type: 'json' };
 import assert from 'assert';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { DelegateProgram, DelegateVerifyProgram, DelegationOrder, Ecdsa, NoOpProgram, Secp256k1, encodeKey } from './delegate.js';
+import { DelegateProgram, DelegateVerifyProgram, DelegationOrder, DelegationZkApp, Ecdsa, NoOpProgram, Secp256k1, TwoTier, UsesDelegationZkApp, encodeKey } from './delegate.js';
 
 console.log('Event names:', Object.keys(SudokuZkApp.events));
 console.log('Compiling ...');
@@ -26,6 +26,8 @@ await SudokuZkApp.compile();
 console.log('DelegateProof key =', (await DelegateProgram.compile()).verificationKey);
 await DelegateVerifyProgram.compile();
 await NoOpProgram.compile();
+await DelegationZkApp.compile();
+await UsesDelegationZkApp.compile();
 
 /** Scaling factor from human-friendly MINA amount to raw integer fee amount. */
 const MINA_TO_RAW_FEE = 1_000_000_000;
@@ -43,11 +45,17 @@ Mina.setActiveInstance(
 let lightnetAccount;
 try {
   // ----------------------------------------------------------------------------
-
   const minaPubkey = PublicKey.fromBase58('B62qpwRxuV4vYFT8QLnrmB67FaKQemy54QH2XuBTyErr9wDDpLHTmQy');
-
   const privateKey = generatePrivateKey();
   const viemAccount = privateKeyToAccount(privateKey);
+  const delegationOrder = new DelegationOrder({
+    target: minaPubkey,
+    signer: Secp256k1.from({
+      x: BigInt('0x' + viemAccount.publicKey.substring(4, 4 + 64)),
+      y: BigInt('0x' + viemAccount.publicKey.substring(4 + 64, 4 + 64 + 64)),
+    }),
+  });
+
   const messageBytes = new Uint8Array(13 + 33);
   messageBytes.set(new TextEncoder().encode('MinaDelegate|'));
   messageBytes.set(encodeKey(minaPubkey).map(x => x.toNumber()), 13);
@@ -60,13 +68,7 @@ try {
   console.log('DelegateProof...');
   console.time('DelegateProof');
   const delegateProof = await DelegateProgram.sign(
-    new DelegationOrder({
-      target: minaPubkey,
-      signer: Secp256k1.from({
-        x: BigInt('0x' + viemAccount.publicKey.substring(4, 4 + 64)),
-        y: BigInt('0x' + viemAccount.publicKey.substring(4 + 64, 4 + 64 + 64)),
-      }),
-    }),
+    delegationOrder,
     Ecdsa.fromHex(hexSignature),
   );
   console.timeEnd('DelegateProof');
