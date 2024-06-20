@@ -17,13 +17,15 @@ import { anvil } from 'viem/chains';
 import paimaL2Abi from '@paima/evm-contracts/abi/PaimaL2Contract.json' with { type: 'json' };
 import assert from 'assert';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { DelegateProof, Ecdsa, Secp256k1 } from './delegate.js';
+import { DelegateProgram, DelegateVerifyProgram, DelegationOrder, Ecdsa, NoOpProgram, Secp256k1, encodeKey } from './delegate.js';
 
 console.log('Event names:', Object.keys(SudokuZkApp.events));
 console.log('Compiling ...');
 await SudokuSolution.compile();
 await SudokuZkApp.compile();
-await DelegateProof.compile();
+console.log('DelegateProof key =', (await DelegateProgram.compile()).verificationKey);
+await DelegateVerifyProgram.compile();
+await NoOpProgram.compile();
 
 /** Scaling factor from human-friendly MINA amount to raw integer fee amount. */
 const MINA_TO_RAW_FEE = 1_000_000_000;
@@ -42,12 +44,14 @@ let lightnetAccount;
 try {
   // ----------------------------------------------------------------------------
 
+  const minaPubkey = PublicKey.fromBase58('B62qpwRxuV4vYFT8QLnrmB67FaKQemy54QH2XuBTyErr9wDDpLHTmQy');
+
   const privateKey = generatePrivateKey();
   const viemAccount = privateKeyToAccount(privateKey);
-  const message = 'hello, world';
-  const messageBytes = new TextEncoder().encode(message);
+  const messageBytes = new Uint8Array(13 + 33);
+  messageBytes.set(new TextEncoder().encode('MinaDelegate|'));
+  messageBytes.set(encodeKey(minaPubkey).map(x => x.toNumber()), 13);
   const hexSignature = await viemAccount.signMessage({ message: { raw: messageBytes } });
-  //const messageBytes = message.toB
 
   console.log(JSON.stringify(messageBytes));
   console.log(hexSignature);
@@ -55,22 +59,28 @@ try {
 
   console.log('DelegateProof...');
   console.time('DelegateProof');
-  const delegateProof = await DelegateProof.meme(
-    [
-      ...new TextEncoder().encode('\x19Ethereum Signed Message:\n'),
-      ...new TextEncoder().encode(`${messageBytes.length}`),
-      ...messageBytes,
-    ].map(x => new UInt8(x)),
+  const delegateProof = await DelegateProgram.sign(
+    new DelegationOrder({
+      target: minaPubkey,
+      signer: Secp256k1.from({
+        x: BigInt('0x' + viemAccount.publicKey.substring(4, 4 + 64)),
+        y: BigInt('0x' + viemAccount.publicKey.substring(4 + 64, 4 + 64 + 64)),
+      }),
+    }),
     Ecdsa.fromHex(hexSignature),
-    Secp256k1.from({
-      x: BigInt('0x' + viemAccount.publicKey.substring(4, 4 + 64)),
-      y: BigInt('0x' + viemAccount.publicKey.substring(4 + 64, 4 + 64 + 64)),
-    })
   );
   console.timeEnd('DelegateProof');
   console.time('Verify');
-  console.log(await DelegateProof.verify(delegateProof));
+  console.log(await DelegateProgram.verify(delegateProof));
   console.timeEnd('Verify');
+
+  console.time('DelegateVerify');
+  await DelegateVerifyProgram.check(delegateProof);
+  console.timeEnd('DelegateVerify');
+
+  console.time('NoOpProgram');
+  await NoOpProgram.blah(delegateProof.publicInput);
+  console.timeEnd('NoOpProgram');
 
   // ----------------------------------------------------------------------------
   const sudoku = generateSudoku(0.5);

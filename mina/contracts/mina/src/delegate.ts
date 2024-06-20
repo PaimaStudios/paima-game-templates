@@ -30,50 +30,124 @@ export class Secp256k1 extends createForeignCurve(Crypto.CurveParams.Secp256k1) 
 export class Ecdsa extends createEcdsa(Secp256k1) {}
 
 
-class Bytes32 extends Bytes(32) {}
+const ethereumPrefix = '\x19Ethereum Signed Message:\n';
+const delegationPrefix = 'MinaDelegate|';
+const innerLength = delegationPrefix.length + 33;
+const outerLength = ethereumPrefix.length + String(innerLength).length + innerLength;
+
+console.log('outerLength =', outerLength);
+
+class BytesDelegation extends Bytes(outerLength) {}
 
 
-const prefix = '\x19Ethereum Signed Message:\n';
+export class DelegationOrder extends Struct({
+  /** Mina public key that the delegation order is issued for. */
+  target: PublicKey,
+  /** Ethereum public key that signed the delegation order. */
+  signer: Secp256k1.provable,
+}) {
+
+}
 
 
-export const DelegateProof = ZkProgram({
-  name: 'DelegateProof',
+function utf8(s: string) {
+  return [...new TextEncoder().encode(s)].map(b => new UInt8(b));
+}
+
+
+function boolToU8(bool: Bool): UInt8 {
+  return UInt8.from(bool.toField());
+}
+
+
+export function encodeKey(k: PublicKey): UInt8[] {
+  const bytes = [boolToU8(k.isOdd)];
+  const bits = k.x.toBits();
+  console.log('encodeKey bits.length=', bits.length);
+  for (let i = 0; i < bits.length; i += 8) {
+    let value = new UInt8(0);
+    for (let j = 0; j < 8; j++) {
+      value = value.mul(2).add(boolToU8(bits[i + j] ?? Bool(false)));
+    }
+    bytes.push(value);
+  }
+  return bytes;
+}
+
+
+export const DelegateProgram = ZkProgram({
+  name: 'DelegateProgram',
+
+  publicInput: DelegationOrder,
 
   methods: {
-    meme: {
-      privateInputs: [Provable.Array(UInt8, 40), Ecdsa.provable, Secp256k1.provable],
+    sign: {
+      privateInputs: [Ecdsa.provable],
 
       async method(
-        message: UInt8[],
-        /** Public input: the puzzle to be solved. */
+        order: DelegationOrder,
         signature: Ecdsa,
-        /** Private input: the solution. */
-        publicKey: ForeignCurve,
       ) {
-        Provable.log(message);
-        Provable.log(signature);
-        Provable.log(publicKey);
+        Provable.log('order:', order);
+        Provable.log('signature:', signature);
 
-        /*
-        const BigBytesType = createBytes(prefix.length + String(message.length).length + message.length);
-        BigBytesType.fromString();
+        const fullMessage = Bytes.from([
+          ...utf8(ethereumPrefix),
+          ...utf8(String(innerLength)),
+          ...utf8(delegationPrefix),
+          // TODO: does this break the circuit?
+          ...encodeKey(order.target),
+        ]);
 
-        const msg = Bytes.from(message);
-
-        Bytes.
-
-        '\x19Ethereum Signed Message:\n' + message.length
-
-        message.length
-        */
-
-        //const digest = Keccak.ethereum(message);
+        Provable.log('full message:', fullMessage);
 
         Provable.asProver(() => console.time('verifyV2'));
-        signature.verifyV2(Bytes.from(message), publicKey).assertTrue();
+        signature.verifyV2(Bytes.from(fullMessage), order.signer).assertTrue();
         Provable.asProver(() => console.timeEnd('verifyV2'));
       }
     }
   }
 });
+export class DelegateProof extends ZkProgram.Proof(DelegateProgram) {}
 
+
+export const DelegateVerifyProgram = ZkProgram({
+  name: 'DelegateVerifyProgram',
+
+  publicOutput: DelegationOrder,
+
+  methods: {
+    check: {
+      privateInputs: [DelegateProof],
+
+      async method(
+        proof: DelegateProof
+      ): Promise<DelegationOrder> {
+        Provable.asProver(() => console.time('proof.verify'));
+        proof.verify();
+        Provable.asProver(() => console.timeEnd('proof.verify'));
+        return proof.publicInput;
+      }
+    }
+  }
+});
+
+
+export const NoOpProgram = ZkProgram({
+  name: 'NoOpProgram',
+
+  publicOutput: DelegationOrder,
+
+  methods: {
+    blah: {
+      privateInputs: [DelegationOrder],
+
+      async method(
+        order: DelegationOrder
+      ): Promise<DelegationOrder> {
+        // NO ASSERTIONS!
+        return order;
+      }
+    }
+  }
+});
