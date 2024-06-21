@@ -21,13 +21,15 @@ import { DelegateProgram, DelegateVerifyProgram, DelegationOrder, DelegationZkAp
 
 console.log('Event names:', Object.keys(SudokuZkApp.events));
 console.log('Compiling ...');
+console.time('compile');
 await SudokuSolution.compile();
 await SudokuZkApp.compile();
-console.log('DelegateProof key =', (await DelegateProgram.compile()).verificationKey);
+await DelegateProgram.compile();
 await DelegateVerifyProgram.compile();
 await NoOpProgram.compile();
-await DelegationZkApp.compile();
-await UsesDelegationZkApp.compile();
+// await DelegationZkApp.compile();
+// await UsesDelegationZkApp.compile();
+console.timeEnd('compile');
 
 /** Scaling factor from human-friendly MINA amount to raw integer fee amount. */
 const MINA_TO_RAW_FEE = 1_000_000_000;
@@ -46,43 +48,39 @@ let lightnetAccount;
 try {
   // ----------------------------------------------------------------------------
   const minaPubkey = PublicKey.fromBase58('B62qpwRxuV4vYFT8QLnrmB67FaKQemy54QH2XuBTyErr9wDDpLHTmQy');
-  const privateKey = generatePrivateKey();
-  const viemAccount = privateKeyToAccount(privateKey);
+  const viemAccount = privateKeyToAccount(generatePrivateKey());
+  console.log(viemAccount.publicKey);
   const delegationOrder = new DelegationOrder({
     target: minaPubkey,
-    signer: Secp256k1.from({
-      x: BigInt('0x' + viemAccount.publicKey.substring(4, 4 + 64)),
-      y: BigInt('0x' + viemAccount.publicKey.substring(4 + 64, 4 + 64 + 64)),
-    }),
+    signer: Secp256k1.fromHex(viemAccount.publicKey),
   });
 
-  const messageBytes = new Uint8Array(13 + 33);
-  messageBytes.set(new TextEncoder().encode('MinaDelegate|'));
-  messageBytes.set(encodeKey(minaPubkey).map(x => x.toNumber()), 13);
-  const hexSignature = await viemAccount.signMessage({ message: { raw: messageBytes } });
+  const hexSignature = await viemAccount.signMessage({ message: { raw: delegationOrder.bytesToSign() } });
 
-  console.log(JSON.stringify(messageBytes));
-  console.log(hexSignature);
-  console.log(viemAccount.publicKey);
-
-  console.log('DelegateProof...');
-  console.time('DelegateProof');
+  console.time('DelegateProgram.sign');
   const delegateProof = await DelegateProgram.sign(
     delegationOrder,
     Ecdsa.fromHex(hexSignature),
   );
-  console.timeEnd('DelegateProof');
-  console.time('Verify');
+  console.timeEnd('DelegateProgram.sign');
+
+  console.time('DelegateProgram.verify');
   console.log(await DelegateProgram.verify(delegateProof));
-  console.timeEnd('Verify');
+  console.timeEnd('DelegateProgram.verify');
 
-  console.time('DelegateVerify');
+  console.time('DelegateVerifyProgram.check');
   await DelegateVerifyProgram.check(delegateProof);
-  console.timeEnd('DelegateVerify');
+  console.timeEnd('DelegateVerifyProgram.check');
 
-  console.time('NoOpProgram');
+  console.time('NoOpProgram.blah');
   await NoOpProgram.blah(delegateProof.publicInput);
-  console.timeEnd('NoOpProgram');
+  console.timeEnd('NoOpProgram.blah');
+
+  // ----------------------------------------------------------------------------
+
+
+  if ('a' < 'b')
+    process.exit(0);
 
   // ----------------------------------------------------------------------------
   const sudoku = generateSudoku(0.5);

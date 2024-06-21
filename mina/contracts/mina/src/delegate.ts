@@ -8,7 +8,6 @@ import {
   Poseidon,
   Struct,
   Provable,
-  Reducer,
   PublicKey,
   ZkProgram,
   MerkleMap,
@@ -20,20 +19,25 @@ import {
   MerkleMapWitness,
 } from 'o1js';
 
+export class Secp256k1 extends createForeignCurve(Crypto.CurveParams.Secp256k1) {
+  /** Convert a standard 0x04{128 hex digits} public key into this provable struct. */
+  static fromHex(publicKey: `0x${string}`): Secp256k1 {
+    if (!publicKey.startsWith('0x04') || publicKey.length != 4 + 64 + 64) {
+      throw new Error('Bad public key format');
+    }
+    return Secp256k1.from({
+      x: BigInt('0x' + publicKey.substring(4, 4 + 64)),
+      y: BigInt('0x' + publicKey.substring(4 + 64, 4 + 64 + 64)),
+    });
+  }
+}
+export class Ecdsa extends createEcdsa(Secp256k1) {
+  // o1js-provided fromHex is good enough
+}
 
-export class Secp256k1 extends createForeignCurve(Crypto.CurveParams.Secp256k1) {}
-export class Ecdsa extends createEcdsa(Secp256k1) {}
 
-
-const ethereumPrefix = '\x19Ethereum Signed Message:\n';
-const delegationPrefix = 'MinaDelegate|';
-const innerLength = delegationPrefix.length + 33;
-const outerLength = ethereumPrefix.length + String(innerLength).length + innerLength;
-
-console.log('outerLength =', outerLength);
-
-class BytesDelegation extends Bytes(outerLength) {}
-
+const ethereumPrefix = Bytes.fromString('\x19Ethereum Signed Message:\n');
+const delegationPrefix = Bytes.fromString('MinaDelegate|');
 
 export class DelegationOrder extends Struct({
   /** Mina public key that the delegation order is issued for. */
@@ -41,24 +45,37 @@ export class DelegationOrder extends Struct({
   /** Ethereum public key that signed the delegation order. */
   signer: Secp256k1.provable,
 }) {
+  private _innerMessage(): Bytes {
+    return Bytes.from([
+      ...delegationPrefix.bytes,
+      ...encodeKey(this.target),
+    ]);
+  }
 
+  /** Get the message for an Etherum wallet to sign, WITHOUT the Ethereum prefix. */
+  bytesToSign(): Uint8Array {
+    return this._innerMessage().toBytes();
+  }
+
+  /** Validate that the given Ethereum signature matches this order, WITH the Ethereum prefix. */
+  assertSignatureMatches(signature: Ecdsa) {
+    const inner = this._innerMessage();
+    const fullMessage = Bytes.from([
+      ...ethereumPrefix.bytes,
+      ...Bytes.fromString(String(inner.length)).bytes,
+      ...inner.bytes,
+    ]);
+    signature.verifyV2(fullMessage, this.signer).assertTrue();
+  }
 }
-
-
-function utf8(s: string) {
-  return [...new TextEncoder().encode(s)].map(b => new UInt8(b));
-}
-
 
 function boolToU8(bool: Bool): UInt8 {
   return UInt8.from(bool.toField());
 }
 
-
 export function encodeKey(k: PublicKey): UInt8[] {
   const bytes = [boolToU8(k.isOdd)];
-  const bits = k.x.toBits();
-  console.log('encodeKey bits.length=', bits.length);
+  const bits = k.x.toBits(/* implied 254 */);
   for (let i = 0; i < bits.length; i += 8) {
     let value = new UInt8(0);
     for (let j = 0; j < 8; j++) {
@@ -83,22 +100,7 @@ export const DelegateProgram = ZkProgram({
         order: DelegationOrder,
         signature: Ecdsa,
       ) {
-        Provable.log('order:', order);
-        Provable.log('signature:', signature);
-
-        const fullMessage = Bytes.from([
-          ...utf8(ethereumPrefix),
-          ...utf8(String(innerLength)),
-          ...utf8(delegationPrefix),
-          // TODO: does this break the circuit?
-          ...encodeKey(order.target),
-        ]);
-
-        Provable.log('full message:', fullMessage);
-
-        Provable.asProver(() => console.time('verifyV2'));
-        signature.verifyV2(Bytes.from(fullMessage), order.signer).assertTrue();
-        Provable.asProver(() => console.timeEnd('verifyV2'));
+        order.assertSignatureMatches(signature);
       }
     }
   }
@@ -212,7 +214,10 @@ const emptyMapRoot = new MerkleMap().getRoot();
 export class DelegationZkApp extends SmartContract {
   @state(Field) treeRoot = State<Field>(emptyMapRoot);
 
-  reducer = Reducer({ actionType: DelegationOrder });
+  static events = {
+    "delegate": DelegationOrder,
+  } as const;
+  events = DelegationZkApp.events;
 
   @method async delegate(
     order: DelegationOrder,
@@ -222,14 +227,7 @@ export class DelegationZkApp extends SmartContract {
     Provable.log('target', order.target.toFields());
 
     // Firstly, check EVM signature.
-    const fullMessage = Bytes.from([
-      ...utf8(ethereumPrefix),
-      ...utf8(String(innerLength)),
-      ...utf8(delegationPrefix),
-      // TODO: does this break the circuit?
-      ...encodeKey(order.target),
-    ]);
-    evmSignature.verifyV2(Bytes.from(fullMessage), order.signer).assertTrue();
+    order.assertSignatureMatches(evmSignature);
 
     // Assert that the witnesses match our idea of the old (0, false) value.
     const [oldInnerRoot, innerKey] = pair.innerWitness.computeRootAndKey(Field(0));
