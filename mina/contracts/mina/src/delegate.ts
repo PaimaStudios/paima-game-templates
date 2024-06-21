@@ -197,13 +197,15 @@ export class DelegationZkApp extends SmartContract {
   } as const;
   events = DelegationZkApp.events;
 
+  @method async init() {
+    super.init();
+  }
+
   @method async delegate(
     order: DelegationOrder,
     witness: MerkleMapWitness,
     evmSignature: Ecdsa,
   ) {
-    Provable.log('target', order.target.toFields());
-
     // Firstly, check EVM signature.
     order.assertSignatureMatches(evmSignature);
 
@@ -223,8 +225,6 @@ export class DelegationZkApp extends SmartContract {
     order: DelegationOrder,
     witness: MerkleMapWitness,
   ) {
-    Provable.log('target', order.target.toFields());
-
     // Assert that the witness matches our idea of the (1, true) value.
     const [root, key] = witness.computeRootAndKey(Field(1));
     this.treeRoot.getAndRequireEquals().assertEquals(root);
