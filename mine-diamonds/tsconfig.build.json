@@ -1,0 +1,10 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./db" },
+    { "path": "./utils" },
+    { "path": "./api" },
+    { "path": "./state-transition" },
+    { "path": "./middleware" }
+  ]
+}

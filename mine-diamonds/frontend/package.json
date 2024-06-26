@@ -1,0 +1,11 @@
+{
+  "name": "@game/frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "http-server -p 8000"
+  },
+  "devDependencies": {
+    "http-server": "14.1.1"
+  }
+}

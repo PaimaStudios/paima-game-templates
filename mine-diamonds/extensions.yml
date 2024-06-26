@@ -1,0 +1,36 @@
+extensions:
+  - name: "OrderbookDex"
+    type: "generic"
+    contractAddress: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+    startBlockHeight: 0
+    abiPath: "./mine-diamonds/abis/OrderbookDex.json"
+    eventSignature: "OrderCreated(address,uint256,uint256,uint256,uint256)"
+    scheduledPrefix: "oc"
+  - name: "OrderbookDex"
+    type: "generic"
+    contractAddress: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+    startBlockHeight: 0
+    abiPath: "./mine-diamonds/abis/OrderbookDex.json"
+    eventSignature: "OrderFilled(address,uint256,address,uint256,uint256)"
+    scheduledPrefix: "of"
+  - name: "OrderbookDex"
+    type: "generic"
+    contractAddress: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+    startBlockHeight: 0
+    abiPath: "./mine-diamonds/abis/OrderbookDex.json"
+    eventSignature: "OrderCancelled(address,uint256)"
+    scheduledPrefix: "occ"
+  - name: "InverseAppProjected1155"
+    type: "generic"
+    contractAddress: "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    startBlockHeight: 0
+    abiPath: "./mine-diamonds/abis/InverseAppProjected1155.json"
+    eventSignature: "Minted(uint256,address,uint256,uint256)"
+    scheduledPrefix: "am"
+  - name: "InverseAppProjected1155"
+    type: "generic"
+    contractAddress: "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    startBlockHeight: 0
+    abiPath: "./mine-diamonds/abis/InverseAppProjected1155.json"
+    eventSignature: "TransferSingle(address,address,address,uint256,uint256)"
+    scheduledPrefix: "at"
