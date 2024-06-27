@@ -9,15 +9,15 @@
  * Build the project: `$ npm run build`
  * Run with node:     `$ node build/src/run.js`.
  */
-import { Sudoku, SudokuSolution, SudokuSolutionProof, SudokuZkApp } from './sudoku.js';
-import { cloneSudoku, generateSudoku, solveSudoku } from './sudoku-lib.js';
+import { Sudoku, SudokuSolution, SudokuSolutionProof, SudokuZkApp } from '@game/mina-contracts';
+import { cloneSudoku, generateSudoku, solveSudoku } from '@game/mina-contracts';
 import { AccountUpdate, EcdsaSignature, Encoding, ForeignCurve, Lightnet, MerkleMap, MerkleTree, Mina, PrivateKey, Provable, PublicKey, UInt8, fetchAccount } from 'o1js';
 import { Abi, createPublicClient, createTestClient, createWalletClient, encodeFunctionData, getAddress, getContract, http, toHex, walletActions } from 'viem';
 import { anvil } from 'viem/chains';
 import paimaL2Abi from '@paima/evm-contracts/abi/PaimaL2Contract.json' with { type: 'json' };
 import assert from 'assert';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { DelegateProgram, DelegateVerifyProgram, DelegationOrder, DelegationZkApp, Ecdsa, NoOpProgram, Secp256k1, DelegationContractData, UsesDelegationZkApp, encodeKey } from './delegate.js';
+import { DelegateProgram, DelegateVerifyProgram, DelegationOrder, DelegationZkApp, Ecdsa, NoOpProgram, Secp256k1, DelegationContractData, UsesDelegationZkApp, encodeKey } from '@game/mina-contracts';
 
 console.log('Event names:', Object.keys(SudokuZkApp.events));
 console.log('Compiling ...');

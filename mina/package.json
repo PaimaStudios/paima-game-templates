@@ -33,7 +33,8 @@
       "./api",
       "./game-logic",
       "./state-transition",
-      "./middleware"
+      "./middleware",
+      "./cli"
     ],
     "devDependencies": {
       "@nomicfoundation/hardhat-ignition-viem": "^0.15.1",
