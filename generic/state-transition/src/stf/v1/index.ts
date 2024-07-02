@@ -23,7 +23,7 @@ export default async function (
 
   switch (expanded.input) {
     case 'gainedExperience':
-      gainExperience(expanded, dbConn);
+      return gainExperience(expanded, dbConn);
     default:
       return [];
   }

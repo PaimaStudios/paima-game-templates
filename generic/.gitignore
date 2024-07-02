@@ -33,7 +33,6 @@ snapshots
 
 # Frontend
 build.zip
-WebGL
 
 # recompiled code for standalone purposes
 packaged/*

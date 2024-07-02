@@ -33,7 +33,7 @@ public class MainMiddleware : MonoBehaviour
 
   public async void UserWalletLogin(Action<LoginResponse> onLoginCallback)
   {
-    LoginResponse response = await Query.UserWalletLogin("metamask");
+    LoginResponse response = await Query.UserWalletLogin(0, "metamask", false);
     if (response.success)
     {
       lastWallet = response.result;
