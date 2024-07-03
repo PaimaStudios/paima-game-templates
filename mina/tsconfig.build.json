@@ -6,6 +6,7 @@
     { "path": "./game-logic" },
     { "path": "./api" },
     { "path": "./state-transition" },
-    { "path": "./middleware" }
+    { "path": "./middleware" },
+    { "path": "./cli" }
   ]
 }
