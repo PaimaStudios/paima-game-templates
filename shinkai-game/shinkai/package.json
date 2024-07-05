@@ -1,0 +1,17 @@
+{
+  "name": "@game/shinkai",
+  "version": "1.0.0",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@shinkai_protocol/shinkai-typescript-lib": "^0.7.0-development.27",
+    "axios": "^1.7.2"
+  }
+}
