@@ -34,7 +34,8 @@
       "./game-logic",
       "./state-transition",
       "./middleware",
-      "./cli"
+      "./cli",
+      "./frontend"
     ],
     "devDependencies": {
       "@nomicfoundation/hardhat-ignition-viem": "^0.15.1",

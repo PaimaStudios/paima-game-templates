@@ -1,0 +1,14 @@
+{
+  "name": "@game/frontend",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "build": "mkdir -p build && ln -sf ../../middleware/packaged/middleware.js build/middleware.js",
+    "prestart": "npm run build"
+  },
+  "dependencies": {
+    "@game/middleware": "1.0.0",
+    "express": "^4.19.2"
+  }
+}

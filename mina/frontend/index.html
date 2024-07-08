@@ -1,0 +1,15 @@
+<html>
+  <head>
+    <title>Doop</title>
+  </head>
+  <body>
+    <script type="module">
+      import endpoints from './build/middleware.js';
+      console.log(endpoints);
+
+      console.time('compile');
+      await endpoints.compile();
+      console.timeEnd('compile');
+    </script>
+  </body>
+</html>
