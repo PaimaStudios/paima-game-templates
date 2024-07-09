@@ -55,7 +55,7 @@ try {
     signer: Secp256k1.fromHex(viemAccount.publicKey),
   });
 
-  const delegationSignature = Ecdsa.fromHex(await viemAccount.signMessage({ message: { raw: delegationOrder.bytesToSign() } }));
+  const delegationSignature = Ecdsa.fromHex(await viemAccount.signMessage({ message: { raw: DelegationOrder.bytesToSign(sender) } }));
 
   console.time('DelegationOrderProgram.sign');
   const delegateProof = await DelegationOrderProgram.sign(

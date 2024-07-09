@@ -1,17 +1,15 @@
-import { paimaEndpoints, WalletConnectHelper } from '@paima/sdk/mw-core';
-import { queryEndpoints } from './endpoints/queries';
-import { writeEndpoints } from './endpoints/write';
+import { extractPublicKey } from '@metamask/eth-sig-util';
+import { EvmInjectedConnector } from '@paima/providers';
+import { initMiddlewareCore, paimaEndpoints } from '@paima/sdk/mw-core';
+import { Cache, CacheHeader, PrivateKey } from 'o1js';
 
-import { initMiddlewareCore } from '@paima/sdk/mw-core';
+import { DelegationOrder, DelegationOrderProgram, Ecdsa, PublicKey, Secp256k1 } from '@game/mina-contracts';
+import { GAME_NAME, gameBackendVersion } from '@game/utils';
 
-import { gameBackendVersion, GAME_NAME } from '@game/utils';
-import { DelegationOrder, DelegationOrderProgram, Secp256k1 } from '@game/mina-contracts';
-import { AddressType } from '@paima/sdk/utils';
+import { queryEndpoints } from './endpoints/queries.js';
+import { writeEndpoints } from './endpoints/write.js';
 
 initMiddlewareCore(GAME_NAME, gameBackendVersion);
-
-import { EvmInjectedConnector } from '@paima/providers';
-import { Cache, CacheHeader, PrivateKey, PublicKey } from 'o1js';
 
 const temporaryPrivateKey = PrivateKey.random();
 
@@ -60,6 +58,10 @@ class IndexedDbCache implements Cache {
 }
 const cache = new IndexedDbCache();
 
+function isHex(x: string): x is `0x${string}` {
+  return x.startsWith('0x');
+}
+
 const endpoints = {
   ...paimaEndpoints,
   ...queryEndpoints,
@@ -72,18 +74,42 @@ const endpoints = {
       console.timeEnd('cache.load');
     }
     console.time('DelegationOrderProgram.compile');
-    await DelegationOrderProgram.compile({ cache });
+    await DelegationOrderProgram.compile(/*{ cache }*/);
     console.timeEnd('DelegationOrderProgram.compile');
   },
 
   async sign() {
     const provider = await EvmInjectedConnector.instance().connectSimple({ gameName: GAME_NAME, gameChainId: undefined });
-    const signature = await provider.signMessage(DelegationOrder.bytesToSign(temporaryPrivateKey.toPublicKey()));
+    const target = temporaryPrivateKey.toPublicKey();
+    const data = DelegationOrder.bytesToSign(target);
+    const signature = await provider.signMessage(data);
+    const publicKey = extractPublicKey({ data, signature });
+    if (!isHex(publicKey))
+      throw new Error('!isHex(publicKey)');
     console.log('signature', signature);
+    console.log('publicKey', publicKey);
+    const signature2 = Ecdsa.fromHex(signature);
+    console.log('Ecdsa.fromHex', signature2);
+
+    // Stringify and destringify later because otherwise the main thread's
+    // Field class != the worker thread's Field class, and instanceof fails.
+    return { signature, target: target.toBase58(), signer: publicKey };
+  },
+
+  async prove(args: { signature: string, target: string, signer: `0x${string}` }) {
+    const order = new DelegationOrder({
+      target: PublicKey.fromBase58(args.target),
+      signer: Secp256k1.fromHex(args.signer),
+    });
+
+    const signature = Ecdsa.fromHex(args.signature);
+    const proof = await DelegationOrderProgram.sign(order, signature);
+    console.log('proof', proof);
+    console.log('proof.toJSON()', proof.toJSON());
   },
 };
 
-export * from './types';
-export type * from './types';
+export * from './types.js';
+export type * from './types.js';
 
 export default endpoints;

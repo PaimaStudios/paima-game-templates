@@ -19,3 +19,4 @@ postMessage({ status: 'Waiting for your signature' });
 const signature = await signaturePromise;
 postMessage({ status: 'Proving' });
 await endpoints.prove(signature);
+postMessage({ status: 'All done' });
