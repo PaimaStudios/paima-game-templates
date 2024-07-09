@@ -38,7 +38,8 @@
       });
 
       //console.log(await endpoints.userWalletLogin({ mode: 0 }));
-      await endpoints.sign();
+      const signature = await endpoints.sign();
+      worker.postMessage({ signature });
     </script>
   </body>
 </html>
