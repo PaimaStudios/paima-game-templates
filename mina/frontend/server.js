@@ -8,6 +8,7 @@ app.get('/', function (req, res, next) {
   next();
 });
 
+express.static.mime.define({'application/javascript': ['js']});
 app.use(express.static('.'));
 
 app.listen(8081);

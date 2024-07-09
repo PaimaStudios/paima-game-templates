@@ -1,15 +1,41 @@
+<!DOCTYPE html>
 <html>
   <head>
     <title>Doop</title>
   </head>
   <body>
-    <script type="module">
-      import endpoints from './build/middleware.js';
-      console.log(endpoints);
+    <div>
+      Web worker status:
+      <span id="status">
+        Loading...
+      </span>
+    </div>
 
-      console.time('compile');
-      await endpoints.compile();
-      console.timeEnd('compile');
+    <script type="module" async>
+      import endpoints from './build/middleware.js';
+
+      // https://github.com/ffmpegwasm/ffmpeg.wasm/issues/694
+      function getWorkerURL(e) {
+        const t = `window = self; import( "${e}" );`;
+        return URL.createObjectURL(new Blob([t], { type: "text/javascript" }));
+      }
+
+      const worker = new Worker(getWorkerURL(new URL('./worker.js', window.location)));
+      let start = new Date();
+      worker.addEventListener('error', e => {
+        console.error('error', e);
+      });
+      worker.addEventListener('messageerror', e => {
+        console.error('messageerror', e);
+      });
+      worker.addEventListener('message', e => {
+        console.log('message', e);
+        if ('status' in e.data) {
+          let now = new Date();
+          document.getElementById('status').innerText = e.data.status + ' -- ' + (now.valueOf() - start.valueOf())/1000 + 's';
+          start = now;
+        }
+      });
     </script>
   </body>
 </html>
