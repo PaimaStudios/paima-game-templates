@@ -1,10 +1,7 @@
 import type { RoundExecutor, MatchExecutor } from '@paima/sdk/executors';
 import type { Hash } from '@paima/sdk/utils';
 
-import type {
-  BaseRoundStatus,
-  UserStats,
-} from '@game/utils';
+import type { BaseRoundStatus, UserStats } from '@game/utils';
 
 export type { RoundExecutor, MatchExecutor };
 
@@ -25,4 +22,9 @@ export interface PackedRoundExecutionState {
 export interface PackedUserStats {
   success: true;
   stats: UserStats;
+}
+
+export interface PackedStats<T> {
+  success: true;
+  stats: T;
 }

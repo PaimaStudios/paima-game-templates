@@ -2,11 +2,21 @@
     "name": "@paima/open-world",
     "version": "1.0.0",
     "private": true,
+    "type": "module",
     "scripts": {
-      "start": "http-server -p 8000"
+        "serve": "http-server -p 8000",
+        "watch": "rollup -c -w",
+        "build": "rollup -c"
     },
     "devDependencies": {
-        "http-server": "14.1.1"
+        "@rollup/plugin-commonjs": "^26.0.1",
+        "@rollup/plugin-node-resolve": "^15.2.3",
+        "http-server": "14.1.1",
+        "rollup": "^4.18.0"
+    },
+    "dependencies": {
+        "@pixi/ui": "^2.1.2",
+        "pixi-drawable-textinput": "^1.0.33",
+        "pixi.js": "^8.2.2"
     }
-  }
-  
+}

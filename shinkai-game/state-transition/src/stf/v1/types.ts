@@ -1,23 +1,21 @@
-export type ParsedSubmittedInput =
-  | InvalidInput
-  | SubmitMoveInput
-  | SubmitIncrementInput
-  | JoinWorldInput;
+export type ParsedSubmittedInput = InvalidInput | NewGameInput | AIInput | TickInput;
+
 export interface InvalidInput {
   input: 'invalidString';
 }
 
-export interface JoinWorldInput {
-  input: 'joinWorld';
+export interface NewGameInput {
+  input: 'newGame';
 }
 
-export interface SubmitMoveInput {
-  input: 'submitMove';
-  x: number;
-  y: number;
+export interface AIInput {
+  input: 'ai';
+  target: string;
+  id: number;
+  response: string;
 }
-export interface SubmitIncrementInput {
-  input: 'submitIncrement';
-  x: number;
-  y: number;
+
+export interface TickInput {
+  input: 'tick';
+  n: number;
 }

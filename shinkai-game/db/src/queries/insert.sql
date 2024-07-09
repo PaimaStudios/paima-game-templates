@@ -1,29 +1,30 @@
-/* 
-  @name create_global_world_state
-*/
-INSERT INTO global_world_state (
-  x,
-  y,
-  -- can_visit
-) VALUES (
- :x!,
- :y!,
---  :can_visit!
-) 
-ON CONFLICT(x, y)
-DO NOTHING;
 
 /* 
-  @name create_global_user_state
+  @name createGlobalUserState
 */
 INSERT INTO global_user_state (
-  wallet, 
-  x,
-  y
+  wallet
 ) VALUES (
-  :wallet!,
-  :x!,
-  :y!
+  :wallet!
 )
 ON CONFLICT (wallet)
 DO NOTHING;
+
+
+/* @name newGame */
+INSERT INTO game (
+  wallet
+) VALUES (
+  :wallet!
+);
+
+/* @name newQuestionAnswer */
+INSERT INTO question_answer (
+ game_id,
+ stage,
+ question 
+) VALUES (
+  :game_id!,
+  :stage!,
+  :question!
+);

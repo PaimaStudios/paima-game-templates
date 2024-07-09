@@ -5,15 +5,12 @@ This documentation provides a basic overview of the template. Each module has it
 ## Shinkai Setup.
 Setup your `.env.<NETWORK>` with the SHINKAI SPECIFIC SETUP
 
+Get SHINKAI_KEY and SHINKAI_PASSPHRASE by exporting your secrets from the Shinkai-UI
 ```
-SHINKAI_URL="http://127.0.0.1:9550"
-SHINKAI_ENCRYPTION_SK="7082...fe96c"
-SHINKAI_SIGNATURE_SK="abb3...d009"
-SHINKAI_RECEIVER_PK="9798...cd35"
-SHINKAI_SENDER="@@localhost.arb-sep-shinkai"
-SHINKAI_SENDER_SUBIDENTITY="main"
-SHINKAI_RECEIVER="@@localhost.arb-sep-shinkai"
-SHINKAI_RECEIVER_SUBIDENTITY="main/agent/o_phi3_3_8b"
+SHINKAI_URL="http://192.168.100.82:9550"
+SHINKAI_KEY="encrypted:0cab....d991"
+SHINKAI_PASSPHRASE="paimaengine"
+SHINKAI_RECEIVER_SUBIDENTITY="/agent/o_llama3_8b_instruct_q4_1"
 ```
 
 ## Installation

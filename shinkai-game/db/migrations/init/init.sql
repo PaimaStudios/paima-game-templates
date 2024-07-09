@@ -1,24 +1,32 @@
--- world is Y by X matrix
---        0     1     2    X
---     |-----|-----|-----|
---  0  | 0,0 | 1,0 | 2,0 |
---  1  | 0,1 | 1,1 | 2,1 |
---  2  | 0,2 | 1,2 | 2,2 |
--- 
---  Y
--- 
+
 CREATE TABLE global_world_state (
-  -- id SERIAL PRIMARY KEY,
-  x INTEGER NOT NULL,
-  y INTEGER NOT NULL,
-  can_visit BOOLEAN NOT NULL,
-  counter INTEGER NOT NULL DEFAULT 0,
-  PRIMARY KEY (x, y)
+  id SERIAL PRIMARY KEY,
+  tokens INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE global_user_state (
   wallet TEXT NOT NULL PRIMARY KEY,
-  x INTEGER NOT NULL,
-  y INTEGER NOT NULL,
-  FOREIGN KEY (x, y) REFERENCES global_world_state (x, y)
+  tokens INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE game (
+  -- we should not use serial ids. But to do safely, 
+  -- we will add a static "serial" identifier 
+  -- in the paima concise command: `create|*1`
+  id SERIAL NOT NULL PRIMARY KEY,
+  stage TEXT NOT NULL DEFAULT 'new',
+  wallet TEXT NOT NULL,
+  prize INTEGER,
+  block_height INTEGER 
+);
+
+CREATE TABLE question_answer (
+  game_id INTEGER NOT NULL,
+  stage TEXT NOT NULL,
+  question TEXT,
+  answer TEXT,
+  message TEXT,
+  score FLOAT,
+  block_height INTEGER,
+  PRIMARY KEY (game_id, stage)
 );

@@ -75,3 +75,21 @@ interface ExternalMetadata {
   sender: string;
   signature: string;
 }
+
+export interface ShinakiKey {
+  my_device_encryption_pk:string;
+  my_device_encryption_sk:string;
+  my_device_identity_pk:string;
+  my_device_identity_sk:string;
+  profile_encryption_pk:string;
+  profile_encryption_sk:string;
+  profile_identity_pk:string;
+  profile_identity_sk:string;
+  node_signature_pk:string;
+  node_encryption_pk:string;
+  profile:string;
+  node_address:string;
+  registration_name:string;
+  permission_type:string;
+  shinkai_identity:string;
+};

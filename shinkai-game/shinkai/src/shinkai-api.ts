@@ -1,10 +1,12 @@
 import {
+  decryptMessageWithPassphrase,
   generateEncryptionKeys,
   generateSignatureKeys,
   ShinkaiMessageBuilder,
 } from '@shinkai_protocol/shinkai-typescript-lib';
 import axios from 'axios';
 import type {
+  ShinakiKey,
   ShinkaiJobCreation,
   ShinkaiMessageBody,
   ShinkaiMessageResponse,
@@ -25,31 +27,43 @@ enum ShinkaiAPIPath {
 export class ShinkaiAPI {
   /* These values are read from the .env file */
   private nodeURL: string;
-  private encryptionSk: Uint8Array;
-  private signatureSk: Uint8Array;
-  private receiverPublicKey: Uint8Array;
-  private sender: { name: string; subidentity: string };
-  private receiver: { name: string; subidentity: string };
+  private encryptionSk!: Uint8Array;
+  private signatureSk!: Uint8Array;
+  private receiverPublicKey!: Uint8Array;
+  private sender!: { name: string; subidentity: string };
+  private receiver!: { name: string; subidentity: string };
 
   constructor() {
-    (this.nodeURL = process.env.SHINKAI_URL!),
-      (this.encryptionSk = new Uint8Array(Buffer.from(process.env.SHINKAI_ENCRYPTION_SK!, 'hex'))),
-      (this.signatureSk = new Uint8Array(Buffer.from(process.env.SHINKAI_SIGNATURE_SK!, 'hex'))),
-      (this.receiverPublicKey = new Uint8Array(
-        Buffer.from(process.env.SHINKAI_RECEIVER_PK!, 'hex')
-      )),
-      (this.sender = {
-        name: process.env.SHINKAI_SENDER!,
-        subidentity: process.env.SHINKAI_SENDER_SUBIDENTITY!,
-      });
-    this.receiver = {
-      name: process.env.SHINKAI_RECEIVER!,
-      subidentity: process.env.SHINKAI_RECEIVER_SUBIDENTITY!,
+    this.nodeURL = process.env.SHINKAI_URL!;
+  }
+
+  async init() {
+    const arrayFromHex = (i: string) => new Uint8Array(Buffer.from(i, 'hex'));
+
+    const keys: ShinakiKey = JSON.parse(
+      (await decryptMessageWithPassphrase(
+        process.env.SHINKAI_KEY ?? '',
+        process.env.SHINKAI_PASSPHRASE ?? ''
+      )) || ''
+    );
+    this.encryptionSk = arrayFromHex(keys.profile_encryption_sk);
+    this.signatureSk = arrayFromHex(keys.profile_identity_sk);
+    this.receiverPublicKey = arrayFromHex(keys.node_encryption_pk);
+    this.sender = {
+      name: keys.shinkai_identity,
+      subidentity: keys.profile,
     };
+    this.receiver = {
+      name: keys.shinkai_identity,
+      subidentity: process.env.SHINKAI_RECEIVER_SUBIDENTITY ?? '',
+    };
+    return this;
   }
 
   /* Helper function that creates a new job, posts a message, and waits for the answer */
   async askQuestion(question: string): Promise<{ question: string; response: string }> {
+    if (!this.sender) throw new Error('call init first');
+
     const job = await this.createJob();
     const receipt = await this.sendMessageToJob(job.data, question);
     const wait = (n: number) => new Promise(resolve => setTimeout(resolve, n));
@@ -148,6 +162,8 @@ export class ShinkaiAPI {
 
   /* Create new Job */
   async createJob(): Promise<ShinkaiJobCreation> {
+    if (!this.sender) throw new Error('call init first');
+
     // Construct the job creation message
     const data = {
       local_vrkai: [],
@@ -179,6 +195,8 @@ export class ShinkaiAPI {
     jobId: string,
     messageContent: string
   ): Promise<ShinkaiPostMessageResponse> {
+    if (!this.sender) throw new Error('call init first');
+
     // Construct the message to send to the job
     const message = await ShinkaiMessageBuilder.jobMessage(
       jobId,
@@ -207,6 +225,8 @@ export class ShinkaiAPI {
     count = 10,
     offset: string | null = null
   ): Promise<{ data: ShinkaiMessageBody[] }> {
+    if (!this.sender) throw new Error('call init first');
+
     const message = await ShinkaiMessageBuilder.getLastMessagesFromInbox(
       this.encryptionSk,
       this.signatureSk,
@@ -249,39 +269,3 @@ export class ShinkaiAPI {
     return response.data;
   }
 }
-
-// async createFolder() {
-//   const payload: APICreateShareableFolder = {
-//     path: '/public1',
-//     subscription_req: {
-//       minimum_token_delegation: 100,
-//       minimum_time_delegated_hours: 100,
-//       monthly_payment: { USD: 10.0 } as any,
-//       is_free: false,
-//     },
-//   };
-//   const msg = await ShinkaiMessageBuilder.createCustomShinkaiMessageToNode(
-//     Buffer.from('90c...99641', 'hex'),
-//     Buffer.from('e28..f4cf', 'hex'),
-//     Buffer.from('e24d...269e04', 'hex'),
-//     payload,
-//     'main',
-//     '@@agallardol.sepolia-shinkai',
-//     '@@agallardol.sepolia-shinkai',
-//     'CreateShareableFolder' as any
-//   );
-//   const url = 'http://127.0.0.1:9550/v1/create_shareable_folder';
-//   try {
-//     const response = await axios.post(url, JSON.stringify(msg), {
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//     });
-//     if (response.status !== 200) {
-//       throw new Error('Request to create shareable folder failed');
-//     }
-//     console.error('Create shareable folder response: ', response.data);
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }
