@@ -23,7 +23,6 @@
     "chain:deploy": "npx hardhat ignition deploy ./contracts/evm/ignition/modules/deploy.ts --parameters ./contracts/evm/ignition/parameters.json --network ${NETWORK:-localhost}"
   },
   "workspaces": [
-    "./shinkai",
     "./utils",
     "./game-logic",
     "./api",

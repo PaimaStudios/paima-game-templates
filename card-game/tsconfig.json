@@ -11,7 +11,6 @@
     "middleware/build",
     "game-logic/build",
     "db/build",
-    "shinkai/build",
     "state-transition/build",
     "api/build",
     "middleware/packaged",

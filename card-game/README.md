@@ -1,17 +1,6 @@
-# Shinkai Game Node Template
+# Card-Game Node Template
 
 This documentation provides a basic overview of the template. Each module has its own `README` file with more detailed information.
-
-## Shinkai Setup.
-Setup your `.env.<NETWORK>` with the SHINKAI SPECIFIC SETUP
-
-Get SHINKAI_KEY and SHINKAI_PASSPHRASE by exporting your secrets from the Shinkai-UI
-```
-SHINKAI_URL="http://192.168.100.82:9550"
-SHINKAI_KEY="encrypted:0cab....d991"
-SHINKAI_PASSPHRASE="paimaengine"
-SHINKAI_RECEIVER_SUBIDENTITY="/agent/o_llama3_8b_instruct_q4_1"
-```
 
 ## Installation
 

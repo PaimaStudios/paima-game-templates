@@ -14,7 +14,6 @@
     "@game/db": "1.0.0",
     "@game/game-logic": "1.0.0",
     "@game/utils": "1.0.0",
-    "@game/shinkai": "1.0.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "node-fetch": "^3.3.2"

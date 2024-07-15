@@ -21,7 +21,7 @@ export const paima = {
         return data;
     },
     connectEvents: (callback: (block: number) => void) => {
-        const listener = new PaimaEventListener(process.env);
+        const listener = new PaimaEventListener();
         const event = new PaimaEventSystemSTFGlobal();
         event.callback = (event: PaimaEvent<STFEvent>, message: STFEvent) => { 
             console.log('socket', { event, message }) 
