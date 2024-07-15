@@ -164,18 +164,19 @@ async function aiCommand(input: AIInput, user: string, blockHeight: number, dbCo
         .filter((c): c is number => !!c)
         .reduce((a, b) => (a ?? 0) + (b ?? 0), 0);
 
-      updateGameParams.prize = (((score ?? 0) / 100) * maxTokens * (multiplier / 100)) | 0;
+      const prize = (((score ?? 0) / 100) * maxTokens * (multiplier / 100)) | 0;
+      updateGameParams.prize = prize;
 
       // Update user tokens
       const updateUserGlobalPositionParams: IUpdateUserGlobalPositionParams = {
-        change: maxTokens,
+        change: prize,
         wallet: user,
       };
       sqlUpdate.push([updateUserGlobalPosition, updateUserGlobalPositionParams]);
 
       // Update world tokens
       const updateTokensParams: IUpdateTokensParams = {
-        change: -1 * maxTokens,
+        change: -1 * prize,
       };
       sqlUpdate.push([updateTokens, updateTokensParams]);
       break;
