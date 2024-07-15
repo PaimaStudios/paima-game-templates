@@ -169,7 +169,7 @@ export class MonkeyScreen extends QFTScreen {
   public inputBribe: Input | null;
   constructor() {
     super();
-    const bg = Sprite.from('/assets/img/tiger.png');
+    const bg = Sprite.from('/assets/img/monkey.png');
     const input = createInput(QFTScreen.submitTalkCoord.x, QFTScreen.submitTalkCoord.y);
 
     const [button, text] = createButton(
