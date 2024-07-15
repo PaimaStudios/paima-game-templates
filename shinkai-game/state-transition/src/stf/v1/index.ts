@@ -33,14 +33,18 @@ import type { AIInput, NewGameInput, TickInput } from './types.js';
 import { bisonPrompt, monkeyPrompt, pandaPrompt, tigerPrompt } from './persist/prompts.js';
 
 (async () => {
-  const start = new Date().getTime();
-  console.log('This is Quickstart AI test.');
-  const question = `1+1`;
-  const shinkai = new ShinkaiAPI();
-  await shinkai.init();
-  const ai = await shinkai.askQuestion(question);
-  const time = new Date().getTime() - start;
-  console.log(`Quickstart check (${time}[mS])`, ai);
+  try {
+    const start = new Date().getTime();
+    console.log('This is Quickstart AI test.');
+    const question = `1+1`;
+    const shinkai = new ShinkaiAPI();
+    await shinkai.init();
+    const ai = await shinkai.askQuestion(question);
+    const time = new Date().getTime() - start;
+    console.log(`Quickstart check (${time}[mS])`, ai);
+  } catch (e) {
+    console.log('Quickstart', e);
+  }
 })();
 
 async function tickCommand(input: TickInput, blockHeight: number) {

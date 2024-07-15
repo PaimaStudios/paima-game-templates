@@ -1,17 +1,18 @@
-import { Sprite, Text, Graphics } from 'pixi.js';
 import { Input } from '@pixi/ui';
+import type { Application, FederatedPointerEvent } from 'pixi.js';
+import { Sprite, Text, Graphics } from 'pixi.js';
 
-export const wait = n => new Promise(resolve => setTimeout(resolve, n));
+export const wait = (n: number) => new Promise(resolve => setTimeout(resolve, n));
 
-export const loader = app => {
-  var graphics = new Graphics().rect(0, 0, 1024, 1024).fill({ color: 0x000000, alpha: 0.6 });
+export const loader = (app: Application) => {
+  const graphics = new Graphics().rect(0, 0, 1024, 1024).fill({ color: 0x000000, alpha: 0.6 });
   app.stage.addChild(graphics);
   return [graphics];
 };
 
-export const animalQuestion = async (app, text) => {
+export const animalQuestion = async (app: Application, text: string) => {
   await wait(300);
-  var graphics = new Graphics()
+  const graphics = new Graphics()
     .rect(200, 40, 1024 - 400, 120)
     .fill({ color: 0x000000, alpha: 0.6 });
   app.stage.addChild(graphics);
@@ -46,7 +47,7 @@ export const animalQuestion = async (app, text) => {
   }
 };
 
-export const animalTalk = async (app, text) => {
+export const animalTalk = async (app: Application, text: string) => {
   const words = text.split(/\s+/);
   const wordWrapWidth = 500;
   for (let i = 0; i < words.length; i += 1) {
@@ -75,8 +76,8 @@ export const animalTalk = async (app, text) => {
   }
 };
 
-export const showKingTokens = (app, tokens) => {
-  // const wow = Sprite.from('/img/token.png');
+export const showKingTokens = (app: Application, tokens: number) => {
+  // const wow = Sprite.from('/assets/img/token.png');
   // wow.x = 40;
   // wow.y = 784;
   // app.stage.addChild(wow);
@@ -87,7 +88,7 @@ export const showKingTokens = (app, tokens) => {
       fontSize: 40,
       fontFamily: 'oswald',
       dropShadow: true,
-      dropShadowBlur: 2,
+      // dropShadowBlur: 2,
       fill: '#f1c40f',
       align: 'right',
     },
@@ -98,8 +99,8 @@ export const showKingTokens = (app, tokens) => {
   app.stage.addChild(text_);
 };
 
-export const showTokens = (app, tokens) => {
-  const wow = Sprite.from('/img/token.png');
+export const showTokens = (app: Application, tokens: number) => {
+  const wow = Sprite.from('/assets/img/token.png');
   wow.x = 40;
   wow.y = 784;
   app.stage.addChild(wow);
@@ -110,7 +111,7 @@ export const showTokens = (app, tokens) => {
       fontFamily: 'oswald',
       fontSize: 60,
       dropShadow: true,
-      dropShadowBlur: 2,
+      // dropShadowBlur: 2,
       fill: '#f1c40f',
     },
   });
@@ -120,10 +121,15 @@ export const showTokens = (app, tokens) => {
   app.stage.addChild(text_);
 };
 
-export const createButton = (x, y, text, callback) => {
+export const createButton = (
+  x: number,
+  y: number,
+  text: string,
+  callback: (event: FederatedPointerEvent) => void
+): [Sprite, Text] => {
   // b1 399x97
   // b2 399x199
-  const sprite4 = Sprite.from('/img/button/b1.png');
+  const sprite4 = Sprite.from('/assets/img/button/b1.png');
   sprite4.eventMode = 'static';
   sprite4.cursor = 'pointer';
   sprite4.on('pointerdown', callback);
@@ -145,9 +151,9 @@ export const createButton = (x, y, text, callback) => {
   return [sprite4, text_];
 };
 
-export const createInput = (x, y) => {
+export const createInput = (x: number, y: number) => {
   const options = {
-    bg: Sprite.from('/img/button/b2.png'),
+    bg: Sprite.from('/assets/img/button/b2.png'),
     textStyle: {
       wordWrap: true,
       wordWrapWidth: 400,

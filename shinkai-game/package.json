@@ -8,7 +8,7 @@
   "scripts": {
     "initialize": "npm ci && cp .env.example ../.env.localhost && cp extensions.yml ../extensions.yml",
     "pack": "sh scripts/pack.sh",
-    "pack:middleware": "npm run build -w middleware/ && cp middleware/packaged/middleware.js frontend/assets/paimaMiddleware.js",
+    "pack:middleware": "npm run build -w middleware/ && cp middleware/packaged/middleware.js frontend/assets/js/paimaMiddleware.js",
     "build": "npx tsc --build tsconfig.build.json",
     "lint": "eslint --ext ts,tsx --ignore-path .gitignore .",
     "lint:fix": "eslint --ext ts,tsx --ignore-path .gitignore --fix .",
