@@ -1,7 +1,7 @@
 import { extractPublicKey } from '@metamask/eth-sig-util';
 import { EvmInjectedConnector } from '@paima/providers';
 import { initMiddlewareCore, paimaEndpoints } from '@paima/sdk/mw-core';
-import { Cache, CacheHeader, JsonProof, PrivateKey } from 'o1js';
+import { Cache, CacheHeader, DynamicProof, FeatureFlags, JsonProof, PrivateKey, VerificationKey, verify } from 'o1js';
 
 import { DelegationOrder, DelegationOrderProgram, DelegationOrderProof, Ecdsa, PublicKey, Secp256k1 } from '@game/mina-contracts';
 import { GAME_NAME, gameBackendVersion } from '@game/utils';
@@ -13,54 +13,74 @@ initMiddlewareCore(GAME_NAME, gameBackendVersion);
 
 const temporaryPrivateKey = PrivateKey.random();
 
-function openDb(name: string, version?: number) {
+function openIndexedDB(name: string, version?: number) {
   return new Promise((resolve, reject) => {
     var request = indexedDB.open(name, version);
     request.onerror = e => reject(e);
-    request.onsuccess = e => resolve(request.result);
+    request.onsuccess = () => resolve(request.result);
   });
 }
 
-class IndexedDbCache implements Cache {
-  canWrite: boolean = true;
+let opfsCacheInstance: Promise<Cache> | undefined;
+
+/** o1js cache that saves to zkcache/ in the origin-private file system. */
+export function opfsCache(): Promise<Cache> {
+  return opfsCacheInstance ??= OpfsCache.load();
+}
+
+class OpfsCache implements Cache {
+  readonly canWrite: true = true;
   debug?: boolean | undefined;
 
-  files = new Map<string, Uint8Array>();
-  dir?: FileSystemDirectoryHandle;
+  private readonly files: Map<string, Uint8Array>;
+  private readonly dir: FileSystemDirectoryHandle;
 
-  async load() {
+  static async load() {
+    const files = new Map<string, Uint8Array>();
     const root = await navigator.storage.getDirectory();
-    this.dir = await root.getDirectoryHandle('zkcache', { create: true });
-    for await (const [k, v] of this.dir.entries()) {
+    const dir = await root.getDirectoryHandle('zkcache', { create: true });
+    for await (const [k, v] of dir.entries()) {
       if (v instanceof FileSystemFileHandle) {
-        console.log('load', k);
-        this.files.set(k, new Uint8Array(await (await v.getFile()).arrayBuffer()));
+        files.set(k, new Uint8Array(await (await v.getFile()).arrayBuffer()));
       }
     }
+    return new OpfsCache({ files, dir });
+  }
+
+  constructor(params: {
+    files: Map<string, Uint8Array>;
+    dir: FileSystemDirectoryHandle;
+  }) {
+    this.files = params.files;
+    this.dir = params.dir;
   }
 
   read(header: CacheHeader): Uint8Array | undefined {
-    console.log('read', header.persistentId, this.files.has(header.persistentId));
+    if (this.debug) {
+      console.log('OpfsCache', 'read', header.persistentId, this.files.has(header.persistentId));
+    }
     return this.files.get(header.persistentId);
   }
+
   write(header: CacheHeader, value: Uint8Array): void {
     this.files.set(header.persistentId, value);
     (async () => {
-      const file = await this.dir!.getFileHandle(header.persistentId, { create: true });
-      //if (!file) throw new Error('!file');
+      const file = await this.dir.getFileHandle(header.persistentId, { create: true });
       const writeable = await file.createWritable();
-      //if (!writeable) throw new Error('!writeable');
       await writeable.write(value);
       await writeable.close();
-      console.log('write', header.persistentId, 'ok');
+      if (this.debug) {
+        console.log('OpfsCache', 'write', header.persistentId, 'len:', value.length);
+      }
     })();
   }
 }
-const cache = new IndexedDbCache();
 
 function isHex(x: string): x is `0x${string}` {
   return x.startsWith('0x');
 }
+
+let vk: VerificationKey;
 
 const endpoints = {
   ...paimaEndpoints,
@@ -68,14 +88,12 @@ const endpoints = {
   ...writeEndpoints,
 
   async compile() {
-    if (cache.files.size == 0) {
-      console.time('cache.load');
-      await cache.load();
-      console.timeEnd('cache.load');
-    }
+    //const cache = await opfsCache();
     console.time('DelegationOrderProgram.compile');
-    await DelegationOrderProgram.compile(/*{ cache }*/);
+    const { verificationKey } = await DelegationOrderProgram.compile(/*{ cache }*/);
     console.timeEnd('DelegationOrderProgram.compile');
+    vk = verificationKey;
+    return JSON.stringify(verificationKey).length;
   },
 
   async sign() {
@@ -111,7 +129,15 @@ const endpoints = {
   },
 
   async verify(proof: JsonProof) {
-    return DelegationOrderProgram.verify(await DelegationOrderProof.fromJSON(proof));
+    console.log('flags', await FeatureFlags.fromZkProgram(DelegationOrderProgram));
+    DynamicProof.featureFlags = FeatureFlags.allMaybe;
+    const dop = await DelegationOrderProof.fromJSON(proof);
+    console.log('dop', dop);
+    const staticVerify = await DelegationOrderProgram.verify(dop);
+    console.log('static', staticVerify);
+    //const dynamicVerify = await verify(dop, vk);
+    //console.log('dynamic', dynamicVerify);
+    return staticVerify /*&& dynamicVerify*/;
   }
 };
 

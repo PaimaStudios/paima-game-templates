@@ -13,13 +13,20 @@ self.addEventListener('message', e => {
   }
 });
 
-postMessage({ status: 'Compiling' });
-await endpoints.compile();
-postMessage({ status: 'Waiting for your signature' });
-const signature = await signaturePromise;
-postMessage({ status: 'Proving' });
-const proof = await endpoints.prove(signature);
-postMessage({ status: `Proof JSON size is ${JSON.stringify(proof).length}` })
-postMessage({ status: 'Verifying locally' });
-const ok = await endpoints.verify(proof);
-postMessage({ status: `Verify ${ok ? 'okay' : 'FAILED!'}` });
+try {
+  postMessage({ start: 'compile', log: 'Compiling' });
+  const vkLen = await endpoints.compile();
+  postMessage({ end: 'compile', log: `Verification key JSON size is ${vkLen} B` });
+  const signature = await signaturePromise;
+  postMessage({ start: 'prove', log: 'Proving' });
+  const proof = await endpoints.prove(signature);
+  postMessage({ end: 'prove', log: `Proof JSON size is ${JSON.stringify(proof).length} B` })
+  postMessage({ start: 'verify', log: 'Verifying locally' });
+  const ok = await endpoints.verify(proof);
+  postMessage({ end: 'verify', log: `Verify ${ok ? 'okay' : 'FAILED!'}` });
+
+  postMessage({ log: 'All done' });
+} catch (e) {
+  postMessage({ log: e });
+  throw e;
+}

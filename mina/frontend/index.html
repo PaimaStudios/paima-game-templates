@@ -7,19 +7,58 @@
         font-family: monospace;
       }
       #log th, #log td {
-        padding-right: 10px;
-        min-width: 3.7em;
+        padding-right: 1ch;
       }
     </style>
   </head>
   <body>
     <div>EVM to Mina delegation</div>
     <table id="log">
-      <tr><th align="right">delay</th><th align="right">time</th><th align="left">message</th></tr>
+      <tr><th align="right">duration</th><th align="left">message</th></tr>
+      <tr><td align="right" id="duration0"><script>window.start0 = performance.now();</script></td><td>Loading</td></tr>
     </table>
 
     <script type="module" async>
       import endpoints from './build/middleware/middleware.js';
+
+      // ----------------------------------------------------------------------
+      // Logging
+
+      class Chronometer {
+        constructor(target) {
+          this.target = target;
+          this.start = performance.now();
+          this.tick();
+        }
+        tick() {
+          this.target.innerText = ((performance.now() - this.start) / 1000).toFixed(1) + 's';
+          this.id = window.requestAnimationFrame(() => this.tick());
+        }
+        end() {
+          window.cancelAnimationFrame(this.id);
+        }
+      }
+
+      document.getElementById('duration0').innerText = ((performance.now() - window.start0) / 1000).toFixed(1) + 's';
+
+      function log(message) {
+        console.log(message);
+        document.getElementById('log').appendChild(elem('tr', {}, [
+          elem('td', { align: 'right' }, []),
+          elem('td', {}, [typeof message === 'string' || typeof message === 'number' ? message : JSON.stringify(message)]),
+        ]));
+      }
+
+      function logChrono(message) {
+        let target;
+        document.getElementById('log').appendChild(elem('tr', {}, [
+          target = elem('td', { align: 'right' }, []),
+          elem('td', {}, [message]),
+        ]));
+        return new Chronometer(target);
+      }
+
+      // ----------------------------------------------------------------------
 
       // https://github.com/ffmpegwasm/ffmpeg.wasm/issues/694
       function getWorkerURL(e) {
@@ -34,20 +73,6 @@
         return e;
       }
 
-      let start = new Date(), last = start;
-      function log(message) {
-        const now = new Date();
-        const diff = (now.valueOf() - last.valueOf()) / 1000;
-        last = now;
-
-        document.getElementById('log').appendChild(elem('tr', {}, [
-          elem('td', { align: 'right' }, [diff.toFixed(3)]),
-          elem('td', { align: 'right' }, [((now.valueOf() - start.valueOf()) / 1000).toFixed(3)]),
-          elem('td', {}, [message]),
-        ]));
-        return now;
-      }
-
       const worker = new Worker(getWorkerURL(new URL('./worker.js', window.location)));
       worker.addEventListener('error', e => {
         console.error('error', e);
@@ -55,16 +80,27 @@
       worker.addEventListener('messageerror', e => {
         console.error('messageerror', e);
       });
+      const chronos = {};
       worker.addEventListener('message', e => {
         console.log('message', e);
-        if ('status' in e.data) {
-          log(e.data.status);
+        if ('start' in e.data) {
+          chronos[e.data.start] = logChrono(e.data.log);
+        } else if ('end' in e.data) {
+          chronos[e.data.end].end();
+          delete chronos[e.data.end];
+          if ('log' in e.data) {
+            log(e.data.log);
+          }
+        } else if ('log' in e.data) {
+          log(e.data.log);
         }
       });
 
       //console.log(await endpoints.userWalletLogin({ mode: 0 }));
       try {
+        const chrono = logChrono("Waiting for your signature");
         const signature = await endpoints.sign();
+        chrono.end();
         worker.postMessage({ signature });
       } catch (err) {
         log(err);
