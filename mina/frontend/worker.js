@@ -1,4 +1,4 @@
-import endpoints from './build/middleware.js';
+import endpoints from './build/middleware/middleware.js';
 
 function future() {
   let resolve;
