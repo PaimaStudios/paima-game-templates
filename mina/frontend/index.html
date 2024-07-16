@@ -2,14 +2,21 @@
 <html>
   <head>
     <title>Doop</title>
+    <style>
+      #log {
+        font-family: monospace;
+      }
+      #log th, #log td {
+        padding-right: 10px;
+        min-width: 3.7em;
+      }
+    </style>
   </head>
   <body>
-    <div>
-      Web worker status:
-      <span id="status">
-        Loading...
-      </span>
-    </div>
+    <div>EVM to Mina delegation</div>
+    <table id="log">
+      <tr><th align="right">delay</th><th align="right">time</th><th align="left">message</th></tr>
+    </table>
 
     <script type="module" async>
       import endpoints from './build/middleware/middleware.js';
@@ -20,8 +27,28 @@
         return URL.createObjectURL(new Blob([t], { type: "text/javascript" }));
       }
 
+      function elem(ty, props, children) {
+        const e = document.createElement(ty);
+        Object.assign(e, props);
+        if (children) e.append(...children);
+        return e;
+      }
+
+      let start = new Date(), last = start;
+      function log(message) {
+        const now = new Date();
+        const diff = (now.valueOf() - last.valueOf()) / 1000;
+        last = now;
+
+        document.getElementById('log').appendChild(elem('tr', {}, [
+          elem('td', { align: 'right' }, [diff.toFixed(3)]),
+          elem('td', { align: 'right' }, [((now.valueOf() - start.valueOf()) / 1000).toFixed(3)]),
+          elem('td', {}, [message]),
+        ]));
+        return now;
+      }
+
       const worker = new Worker(getWorkerURL(new URL('./worker.js', window.location)));
-      let start = new Date();
       worker.addEventListener('error', e => {
         console.error('error', e);
       });
@@ -31,15 +58,17 @@
       worker.addEventListener('message', e => {
         console.log('message', e);
         if ('status' in e.data) {
-          let now = new Date();
-          document.getElementById('status').innerText = e.data.status + ' -- ' + (now.valueOf() - start.valueOf())/1000 + 's';
-          start = now;
+          log(e.data.status);
         }
       });
 
       //console.log(await endpoints.userWalletLogin({ mode: 0 }));
-      const signature = await endpoints.sign();
-      worker.postMessage({ signature });
+      try {
+        const signature = await endpoints.sign();
+        worker.postMessage({ signature });
+      } catch (err) {
+        log(err);
+      }
     </script>
   </body>
 </html>

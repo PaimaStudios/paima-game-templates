@@ -11,4 +11,5 @@ app.get('/', function (req, res, next) {
 express.static.mime.define({'application/javascript': ['js']});
 app.use(express.static('.'));
 
-app.listen(8081);
+const server = app.listen(8081);
+console.log(`http://localhost:${server.address().port}`);

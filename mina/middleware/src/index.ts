@@ -1,9 +1,9 @@
 import { extractPublicKey } from '@metamask/eth-sig-util';
 import { EvmInjectedConnector } from '@paima/providers';
 import { initMiddlewareCore, paimaEndpoints } from '@paima/sdk/mw-core';
-import { Cache, CacheHeader, PrivateKey } from 'o1js';
+import { Cache, CacheHeader, JsonProof, PrivateKey } from 'o1js';
 
-import { DelegationOrder, DelegationOrderProgram, Ecdsa, PublicKey, Secp256k1 } from '@game/mina-contracts';
+import { DelegationOrder, DelegationOrderProgram, DelegationOrderProof, Ecdsa, PublicKey, Secp256k1 } from '@game/mina-contracts';
 import { GAME_NAME, gameBackendVersion } from '@game/utils';
 
 import { queryEndpoints } from './endpoints/queries.js';
@@ -81,8 +81,9 @@ const endpoints = {
   async sign() {
     const provider = await EvmInjectedConnector.instance().connectSimple({ gameName: GAME_NAME, gameChainId: undefined });
     const target = temporaryPrivateKey.toPublicKey();
-    const data = DelegationOrder.bytesToSign(target);
-    const signature = await provider.signMessage(data);
+    const data = DelegationOrder.bytesToSign({ target });
+    const stringData = new TextDecoder().decode(data);
+    const signature = await provider.signMessage(stringData);
     const publicKey = extractPublicKey({ data, signature });
     if (!isHex(publicKey))
       throw new Error('!isHex(publicKey)');
@@ -106,7 +107,12 @@ const endpoints = {
     const proof = await DelegationOrderProgram.sign(order, signature);
     console.log('proof', proof);
     console.log('proof.toJSON()', proof.toJSON());
+    return proof.toJSON();
   },
+
+  async verify(proof: JsonProof) {
+    return DelegationOrderProgram.verify(await DelegationOrderProof.fromJSON(proof));
+  }
 };
 
 export * from './types.js';

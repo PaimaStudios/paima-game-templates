@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
-    "build": "mkdir -p build && ln -sf ../../middleware/packaged/ build/middleware",
+    "build": "mkdir -p build && ln -sfT ../../middleware/packaged/ build/middleware",
     "prestart": "npm run build"
   },
   "dependencies": {

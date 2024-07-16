@@ -18,5 +18,8 @@ await endpoints.compile();
 postMessage({ status: 'Waiting for your signature' });
 const signature = await signaturePromise;
 postMessage({ status: 'Proving' });
-await endpoints.prove(signature);
-postMessage({ status: 'All done' });
+const proof = await endpoints.prove(signature);
+postMessage({ status: `Proof JSON size is ${JSON.stringify(proof).length}` })
+postMessage({ status: 'Verifying locally' });
+const ok = await endpoints.verify(proof);
+postMessage({ status: `Verify ${ok ? 'okay' : 'FAILED!'}` });
