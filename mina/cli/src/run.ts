@@ -12,18 +12,10 @@
 import { DelegationOrder, DelegationOrderProgram, Ecdsa, Secp256k1, Sudoku, SudokuSolution, SudokuSolutionProof, SudokuZkApp, cloneSudoku, generateSudoku, solveSudoku } from '@game/mina-contracts';
 import paimaL2Abi from '@paima/evm-contracts/abi/PaimaL2Contract.json' with { type: 'json' };
 import assert from 'assert';
-import { AccountUpdate, Lightnet, Mina, PrivateKey, PublicKey, fetchAccount } from 'o1js';
+import { AccountUpdate, Lightnet, Mina, PrivateKey, PublicKey, fetchAccount, verify } from 'o1js';
 import { createWalletClient, getContract, http, toHex } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { anvil } from 'viem/chains';
-
-console.log('Event names:', Object.keys(SudokuZkApp.events));
-console.log('Compiling ...');
-console.time('compile');
-await SudokuSolution.compile();
-await SudokuZkApp.compile();
-await DelegationOrderProgram.compile();
-console.timeEnd('compile');
 
 /** Scaling factor from human-friendly MINA amount to raw integer fee amount. */
 const MINA_TO_RAW_FEE = 1_000_000_000;
@@ -37,6 +29,16 @@ Mina.setActiveInstance(
     lightnetAccountManager: lightnetAccountManagerEndpoint,
   })
 );
+
+// ----------------------------------------------------------------------------
+// Compile
+console.log('Event names:', Object.keys(SudokuZkApp.events));
+console.log('Compiling ...');
+console.time('compile');
+//await SudokuSolution.compile();
+//await SudokuZkApp.compile();
+const { verificationKey } = await DelegationOrderProgram.compile();
+console.timeEnd('compile');
 
 let lightnetAccount;
 try {
@@ -55,7 +57,7 @@ try {
     signer: Secp256k1.fromHex(viemAccount.publicKey),
   });
 
-  const delegationSignature = Ecdsa.fromHex(await viemAccount.signMessage({ message: { raw: DelegationOrder.bytesToSign(sender) } }));
+  const delegationSignature = Ecdsa.fromHex(await viemAccount.signMessage({ message: { raw: DelegationOrder.bytesToSign(delegationOrder) } }));
 
   console.time('DelegationOrderProgram.sign');
   const delegateProof = await DelegationOrderProgram.sign(
@@ -66,6 +68,8 @@ try {
 
   console.time('DelegationOrderProgram.verify');
   console.log(await DelegationOrderProgram.verify(delegateProof));
+  //console.log(await verify(delegateProof, verificationKey));
+  //console.log(await verify(delegateProof.toJSON(), verificationKey));
   console.timeEnd('DelegationOrderProgram.verify');
 
   // ----------------------------------------------------------------------------
