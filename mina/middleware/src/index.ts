@@ -1,15 +1,18 @@
 import { extractPublicKey } from '@metamask/eth-sig-util';
 import { EvmInjectedConnector } from '@paima/providers';
 import { initMiddlewareCore, paimaEndpoints } from '@paima/sdk/mw-core';
-import { Cache, CacheHeader, DynamicProof, FeatureFlags, JsonProof, PrivateKey, VerificationKey, verify } from 'o1js';
+import { Cache, CacheHeader, DynamicProof, FeatureFlags, JsonProof, PrivateKey, PublicKey, VerificationKey, verify } from 'o1js';
 
-import { DelegationOrder, DelegationOrderProgram, DelegationOrderProof, Ecdsa, PublicKey, Secp256k1 } from '@game/mina-contracts';
+import { delegateEvmToMina, Ecdsa, Secp256k1 } from '@game/mina-contracts';
 import { GAME_NAME, gameBackendVersion } from '@game/utils';
 
 import { queryEndpoints } from './endpoints/queries.js';
 import { writeEndpoints } from './endpoints/write.js';
 
 initMiddlewareCore(GAME_NAME, gameBackendVersion);
+
+const { DelegationOrder, DelegationOrderProgram, DelegationOrderProof } =
+  delegateEvmToMina(`${GAME_NAME} login: `);
 
 const temporaryPrivateKey = PrivateKey.random();
 

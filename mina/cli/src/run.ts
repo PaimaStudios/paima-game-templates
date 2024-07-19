@@ -9,13 +9,15 @@
  * Build the project: `$ npm run build`
  * Run with node:     `$ node build/src/run.js`.
  */
-import { DelegationOrder, DelegationOrderProgram, Ecdsa, Secp256k1, Sudoku, SudokuSolution, SudokuSolutionProof, SudokuZkApp, cloneSudoku, generateSudoku, solveSudoku } from '@game/mina-contracts';
+import { delegateEvmToMina, Ecdsa, Secp256k1, Sudoku, SudokuSolution, SudokuSolutionProof, SudokuZkApp, cloneSudoku, generateSudoku, solveSudoku } from '@game/mina-contracts';
 import paimaL2Abi from '@paima/evm-contracts/abi/PaimaL2Contract.json' with { type: 'json' };
 import assert from 'assert';
 import { AccountUpdate, Lightnet, Mina, PrivateKey, PublicKey, fetchAccount, verify } from 'o1js';
 import { createWalletClient, getContract, http, toHex } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { anvil } from 'viem/chains';
+
+const { DelegationOrder, DelegationOrderProgram, DelegationOrderProof } = delegateEvmToMina('Test: ');
 
 /** Scaling factor from human-friendly MINA amount to raw integer fee amount. */
 const MINA_TO_RAW_FEE = 1_000_000_000;
