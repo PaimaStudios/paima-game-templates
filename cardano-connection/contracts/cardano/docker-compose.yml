@@ -3,7 +3,7 @@ version: "3.5"
 # ./start.sh
 # ./yaci-cli.sh
 # create-node
-# 
+# start
 
 services:
   postgres:

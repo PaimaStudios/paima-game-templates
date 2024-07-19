@@ -21,7 +21,6 @@
   "devDependencies": {
     "esbuild-plugin-polyfill-node": "^0.3.0",
     "dotenv": "^16.3.1",
-    "esbuild": "^0.19.9",
-    "esbuild-plugin-d.ts": "^1.2.1"
+    "esbuild": "^0.19.9"
   }
 }
