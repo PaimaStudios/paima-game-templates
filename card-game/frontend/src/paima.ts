@@ -1,37 +1,56 @@
 import endpoints, { WalletMode } from '@game/middleware';
-import { PaimaEvent, PaimaEventListener, PaimaEventSystemSTFGlobal } from '@paima/sdk/events';
+import { PaimaEventManager, BuiltinEvents } from '@paima/sdk/events';
 
-
-type STFEvent = {block: number; emulated: number | undefined};
-// Paima Stuff
 export const paima = {
+  start: async () => {
+    const wallet = await endpoints.userWalletLogin({
+      mode: WalletMode.EvmInjected,
+      preferBatchedMode: false,
+    });
 
-    start: async () => {
-        const wallet = await endpoints.userWalletLogin({
-            mode: WalletMode.EvmInjected,
-            preferBatchedMode: false,
-        });
-        
-        console.log({ wallet });
-        if (!wallet.success) return null;
+    console.log({ wallet });
+    if (!wallet.success) return null;
+  },
+  sendTX: async (card1to9: number) => {
+    const data = await endpoints.click(card1to9);
+    return data;
+  },
+  connectEvents: (callback: (block: number) => void) => {
+    // const QuestCompletionEvent = genEvent({
+    //   name: 'QuestCompletion',
+    //   fields: [
+    //     {
+    //       name: 'questId',
+    //       type: Type.Integer(),
+    //       indexed: true,
+    //     },
+    //     {
+    //       name: 'playerId',
+    //       type: Type.Integer(),
+    //     },
+    //   ],
+    // } as const);
 
-    },
-    sendTX: async (card1to9: number) => {
-        const data = await endpoints.click(card1to9);
-        return data;
-    },
-    connectEvents: (callback: (block: number) => void) => {
-        const listener = new PaimaEventListener();
-        const event = new PaimaEventSystemSTFGlobal();
-        event.callback = (event: PaimaEvent<STFEvent>, message: STFEvent) => { 
-            console.log('socket', { event, message }) 
-            callback(message.block);
-        };
-        listener.subscribe(event);
-    },
-    getCards: async (): Promise<{card: number, upwards: boolean}[]> => {
-        const data = await endpoints.getGame();
-        if (!data.success) throw new Error('Cannot fetch');
-        return data.stats;
-    }
+    PaimaEventManager.Instance.subscribe(
+      {
+        topic: BuiltinEvents.RollupBlock,
+        // topic: {
+        //   ...QuestCompletionEvent,
+        //   path: ['questId'],
+        //   broker: PaimaEventBrokerNames.PaimaEngine,
+        //   type: Type.Object({ questId: Type.Integer(), playerId: Type.Integer() }),
+        // },
+        filter: { block: undefined }, // all quests
+      },
+      event => {
+        console.log(`EVENT: ${event.block} || ${event.emulated}`);
+        callback(event.block);
+      }
+    );
+  },
+  getCards: async (): Promise<{ card: number; upwards: boolean }[]> => {
+    const data = await endpoints.getGame();
+    if (!data.success) throw new Error('Cannot fetch');
+    return data.stats;
+  },
 };

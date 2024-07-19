@@ -8,7 +8,7 @@ import {
 
 import { buildEndpointErrorFxn } from '../errors';
 import type { PackedStats } from '../types';
-import { awaitBlock } from '@paima/sdk/events';
+import { awaitBlockWS } from '@paima/sdk/events';
 
 const getUserWallet = (errorFxn: EndpointErrorFxn): Result<string> => {
   try {
@@ -34,8 +34,8 @@ async function click(card: number): Promise<PackedStats<{ block: number }> | Fai
   try {
     const result = await postConciseData(conciseBuilder.build(), errorFxn);
     if (result.success) {
-      await awaitBlock({ blockHeight: result.blockHeight });
-      return { success: true, stats: { block: result.blockHeight } } 
+      await awaitBlockWS(result.blockHeight);
+      return { success: true, stats: { block: result.blockHeight } };
     } else {
       return errorFxn(PaimaMiddlewareErrorCode.ERROR_POSTING_TO_CHAIN);
     }

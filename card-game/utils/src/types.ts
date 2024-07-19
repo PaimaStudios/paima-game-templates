@@ -1,4 +1,4 @@
-import type { IGetUserStatsResult, IGetWorldStatsResult } from '@game/db';
+import type { IGetUserStatsResult } from '@game/db';
 import type { IGetBlockHeightsResult } from '@paima/db';
 import type { WalletAddress } from '@paima/sdk/utils';
 
@@ -28,5 +28,3 @@ export interface RoundStatusData extends BaseRoundStatus {
 }
 
 export type UserStats = IGetUserStatsResult;
-
-export type WorldStats = IGetWorldStatsResult;

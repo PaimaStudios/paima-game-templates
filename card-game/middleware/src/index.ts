@@ -6,11 +6,7 @@ import {
   postConciselyEncodedData,
 } from '@paima/sdk/mw-core';
 
-export {
-  PaimaEventListener,
-  PaimaEventSystemBatcherHashAddress,
-  PaimaEventSystemSTFGlobal,
-} from '@paima/sdk/events';
+export { PaimaEventManager } from '@paima/sdk/events';
 
 import { gameBackendVersion, GAME_NAME } from '@game/utils';
 
