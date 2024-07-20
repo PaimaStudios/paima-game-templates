@@ -15,7 +15,7 @@ export const paima = {
     const data = await endpoints.click(card1to9);
     return data;
   },
-  connectEvents: (callback: (block: number) => void) => {
+  connectEvents: async (callback: (block: number) => void) => {
     // const QuestCompletionEvent = genEvent({
     //   name: 'QuestCompletion',
     //   fields: [
@@ -31,7 +31,7 @@ export const paima = {
     //   ],
     // } as const);
 
-    PaimaEventManager.Instance.subscribe(
+    await PaimaEventManager.Instance.subscribe(
       {
         topic: BuiltinEvents.RollupBlock,
         // topic: {

@@ -1,7 +1,7 @@
 const path = require('path');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const webpack = require('webpack');
-require('dotenv').config({ path: `./../../.env.${process.env.NETWORK ?? "local"}` });
+require('dotenv').config({ path: `./../../.env.${process.env.NETWORK ?? "localhost"}` });
 
 if (!process.env.CHAIN_URI) throw new Error('Please check the .env.$NETWORK file');
 

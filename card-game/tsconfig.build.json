@@ -7,5 +7,6 @@
     { "path": "./api" },
     { "path": "./state-transition" },
     { "path": "./middleware" },
+    { "path": "./precompiles" },
   ]
 }

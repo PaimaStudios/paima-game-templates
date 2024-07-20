@@ -4,7 +4,6 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "serve": "http-server -p 8000",
         "dev": "npm run clean && webpack serve --mode development --config webpack.config.dev.cjs",
         "build": "npm run clean && webpack --mode production --config webpack.config.prod.cjs",
         "clean": "rm -f public/dist/*"    

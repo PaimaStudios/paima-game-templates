@@ -1,7 +1,7 @@
 const path = require('path');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const webpack = require('webpack');
-require('dotenv').config({ path: `./../../.env.${process.env.NETWORK ?? "local"}` });
+require('dotenv').config({ path: `./../../.env.${process.env.NETWORK ?? "localhost"}` });
 
 
 if (!process.env.CHAIN_URI || !process.env.BACKEND_URI || !process.env.CHAIN_ID)
