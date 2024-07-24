@@ -42,7 +42,7 @@ export const paima = {
         // },
         filter: { block: undefined }, // all quests
       },
-      event => {
+      (event: { block: number; emulated: any }) => {
         console.log(`EVENT: ${event.block} || ${event.emulated}`);
         callback(event.block);
       }
