@@ -6,7 +6,6 @@ import {
   CacheHeader,
   DynamicProof,
   FeatureFlags,
-  FlexibleProvablePure,
   JsonProof,
   PrivateKey,
   PublicKey,
@@ -27,9 +26,17 @@ const { DelegationOrder, DelegationOrderProgram, DelegationOrderProof } = delega
   `${GAME_NAME} login: `
 );
 
+function getWorkerURL(relative: string): string {
+  const absolute = new URL(relative, import.meta.url);
+  console.log(absolute);
+  const text = `window = self; import(${JSON.stringify(absolute)});`;
+  return URL.createObjectURL(new Blob([text], { type: "text/javascript" }));
+}
+
 interface TheThingStorage {
   privateKey?: string;
   signature?: string;
+  verificationKey?: string;
   proof?: JsonProof;
 }
 
@@ -40,8 +47,12 @@ class TheThing {
   publicKey: PublicKey;
   /** The signed order. May be rejected by user cancelling. */
   signature: Promise<string>;
+  /** The verification key which can be used by {@link DynamicProof}. */
+  verificationKey?: Promise<VerificationKey>;
   /** The serialized ZK proof of the signature. */
-  proof: Promise<JsonProof>;
+  proof?: Promise<JsonProof>;
+
+  private worker = new Worker(getWorkerURL('./worker.js'));
 
   constructor({
     storageKey,
@@ -68,7 +79,7 @@ class TheThing {
       localStorage.setItem(storageKey, JSON.stringify(storage));
     }
     const target = (this.publicKey = this.privateKey.toPublicKey());
-    console.log('private key =', target);
+    console.log('public key =', target);
 
     // 2. signature
     const signaturePromise = (this.signature = (async () => {
@@ -98,18 +109,34 @@ class TheThing {
       return storage.signature;
     })());
 
+    return;
+
+    // 3. verification key
+    const vkPromise = this.verificationKey = (async () => {
+      // Also do this if !storage.proof because we need to call .compile()
+      // before proving.
+      if (!storage.verificationKey || !storage.proof) {
+        console.log('vk being generated...');
+        // If the VK isn't in local storage, start compiling concurrently
+        // with waiting for the signature.
+
+        // TODO: Do this in a worker.
+        console.time('DelegationOrderProgram.compile');
+        const { verificationKey } = await DelegationOrderProgram.compile();
+        console.timeEnd('DelegationOrderProgram.compile');
+
+        storage.verificationKey = VerificationKey.toJSON(verificationKey);
+      }
+      console.log('verificationKey =', VerificationKey.fromJSON(storage.verificationKey));
+      return VerificationKey.fromJSON(storage.verificationKey);
+    })();
+
     // 3. proof
     this.proof = (async () => {
       if (!storage.proof) {
-        console.log('proof being generated...');
-        // If the proof isn't in local storage, start compiling concurrently
-        // with waiting for the signature.
-        // TODO: Store verification key.
-        // TODO: Do this in a worker.
-        console.time('DelegationOrderProgram.compile');
-        await DelegationOrderProgram.compile();
-        console.timeEnd('DelegationOrderProgram.compile');
+        await vkPromise;
 
+        console.log('proof being generated...');
         // Turn the signature into a DelegationOrder and sign it.
         const signature = await signaturePromise;
         const data = DelegationOrder.bytesToSign({ target });
@@ -135,10 +162,26 @@ class TheThing {
   }
 }
 
+function isHex(x: string): x is `0x${string}` {
+  return x.startsWith('0x');
+}
+
 const thing = new TheThing({
   storageKey: `${GAME_NAME} login: `,
   prefix: `${GAME_NAME} login: `,
 });
+(async () => {
+  console.log('X publicKey =', thing.publicKey);
+})();
+(async () => {
+  console.log('X vk =', await thing.verificationKey);
+})();
+(async () => {
+  console.log('X signature =', await thing.signature);
+})();
+(async () => {
+  console.log('X proof =', await thing.proof);
+})();
 
 function openIndexedDB(name: string, version?: number) {
   return new Promise((resolve, reject) => {
@@ -200,79 +243,10 @@ class OpfsCache implements Cache {
   }
 }
 
-function isHex(x: string): x is `0x${string}` {
-  return x.startsWith('0x');
-}
-
-let vk: VerificationKey;
-
-class SideloadedProgramProof extends DynamicProof<typeof DelegationOrder, void> {
-  static publicInputType = DelegationOrder;
-  static publicOutputType = Void;
-  static maxProofsVerified = 0 as const;
-}
-
 const endpoints = {
   ...paimaEndpoints,
   ...queryEndpoints,
   ...writeEndpoints,
-
-  async compile() {
-    //const cache = await opfsCache();
-    console.time('DelegationOrderProgram.compile');
-    const { verificationKey } = await DelegationOrderProgram.compile(/*{ cache }*/);
-    console.timeEnd('DelegationOrderProgram.compile');
-    vk = verificationKey;
-    return JSON.stringify(verificationKey).length;
-  },
-
-  async sign() {
-    const provider = await EvmInjectedConnector.instance().connectSimple({
-      gameName: GAME_NAME,
-      gameChainId: undefined,
-    });
-    const target = temporaryPrivateKey.toPublicKey();
-    const data = DelegationOrder.bytesToSign({ target });
-    const stringData = new TextDecoder().decode(data);
-    const signature = await provider.signMessage(stringData);
-    const publicKey = extractPublicKey({ data, signature });
-    if (!isHex(publicKey)) throw new Error('!isHex(publicKey)');
-    console.log('signature', signature);
-    console.log('publicKey', publicKey);
-    const signature2 = Ecdsa.fromHex(signature);
-    console.log('Ecdsa.fromHex', signature2);
-
-    // Stringify and destringify later because otherwise the main thread's
-    // Field class != the worker thread's Field class, and instanceof fails.
-    return { signature, target: target.toBase58(), signer: publicKey };
-  },
-
-  async prove(args: { signature: string; target: string; signer: `0x${string}` }) {
-    const order = new DelegationOrder({
-      target: PublicKey.fromBase58(args.target),
-      signer: Secp256k1.fromHex(args.signer),
-    });
-
-    const signature = Ecdsa.fromHex(args.signature);
-    const proof: DelegationOrderProof = await DelegationOrderProgram.sign(order, signature);
-    console.log('proof', proof);
-    console.log('proof.toJSON()', proof.toJSON());
-    return proof.toJSON();
-  },
-
-  async verify(jsonProof: JsonProof) {
-    console.log('flags', await FeatureFlags.fromZkProgram(DelegationOrderProgram));
-    DynamicProof.featureFlags = FeatureFlags.allMaybe;
-    const delegProof = await DelegationOrderProof.fromJSON(jsonProof);
-    console.log('delegProof', delegProof);
-    const staticVerify = await DelegationOrderProgram.verify(delegProof);
-    console.log('static', staticVerify);
-    const dynProof = await SideloadedProgramProof.fromJSON(jsonProof);
-    console.log('dynProof', dynProof);
-    const dynamicVerify = await verify(dynProof, vk);
-    console.log('dynamic', dynamicVerify);
-    return staticVerify /*&& dynamicVerify*/;
-  },
 };
 
 export * from './types.js';

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8">
     <title>Doop</title>
     <style>
       #log {
@@ -62,7 +63,7 @@
 
       // https://github.com/ffmpegwasm/ffmpeg.wasm/issues/694
       function getWorkerURL(e) {
-        const t = `window = self; import( "${e}" );`;
+        const t = `window = self; import(${JSON.stringify(e)});`;
         return URL.createObjectURL(new Blob([t], { type: "text/javascript" }));
       }
 
@@ -73,6 +74,7 @@
         return e;
       }
 
+      /*
       const worker = new Worker(getWorkerURL(new URL('./worker.js', window.location)));
       worker.addEventListener('error', e => {
         console.error('error', e);
@@ -95,16 +97,17 @@
           log(e.data.log);
         }
       });
+      */
 
       //console.log(await endpoints.userWalletLogin({ mode: 0 }));
-      try {
+      /*try {
         const chrono = logChrono("Waiting for your signature");
         const signature = await endpoints.sign();
         chrono.end();
         worker.postMessage({ signature });
       } catch (err) {
         log(err);
-      }
+      }*/
     </script>
   </body>
 </html>

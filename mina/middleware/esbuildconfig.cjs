@@ -1,8 +1,12 @@
 const esbuild = require("esbuild");
-const {
-  config,
-} = require("@paima/build-utils/middleware-esbuildconfig.template");
+const { config } = require("@paima/build-utils/middleware-esbuildconfig.template");
 esbuild.build({
+  ...config,
   sourcemap: true,
-  ...config
+  outfile: undefined,
+  outdir: './packaged',
+  entryPoints: {
+    'middleware': 'build/index.js',
+    'worker': 'build/worker.js',
+  },
 });
