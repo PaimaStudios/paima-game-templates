@@ -42,6 +42,13 @@
 
       document.getElementById('duration0').innerText = ((performance.now() - window.start0) / 1000).toFixed(1) + 's';
 
+      function elem(ty, props, children) {
+        const e = document.createElement(ty);
+        Object.assign(e, props);
+        if (children) e.append(...children);
+        return e;
+      }
+
       function log(message) {
         console.log(message);
         document.getElementById('log').appendChild(elem('tr', {}, [
@@ -59,55 +66,22 @@
         return new Chronometer(target);
       }
 
+      async function logChrono2(message, promise) {
+        const chrono = logChrono(message);
+        promise.then(() => chrono.end());
+        return promise;
+      }
+
       // ----------------------------------------------------------------------
 
-      // https://github.com/ffmpegwasm/ffmpeg.wasm/issues/694
-      function getWorkerURL(e) {
-        const t = `window = self; import(${JSON.stringify(e)});`;
-        return URL.createObjectURL(new Blob([t], { type: "text/javascript" }));
-      }
+      log('Mina public key: ' + endpoints.publicKey.toBase58());
+      const sig = logChrono2('Waiting for your signature', endpoints.signature);
+      const vk = await logChrono2('Compiling', endpoints.verificationKey);
+      log(`Verification key JSON size is ${JSON.stringify(vk).length} B`);
+      await sig;
+      const proof = await logChrono2('Proving', endpoints.proof);
+      log(`Proof JSON size is ${JSON.stringify(proof).length} B`);
 
-      function elem(ty, props, children) {
-        const e = document.createElement(ty);
-        Object.assign(e, props);
-        if (children) e.append(...children);
-        return e;
-      }
-
-      /*
-      const worker = new Worker(getWorkerURL(new URL('./worker.js', window.location)));
-      worker.addEventListener('error', e => {
-        console.error('error', e);
-      });
-      worker.addEventListener('messageerror', e => {
-        console.error('messageerror', e);
-      });
-      const chronos = {};
-      worker.addEventListener('message', e => {
-        console.log('message', e);
-        if ('start' in e.data) {
-          chronos[e.data.start] = logChrono(e.data.log);
-        } else if ('end' in e.data) {
-          chronos[e.data.end].end();
-          delete chronos[e.data.end];
-          if ('log' in e.data) {
-            log(e.data.log);
-          }
-        } else if ('log' in e.data) {
-          log(e.data.log);
-        }
-      });
-      */
-
-      //console.log(await endpoints.userWalletLogin({ mode: 0 }));
-      /*try {
-        const chrono = logChrono("Waiting for your signature");
-        const signature = await endpoints.sign();
-        chrono.end();
-        worker.postMessage({ signature });
-      } catch (err) {
-        log(err);
-      }*/
     </script>
   </body>
 </html>

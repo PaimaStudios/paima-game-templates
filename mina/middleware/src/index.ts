@@ -22,6 +22,7 @@ export type * from './types.js';
 
 initMiddlewareCore(GAME_NAME, gameBackendVersion);
 
+// https://github.com/ffmpegwasm/ffmpeg.wasm/issues/694
 function workerToBlobUrl(relative: string): string {
   const absolute = new URL(relative, import.meta.url);
   const text = `self.window = self; import(${JSON.stringify(absolute)});`;
@@ -63,7 +64,7 @@ class MinaWorker {
   }
 }
 
-interface TheThingStorage {
+interface MinaDelegationCacheStorage {
   privateKey?: string;
   signature?: string;
   verificationKey?: {
@@ -73,7 +74,7 @@ interface TheThingStorage {
   proof?: JsonProof;
 }
 
-export class TheThing {
+export class MinaDelegationCache {
   /** The randomly-generated Mina private key, for use. */
   readonly privateKey: PrivateKey;
   /** The corresponding public key, which gets signed. */
@@ -96,7 +97,7 @@ export class TheThing {
   }) {
     // Just reuse the prefix as the storage key.
     const storageKey = prefix;
-    const storage: TheThingStorage = JSON.parse(localStorage.getItem(storageKey) ?? '{}');
+    const storage: MinaDelegationCacheStorage = JSON.parse(localStorage.getItem(storageKey) ?? '{}');
     const { DelegationOrder } = delegateEvmToMina(prefix);
 
     // 1. key
@@ -182,7 +183,7 @@ export class TheThing {
   }
 }
 
-const thing = new TheThing({
+const thing = new MinaDelegationCache({
   prefix: `${GAME_NAME} login: `,
 });
 console.log('publicKey =', thing.publicKey.toBase58());
@@ -202,6 +203,11 @@ const endpoints = {
   ...paimaEndpoints,
   ...queryEndpoints,
   ...writeEndpoints,
+
+  publicKey: thing.publicKey,
+  signature: thing.signature,
+  verificationKey: thing.verificationKey,
+  proof: thing.proof,
 };
 
 export default endpoints;
