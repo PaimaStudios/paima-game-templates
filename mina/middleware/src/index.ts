@@ -3,8 +3,6 @@ import { delegateEvmToMina } from '@paima/mina-delegation';
 import { EvmInjectedConnector } from '@paima/providers';
 import { initMiddlewareCore, paimaEndpoints } from '@paima/sdk/mw-core';
 import {
-  Cache,
-  CacheHeader,
   DynamicProof,
   JsonProof,
   PrivateKey,
@@ -194,58 +192,6 @@ console.log('publicKey =', thing.publicKey.toBase58());
   const p = await thing.proof;
   console.log('proof =', JSON.stringify(p).length, ':', p);
 })();
-
-let opfsCacheInstance: Promise<Cache> | undefined;
-
-/** o1js cache that saves to zkcache/ in the origin-private file system. */
-export function opfsCache(): Promise<Cache> {
-  return (opfsCacheInstance ??= OpfsCache.load());
-}
-
-class OpfsCache implements Cache {
-  readonly canWrite: true = true;
-  debug?: boolean | undefined;
-
-  private readonly files: Map<string, Uint8Array>;
-  private readonly dir: FileSystemDirectoryHandle;
-
-  static async load() {
-    const files = new Map<string, Uint8Array>();
-    const root = await navigator.storage.getDirectory();
-    const dir = await root.getDirectoryHandle('zkcache', { create: true });
-    for await (const [k, v] of dir.entries()) {
-      if (v instanceof FileSystemFileHandle) {
-        files.set(k, new Uint8Array(await (await v.getFile()).arrayBuffer()));
-      }
-    }
-    return new OpfsCache({ files, dir });
-  }
-
-  constructor(params: { files: Map<string, Uint8Array>; dir: FileSystemDirectoryHandle }) {
-    this.files = params.files;
-    this.dir = params.dir;
-  }
-
-  read(header: CacheHeader): Uint8Array | undefined {
-    if (this.debug) {
-      console.log('OpfsCache', 'read', header.persistentId, this.files.has(header.persistentId));
-    }
-    return this.files.get(header.persistentId);
-  }
-
-  write(header: CacheHeader, value: Uint8Array): void {
-    this.files.set(header.persistentId, value);
-    (async () => {
-      const file = await this.dir.getFileHandle(header.persistentId, { create: true });
-      const writeable = await file.createWritable();
-      await writeable.write(value);
-      await writeable.close();
-      if (this.debug) {
-        console.log('OpfsCache', 'write', header.persistentId, 'len:', value.length);
-      }
-    })();
-  }
-}
 
 const endpoints = {
   ...paimaEndpoints,
