@@ -1,11 +1,13 @@
-import { GAME_NAME } from '@game/utils';
+import { JsonProof, PublicKey } from 'o1js';
+import { delegateEvmToMina, Ecdsa, Secp256k1 } from '@paima/mina-delegation';
 
-import { delegateEvmToMina, Ecdsa, Secp256k1, DelegationOrderProof } from '@game/mina-contracts';
-import { JsonProof, PublicKey, VerificationKey } from 'o1js';
+export type Methods = typeof methods;
+export type InitParams = {
+  prefix: string;
+};
 
-const { DelegationOrder, DelegationOrderProgram, DelegationOrderProof } = delegateEvmToMina(
-  `${GAME_NAME} login: `
-);
+const initParams = Object.fromEntries(new URLSearchParams(new URL(import.meta.url).hash.substring(1))) as InitParams;
+const { DelegationOrder, DelegationOrderProgram } = delegateEvmToMina(initParams.prefix);
 
 const methods = {
   async compile(): Promise<string> {
@@ -38,8 +40,6 @@ const methods = {
     return proof.toJSON();
   },
 } as const;
-
-export type Methods = typeof methods;
 
 self.addEventListener('message', async event => {
   const { id, method, args } = event.data;

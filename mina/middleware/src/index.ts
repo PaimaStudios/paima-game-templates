@@ -15,32 +15,33 @@ import { GAME_NAME, gameBackendVersion } from '@game/utils';
 import { queryEndpoints } from './endpoints/queries.js';
 import { writeEndpoints } from './endpoints/write.js';
 
-import type { Methods } from './worker.js';
+import type { Methods, InitParams } from './worker.js';
 
 export * from './types.js';
 export type * from './types.js';
 
 initMiddlewareCore(GAME_NAME, gameBackendVersion);
 
-function getWorkerURL(relative: string): string {
+function workerToBlobUrl(relative: string): string {
   const absolute = new URL(relative, import.meta.url);
   const text = `self.window = self; import(${JSON.stringify(absolute)});`;
   return URL.createObjectURL(new Blob([text], { type: 'text/javascript' }));
 }
 
-class WorkerClient {
-  private worker = new Worker(getWorkerURL('./worker.js'), { type: 'module' });
+class MinaWorker {
+  private readonly worker;
+  private readonly ready: Promise<unknown>;
+  private readonly pending = new Map<number, PromiseWithResolvers<unknown>>();
   private next = 1;
-  private pending = new Map<number, PromiseWithResolvers<unknown>>();
-  private ready: Promise<unknown>;
 
-  constructor() {
+  constructor(initParams: InitParams) {
     // Needed otherwise async import() of the real script will result in
     // onmessage event handler being added too late and our call being dropped.
     const readyEvent = Promise.withResolvers();
     this.pending.set(0, readyEvent);
     this.ready = readyEvent.promise;
 
+    this.worker = new Worker(workerToBlobUrl('./worker.js#' + new URLSearchParams(initParams)), { type: 'module' });
     this.worker.addEventListener('error', console.error);
     this.worker.addEventListener('messageerror', console.error);
     this.worker.addEventListener('message', event => {
@@ -72,19 +73,17 @@ interface TheThingStorage {
   proof?: JsonProof;
 }
 
-class TheThing {
+export class TheThing {
   /** The randomly-generated Mina private key, for use. */
-  privateKey: PrivateKey;
+  readonly privateKey: PrivateKey;
   /** The corresponding public key, which gets signed. */
-  publicKey: PublicKey;
+  readonly publicKey: PublicKey;
   /** The signed order. May be rejected by user cancelling. */
-  signature: Promise<string>;
+  readonly signature: Promise<string>;
   /** The verification key which can be used by {@link DynamicProof}. */
-  verificationKey: Promise<VerificationKey>;
+  readonly verificationKey: Promise<VerificationKey>;
   /** The serialized ZK proof of the signature. */
-  proof: Promise<JsonProof>;
-
-  private worker = new WorkerClient();
+  readonly proof: Promise<JsonProof>;
 
   constructor({
     prefix,
@@ -138,13 +137,19 @@ class TheThing {
       return storage.signature;
     })());
 
+    // Lazy-initialize the background thread only if we need it.
+    let worker: MinaWorker;
+    function getWorker() {
+      return worker ??= new MinaWorker({ prefix });
+    }
+
     // 3. verification key
     const vkPromise = (this.verificationKey = (async () => {
       // If the VK isn't in local storage, start compiling concurrently
       // with waiting for the signature. Also do this if !storage.proof because
       // we need to call .compile() before proving.
       if (!storage.verificationKey || !storage.proof) {
-        storage.verificationKey = JSON.parse(await this.worker.method('compile')());
+        storage.verificationKey = JSON.parse(await getWorker().method('compile')());
         localStorage.setItem(storageKey, JSON.stringify(storage));
       }
       // NB: fromJSON's signature accepts `string` but it actually wants an object,
@@ -162,7 +167,7 @@ class TheThing {
         // Turn the signature into a DelegationOrder and sign it.
         const data = DelegationOrder.bytesToSign({ target });
         const ethPublicKey = extractPublicKey({ data, signature });
-        const proof = await this.worker.method('sign')({
+        const proof = await getWorker().method('sign')({
           target: target.toBase58(),
           signer: ethPublicKey,
           signature: signature,
