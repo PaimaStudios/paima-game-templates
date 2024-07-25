@@ -23,7 +23,7 @@ const methods = {
     signature,
   }: {
     target: string;
-    signer: `0x${string}`;
+    signer: string;
     signature: string;
   }): Promise<JsonProof> {
     console.time('DelegationOrderProgram.sign');
@@ -42,11 +42,9 @@ const methods = {
 export type Methods = typeof methods;
 
 self.addEventListener('message', async event => {
-  //console.log('main->worker onmessage', event.data);
   const { id, method, args } = event.data;
   const handler = methods[method as keyof Methods] as (...args: unknown[]) => unknown;
   const result = await handler(...args);
-  //console.log('worker->main postMessage', { id, result });
   postMessage({ id, result });
 });
 postMessage({ id: 0 }); // indicate ready

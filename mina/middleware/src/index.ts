@@ -46,7 +46,6 @@ class WorkerClient {
     this.worker.addEventListener('error', console.error);
     this.worker.addEventListener('messageerror', console.error);
     this.worker.addEventListener('message', event => {
-      //console.log('worker->main onmessage', event.data);
       this.pending.get(event.data.id)?.resolve(event.data.result);
       this.pending.delete(event.data.id);
     });
@@ -90,25 +89,23 @@ class TheThing {
   private worker = new WorkerClient();
 
   constructor({
-    storageKey,
     prefix,
-    /** If provided, called when the user declines to sign. Resolve to ask again. */
     onRejectSignature,
   }: {
-    storageKey: string;
+    /** The proof namespace, like "My Game login: ". Shown in the signature prompt and used as the storage key. */
     prefix: string;
-    /** If provided, the user declining to sign. */
-    onRejectSignature?: (err: unknown) => Promise<void>;
+    /** If provided, called when the user declines to sign. */
+    onRejectSignature?: (err: unknown, askAgain: () => void) => void;
   }) {
+    // Just reuse the prefix as the storage key.
+    const storageKey = prefix;
     const storage: TheThingStorage = JSON.parse(localStorage.getItem(storageKey) ?? '{}');
-    //console.log(storageKey, 'has', Object.keys(storage));
     const { DelegationOrder } = delegateEvmToMina(prefix);
 
     // 1. key
     if (storage.privateKey) {
       this.privateKey = PrivateKey.fromBase58(storage.privateKey);
     } else {
-      //console.log('privateKey being generated...');
       this.privateKey = PrivateKey.random();
       storage.privateKey = this.privateKey.toBase58();
       localStorage.setItem(storageKey, JSON.stringify(storage));
@@ -118,7 +115,6 @@ class TheThing {
     // 2. signature
     const signaturePromise = (this.signature = (async () => {
       if (!storage.signature) {
-        //console.log('signature being generated...');
         const provider = await EvmInjectedConnector.instance().connectSimple({
           gameName: GAME_NAME,
           gameChainId: undefined,
@@ -131,7 +127,9 @@ class TheThing {
               storage.signature = await provider.signMessage(stringData);
               break;
             } catch (err) {
-              await onRejectSignature(err);
+              const { promise, resolve } = Promise.withResolvers<void>();
+              onRejectSignature(err, resolve);
+              await promise;
             }
           }
         } else {
@@ -148,7 +146,6 @@ class TheThing {
       // with waiting for the signature. Also do this if !storage.proof because
       // we need to call .compile() before proving.
       if (!storage.verificationKey || !storage.proof) {
-        //console.log('vk being generated...');
         storage.verificationKey = JSON.parse(await this.worker.method('compile')());
         localStorage.setItem(storageKey, JSON.stringify(storage));
       }
@@ -165,12 +162,8 @@ class TheThing {
         const signature = await signaturePromise;
 
         // Turn the signature into a DelegationOrder and sign it.
-        //console.log('proof being generated...');
         const data = DelegationOrder.bytesToSign({ target });
         const ethPublicKey = extractPublicKey({ data, signature });
-        if (!isHex(ethPublicKey)) {
-          throw new Error('!isHex(publicKey)');
-        }
         const proof = await this.worker.method('sign')({
           target: target.toBase58(),
           signer: ethPublicKey,
@@ -186,12 +179,7 @@ class TheThing {
   }
 }
 
-function isHex(x: string): x is `0x${string}` {
-  return x.startsWith('0x');
-}
-
 const thing = new TheThing({
-  storageKey: `${GAME_NAME} login: `,
   prefix: `${GAME_NAME} login: `,
 });
 console.log('publicKey =', thing.publicKey.toBase58());
@@ -206,14 +194,6 @@ console.log('publicKey =', thing.publicKey.toBase58());
   const p = await thing.proof;
   console.log('proof =', JSON.stringify(p).length, ':', p);
 })();
-
-function openIndexedDB(name: string, version?: number) {
-  return new Promise((resolve, reject) => {
-    var request = indexedDB.open(name, version);
-    request.onerror = e => reject(e);
-    request.onsuccess = () => resolve(request.result);
-  });
-}
 
 let opfsCacheInstance: Promise<Cache> | undefined;
 
