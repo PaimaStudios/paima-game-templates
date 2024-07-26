@@ -7,6 +7,6 @@ esbuild.build({
   outdir: './packaged',
   entryPoints: {
     'middleware': 'build/index.js',
-    'worker': 'build/worker.js',
+    'mina.worker': 'build/mina.worker.js',
   },
 });

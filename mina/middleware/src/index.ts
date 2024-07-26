@@ -15,7 +15,7 @@ import { GAME_NAME, gameBackendVersion } from '@game/utils';
 import { queryEndpoints } from './endpoints/queries.js';
 import { writeEndpoints } from './endpoints/write.js';
 
-import type { Methods, InitParams } from './worker.js';
+import type { Methods, InitParams } from './mina.worker.js';
 
 export * from './types.js';
 export type * from './types.js';
@@ -42,7 +42,7 @@ class MinaWorker {
     this.pending.set(0, readyEvent);
     this.ready = readyEvent.promise;
 
-    this.worker = new Worker(workerToBlobUrl('./worker.js#' + new URLSearchParams(initParams)), { type: 'module' });
+    this.worker = new Worker(workerToBlobUrl('./mina.worker.js#' + new URLSearchParams(initParams)), { type: 'module' });
     this.worker.addEventListener('error', console.error);
     this.worker.addEventListener('messageerror', console.error);
     this.worker.addEventListener('message', event => {
