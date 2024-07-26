@@ -17,7 +17,7 @@ import { createWalletClient, getContract, http, toHex } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { anvil } from 'viem/chains';
 
-const { DelegationOrder, DelegationOrderProgram, DelegationOrderProof } = delegateEvmToMina('Test: ');
+const { DelegationCommand, DelegationCommandProgram, DelegationCommandProof } = delegateEvmToMina('Test: ');
 
 /** Scaling factor from human-friendly MINA amount to raw integer fee amount. */
 const MINA_TO_RAW_FEE = 1_000_000_000;
@@ -39,7 +39,7 @@ console.log('Compiling ...');
 console.time('compile');
 //await SudokuSolution.compile();
 //await SudokuZkApp.compile();
-const { verificationKey } = await DelegationOrderProgram.compile();
+const { verificationKey } = await DelegationCommandProgram.compile();
 console.timeEnd('compile');
 
 let lightnetAccount;
@@ -54,25 +54,25 @@ try {
 
   // ----------------------------------------------------------------------------
   const viemAccount = privateKeyToAccount(generatePrivateKey());
-  const delegationOrder = new DelegationOrder({
+  const delegationOrder = new DelegationCommand({
     target: sender,
     signer: Secp256k1.fromHex(viemAccount.publicKey),
   });
 
-  const delegationSignature = Ecdsa.fromHex(await viemAccount.signMessage({ message: { raw: DelegationOrder.bytesToSign(delegationOrder) } }));
+  const delegationSignature = Ecdsa.fromHex(await viemAccount.signMessage({ message: { raw: DelegationCommand.bytesToSign(delegationOrder) } }));
 
-  console.time('DelegationOrderProgram.sign');
-  const delegateProof = await DelegationOrderProgram.sign(
+  console.time('DelegationCommandProgram.sign');
+  const delegateProof = await DelegationCommandProgram.sign(
     delegationOrder,
     delegationSignature,
   );
-  console.timeEnd('DelegationOrderProgram.sign');
+  console.timeEnd('DelegationCommandProgram.sign');
 
-  console.time('DelegationOrderProgram.verify');
-  console.log(await DelegationOrderProgram.verify(delegateProof));
+  console.time('DelegationCommandProgram.verify');
+  console.log(await DelegationCommandProgram.verify(delegateProof));
   //console.log(await verify(delegateProof, verificationKey));
   //console.log(await verify(delegateProof.toJSON(), verificationKey));
-  console.timeEnd('DelegationOrderProgram.verify');
+  console.timeEnd('DelegationCommandProgram.verify');
 
   // ----------------------------------------------------------------------------
   const sudoku = generateSudoku(0.5);

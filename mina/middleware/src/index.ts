@@ -98,7 +98,7 @@ export class MinaDelegationCache {
     // Just reuse the prefix as the storage key.
     const storageKey = prefix;
     const storage: MinaDelegationCacheStorage = JSON.parse(localStorage.getItem(storageKey) ?? '{}');
-    const { DelegationOrder } = delegateEvmToMina(prefix);
+    const { DelegationCommand } = delegateEvmToMina(prefix);
 
     // 1. key
     if (storage.privateKey) {
@@ -117,7 +117,7 @@ export class MinaDelegationCache {
           gameName: GAME_NAME,
           gameChainId: undefined,
         });
-        const data = DelegationOrder.bytesToSign({ target });
+        const data = DelegationCommand.bytesToSign({ target });
         const stringData = new TextDecoder().decode(data);
         if (onRejectSignature) {
           while (true) {
@@ -165,8 +165,8 @@ export class MinaDelegationCache {
         await vkPromise;
         const signature = await signaturePromise;
 
-        // Turn the signature into a DelegationOrder and sign it.
-        const data = DelegationOrder.bytesToSign({ target });
+        // Turn the signature into a DelegationCommand and sign it.
+        const data = DelegationCommand.bytesToSign({ target });
         const ethPublicKey = extractPublicKey({ data, signature });
         const proof = await getWorker().method('sign')({
           target: target.toBase58(),

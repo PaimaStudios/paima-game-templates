@@ -7,13 +7,13 @@ export type InitParams = {
 };
 
 const initParams = Object.fromEntries(new URLSearchParams(new URL(import.meta.url).hash.substring(1))) as InitParams;
-const { DelegationOrder, DelegationOrderProgram } = delegateEvmToMina(initParams.prefix);
+const { DelegationCommand, DelegationCommandProgram } = delegateEvmToMina(initParams.prefix);
 
 const methods = {
   async compile(): Promise<string> {
-    console.time('DelegationOrderProgram.compile');
-    const { verificationKey } = await DelegationOrderProgram.compile();
-    console.timeEnd('DelegationOrderProgram.compile');
+    console.time('DelegationCommandProgram.compile');
+    const { verificationKey } = await DelegationCommandProgram.compile();
+    console.timeEnd('DelegationCommandProgram.compile');
     // NB: do not use VerificationKey.toJSON as it just returns the "data" field
     // which is NOT the format that fromJSON expects.
     return JSON.stringify(verificationKey);
@@ -28,15 +28,15 @@ const methods = {
     signer: string;
     signature: string;
   }): Promise<JsonProof> {
-    console.time('DelegationOrderProgram.sign');
-    const proof = await DelegationOrderProgram.sign(
-      new DelegationOrder({
+    console.time('DelegationCommandProgram.sign');
+    const proof = await DelegationCommandProgram.sign(
+      new DelegationCommand({
         target: PublicKey.fromBase58(target),
         signer: Secp256k1.fromHex(signer),
       }),
       Ecdsa.fromHex(signature)
     );
-    console.timeEnd('DelegationOrderProgram.sign');
+    console.timeEnd('DelegationCommandProgram.sign');
     return proof.toJSON();
   },
 } as const;
