@@ -3,10 +3,4 @@ const { config } = require("@paima/build-utils/middleware-esbuildconfig.template
 esbuild.build({
   ...config,
   sourcemap: true,
-  outfile: undefined,
-  outdir: './packaged',
-  entryPoints: {
-    'middleware': 'build/index.js',
-    'mina.worker': 'build/mina.worker.js',
-  },
 });

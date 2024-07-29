@@ -16,18 +16,14 @@ import { queryEndpoints } from './endpoints/queries.js';
 import { writeEndpoints } from './endpoints/write.js';
 
 import type { Methods, InitParams } from './mina.worker.js';
+import minaWorkerCode from './mina.worker.txt';
 
 export * from './types.js';
 export type * from './types.js';
 
 initMiddlewareCore(GAME_NAME, gameBackendVersion);
 
-// https://github.com/ffmpegwasm/ffmpeg.wasm/issues/694
-function workerToBlobUrl(relative: string): string {
-  const absolute = new URL(relative, import.meta.url);
-  const text = `self.window = self; import(${JSON.stringify(absolute)});`;
-  return URL.createObjectURL(new Blob([text], { type: 'text/javascript' }));
-}
+const workerBlobUrl = URL.createObjectURL(new Blob([minaWorkerCode], { type: 'text/javascript' }));
 
 class MinaWorker {
   private readonly worker;
@@ -42,7 +38,7 @@ class MinaWorker {
     this.pending.set(0, readyEvent);
     this.ready = readyEvent.promise;
 
-    this.worker = new Worker(workerToBlobUrl('./mina.worker.js#' + new URLSearchParams(initParams)), { type: 'module' });
+    this.worker = new Worker(workerBlobUrl + '#' + new URLSearchParams(initParams), { type: 'module' });
     this.worker.addEventListener('error', console.error);
     this.worker.addEventListener('messageerror', console.error);
     this.worker.addEventListener('message', event => {
