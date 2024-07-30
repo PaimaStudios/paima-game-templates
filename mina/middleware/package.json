@@ -16,7 +16,7 @@
     "@game/game-logic": "1.0.0",
     "@game/mina-contracts": "^0.1.0",
     "@game/utils": "1.0.0",
-    "o1js": "^1.4.0"
+    "o1js": "^1.6.0"
   },
   "devDependencies": {
     "esbuild": "^0.19.11",
