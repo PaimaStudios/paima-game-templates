@@ -1,0 +1,22 @@
+{
+  "name": "@game/db",
+  "version": "1.0.0",
+  "description": "Database serve for Paima Studios [GAME_NAME]",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "start": "npx tsx src/index.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@electric-sql/pglite": "^0.1.5",
+    "pglite-server": "^0.1.2"
+  },
+  "devDependencies": {
+    "tsc-alias": "^1.8.8",
+    "tsx": "^4.10.2",
+    "typescript": "^5.4.5"
+  }
+}
