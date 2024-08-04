@@ -7,11 +7,16 @@ import { createScheduledData, type SQLUpdate } from '@paima/node-sdk/db';
 import type { ICreateGlobalUserStateParams, IFlipCardParams, IGetUserStatsResult } from '@game/db';
 import { getUserStats, createGlobalUserState, flipCard } from '@game/db';
 import type { ClickInput, TickInput } from './types.js';
+import { PrecompileNames } from '@game/precompiles';
 
 async function tickCommand(input: TickInput, blockHeight: number) {
   const sqlUpdate: SQLUpdate[] = [];
   sqlUpdate.push(
-    createScheduledData(`tick|${input.n + 1}`, blockHeight + 60 / ENV.BLOCK_TIME, 'what-goes-here')
+    createScheduledData(
+      `tick|${input.n + 1}`,
+      blockHeight + 60 / ENV.BLOCK_TIME,
+      PrecompileNames.GameTick
+    )
   );
   return sqlUpdate;
 }
