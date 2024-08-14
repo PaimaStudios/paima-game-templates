@@ -1,20 +1,22 @@
 {
-  "name": "@chess/middleware",
+  "name": "@game/middleware",
   "version": "1.0.0",
-  "description": "Middleware for Chess game, to be imported into any frontend",
+  "description": "Middleware for OpenWorld game, to be imported into any frontend",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "sh scripts/build.sh",
+    "build:testnet": "cross-env NETWORK=testnet sh scripts/build.sh",
+    "build:mainnet": "cross-env NETWORK=mainnet sh scripts/build.sh",
     "lint": "prettier --write '**/*.ts'"
   },
   "keywords": [],
   "author": "PaimaStudios",
   "dependencies": {
-    "@chess/game-logic": "1.0.0",
-    "@chess/utils": "1.0.0"
+    "@game/game-logic": "1.0.0",
+    "@game/utils": "1.0.0"
   },
   "devDependencies": {
     "dotenv": "^16.3.1",
