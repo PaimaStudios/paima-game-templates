@@ -18,6 +18,7 @@
       "lint:fix": "npm run lint -- --fix",
       "prettier": "prettier --config .prettierrc --ignore-path .prettierignore --check .",
       "prettier:fix": "npm run prettier -- --write",
+      "pretest": "npm run build",
       "test": "NODE_OPTIONS=--experimental-vm-modules DOTENV_CONFIG_PATH=../.env.localhost jest",
       "test:watch": "npm test -- --watch",
       "prestart": "npm run build && docker compose up --wait",
