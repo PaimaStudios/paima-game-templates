@@ -22,7 +22,7 @@ namespace Paima.Middleware
     // Integrate with JS following https://docs.unity3d.com/Manual/webgl-interactingwithbrowserscripting.html
 
     [DllImport("__Internal")]
-    private static extern int bridge_userWalletLogin(string walletType);
+    private static extern int bridge_userWalletLogin(int mode, string name, int preferBatchedMode);
     [DllImport("__Internal")]
     private static extern int bridge_getUserState(string walletAddress);
     [DllImport("__Internal")]
@@ -81,10 +81,10 @@ namespace Paima.Middleware
      * return the wallet information. If not, then the user will have a pop-up window which they will have to
      * confirm authorizing connecting their wallet to the game, before the data is returned.
      */
-    public static async Task<LoginResponse> UserWalletLogin(string walletType)
+    public static async Task<LoginResponse> UserWalletLogin(int mode, string name, bool preferBatchedMode)
     {
 #if JS_MIDDLEWARE
-      int answerId = bridge_userWalletLogin(walletType);
+      int answerId = bridge_userWalletLogin(mode, name, preferBatchedMode ? 1 : 0);
 #else
       int answerId = NewMockupAnswer();
 #endif
@@ -140,7 +140,7 @@ namespace Paima.Middleware
       if (!string.IsNullOrEmpty(jsonResponse))
       {
         answer = JsonUtility.FromJson<AsyncAnswer>(jsonResponse);
-        // skip redundant actionResponse type of responses 
+        // skip redundant actionResponse type of responses
         // (the most sensible check since unity's serialization utility replaces non existent values with fully initialized classes)
         if (!jsonResponse.Contains("\"actionResponse\":"))
         {
