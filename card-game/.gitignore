@@ -32,8 +32,8 @@ snapshots
 *.local
 
 .env
-.env.testnet
-.env.mainnet
+.env.*
+!.env.example
 
 # Frontend
 build.zip

@@ -1,5 +1,6 @@
-import endpoints, { WalletMode } from '@game/middleware';
+import endpoints from '@game/middleware';
 import { PaimaEventManager, BuiltinEvents } from '@paima/sdk/events';
+import { WalletMode } from '@paima/sdk/providers';
 
 export const paima = {
   start: async () => {
@@ -31,6 +32,10 @@ export const paima = {
     //   ],
     // } as const);
 
+    // await PaimaEventManager.Instance.sendMessage(
+    //   BuiltinEvents.RollupBlock,
+    //   { block: 'asdf' as any, } as any
+    // );
     await PaimaEventManager.Instance.subscribe(
       {
         topic: BuiltinEvents.RollupBlock,
@@ -51,6 +56,6 @@ export const paima = {
   getCards: async (): Promise<{ card: number; upwards: boolean }[]> => {
     const data = await endpoints.getGame();
     if (!data.success) throw new Error('Cannot fetch');
-    return data.stats;
+    return data.result;
   },
 };

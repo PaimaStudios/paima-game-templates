@@ -1,5 +1,5 @@
 import { builder } from '@paima/sdk/concise';
-import type { EndpointErrorFxn, FailedResult, PostDataResponse, Result } from '@paima/sdk/mw-core';
+import type { EndpointErrorFxn } from '@paima/sdk/mw-core';
 import {
   PaimaMiddlewareErrorCode,
   postConciseData,
@@ -7,8 +7,8 @@ import {
 } from '@paima/sdk/mw-core';
 
 import { buildEndpointErrorFxn } from '../errors';
-import type { PackedStats } from '../types';
 import { awaitBlockWS } from '@paima/sdk/events';
+import type { FailedResult, Result, SuccessfulResult } from '@paima/sdk/utils';
 
 const getUserWallet = (errorFxn: EndpointErrorFxn): Result<string> => {
   try {
@@ -22,7 +22,7 @@ const getUserWallet = (errorFxn: EndpointErrorFxn): Result<string> => {
   }
 };
 
-async function click(card: number): Promise<PackedStats<{ block: number }> | FailedResult> {
+async function click(card: number): Promise<SuccessfulResult<{ block: number }> | FailedResult> {
   const errorFxn = buildEndpointErrorFxn('joinWorld');
 
   const query = getUserWallet(errorFxn);
@@ -35,7 +35,7 @@ async function click(card: number): Promise<PackedStats<{ block: number }> | Fai
     const result = await postConciseData(conciseBuilder.build(), errorFxn);
     if (result.success) {
       await awaitBlockWS(result.blockHeight);
-      return { success: true, stats: { block: result.blockHeight } };
+      return { success: true, result: { block: result.blockHeight } };
     } else {
       return errorFxn(PaimaMiddlewareErrorCode.ERROR_POSTING_TO_CHAIN);
     }

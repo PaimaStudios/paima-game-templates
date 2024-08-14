@@ -1,5 +1,7 @@
-import { generatePrecompile } from '@paima/sdk/precompiles';
+import { generatePrecompiles } from '@paima/sdk/precompiles';
 
-export const precompiles = {
-  ...generatePrecompile('foo'),
-} as const;
+export enum PrecompileNames {
+  GameTick = 'game-tick',
+}
+
+export const precompiles = generatePrecompiles(PrecompileNames);
