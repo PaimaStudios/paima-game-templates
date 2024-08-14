@@ -35,7 +35,7 @@ export type IGetCardsParams = void;
 /** 'GetCards' return type */
 export interface IGetCardsResult {
   card: number;
-  upwards: boolean | null;
+  upwards: boolean;
 }
 
 /** 'GetCards' query type */

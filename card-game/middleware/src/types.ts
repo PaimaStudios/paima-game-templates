@@ -13,18 +13,3 @@ export interface RoundExecutionState extends BaseRoundStatus {
   roundEndsInBlocks: number;
   roundEndsInSeconds: number;
 }
-
-export interface PackedRoundExecutionState {
-  success: true;
-  round: RoundExecutionState;
-}
-
-export interface PackedUserStats {
-  success: true;
-  stats: UserStats;
-}
-
-export interface PackedStats<T> {
-  success: true;
-  stats: T;
-}

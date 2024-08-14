@@ -2,15 +2,21 @@
 -- recall: migrations need to be repackaged with `npm run pack` when changed
 INSERT INTO global_cards (card) VALUES (1),(2),(3),(4),(5),(6),(7),(8),(9);
 
-INSERT INTO scheduled_data (block_height, input_data )
-VALUES (
-  -- get the latest block + 1
-  coalesce((
-    SELECT block_height
-    FROM block_heights
-    ORDER BY block_height DESC
-    LIMIT 1
-  ), 0) + 2,
-  'tick|0'
-);
-
+-- todo: replace https://github.com/PaimaStudios/paima-engine/issues/414
+WITH new_ticks AS (
+  INSERT INTO scheduled_data (block_height, input_data )
+  VALUES (
+    -- get the latest block + 1
+    coalesce((
+      SELECT block_height
+      FROM block_heights
+      ORDER BY block_height DESC
+      LIMIT 1
+    ), 0) + 2,
+    'tick|0'
+  )
+  RETURNING id
+)
+INSERT INTO scheduled_data_precompile (id, precompile)
+SELECT id, 'game-tick'
+FROM new_ticks

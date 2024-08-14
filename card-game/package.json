@@ -17,6 +17,7 @@
     "test": "DOTENV_CONFIG_PATH=../.env.localhost jest",
     "test:watch": "npm test -- --watch",
     "database:up": "cd db/docker && docker compose up",
+    "database:up-new": "cd db && npm run start:pglite",
     "database:reset": "npx paima-reset-db",
     "compile:api": "npm run compile -w api/",
     "compile:db": "npm run compile -w db/",
@@ -58,13 +59,14 @@
     "jest": "^29.7.0",
     "prettier": "^3.2.4",
     "ts-jest": "^29.1.1",
+    "tsx": "^4.16.5",
     "typescript": "^5.3.3"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.0.2",
     "@paima/evm-contracts": "3.1.0",
-    "@paima/node-sdk": "2.4.0",
-    "@paima/sdk": "2.4.0"
+    "@paima/node-sdk": "4.0.0",
+    "@paima/sdk": "4.0.0"
   },
   "overrides": {
     "@nomicfoundation/hardhat-toolbox-viem": {

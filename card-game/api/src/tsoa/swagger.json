@@ -35,6 +35,69 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"FailedResult": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							false
+						],
+						"nullable": false
+					},
+					"errorMessage": {
+						"type": "string"
+					},
+					"errorCode": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"success",
+					"errorMessage"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"InternalServerErrorResult": {
+				"$ref": "#/components/schemas/FailedResult"
+			},
+			"FieldErrors": {
+				"description": "comes from the `tsoa` package, but we don't want it as a dependency just for this type",
+				"properties": {},
+				"type": "object",
+				"additionalProperties": {
+					"properties": {
+						"value": {},
+						"message": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"message"
+					],
+					"type": "object"
+				}
+			},
+			"ValidateErrorResult": {
+				"properties": {
+					"message": {
+						"type": "string",
+						"enum": [
+							"Validation Failed"
+						],
+						"nullable": false
+					},
+					"details": {
+						"$ref": "#/components/schemas/FieldErrors"
+					}
+				},
+				"required": [
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"IGetCardsResult": {
 				"description": "'GetCards' return type",
 				"properties": {
@@ -43,8 +106,7 @@
 						"format": "double"
 					},
 					"upwards": {
-						"type": "boolean",
-						"nullable": true
+						"type": "boolean"
 					}
 				},
 				"required": [
@@ -77,6 +139,32 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/GetUserStatsResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidateErrorResult"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerErrorResult"
+								},
+								"examples": {
+									"Example 1": {}
 								}
 							}
 						}
@@ -116,6 +204,32 @@
 										"stats"
 									],
 									"type": "object"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidateErrorResult"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalServerErrorResult"
+								},
+								"examples": {
+									"Example 1": {}
 								}
 							}
 						}
