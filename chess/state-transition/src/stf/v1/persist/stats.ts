@@ -5,6 +5,7 @@ import { createScheduledData } from '@paima/node-sdk/db';
 import type { WalletAddress } from '@paima/sdk/utils';
 import type { ConciseResult } from '@chess/utils';
 import type { UserStats } from '../types';
+import { PrecompileNames } from '@chess/precompiles';
 
 // Generate blank/empty user stats
 export function blankStats(wallet: string): SQLUpdate {
@@ -42,7 +43,11 @@ export function scheduleStatsUpdate(
   ratingChange: number,
   block_height: number
 ): SQLUpdate {
-  return createScheduledData(createStatsUpdateInput(wallet, result, ratingChange), block_height);
+  return createScheduledData(
+    createStatsUpdateInput(wallet, result, ratingChange),
+    block_height,
+    PrecompileNames.Default
+  );
 }
 
 // Create stats update input
