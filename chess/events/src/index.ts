@@ -22,7 +22,7 @@ export const CreatedLobby_v1 = genEvent({
       type: Type.Number(),
     },
   ],
-} as const);
+});
 
 export const CreatedLobby_v2 = genEvent({
   name: 'CreatedLobby',
@@ -77,7 +77,32 @@ export const MatchWon = genEvent({
   ],
 });
 
-const eventDefinitions = [CreatedLobby_v1, CreatedLobby_v2, JoinedLobby, MatchWon] as const;
+export const PlayerMoved = genEvent({
+  name: 'PlayerMoved',
+  fields: [
+    {
+      indexed: true,
+      name: 'lobbyId',
+      type: Type.String(),
+    },
+    {
+      name: 'move',
+      type: Type.String(),
+    },
+    {
+      name: 'round',
+      type: Type.Number(),
+    },
+  ],
+});
+
+const eventDefinitions = [
+  CreatedLobby_v1,
+  CreatedLobby_v2,
+  JoinedLobby,
+  MatchWon,
+  PlayerMoved,
+] as const;
 
 export const events = generateAppEvents(eventDefinitions);
 

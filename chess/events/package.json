@@ -13,7 +13,6 @@
   "keywords": [],
   "author": "PaimaStudios",
   "dependencies": {
-    "esrun": "^3.2.26",
     "mqtt": "5.8.1",
     "@sinclair/typebox": "0.33.4"
   }

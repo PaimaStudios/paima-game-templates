@@ -41,9 +41,9 @@ import { updateTimer, PRACTICE_BOT_ADDRESS, currentPlayer } from '@chess/utils';
 import type { SQLUpdate } from '@paima/node-sdk/db';
 import { calculateBestMove } from './persist/ai';
 import type { Events } from '@chess/events';
-import { MatchWon } from '@chess/events';
+import { MatchWon, PlayerMoved } from '@chess/events';
 import { encodeEventForStf } from '@paima/events';
-import { precompiles, PrecompileNames } from '@chess/precompiles';
+import { precompiles } from '@chess/precompiles';
 
 // State transition when a create lobby input is processed
 export const createdLobby = async (
@@ -117,6 +117,14 @@ export const submittedMoves = async (
     events
   );
 
+  events.push(
+    encodeEventForStf(precompiles.default, PlayerMoved, {
+      lobbyId: lobby.lobby_id,
+      move: input.pgnMove,
+      round: input.roundNumber,
+    })
+  );
+
   // In practice mode we will submit a move for the AI after user's input
   if (lobby.practice) {
     const nextRound = lobby.current_round + 1;
@@ -171,6 +179,14 @@ export const submittedBotMove = async (
     dbConn,
     prando,
     events
+  );
+
+  events.push(
+    encodeEventForStf(precompiles.default, PlayerMoved, {
+      lobbyId: lobby.lobby_id,
+      move: practiceMove,
+      round: input.roundNumber,
+    })
   );
 
   return [persistMoveTuple, ...roundExecutionTuples];
