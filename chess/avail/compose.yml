@@ -1,0 +1,35 @@
+services:
+  node:
+    build:
+      dockerfile: Dockerfile
+      target: node
+    ports:
+      - 30333:30333
+      - "9944:9944"
+      - "9933:9933"
+    healthcheck:
+      test: ["CMD", "sh", "/bin/health_check.sh"]
+      interval: 2s
+      timeout: 60s
+      retries: 30
+
+  lightbootstrap:
+    build:
+      dockerfile: Dockerfile
+      target: bootstrap
+    ports:
+      - "7700:7700"
+      - "39000:39000"
+
+  light:
+    build:
+      dockerfile: Dockerfile
+      target: light
+    depends_on:
+      node:
+        condition: service_healthy
+      lightbootstrap:
+        condition: service_started
+    ports:
+      - "7007:7007"
+    restart: on-failure:5 
