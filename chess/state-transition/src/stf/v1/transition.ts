@@ -118,10 +118,14 @@ export const submittedMoves = async (
   );
 
   events.push(
-    encodeEventForStf(precompiles.default, PlayerMoved, {
-      lobbyId: lobby.lobby_id,
-      move: input.pgnMove,
-      round: input.roundNumber,
+    encodeEventForStf({
+      from: precompiles.default,
+      topic: PlayerMoved,
+      data: {
+        lobbyId: lobby.lobby_id,
+        move: input.pgnMove,
+        round: input.roundNumber,
+      },
     })
   );
 
@@ -182,10 +186,14 @@ export const submittedBotMove = async (
   );
 
   events.push(
-    encodeEventForStf(precompiles.default, PlayerMoved, {
-      lobbyId: lobby.lobby_id,
-      move: practiceMove,
-      round: input.roundNumber,
+    encodeEventForStf({
+      from: precompiles.default,
+      topic: PlayerMoved,
+      data: {
+        lobbyId: lobby.lobby_id,
+        move: practiceMove,
+        round: input.roundNumber,
+      },
     })
   );
 
@@ -390,8 +398,13 @@ async function finalizeMatch(
 
   if (results[0] !== 't') {
     events.push(
-      encodeEventForStf(precompiles.default, MatchWon, {
-        winner: results[0] === 'w' ? matchEnvironment.user1.wallet : matchEnvironment.user2.wallet,
+      encodeEventForStf({
+        from: precompiles.default,
+        topic: MatchWon,
+        data: {
+          winner:
+            results[0] === 'w' ? matchEnvironment.user1.wallet : matchEnvironment.user2.wallet,
+        },
       })
     );
   }

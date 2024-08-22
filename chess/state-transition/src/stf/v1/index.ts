@@ -45,9 +45,13 @@ export default async function (
       };
     case 'joinedLobby':
       events.push(
-        encodeEventForStf(precompiles.default, JoinedLobby, {
-          lobbyId: parsed.lobbyID,
-          player: user,
+        encodeEventForStf({
+          from: precompiles.default,
+          topic: JoinedLobby,
+          data: {
+            lobbyId: parsed.lobbyID,
+            player: user,
+          },
         })
       );
       return {

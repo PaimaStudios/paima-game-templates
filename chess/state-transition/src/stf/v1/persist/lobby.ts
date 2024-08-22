@@ -26,19 +26,27 @@ export function persistLobbyCreation(
   const lobby_id = randomnessGenerator.nextString(12);
 
   events.push(
-    encodeEventForStf(precompiles.default, CreatedLobby_v1, {
-      rounds: inputData.numOfRounds,
-      user: player,
-      lobbyId: lobby_id,
+    encodeEventForStf({
+      from: precompiles.default,
+      topic: CreatedLobby_v1,
+      data: {
+        rounds: inputData.numOfRounds,
+        user: player,
+        lobbyId: lobby_id,
+      },
     })
   );
 
   events.push(
-    encodeEventForStf(precompiles.default, CreatedLobby_v2, {
-      rounds: inputData.numOfRounds,
-      user: player,
-      isPractice: inputData.isPractice,
-      lobbyId: lobby_id,
+    encodeEventForStf({
+      from: precompiles.default,
+      topic: CreatedLobby_v2,
+      data: {
+        rounds: inputData.numOfRounds,
+        user: player,
+        isPractice: inputData.isPractice,
+        lobbyId: lobby_id,
+      },
     })
   );
 
