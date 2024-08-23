@@ -1,9 +1,9 @@
 import type { EventQueue } from '@paima/events';
-import { generateAppEvents } from '@paima/events';
-import { genEvent } from '@paima/events';
+import { registerEvents } from '@paima/events';
+import { genEvent, toSignature, toSignatureHash } from '@paima/events';
 import { Type } from '@sinclair/typebox';
 
-export const CreatedLobby_v1 = genEvent({
+const CreatedLobby_v1 = genEvent({
   name: 'CreatedLobby',
   fields: [
     {
@@ -24,7 +24,7 @@ export const CreatedLobby_v1 = genEvent({
   ],
 });
 
-export const CreatedLobby_v2 = genEvent({
+const CreatedLobby_v2 = genEvent({
   name: 'CreatedLobby',
   fields: [
     {
@@ -50,7 +50,7 @@ export const CreatedLobby_v2 = genEvent({
   ],
 });
 
-export const JoinedLobby = genEvent({
+const JoinedLobby = genEvent({
   name: 'JoinedLobby',
   fields: [
     {
@@ -66,7 +66,7 @@ export const JoinedLobby = genEvent({
   ],
 });
 
-export const MatchWon = genEvent({
+const MatchWon = genEvent({
   name: 'MatchWon',
   fields: [
     {
@@ -77,7 +77,7 @@ export const MatchWon = genEvent({
   ],
 });
 
-export const PlayerMoved = genEvent({
+const PlayerMoved = genEvent({
   name: 'PlayerMoved',
   fields: [
     {

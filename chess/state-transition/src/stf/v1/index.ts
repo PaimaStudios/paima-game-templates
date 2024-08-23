@@ -11,9 +11,8 @@ import {
   scheduledData,
 } from './transition';
 import type { SQLUpdate } from '@paima/node-sdk/db';
-import type { Events } from '@chess/events';
+import { Events, events as GameEvents } from '@chess/events';
 import { precompiles } from '@chess/precompiles';
-import { JoinedLobby } from '@chess/events';
 import { encodeEventForStf } from '@paima/events';
 
 // entrypoint for your state machine
@@ -47,7 +46,7 @@ export default async function (
       events.push(
         encodeEventForStf({
           from: precompiles.default,
-          topic: JoinedLobby,
+          topic: GameEvents.JoinedLobby,
           data: {
             lobbyId: parsed.lobbyID,
             player: user,

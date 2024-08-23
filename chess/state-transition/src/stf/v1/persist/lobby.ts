@@ -11,7 +11,7 @@ import { persistNewRound } from './match.js';
 import type { SQLUpdate } from '@paima/node-sdk/db';
 import { initialState } from '@chess/game-logic';
 import { schedulePracticeMove } from './practice.js';
-import { Events, CreatedLobby_v1, CreatedLobby_v2 } from '@chess/events';
+import { Events, events as GameEvents } from '@chess/events';
 import { encodeEventForStf } from '@paima/events';
 import { precompiles } from '@chess/precompiles';
 
@@ -28,7 +28,7 @@ export function persistLobbyCreation(
   events.push(
     encodeEventForStf({
       from: precompiles.default,
-      topic: CreatedLobby_v1,
+      topic: GameEvents.CreatedLobby_v1,
       data: {
         rounds: inputData.numOfRounds,
         user: player,
@@ -40,7 +40,7 @@ export function persistLobbyCreation(
   events.push(
     encodeEventForStf({
       from: precompiles.default,
-      topic: CreatedLobby_v2,
+      topic: GameEvents.CreatedLobby_v2,
       data: {
         rounds: inputData.numOfRounds,
         user: player,

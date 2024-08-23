@@ -41,7 +41,7 @@ import { updateTimer, PRACTICE_BOT_ADDRESS, currentPlayer } from '@chess/utils';
 import type { SQLUpdate } from '@paima/node-sdk/db';
 import { calculateBestMove } from './persist/ai';
 import type { Events } from '@chess/events';
-import { MatchWon, PlayerMoved } from '@chess/events';
+import { events as GameEvents } from '@chess/events';
 import { encodeEventForStf } from '@paima/events';
 import { precompiles } from '@chess/precompiles';
 
@@ -120,7 +120,7 @@ export const submittedMoves = async (
   events.push(
     encodeEventForStf({
       from: precompiles.default,
-      topic: PlayerMoved,
+      topic: GameEvents.PlayerMoved,
       data: {
         lobbyId: lobby.lobby_id,
         move: input.pgnMove,
@@ -188,7 +188,7 @@ export const submittedBotMove = async (
   events.push(
     encodeEventForStf({
       from: precompiles.default,
-      topic: PlayerMoved,
+      topic: GameEvents.PlayerMoved,
       data: {
         lobbyId: lobby.lobby_id,
         move: practiceMove,
@@ -400,7 +400,7 @@ async function finalizeMatch(
     events.push(
       encodeEventForStf({
         from: precompiles.default,
-        topic: MatchWon,
+        topic: GameEvents.MatchWon,
         data: {
           winner:
             results[0] === 'w' ? matchEnvironment.user1.wallet : matchEnvironment.user2.wallet,
