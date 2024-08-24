@@ -11,15 +11,45 @@ import { persistNewRound } from './match.js';
 import type { SQLUpdate } from '@paima/node-sdk/db';
 import { initialState } from '@chess/game-logic';
 import { schedulePracticeMove } from './practice.js';
+import { Events, events as GameEvents } from '@chess/events';
+import { encodeEventForStf } from '@paima/events';
+import { precompiles } from '@chess/precompiles';
 
 // Persist creation of a lobby
 export function persistLobbyCreation(
   player: WalletAddress,
   blockHeight: number,
   inputData: CreatedLobbyInput,
-  randomnessGenerator: Prando
+  randomnessGenerator: Prando,
+  events: Events
 ): SQLUpdate[] {
   const lobby_id = randomnessGenerator.nextString(12);
+
+  events.push(
+    encodeEventForStf({
+      from: precompiles.default,
+      topic: GameEvents.CreatedLobby_v1,
+      data: {
+        rounds: inputData.numOfRounds,
+        user: player,
+        lobbyId: lobby_id,
+      },
+    })
+  );
+
+  events.push(
+    encodeEventForStf({
+      from: precompiles.default,
+      topic: GameEvents.CreatedLobby_v2,
+      data: {
+        rounds: inputData.numOfRounds,
+        user: player,
+        isPractice: inputData.isPractice,
+        lobbyId: lobby_id,
+      },
+    })
+  );
+
   const params = {
     lobby_id: lobby_id,
     num_of_rounds: inputData.numOfRounds,
