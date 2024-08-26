@@ -1,0 +1,355 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"IGetWorldStatsResult": {
+				"description": "'GetWorldStats' return type",
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"tokens": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id",
+					"tokens"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"WorldStats": {
+				"$ref": "#/components/schemas/IGetWorldStatsResult"
+			},
+			"GetWorldStateResponse": {
+				"properties": {
+					"stats": {
+						"items": {
+							"$ref": "#/components/schemas/WorldStats"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"stats"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetUserStatsResult": {
+				"description": "'GetUserStats' return type",
+				"properties": {
+					"tokens": {
+						"type": "number",
+						"format": "double"
+					},
+					"wallet": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"tokens",
+					"wallet"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserStats": {
+				"$ref": "#/components/schemas/IGetUserStatsResult"
+			},
+			"GetUserStatsResponse": {
+				"properties": {
+					"stats": {
+						"$ref": "#/components/schemas/UserStats"
+					}
+				},
+				"required": [
+					"stats"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetGameByIdResult": {
+				"description": "'GetGameById' return type",
+				"properties": {
+					"block_height": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"prize": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"stage": {
+						"type": "string"
+					},
+					"wallet": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"block_height",
+					"id",
+					"prize",
+					"stage",
+					"wallet"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "@game/api",
+		"version": "1.0.0",
+		"description": "Webserver REST API for the middleware to interact with game node.",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/world_state": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetWorldStateResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/user_stats": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetUserStatsResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "wallet",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/game/round": {
+			"get": {
+				"operationId": "GetRound",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"stats": {
+											"properties": {
+												"response": {
+													"type": "string",
+													"nullable": true
+												}
+											},
+											"required": [
+												"response"
+											],
+											"type": "object"
+										}
+									},
+									"required": [
+										"stats"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "game_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "stage",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/game": {
+			"get": {
+				"operationId": "GetGame",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"stats": {
+											"$ref": "#/components/schemas/IGetGameByIdResult"
+										}
+									},
+									"required": [
+										"stats"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "game_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/game/new": {
+			"get": {
+				"operationId": "GetNewGameX",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"stats": {
+											"$ref": "#/components/schemas/IGetGameByIdResult"
+										}
+									},
+									"required": [
+										"stats"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "wallet",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/game/tokens": {
+			"get": {
+				"operationId": "GetTokens",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"stats": {
+											"properties": {
+												"global": {
+													"type": "number",
+													"format": "double"
+												},
+												"tokens": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"global",
+												"tokens"
+											],
+											"type": "object"
+										}
+									},
+									"required": [
+										"stats"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "wallet",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

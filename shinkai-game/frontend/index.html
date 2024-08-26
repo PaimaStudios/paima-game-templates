@@ -1,0 +1,57 @@
+
+<!doctype html>
+<html>
+  <head>
+    <script src="https://pixijs.download/release/pixi.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@pixi/ui@2.1.2/dist/pixi-ui.min.js"></script>
+    <style>
+      canvas{ max-width: 100vw; max-height: 100vh; margin: auto; }
+    </style>
+  </head>
+  <body id="body" style="display: flex; overflow: hidden; background-color: #352a27;">
+    <script type="module">
+      import endpoints, { WalletMode } from './assets/js/paimaMiddleware.js';
+
+      document.Paima = {
+        start: async () => {
+          const wallet = await endpoints.userWalletLogin({
+            mode: WalletMode.EvmInjected,
+            preferBatchedMode: false,
+          });
+          console.log({ wallet });
+          if (!wallet.success) return null;
+          
+          const game = await endpoints.newGame();
+          // block_height: null
+          // id: 1
+          // prize: null
+          // stage: "new"
+          // wallet: "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+          const tokens = await endpoints.getTokens(wallet.result.walletAddress);
+          // tokens: 100
+          // global: 10000
+          return { 
+            wallet: wallet.result.walletAddress, 
+            game: game.stats, 
+            tokens: tokens.stats
+          };
+        },
+        ai: async(response, target, id) => {
+          const x = await endpoints.ai(target, id, response);
+          if (!x.success) return null;
+          const z = endpoints.getGameRound(id, target);    
+          return z;
+        },
+        game: async(id) => {
+          const x = await endpoints.getGame(id);
+          if (!x.success) return null;
+          return x;
+        }
+    };
+    </script>
+  </body>
+</html>
+
+<script type="module" src="/build/index.js" ></script>
+
+</html>
