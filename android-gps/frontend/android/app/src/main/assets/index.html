@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Paima Bridge</title>
+</head>
+<body>
+
+</body>
+<!-- <script type="module" src="./paimaMiddleware.js"></script> -->
+<script>
+    let loaded = false;
+    console.log('Bridge Started');
+    // Connect and interact with wallet
+    window.connect = (title, description, lat, lon) => {
+        console.log("Running on Bridge");
+        try {
+            window.Paima.connectAPIWallet(title, description, lat, lon)
+                .then(res => console.log("WALLET CONNECT", JSON.stringify(res)))
+                .catch(e => console.log('ERROR @connect', e.message()));
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    window.getLocations = () => {
+        const f = () => {
+            console.log("Running on Bridge");
+            try {
+                window.Paima.endpoints.getLocations()
+                    .then(res => {
+                        console.log("LOCATIONS", res);
+                        if (res.success) {
+                            // [
+                            //    {"latitude":40.7128,"longitude":-74.006,"title":"New York","description":"The Big Apple","wallet":"0x0"},
+                            //    {"latitude":40.717,"longitude":-74.0052,"title":"Location1","description":"Description","wallet":"0x0"},
+                            //    {"latitude":40.7118,"longitude":-74.0046,"title":"Location2","description":"Description","wallet":"0x0"}...
+                            // ]
+                            Android.locationUpdate(JSON.stringify(res.stats));
+                        }
+                     })
+                    .catch(e => console.log('ERROR @getLocations', e.message()));
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        if (loaded) f();
+        else {
+            console.log('Waiting for bridge to load');
+            setTimeout(window.getLocations, 100);
+        }
+    }
+
+    (async () => {
+        try {
+            const Paima = await import ('./paimaMiddleware.js')
+            console.log('Bridge Loaded');
+            loaded = true;
+        } catch (e) {
+            console.log('Bridge Error', e);
+        }
+    })();
+</script>
+</html>
