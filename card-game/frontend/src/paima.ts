@@ -1,6 +1,7 @@
 import endpoints from '@game/middleware';
 import { PaimaEventManager, BuiltinEvents } from '@paima/sdk/events';
 import { WalletMode } from '@paima/sdk/providers';
+import { events } from '@game/events';
 
 export const paima = {
   start: async () => {
@@ -16,7 +17,7 @@ export const paima = {
     const data = await endpoints.click(card1to9);
     return data;
   },
-  connectEvents: async (callback: (block: number) => void) => {
+  connectEvents: async (callback: (info: string) => void) => {
     // const QuestCompletionEvent = genEvent({
     //   name: 'QuestCompletion',
     //   fields: [
@@ -49,7 +50,17 @@ export const paima = {
       },
       event => {
         console.log(`EVENT: ${event.block} || ${event.emulated}`);
-        callback(event.block);
+        callback(`Rollup block: ${event.block}`);
+      }
+    );
+    await PaimaEventManager.Instance.subscribe(
+      {
+        topic: events.ClickEvent,
+        filter: { user: undefined }, // all users
+      },
+      event => {
+        console.log(`EVENT: ${event.time}`);
+        callback(`Click time: ${event.time}`);
       }
     );
   },

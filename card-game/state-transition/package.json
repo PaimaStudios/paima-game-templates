@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@game/db": "1.0.0",
+    "@game/events": "1.0.0",
     "@game/game-logic": "1.0.0",
     "@game/utils": "1.0.0",
     "cors": "^2.8.5",

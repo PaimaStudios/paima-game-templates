@@ -21,6 +21,9 @@
     },
     {
       "path": "../precompiles"
+    },
+    {
+      "path": "../events"
     }
   ]
 }

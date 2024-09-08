@@ -1,6 +1,6 @@
 import type { IGetUserStatsResult } from '@game/db';
 import type { IGetBlockHeightsResult } from '@paima/db';
-import type { WalletAddress } from '@paima/sdk/utils';
+import type { WalletAddress } from '@paima/sdk/chain-types';
 
 export interface RoundExecutorData {
   match_state: string;

@@ -32,11 +32,18 @@ const config: HardhatUserConfig = {
     },
     testnet: {
       url: testnet.CHAIN_URI ?? '',
-      accounts: testnet.DEPLOYER_PRIVATE_KEY == null ? [] : [testnet.DEPLOYER_PRIVATE_KEY],
+      accounts:
+        testnet.DEPLOYER_PRIVATE_KEY == null || testnet.DEPLOYER_PRIVATE_KEY === ''
+          ? []
+          : [testnet.DEPLOYER_PRIVATE_KEY],
+      allowUnlimitedContractSize: true,
     },
     production: {
       url: mainnet.CHAIN_URI ?? '',
-      accounts: mainnet.DEPLOYER_PRIVATE_KEY == null ? [] : [mainnet.DEPLOYER_PRIVATE_KEY],
+      accounts:
+        mainnet.DEPLOYER_PRIVATE_KEY == null || mainnet.DEPLOYER_PRIVATE_KEY === ''
+          ? []
+          : [mainnet.DEPLOYER_PRIVATE_KEY],
     },
   },
   dependencyCompiler: {
