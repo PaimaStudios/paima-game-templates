@@ -1,5 +1,5 @@
 import type { ConciseResult } from '@chess/utils';
-import type { WalletAddress } from '@paima/sdk/utils';
+import type { WalletAddress } from '@paima/sdk/chain-types';
 
 export type ParsedSubmittedInput =
   | CreatedLobbyInput

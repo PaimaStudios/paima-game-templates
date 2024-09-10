@@ -1,25 +1,25 @@
-import type { Pool } from 'pg';
-
+import type { PoolClient } from 'pg';
 import parse from './parser.js';
-import type Prando from '@paima/sdk/prando';
-import type { SubmittedChainData } from '@paima/sdk/utils';
+import type Prando from '@paima/sdk/prando.js';
 import {
   createdLobby,
   joinedLobby,
   closedLobby,
   submittedMoves,
   scheduledData,
-} from './transition';
-import type { SQLUpdate } from '@paima/node-sdk/db';
+} from './transition.js';
+import type { SQLUpdate } from '@paima/node-sdk/db.js';
+import { PreExecutionBlockHeader, STFSubmittedData } from '@paima/sdk/chain-types.js';
 
 // entrypoint for your state machine
 export default async function (
-  inputData: SubmittedChainData,
-  blockHeight: number,
+  inputData: STFSubmittedData,
+  blockHeader: PreExecutionBlockHeader,
   randomnessGenerator: Prando,
-  dbConn: Pool
-): Promise<SQLUpdate[]> {
+  dbConn: PoolClient
+): Promise<{ stateTransitions: SQLUpdate[]; events: [] }> {
   console.log(inputData, 'parsing input data');
+  // @ts-ignore
   const user = inputData.userAddress.toLowerCase();
   const parsed = parse(inputData.inputData);
   console.log(`Processing input string: ${inputData.inputData}`);
@@ -27,18 +27,46 @@ export default async function (
 
   switch (parsed.input) {
     case 'createdLobby':
-      return createdLobby(user, blockHeight, parsed, randomnessGenerator);
+      return {
+        stateTransitions: await createdLobby(
+          user,
+          blockHeader.blockHeight,
+          parsed,
+          randomnessGenerator
+        ),
+        events: [],
+      };
     case 'joinedLobby':
-      return joinedLobby(user, blockHeight, parsed, dbConn);
+      return {
+        stateTransitions: await joinedLobby(user, blockHeader.blockHeight, parsed, dbConn),
+        events: [],
+      };
     case 'closedLobby':
-      return closedLobby(user, parsed, dbConn);
+      return { stateTransitions: await closedLobby(user, parsed, dbConn), events: [] };
     case 'submittedMoves':
-      return submittedMoves(user, blockHeight, parsed, dbConn, randomnessGenerator);
+      return {
+        stateTransitions: await submittedMoves(
+          user,
+          blockHeader.blockHeight,
+          parsed,
+          dbConn,
+          randomnessGenerator
+        ),
+        events: [],
+      };
     case 'scheduledData': {
-      if (!inputData.scheduled) return [];
-      return scheduledData(blockHeight, parsed, dbConn, randomnessGenerator);
+      if (!inputData.scheduled) return { stateTransitions: [], events: [] };
+      return {
+        stateTransitions: await scheduledData(
+          blockHeader.blockHeight,
+          parsed,
+          dbConn,
+          randomnessGenerator
+        ),
+        events: [],
+      };
     }
     default:
-      return [];
+      return { stateTransitions: [], events: [] };
   }
 }

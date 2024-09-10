@@ -56,13 +56,13 @@
     "prettier": "^3.2.4",
     "ts-jest": "^29.1.1",
     "typescript": "^5.3.3",
-    "@paima/build-utils": "2.2.0"
+    "@paima/build-utils": "4.0.0"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.6.0",
-    "@paima/evm-contracts": "1.1.0",
-    "@paima/sdk": "2.2.0",
-    "@paima/node-sdk": "2.2.0"
+    "@openzeppelin/contracts": "^5.0.2",
+    "@paima/evm-contracts": "3.1.0",
+    "@paima/sdk": "5.0.0",
+    "@paima/node-sdk": "5.0.0"
   },
   "overrides": {
     "@nomicfoundation/hardhat-toolbox-viem": {

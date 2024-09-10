@@ -6,15 +6,15 @@ import type {
   IGetAllPaginatedUserLobbiesResult,
   LobbyStatus,
 } from '@chess/db';
-import type { WalletAddress } from '@paima/sdk/utils';
+import type { WalletAddress } from '@paima/sdk/chain-types.js';
 type IGetBlockHeightsResult = {
   block_height: number;
-  done: boolean;
   seed: string;
 };
 export type ConciseResult = 'w' | 't' | 'l';
 export type ExpandedResult = 'win' | 'tie' | 'loss';
 export type MatchResult = [ConciseResult, ConciseResult];
+export { LobbyStatus } from '@chess/db';
 
 export interface MatchWinnerResponse {
   match_status?: LobbyStatus;
