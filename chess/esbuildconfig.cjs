@@ -1,14 +1,15 @@
 const esbuild = require("esbuild");
-const {
-  generateConfig,
-} = require("@paima/build-utils/standalone-esbuildconfig.template");
 
-const { config, outFiles, workspace } = generateConfig(
-  "api",
-  "state-transition"
-);
-esbuild.build(config);
+esbuild.build({
+  platform: "node",
+  entryPoints: [`game/src/index.ts`],
+  bundle: true,
+  outfile: `packaged/index.cjs`,
+  format: "cjs",
+  treeShaking: true,
+  external: ["pg-native"],
+});
 
-console.log(
-  `\x1b[32m${workspace}\x1b[0m bundled to packaged/${outFiles[workspace]}`
-);
+const { copyAssetsForBundle } = require("@paima/engine/scripts/copyAssets.cjs");
+
+copyAssetsForBundle("packaged");

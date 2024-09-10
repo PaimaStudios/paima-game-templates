@@ -21,7 +21,8 @@
     "compile:api": "npm run compile -w api/",
     "compile:db": "npm run compile -w db/",
     "chain:start": "rm -rf  ./contracts/evm/ignition/deployments/chain-31337 && npx hardhat node",
-    "chain:deploy": "npx hardhat ignition deploy ./contracts/evm/ignition/modules/deploy.ts --parameters ./contracts/evm/ignition/parameters.json --network ${NETWORK:-localhost}"
+    "chain:deploy": "npx hardhat ignition deploy ./contracts/evm/ignition/modules/deploy.ts --parameters ./contracts/evm/ignition/parameters.json --network ${NETWORK:-localhost}",
+    "dev": "npm run pack && DOTENV_CONFIG_PATH=../.env.localhost node --require dotenv/config ./packaged/index.cjs"
   },
   "workspaces": [
     "./db",
@@ -29,7 +30,9 @@
     "./game-logic",
     "./api",
     "./state-transition",
-    "./middleware"
+    "./middleware",
+    "./game",
+    "./precompiles"
   ],
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition-viem": "^0.13.1",
