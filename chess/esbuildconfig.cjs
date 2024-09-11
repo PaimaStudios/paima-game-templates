@@ -10,6 +10,8 @@ esbuild.build({
   external: ["pg-native"],
 });
 
-const { copyAssetsForBundle } = require("@paima/engine/scripts/copyAssets.cjs");
+const {
+  copyAssetsForBundle,
+} = require("@paima/build-utils/scripts/copyAssets.cjs");
 
 copyAssetsForBundle("packaged");
