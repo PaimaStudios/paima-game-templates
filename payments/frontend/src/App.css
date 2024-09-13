@@ -1,0 +1,175 @@
+body {
+  background-color: #2D2441;
+  color: white;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+.App {
+  text-align: center;
+  padding: 20px;
+}
+
+.item-list {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.item {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin: 10px;
+  width: 200px;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.item:hover {
+  background-color: #000921;
+}
+
+.item img {
+  max-width: 100%;
+  height: auto;
+}
+
+.cart {
+  margin-top: 20px;
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+}
+
+.modal-content {
+  background-color: #2D2441;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 540px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+}
+
+.modal-content button {
+  margin-top: 10px;
+}
+
+iframe {
+  border: none;
+  margin-top: 10px;
+  height: 500px;
+  width: 400px;
+}
+
+.transakIframe {
+  height: 100%; 
+  width: 100%; 
+  border: none;
+}
+
+.material-button {
+  background-color: #2196F3;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.material-button:hover {
+  background-color: #1976D2;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.material-button:active {
+  background-color: #0D47A1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.material-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.3);
+}
+
+.fetched-items {
+  margin: 20px 0;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  color: black;
+}
+
+.fetched-items h2 {
+  margin-bottom: 10px;
+}
+
+.fetched-items ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.fetched-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.fetched-item-image {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.fetched-item-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.fetched-item-name {
+  font-weight: bold;
+}
+
+.fetched-item-amount {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.order-data {
+  text-align: left;
+  color: black;
+  background-color: #f4f4f4;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 300px;
+  overflow-y: auto;
+}
