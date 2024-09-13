@@ -158,3 +158,18 @@ iframe {
   font-size: 0.9em;
   color: #666;
 }
+
+.order-data {
+  text-align: left;
+  color: black;
+  background-color: #f4f4f4;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 300px;
+  overflow-y: auto;
+}

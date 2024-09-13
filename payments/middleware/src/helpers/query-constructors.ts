@@ -1,6 +1,9 @@
 import type { WalletAddress } from '@paima/sdk/utils';
-import type { QueryOptions } from '@paima/sdk/mw-core';
-import { buildBackendQuery } from '@paima/sdk/mw-core';
+import { buildQuery, getBackendUri, type QueryOptions } from '@paima/sdk/mw-core';
+
+function buildBackendQuery(endpoint: string, options: QueryOptions) {
+  return `${getBackendUri()}/${buildQuery(endpoint, options)}`;
+}
 
 export function backendQueryUserStats(wallet: WalletAddress): string {
   const endpoint = 'user_stats';
@@ -32,4 +35,3 @@ export function backendQueryMatchExecutor(lobbyID: string): string {
   };
   return buildBackendQuery(endpoint, options);
 }
-

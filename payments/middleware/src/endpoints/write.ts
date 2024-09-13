@@ -1,5 +1,5 @@
 import { builder } from '@paima/sdk/concise';
-import type { EndpointErrorFxn, FailedResult, PostDataResponse, Result } from '@paima/sdk/mw-core';
+import type { EndpointErrorFxn } from '@paima/sdk/mw-core';
 import {
   PaimaMiddlewareErrorCode,
   postConciseData,
@@ -10,6 +10,7 @@ import {
 import { buildEndpointErrorFxn } from '../errors';
 import { queryEndpoints } from './queries';
 import type { PackedStats } from '../types';
+import type { FailedResult, Result } from '@paima/sdk/utils';
 
 const getUserWallet = (errorFxn: EndpointErrorFxn): Result<string> => {
   try {

@@ -1,11 +1,12 @@
-import type { FailedResult } from '@paima/sdk/mw-core';
-import { buildBackendQuery, PaimaMiddlewareErrorCode } from '@paima/sdk/mw-core';
-
-import type { UserStats } from '@game/utils';
-
+import type { QueryOptions } from '@paima/sdk/mw-core';
+import { buildQuery, getBackendUri, PaimaMiddlewareErrorCode } from '@paima/sdk/mw-core';
 import { buildEndpointErrorFxn } from '../errors';
-import type { PackedStats, PackedUserStats } from '../types';
+import type { PackedStats } from '../types';
+import type { FailedResult } from '@paima/sdk/utils';
 
+function buildBackendQuery(endpoint: string, options: QueryOptions) {
+  return `${getBackendUri()}/${buildQuery(endpoint, options)}`;
+}
 
 async function getLocations(): Promise<PackedStats<any> | FailedResult> {
   const errorFxn = buildEndpointErrorFxn('getWorldStats');
