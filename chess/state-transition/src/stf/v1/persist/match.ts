@@ -15,7 +15,8 @@ import {
   executedRound,
 } from '@chess/db';
 import type { MatchEnvironment, MatchState } from '@chess/game-logic';
-import { ENV, type WalletAddress } from '@paima/sdk/utils';
+import { ENV } from '@paima/sdk/utils';
+import type { WalletAddress } from '@paima/sdk/chain-types';
 import type { ConciseResult, ExpandedResult, MatchResult, Timer } from '@chess/utils';
 import { scheduleZombieRound, deleteZombieRound } from './zombie.js';
 import type { INewFinalStateParams } from '@chess/db';

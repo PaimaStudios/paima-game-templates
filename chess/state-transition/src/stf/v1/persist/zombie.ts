@@ -3,10 +3,16 @@ import { createScheduledData, deleteScheduledData } from '@paima/node-sdk/db';
 import { calculateBestMove } from './ai';
 import type { IGetLobbyByIdResult } from '@chess/db';
 import type { SubmittedMovesInput } from '../types';
+import { precompiles } from '@chess/precompiles';
 
 // Schedule a zombie round to be executed in the future
 export function scheduleZombieRound(lobbyId: string, block_height: number): SQLUpdate {
-  return createScheduledData(createZombieInput(lobbyId), block_height);
+  console.log('creating zombie round');
+  return createScheduledData(
+    createZombieInput(lobbyId),
+    { blockHeight: block_height },
+    { precompile: precompiles.default }
+  );
 }
 
 // Delete a scheduled zombie round to be executed in the future

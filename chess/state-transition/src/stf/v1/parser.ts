@@ -1,5 +1,5 @@
-import type { ParserRecord } from '@paima/sdk/concise';
-import { PaimaParser } from '@paima/sdk/concise';
+import type { ParserRecord } from '@paima/sdk/concise.js';
+import { PaimaParser } from '@paima/sdk/concise.js';
 import type {
   BotMove,
   ClosedLobbyInput,
@@ -9,8 +9,8 @@ import type {
   SubmittedMovesInput,
   UserStats,
   ZombieRound,
-} from './types';
-import { ENV } from '@paima/sdk/utils';
+} from './types.js';
+import { ENV } from '@paima/sdk/utils.js';
 
 const myGrammar = `
 createdLobby        = c|numOfRounds|roundLength|playTimePerPlayer|isHidden?|isPractice?|botDifficulty|playerOneIsWhite?

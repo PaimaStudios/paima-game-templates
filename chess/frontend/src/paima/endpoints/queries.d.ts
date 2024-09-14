@@ -1,4 +1,4 @@
-import type { FailedResult, Result } from '@paima/sdk/mw-core';
+import type { FailedResult, Result } from '@paima/sdk/utils';
 import type { MatchExecutor, RoundExecutor } from '@paima/sdk/executors';
 import type { MatchWinnerResponse } from '@chess/utils';
 import type { LobbyStates, NewLobbies, PackedLobbyState, PackedRoundExecutionState, PackedUserLobbies, PackedUserStats } from '../types';

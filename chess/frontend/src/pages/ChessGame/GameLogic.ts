@@ -1,5 +1,5 @@
 import type { LobbyState } from "@chess/utils";
-import type { FailedResult } from "@paima/sdk/mw-core";
+import type { FailedResult } from "@paima/utils";
 import * as Paima from "../../paima/middleware.js";
 import type { Color } from "chess.js";
 import { Chess } from "chess.js";
