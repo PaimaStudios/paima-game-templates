@@ -1,16 +1,16 @@
 const esbuild = require("esbuild");
+esbuild.build({
+  platform: "node",
+  entryPoints: [`game/src/index.ts`],
+  bundle: true,
+  outfile: `packaged/index.cjs`,
+  format: "cjs",
+  treeShaking: true,
+  external: ["pg-native"],
+});
+
 const {
-  generateConfig,
-} = require("@paima/build-utils/standalone-esbuildconfig.template");
+  copyAssetsForBundle,
+} = require("@paima/build-utils/scripts/copyAssets.cjs");
 
-const { config, outFiles, workspace } = generateConfig(
-  "api",
-  "state-transition",
-  "precompiles",
-  "events",
-);
-esbuild.build(config);
-
-console.log(
-  `\x1b[32m${workspace}\x1b[0m bundled to packaged/${outFiles[workspace]}`,
-);
+copyAssetsForBundle("packaged");

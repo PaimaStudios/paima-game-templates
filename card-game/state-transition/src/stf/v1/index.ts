@@ -1,11 +1,8 @@
-import type { Pool } from 'pg';
+import type { PoolClient } from 'pg';
 
 import parse from './parser.js';
 import type Prando from '@paima/sdk/prando';
-import type {
-  PreExecutionBlockHeader,
-  STFSubmittedData,
-} from '@paima/sdk/chain-types';
+import type { PreExecutionBlockHeader, STFSubmittedData } from '@paima/sdk/chain-types';
 import { ENV } from '@paima/sdk/utils';
 import { createScheduledData, type SQLUpdate } from '@paima/node-sdk/db';
 import type { ICreateGlobalUserStateParams, IFlipCardParams, IGetUserStatsResult } from '@game/db';
@@ -18,9 +15,13 @@ import { encodeEventForStf } from '@paima/events';
 async function tickCommand(input: TickInput, blockHeader: PreExecutionBlockHeader) {
   const sqlUpdate: SQLUpdate[] = [];
   sqlUpdate.push(
-    createScheduledData(`tick|${input.n + 1}`, blockHeader.blockHeight + 60 / ENV.BLOCK_TIME, {
-      precompile: precompiles[PrecompileNames.GameTick],
-    })
+    createScheduledData(
+      `tick|${input.n + 1}`,
+      { blockHeight: blockHeader.blockHeight + 60 / ENV.BLOCK_TIME },
+      {
+        precompile: precompiles[PrecompileNames.GameTick],
+      }
+    )
   );
   return sqlUpdate;
 }
@@ -42,7 +43,7 @@ export default async function (
   inputData: STFSubmittedData,
   blockHeader: PreExecutionBlockHeader,
   randomnessGenerator: Prando,
-  dbConn: Pool
+  dbConn: PoolClient
 ): Promise<{ stateTransitions: SQLUpdate[]; events: Events }> {
   console.log(inputData, 'parsing input data');
   const user = 'userAddress' in inputData ? inputData.userAddress.toLowerCase() : '0x0';

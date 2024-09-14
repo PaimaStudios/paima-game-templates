@@ -9,8 +9,8 @@ import * as dotenv from 'dotenv';
 
 const testnet: Record<string, string> = {};
 const mainnet: Record<string, string> = {};
-dotenv.config({ path: './../.env.testnet', processEnv: testnet });
-dotenv.config({ path: './../.env.mainnet', processEnv: mainnet });
+dotenv.config({ path: './.env.testnet', processEnv: testnet });
+dotenv.config({ path: './.env.mainnet', processEnv: mainnet });
 
 const config: HardhatUserConfig = {
   solidity: '0.8.20',

@@ -1,28 +1,29 @@
-const path = require('path');
-const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
-const webpack = require('webpack');
-require('dotenv').config({ path: `./../../.env.${process.env.NETWORK ?? "localhost"}` });
-
+const path = require("path");
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+const webpack = require("webpack");
+require("dotenv").config({
+  path: `./../.env.${process.env.NETWORK ?? "localhost"}`,
+});
 
 if (!process.env.CHAIN_URI || !process.env.BACKEND_URI || !process.env.CHAIN_ID)
-  throw new Error('Please ensure you have filled out your .env file');
+  throw new Error("Please ensure you have filled out your .env file");
 
 module.exports = {
-  entry: './src/index.ts',
-  devtool: 'inline-source-map',
+  entry: "./src/index.ts",
+  devtool: "inline-source-map",
   output: {
-    path: path.resolve(__dirname, 'public/dist'),
-    filename: 'bundle.js',
-    publicPath: '/public/dist',
+    path: path.resolve(__dirname, "public/dist"),
+    filename: "bundle.js",
+    publicPath: "/public/dist",
   },
   devServer: {
-    static: path.resolve(__dirname, './public'),
-    host: 'localhost',
+    static: path.resolve(__dirname, "./public"),
+    host: "localhost",
     port: 9000,
     open: false,
     devMiddleware: {
       index: true,
-      publicPath: '/public',
+      publicPath: "/public",
       serverSideRender: true,
       writeToDisk: true,
     },
@@ -31,21 +32,21 @@ module.exports = {
     new NodePolyfillPlugin(),
 
     new webpack.ProvidePlugin({
-      process: 'process/browser',
+      process: "process/browser",
     }),
     new webpack.DefinePlugin({
-      'process.env': JSON.stringify(process.env),
+      "process.env": JSON.stringify(process.env),
     }),
     new webpack.SourceMapDevToolPlugin({
-      filename: '[file].map',
+      filename: "[file].map",
     }),
   ],
   module: {
     rules: [
       {
         test: /\.ts$/,
-        include: path.resolve(__dirname, 'src'),
-        loader: 'ts-loader',
+        include: path.resolve(__dirname, "src"),
+        loader: "ts-loader",
       },
       // {
       //   test: require.resolve('phaser'),
@@ -54,7 +55,7 @@ module.exports = {
       // },
       {
         test: /\.m?js/,
-        type: 'javascript/auto',
+        type: "javascript/auto",
       },
       {
         test: /\.m?js/,
@@ -62,23 +63,23 @@ module.exports = {
           fullySpecified: false,
         },
       },
-      { test: /\.json$/, type: 'json' },
+      { test: /\.json$/, type: "json" },
     ],
   },
 
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: [".ts", ".js"],
     fallback: {
-      ['mina-signer']: false,
-      ['fs/promises']: false,
-      crypto: require.resolve('crypto-browserify'),
-      stream: require.resolve('stream-browserify'),
-      http: require.resolve('stream-http'),
-      https: require.resolve('https-browserify'),
-      os: require.resolve('os-browserify'),
-      url: require.resolve('url/'),
-      zlib: require.resolve('browserify-zlib'),
-      assert: require.resolve('assert/'),
+      ["mina-signer"]: false,
+      ["fs/promises"]: false,
+      crypto: require.resolve("crypto-browserify"),
+      stream: require.resolve("stream-browserify"),
+      http: require.resolve("stream-http"),
+      https: require.resolve("https-browserify"),
+      os: require.resolve("os-browserify"),
+      url: require.resolve("url/"),
+      zlib: require.resolve("browserify-zlib"),
+      assert: require.resolve("assert/"),
     },
   },
 };

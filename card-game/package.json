@@ -6,7 +6,6 @@
   },
   "private": true,
   "scripts": {
-    "initialize": "npm ci && cp .env.example ../.env.localhost && cp extensions.yml ../extensions.yml",
     "pack": "sh scripts/pack.sh",
     "pack:middleware": "npm run build -w middleware/",
     "build": "npx tsc --build tsconfig.build.json",
@@ -14,7 +13,7 @@
     "lint:fix": "eslint --ext ts,tsx --ignore-path .gitignore --fix .",
     "prettier": "prettier --config .prettierrc --ignore-path .prettierignore --check .",
     "prettier:fix": "prettier --write --config .prettierrc --ignore-path .prettierignore --check .",
-    "test": "DOTENV_CONFIG_PATH=../.env.localhost jest",
+    "test": "DOTENV_CONFIG_PATH=./.env.localhost jest",
     "test:watch": "npm test -- --watch",
     "database:up": "cd db/docker && docker compose up",
     "database:up-new": "cd db && npm run start:pglite",
@@ -22,7 +21,8 @@
     "compile:api": "npm run compile -w api/",
     "compile:db": "npm run compile -w db/",
     "chain:start": "rm -rf  ./contracts/evm/ignition/deployments/chain-31337 && npx hardhat node",
-    "chain:deploy": "npx hardhat ignition deploy ./contracts/evm/ignition/modules/deploy.ts --parameters ./contracts/evm/ignition/parameters.json --network ${NETWORK:-localhost}"
+    "chain:deploy": "npx hardhat ignition deploy ./contracts/evm/ignition/modules/deploy.ts --parameters ./contracts/evm/ignition/parameters.json --network ${NETWORK:-localhost}",
+    "dev": "npm run pack && DOTENV_CONFIG_PATH=./.env.localhost node --require dotenv/config ./packaged/index.cjs"
   },
   "workspaces": [
     "./utils",
@@ -32,7 +32,8 @@
     "./state-transition",
     "./middleware",
     "./precompiles",
-    "./events"
+    "./events",
+    "./game"
   ],
   "devDependencies": {
     "@nomicfoundation/hardhat-ignition-viem": "^0.13.1",
