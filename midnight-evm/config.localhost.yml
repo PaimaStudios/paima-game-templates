@@ -1,0 +1,17 @@
+# Main chain
+evm:
+  type: 'evm-main'
+  chainUri: 'http://localhost:8545'
+  chainId: 31337
+  chainCurrencyName: 'Test Hardhat Tokens'
+  chainCurrencySymbol: 'TEST'
+  chainCurrencyDecimals: 18
+  chainExplorerUri: ''
+  funnelBlockGroupSize: 100
+  presyncStepSize: 1000
+  paimaL2ContractAddress: '0x5FbDB2315678afecb367f032d93F642f64180aa3'
+MyMidnight:
+  type: midnight
+  indexer: https://indexer.devnet.midnight.network/api/v1/graphql
+  networkId: 1  # 0 for localhost, 1 for devnet
+  confirmationDepth: 10
