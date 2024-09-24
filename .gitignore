@@ -14,3 +14,4 @@
 # [dev-]paima-engine-[linux|mac] maybe others in the future
 /*paima-engine*
 /.env*
+.vscode

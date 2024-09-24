@@ -1,0 +1,21 @@
+{
+  "name": "@midnightevm/game",
+  "version": "1.0.0",
+  "description": "Module which includes entrypoint run function.",
+  "main": "build/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@paima/precompiles": "5.0.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.5"
+  }
+}
