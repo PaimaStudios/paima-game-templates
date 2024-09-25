@@ -1,0 +1,7 @@
+extensions:
+  - name: "my midnight extension"
+    type: midnight-contract-state
+    network: MyMidnight
+    contractAddress: 0100017747ddbf465f1807f8af623d2af762e05e67fb8b7a4e7970aa3ecb42bc3e6b71
+    startBlockHeight: 988075
+    scheduledPrefix: midnight_increment

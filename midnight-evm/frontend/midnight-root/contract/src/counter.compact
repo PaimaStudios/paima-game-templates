@@ -1,0 +1,11 @@
+include "std";
+
+ledger {
+  // public state
+  round: Counter;
+}
+
+// transition function changing public state
+export circuit increment(): Void {
+  ledger.round.increment(1);
+}

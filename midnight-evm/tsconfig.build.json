@@ -1,0 +1,13 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./db" },
+    { "path": "./utils" },
+    { "path": "./game-logic" },
+    { "path": "./api" },
+    { "path": "./state-transition" },
+    { "path": "./middleware" },
+    { "path": "./game" },
+    { "path": "./precompiles" }
+  ]
+}

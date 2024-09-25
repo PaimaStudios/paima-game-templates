@@ -1,0 +1,23 @@
+{
+  "name": "@midnight-ntwrk/counter-helpers",
+  "description": "Midnight Welcome API general-purpose helpers",
+  "author": "IOG",
+  "license": "Apache-2.0",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "module": "./dist/index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "prepack": "yarn build",
+    "build": "rm -rf ./dist && tsc -p ./tsconfig.build.json",
+    "test": "jest --passWithNoTests",
+    "lint": "eslint ./src"
+  },
+  "devDependencies": {
+    "eslint": "^8.52.0",
+    "jest": "^29.7.0",
+    "typescript": "^5.2.2"
+  }
+}
