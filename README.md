@@ -1,6 +1,6 @@
 # Paima Engine Templates
 
-This repository serves as a collection of all our available templates for developers to use as a base for their game/Web3 project using [Paima Engine](https//paimastudios.com). 
+This repository serves as a collection of all our available templates for developers to use as a base for their game/Web3 project using [Paima Engine](https://paimastudios.com/)
 
 You can use these templates in one of two ways:
 1. Use `./paima-engine init template` to generate the template you want locally
