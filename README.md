@@ -1,3 +1,12 @@
+# NOTICE 
+
+⚠️ Paima Engine is now EffectStream.  
+These templates have been moved into the EffectStream Monorepo.
+
+Home: https://effectstream.github.io/home/  
+Docs: https://effectstream.github.io/docs/  
+EffectStream Monorepo: https://github.com/effectstream/effectstream  
+
 # Paima Engine Templates
 
 This repository serves as a collection of all our available templates for developers to use as a base for their game/Web3 project using [Paima Engine](https://paimastudios.com/)
