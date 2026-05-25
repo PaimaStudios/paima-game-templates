@@ -1,5 +1,5 @@
-import { Sudoku, SudokuZkApp } from './sudoku';
-import { cloneSudoku, generateSudoku, solveSudoku } from './sudoku-lib';
+import { Sudoku, SudokuSolution, SudokuZkApp } from './sudoku.js';
+import { cloneSudoku, generateSudoku, solveSudoku } from './sudoku-lib.js';
 import { PrivateKey, PublicKey, Mina, AccountUpdate } from 'o1js';
 
 describe('sudoku', () => {
@@ -9,6 +9,11 @@ describe('sudoku', () => {
     sudoku: number[][],
     sender: Mina.TestPublicKey,
     senderKey: PrivateKey;
+
+  it('compiles', async () => {
+    await SudokuSolution.compile();
+    await SudokuZkApp.compile();
+  });
 
   beforeEach(async () => {
     let Local = await Mina.LocalBlockchain({ proofsEnabled: false });
@@ -31,7 +36,8 @@ describe('sudoku', () => {
     if (solution === undefined) throw Error('cannot happen');
     let tx = await Mina.transaction(sender, async () => {
       let zkApp = new SudokuZkApp(zkAppAddress);
-      await zkApp.submitSolution(Sudoku.from(sudoku), Sudoku.from(solution!));
+      let proof = await SudokuSolution.solve(Sudoku.from(sudoku), Sudoku.from(solution));
+      await zkApp.submitSolutionProof(proof);
     });
     await tx.prove();
     await tx.sign([senderKey]).send();
@@ -52,10 +58,7 @@ describe('sudoku', () => {
     await expect(async () => {
       let tx = await Mina.transaction(sender, async () => {
         let zkApp = new SudokuZkApp(zkAppAddress);
-        await zkApp.submitSolution(
-          Sudoku.from(sudoku),
-          Sudoku.from(noSolution)
-        );
+        await zkApp.submitSolution(Sudoku.from(sudoku), Sudoku.from(noSolution));
       });
       await tx.prove();
       await tx.sign([senderKey]).send();
