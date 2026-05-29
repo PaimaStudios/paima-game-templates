@@ -1,0 +1,4 @@
+db/src/*.queries.ts
+api/src/tsoa/routes.ts
+build
+middleware/packaged/*

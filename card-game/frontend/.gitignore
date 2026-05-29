@@ -1,0 +1,3 @@
+output/*.js
+/node_modules/*
+/assets/paimaMiddleware.js
