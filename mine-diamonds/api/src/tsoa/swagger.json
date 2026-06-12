@@ -1,0 +1,389 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"IGetUserValidMintedAssetsResult": {
+				"description": "'GetUserValidMintedAssets' return type",
+				"properties": {
+					"amount": {
+						"type": "number",
+						"format": "double"
+					},
+					"assettokenid": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"amount",
+					"assettokenid"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserValidMintedAssets": {
+				"$ref": "#/components/schemas/IGetUserValidMintedAssetsResult"
+			},
+			"GetUserValidMintedAssetsResponse": {
+				"properties": {
+					"stats": {
+						"items": {
+							"$ref": "#/components/schemas/UserValidMintedAssets"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"stats"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetUserTokenStatsResult": {
+				"description": "'GetUserTokenStats' return type",
+				"properties": {
+					"amount": {
+						"type": "number",
+						"format": "double"
+					},
+					"isdiamond": {
+						"type": "boolean"
+					},
+					"usertokenid": {
+						"type": "number",
+						"format": "double"
+					},
+					"wallet": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"amount",
+					"isdiamond",
+					"usertokenid",
+					"wallet"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserTokenStats": {
+				"$ref": "#/components/schemas/IGetUserTokenStatsResult"
+			},
+			"GetUserTokenStateResponse": {
+				"properties": {
+					"stats": {
+						"items": {
+							"$ref": "#/components/schemas/UserTokenStats"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"stats"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetUserStatsResult": {
+				"description": "'GetUserStats' return type",
+				"properties": {
+					"currentusertokenid": {
+						"type": "number",
+						"format": "double"
+					},
+					"wallet": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"currentusertokenid",
+					"wallet"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserStats": {
+				"$ref": "#/components/schemas/IGetUserStatsResult"
+			},
+			"GetUserStatsResponse": {
+				"properties": {
+					"stats": {
+						"$ref": "#/components/schemas/UserStats"
+					}
+				},
+				"required": [
+					"stats"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetUserAssetStatsResult": {
+				"description": "'GetUserAssetStats' return type",
+				"properties": {
+					"amount": {
+						"type": "number",
+						"format": "double"
+					},
+					"assettokenid": {
+						"type": "number",
+						"format": "double"
+					},
+					"minter": {
+						"type": "string"
+					},
+					"usertokenid": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"amount",
+					"assettokenid",
+					"minter",
+					"usertokenid"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserAssetStats": {
+				"$ref": "#/components/schemas/IGetUserAssetStatsResult"
+			},
+			"GetUserAssetStateResponse": {
+				"properties": {
+					"stats": {
+						"items": {
+							"$ref": "#/components/schemas/UserAssetStats"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"stats"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IGetDexOrdersResult": {
+				"description": "'GetDexOrders' return type",
+				"properties": {
+					"amount": {
+						"type": "number",
+						"format": "double"
+					},
+					"assettokenid": {
+						"type": "number",
+						"format": "double"
+					},
+					"orderid": {
+						"type": "number",
+						"format": "double"
+					},
+					"price": {
+						"type": "string"
+					},
+					"seller": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"amount",
+					"assettokenid",
+					"orderid",
+					"price",
+					"seller"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DexOrder": {
+				"$ref": "#/components/schemas/IGetDexOrdersResult"
+			},
+			"GetDexOrdersResponse": {
+				"properties": {
+					"stats": {
+						"items": {
+							"$ref": "#/components/schemas/DexOrder"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"stats"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "@game/api",
+		"version": "1.0.0",
+		"description": "Webserver REST API for the middleware to interact with game node.",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/user_valid_minted_assets": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetUserValidMintedAssetsResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "user",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/user_token_state": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetUserTokenStateResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "wallet",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "userTokenId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/user_stats": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetUserStatsResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "wallet",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/user_asset_state": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetUserAssetStateResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "user",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "userTokenId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/dex_orders": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetDexOrdersResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

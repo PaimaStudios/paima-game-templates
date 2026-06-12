@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Mine Diamonds</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+  <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+    <h1>Mine and trade diamonds!</h1>
+    <span>Connected wallet: <span id="walletAddress"></span></span>
+    <p>Try to mine minerals. If you are lucky enough to find diamonds, you can then sell them on the DEX below!</p>
+    <button id="mineButton" style="margin-bottom: 16px;">Mine for diamonds</button>
+    <h3>Your mining history</h3>
+    <table id="mined" style="display: none;">
+      <tr>
+        <th>User nonce</th>
+        <th>Amount</th>
+        <th>Is diamond?</th>
+        <th>Mint ERC1155</th>
+      </tr>
+    </table>
+    <hr style="width: 100%;">
+    <h1 style="padding-top: 24px; width: 100%; text-align: center;">DEX</h1>
+    <p>You can trade valid minted diamonds here!</p>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span>Lowest price right now (ETH):</span>
+      <span id="lowestPriceEth"></span>
+    </div>
+    <h2>Your valid minted diamonds you can sell</h2>
+    <table id="userValidAssets" style="display: none;">
+      <tr>
+        <th>Asset token ID</th>
+        <th>Amount</th>
+        <th>Create sell order</th>
+      </tr>
+    </table>
+    <h2>Bulk buy</h2>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 300px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;">
+        <span>Buy amount: </span>
+        <input id="bulkBuyInput" type="number" min="0" style="text-align: right; flex-grow: 1;"></input>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;">
+        <span>Total ETH to pay:</span>
+        <span id="bulkBuyTotalEth"></span>
+      </div>
+      <button id="bulkBuyButton" style="align-self: flex-end;" disabled>Execute bulk buy</button>
+    </div>
+    <h2>Existing valid sell orders</h2>
+    <table id="orders" style="display: none;">
+      <tr>
+        <th>Order ID</th>
+        <th>Amount</th>
+        <th>Price per diamond (ETH)</th>
+        <th>Seller</th>
+        <th>Buy / Cancel</th>
+      </tr>
+    </table>
+  </div>
+</body>
+<script type="module">
+  import endpoints, { WalletMode } from "./paimaMiddleware.js";
+  import { ethers } from "./ethers.min.js";
+
+  const ASSET_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+  const DEX_ADDRESS = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
+
+  function formatAddress(addr) {
+    return addr.substring(0, 6) + '...' + addr.substring(addr.length - 4);
+  }
+
+  async function start() {
+    // Get data for wallet and world
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    const walletAddress = await signer.getAddress();
+    document.getElementById('walletAddress').innerHTML = formatAddress(walletAddress);
+
+    const wallet = await endpoints.userWalletLogin({
+      mode: WalletMode.EvmInjected,
+      preferBatchedMode: false,
+    });
+    if (!wallet.success) throw new Error('Wallet Error');
+
+    const user = await endpoints.getUserStats(walletAddress);
+    if (!user.success) {
+      throw new Error("User Error");
+    }
+    const assetContract = new ethers.Contract(ASSET_ADDRESS, [
+      "function balanceOf(address account, uint256 id) view returns (uint256)",
+      "function currentNonce(address user) view returns (uint256)",
+      "function isApprovedForAll(address account, address operator) view returns (bool)",
+      "function mint(uint256 value, bytes data) public",
+      "function setApprovalForAll(address operator, bool approved) public",
+    ], signer);
+    const dexContract = new ethers.Contract(DEX_ADDRESS, [
+      "function cancelSellOrder(uint256 orderId) public",
+      "function createSellOrder(uint256 assetId, uint256 assetAmount, uint256 pricePerAsset) public",
+      "function fillOrdersExactEth(uint256 minimumAsset, uint256[] memory orderIds) public payable",
+      "function fillOrdersExactAsset(uint256 assetAmount, uint256[] memory orderIds) public payable"
+    ], signer);
+
+    const nextNonce = await assetContract.currentNonce(walletAddress) + 1n;
+    const isApproved = await assetContract.isApprovedForAll(walletAddress, DEX_ADDRESS);
+
+    let mineButton = document.getElementById("mineButton");
+    mineButton.onclick = () => {
+      endpoints.submitMineAttempt().then((x) => {
+        if (x.success) {
+          mineButton.innerHTML = "Please wait...";
+          mineButton.disabled = true;
+          setTimeout(() => {
+            window.location.reload();
+          }, 10 * 1000); // wait 10 seconds
+        }
+      });
+    };
+
+    const minedTable = document.getElementById("mined");
+    minedTable.style.setProperty("display", "table");
+    if (user?.stats?.currentusertokenid > 1) {
+      for (let i = 1; i < user.stats.currentusertokenid; i++) {
+        const userToken = (await endpoints.getUserTokenStats(walletAddress, i)).stats[0];
+        const row = minedTable.insertRow(i);
+        let cell = row.insertCell(0);
+        cell.innerHTML = `${i}`;
+        cell = row.insertCell(1);
+        cell.innerHTML = `${userToken.amount}`;
+        cell = row.insertCell(2);
+        cell.innerHTML = `${userToken.isdiamond ? "YES" : "no"}`;
+
+        cell = row.insertCell(3);
+        let mintButton = document.createElement("button");
+        mintButton.style.setProperty("width", "100%");
+        if (i > nextNonce) {
+          mintButton.innerHTML = "Mint above first";
+          mintButton.disabled = true;
+        } else if (i == nextNonce) {
+          mintButton.innerHTML = "Mint";
+          mintButton.onclick = () => {
+            mintButton.innerHTML = "Confirm and wait...";
+            mintButton.disabled = true;
+            assetContract.mint(userToken.amount, "0x").then((x) => {
+              window.location.reload();
+            });
+          };
+        } else {
+          const id = (await endpoints.getUserAssetStats(walletAddress, i))?.stats?.[0]?.assettokenid;
+          mintButton = document.createTextNode(`Minted ID ${JSON.stringify(id)}`);
+        }
+        cell.appendChild(mintButton);
+      }
+    } else {
+      minedTable.innerHTML = 'You have not mined any minerals yet. Try mining some!';
+    }
+
+    const userValidAssets = (await endpoints.getUserValidMintedAssets(walletAddress)).stats;
+    const table = document.getElementById("userValidAssets");
+    table.style.setProperty("display", "table");
+    if (userValidAssets.length === 0) {
+      table.innerHTML = "You don't have any valid minted diamonds. Mine and mint them!";
+    } else {
+      for (const asset of userValidAssets) {
+        if (asset.amount == 0) continue;
+        const row = table.insertRow();
+        let cell = row.insertCell(0);
+        cell.innerHTML = `${asset.assettokenid}`;
+        cell = row.insertCell(1);
+        cell.innerHTML = `${asset.amount}`;
+        cell = row.insertCell(2);
+        const sellButton = document.createElement("button");
+        sellButton.innerHTML = isApproved ? "Sell" : "Approve to sell";
+        sellButton.style.setProperty("width", "100%");
+        sellButton.onclick = () => {
+          if (!isApproved) {
+            sellButton.innerHTML = "Confirm and wait...";
+            sellButton.disabled = true;
+            assetContract.setApprovalForAll(DEX_ADDRESS, true).then((x) => {
+              window.location.reload();
+            });
+            return;
+          }
+
+          const price = prompt("Enter price per diamond (in ETH)");
+          if (!price) return;
+          sellButton.innerHTML = "Confirm and wait...";
+          sellButton.disabled = true;
+          dexContract.createSellOrder(asset.assettokenid, asset.amount, ethers.parseEther(price)).then((x) => {
+            window.location.reload();
+          });
+        };
+        cell.appendChild(sellButton);
+      }
+    }
+
+    const dexOrders = (await endpoints.getDexOrders()).stats;
+    const lowestPriceEth = document.getElementById("lowestPriceEth");
+    lowestPriceEth.innerHTML = dexOrders?.length > 0 ? ethers.formatEther(dexOrders[0].price) : "N/A";
+
+    let bulkBuyOrders = [];
+    let bulkBuyEth = BigInt(0);
+    const bulkBuyInput = document.getElementById("bulkBuyInput");
+    const bulkBuyButton = document.getElementById("bulkBuyButton");
+    let maxAmount = dexOrders.reduce((prev, curr) => prev + curr.amount, 0);
+    bulkBuyInput.max = maxAmount;
+    bulkBuyInput.oninput = () => {
+      if (bulkBuyInput.value > maxAmount) {
+        bulkBuyInput.value = maxAmount;
+      }
+      if (bulkBuyInput.value > 0) {
+        bulkBuyButton.disabled = false;
+      } else {
+        bulkBuyButton.disabled = true;
+      }
+      bulkBuyEth = BigInt(0);
+      bulkBuyOrders = [];
+      let remainingAmount = BigInt(bulkBuyInput.value);
+      for (const order of dexOrders) {
+        console.log('o', order)
+        const buyAmount = BigInt(order.amount < remainingAmount ? order.amount : remainingAmount);
+        remainingAmount -= buyAmount;
+        bulkBuyEth += BigInt(order.price) * buyAmount;
+        bulkBuyOrders.push(order);
+      }
+      document.getElementById("bulkBuyTotalEth").innerHTML = ethers.formatEther(bulkBuyEth);
+    }
+
+    bulkBuyButton.onclick = () => {
+      const bulkBuyButtonPreviousHtml = bulkBuyButton.innerHTML;
+      bulkBuyButton.innerHTML = "Confirm and wait...";
+      bulkBuyButton.disabled = true;
+      dexContract.fillOrdersExactAsset(BigInt(bulkBuyInput.value), bulkBuyOrders.map((o) => o.orderid), { value: bulkBuyEth }).then((x) => {
+        window.location.reload();
+      }).catch((e) => {
+        console.error(e);
+        bulkBuyButton.innerHTML = bulkBuyButtonPreviousHtml;
+        bulkBuyButton.disabled = false;
+      });
+    };
+
+    const ordersTable = document.getElementById("orders");
+    ordersTable.style.setProperty("display", "table");
+    if (dexOrders.length === 0) {
+      ordersTable.innerHTML = "No valid sell orders available. Be the first!";
+    } else {
+      for (const order of dexOrders) {
+        const isSeller = order.seller.toLowerCase() === walletAddress.toLowerCase();
+        console.log('isOwner', order.orderid, isSeller, order.seller, walletAddress)
+        const row = ordersTable.insertRow();
+        let cell = row.insertCell(0);
+        cell.innerHTML = `${order.orderid}`;
+        cell = row.insertCell(1);
+        cell.innerHTML = `${order.amount}`;
+        cell = row.insertCell(2);
+        cell.innerHTML = `${ethers.formatEther(order.price)}`;
+        cell = row.insertCell(3);
+        cell.innerHTML = isSeller ? 'You' : `${formatAddress(order.seller)}`;
+        cell = row.insertCell(4);
+        const buyButton = document.createElement("button");
+        buyButton.innerHTML = isSeller ? "Cancel" : "Buy";
+        buyButton.style.setProperty("width", "100%");
+        buyButton.onclick = () => {
+          const buyButtonPreviousHtml = buyButton.innerHTML;
+          buyButton.innerHTML = "Confirm and wait...";
+          buyButton.disabled = true;
+          if (isSeller) {
+            dexContract.cancelSellOrder(order.orderid).then((x) => {
+              window.location.reload();
+            });
+          } else {
+            const amount = prompt(`Enter how many diamond you want to buy (max ${order.amount})`);
+            if (!amount) {
+              buyButton.innerHTML = buyButtonPreviousHtml;
+              buyButton.disabled = false;
+              return;
+            }
+            if (amount > order.amount) {
+              alert('You exceeded the max amount!')
+              buyButton.innerHTML = buyButtonPreviousHtml;
+              buyButton.disabled = false;
+              return;
+            }
+            dexContract.fillOrdersExactEth(amount, [order.orderid], { value: BigInt(order.price) * BigInt(amount) }).then((x) => {
+              window.location.reload();
+            }).catch((e) => {
+              console.error(e);
+              buyButton.innerHTML = buyButtonPreviousHtml;
+              buyButton.disabled = false;
+            });
+          }
+
+        };
+        cell.appendChild(buyButton);
+      }
+    }
+  }
+
+  start().then((r) => r);
+</script>
+
+</html>
