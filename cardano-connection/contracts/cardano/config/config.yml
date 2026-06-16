@@ -1,0 +1,15 @@
+source:
+  type: cardano_net
+  relay:
+    - host.docker.internal
+    - 3001
+
+sink:
+  type: cardano
+  db:
+    type: postgres
+    # todo: dynamically fill this
+    database_url: postgresql://carp:defaultpassword@localhost:5432/carp_localhost
+  network: preprod # preview / preprod / testnet
+
+start_block:

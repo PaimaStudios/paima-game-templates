@@ -1,0 +1,89 @@
+version: "3.5"
+
+# ./start.sh
+# ./yaci-cli.sh
+# create-node
+# start
+
+services:
+  postgres:
+    restart: unless-stopped
+    image: postgres:16.1
+    shm_size: 8gb
+    environment:
+      - POSTGRES_LOGGING=all
+      - LOG_STATEMENT=all
+      - LOG_MIN_MESSAGES=debug1
+      - POSTGRES_DB=${POSTGRES_DB:-carp}
+      - PGPASSFILE=./config/secrets/${NETWORK:-preprod}/.pgpass
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?Export PG password}
+      - POSTGRES_USER=${POSTGRES_USER:?Export PG username}
+    # secrets:
+    #   - source: pgpass
+    #     target: .pgpass
+    volumes:
+      - ./${NETWORK:-preprod}/postgres-data:/var/lib/postgresql/data
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    network_mode: host
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  
+  carp:
+    restart: unless-stopped
+    # todo: bump to 3.1.1
+    image: dcspark/carp:3.1.0
+    environment:
+      - NETWORK=${NETWORK:-preprod}
+      # - SOCKET=/app/node-ipc/node.socket
+      - PGPASSFILE=./config/secrets/${NETWORK:-preprod}/.pgpass
+      - DATABASE_URL=${DATABASE_URL}
+      - RUST_BACKTRACE=full
+    # secrets:
+    #   - source: pgpass
+    #     target: .pgpass
+    volumes:
+      - ./${NETWORK:-preprod}/node-ipc:/app/node-ipc:rw
+      - ./config/:/app/config
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        # apt-get update;
+        # apt-get install -y netcat-traditional;
+        # nc -zv localhost 5432;
+        # nc -zv host.docker.internal 5432;
+        # nc -zv postgres 5432;
+        # pg_isready -h localhost -p 5432;
+        /app/migration up ;
+        /app/carp --plan ./config/execution_plan.toml --config-path ./config/config.yml;
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    network_mode: host
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  carp_web:
+    restart: unless-stopped
+    # todo: bump to 3.1.1
+    image: dcspark/carp-webserver:3.1.0
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    network_mode: host
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+# secrets:
+#   pgpass:
+#     file: ./config/secrets/${NETWORK:-preprod}/.pgpass
+
+volumes:
+  node-ipc:
+  
