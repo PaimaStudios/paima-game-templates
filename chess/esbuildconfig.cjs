@@ -5,8 +5,11 @@ const {
 
 const { config, outFiles, workspace } = generateConfig(
   "api",
-  "state-transition"
+  "state-transition",
+  "precompiles",
+  "events",
 );
+
 esbuild.build(config);
 
 console.log(

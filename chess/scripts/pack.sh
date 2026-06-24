@@ -4,6 +4,8 @@ npm run build
 
 BUNDLE_WORKSPACE=api node ./esbuildconfig.cjs
 BUNDLE_WORKSPACE=state-transition node ./esbuildconfig.cjs
+BUNDLE_WORKSPACE=precompiles node ./esbuildconfig.cjs
+BUNDLE_WORKSPACE=events node ./esbuildconfig.cjs
 
 cp api/src/tsoa/swagger.json ./packaged/openapi.json
 

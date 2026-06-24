@@ -5,6 +5,24 @@
     "rootDir": "src",
     "outDir": "build"
   },
-  "include": ["src/**/*"],
-  "references": [{ "path": "../utils" }, { "path": "../game-logic" }, { "path": "../db" }]
+  "include": [
+    "src/**/*"
+  ],
+  "references": [
+    {
+      "path": "../utils"
+    },
+    {
+      "path": "../game-logic"
+    },
+    {
+      "path": "../db"
+    },
+    {
+      "path": "../events"
+    },
+    {
+      "path": "../precompiles"
+    }
+  ]
 }
