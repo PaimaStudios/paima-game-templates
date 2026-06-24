@@ -10,6 +10,6 @@
     { "path": "../utils" },
     { "path": "../game-logic" },
     { "path": "../db" },
-    { "path": "../precompiles"}
+    { "path": "../state-transition"}
   ]
 }

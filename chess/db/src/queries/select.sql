@@ -128,8 +128,8 @@ AND round_within_match = :round_number;
 
 /* @name getMatchSeeds */
 SELECT * FROM rounds
-INNER JOIN block_heights
-ON block_heights.block_height = rounds.execution_block_height
+INNER JOIN paima_blocks
+ON paima_blocks.block_height = rounds.execution_block_height
 WHERE rounds.lobby_id = :lobby_id;
 
 /* @name getFinalState */

@@ -1,4 +1,6 @@
-import type { WalletAddress } from '@paima/sdk/utils';
+import type { WalletAddress } from '@paima/sdk/chain-types';
+import type { QueryOptions } from '@paima/sdk/mw-core';
+export declare function buildBackendQuery(endpoint: string, options: QueryOptions): string;
 export declare function backendQueryLobbyState(lobbyID: string): string;
 export declare function backendQuerySearchLobby(wallet: WalletAddress, searchQuery: string, page: number, count?: number): string;
 export declare function backendQueryUserLobbiesBlockheight(wallet: WalletAddress, blockHeight: number): string;

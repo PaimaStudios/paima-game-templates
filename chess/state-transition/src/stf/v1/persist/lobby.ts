@@ -2,7 +2,7 @@ import type { CreatedLobbyInput, JoinedLobbyInput } from '../types.js';
 import type { IGetLobbyByIdResult, IStartMatchParams, ICloseLobbyParams } from '@chess/db';
 import { createLobby, startMatch, closeLobby, ICreateLobbyParams } from '@chess/db';
 import type Prando from '@paima/sdk/prando';
-import type { WalletAddress } from '@paima/sdk/utils';
+import type { WalletAddress } from '@paima/sdk/chain-types';
 import type { Timer } from '@chess/utils';
 import { PRACTICE_BOT_ADDRESS } from '@chess/utils';
 import { Chess } from 'chess.js';

@@ -1,4 +1,4 @@
-import type { FailedResult, OldResult } from '@paima/sdk/mw-core';
+import type { FailedResult, OldResult } from '@paima/sdk/utils';
 import type { MatchMove } from '@chess/game-logic';
 import type { CreateLobbySuccessfulResponse, PackedLobbyState } from '../types';
 declare function createLobby(numberOfRounds: number, roundLength: number, playTimePerPlayer: number, botDifficulty: number, isHidden?: boolean, isPractice?: boolean, playerOneIsWhite?: boolean): Promise<CreateLobbySuccessfulResponse | FailedResult>;

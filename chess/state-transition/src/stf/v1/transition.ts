@@ -1,6 +1,6 @@
-import type { Pool } from 'pg';
-import type Prando from '@paima/sdk/prando';
-import type { WalletAddress } from '@paima/sdk/utils';
+import type { PoolClient } from 'pg';
+import type Prando from '@paima/sdk/prando.js';
+import type { WalletAddress } from '@paima/sdk/chain-types.js';
 import type { IGetLobbyByIdResult, IGetRoundDataResult, IGetRoundMovesResult } from '@chess/db';
 import { getLobbyById, getRoundData, getUserStats, endMatch } from '@chess/db';
 import type { MatchState } from '@chess/game-logic';
@@ -24,7 +24,7 @@ import {
   persistMatchResults,
   schedulePracticeMove,
   generateZombieMove,
-} from './persist';
+} from './persist/index.js';
 import { isValidMove } from '@chess/game-logic';
 import type {
   BotMove,
@@ -38,8 +38,8 @@ import type {
 import { isBotMove, isUserStats, isZombieRound } from './types.js';
 import type { Timer } from '@chess/utils';
 import { updateTimer, PRACTICE_BOT_ADDRESS, currentPlayer } from '@chess/utils';
-import type { SQLUpdate } from '@paima/node-sdk/db';
-import { calculateBestMove } from './persist/ai';
+import type { SQLUpdate } from '@paima/node-sdk/db.js';
+import { calculateBestMove } from './persist/ai.js';
 
 // State transition when a create lobby input is processed
 export const createdLobby = async (
@@ -56,7 +56,7 @@ export const joinedLobby = async (
   player: WalletAddress,
   blockHeight: number,
   input: JoinedLobbyInput,
-  dbConn: Pool
+  dbConn: PoolClient
 ): Promise<SQLUpdate[]> => {
   const [lobby] = await getLobbyById.run({ lobby_id: input.lobbyID }, dbConn);
   if (lobby) return persistLobbyJoin(blockHeight, player, input, lobby);
@@ -67,7 +67,7 @@ export const joinedLobby = async (
 export const closedLobby = async (
   player: WalletAddress,
   input: ClosedLobbyInput,
-  dbConn: Pool
+  dbConn: PoolClient
 ): Promise<SQLUpdate[]> => {
   const [lobby] = await getLobbyById.run({ lobby_id: input.lobbyID }, dbConn);
   if (!lobby) return [];
@@ -83,7 +83,7 @@ export const submittedMoves = async (
   player: WalletAddress,
   blockHeight: number,
   input: SubmittedMovesInput,
-  dbConn: Pool,
+  dbConn: PoolClient,
   prando: Prando
 ): Promise<SQLUpdate[]> => {
   // Perform DB read queries to get needed data
@@ -127,7 +127,7 @@ export const submittedMoves = async (
 export const submittedBotMove = async (
   blockHeight: number,
   input: BotMove,
-  dbConn: Pool,
+  dbConn: PoolClient,
   prando: Prando
 ): Promise<SQLUpdate[]> => {
   const [lobby] = await getLobbyById.run({ lobby_id: input.lobbyID }, dbConn);
@@ -197,7 +197,7 @@ function validateSubmittedMove(
 export const scheduledData = async (
   blockHeight: number,
   input: ScheduledDataInput,
-  dbConn: Pool,
+  dbConn: PoolClient,
   randomnessGenerator: Prando
 ): Promise<SQLUpdate[]> => {
   // This executes 'zombie rounds', rounds which have reached the specified timeout time per round.
@@ -218,7 +218,7 @@ export const scheduledData = async (
 export const zombieRound = async (
   blockHeight: number,
   lobbyId: string,
-  dbConn: Pool,
+  dbConn: PoolClient,
   prando: Prando
 ): Promise<SQLUpdate[]> => {
   const [lobby] = await getLobbyById.run({ lobby_id: lobbyId }, dbConn);
@@ -281,7 +281,10 @@ export const zombieRound = async (
 };
 
 // State transition when an update stats input is processed
-export const updateStats = async (newStats: UserStats, dbConn: Pool): Promise<SQLUpdate[]> => {
+export const updateStats = async (
+  newStats: UserStats,
+  dbConn: PoolClient
+): Promise<SQLUpdate[]> => {
   const [stats] = await getUserStats.run({ wallet: newStats.user }, dbConn);
   // Verify coherency that the user has existing stats which can be updated
   if (stats) {
@@ -298,7 +301,7 @@ export async function executeRound(
   lobby: IGetLobbyByIdResult,
   moves: IGetRoundMovesResult[],
   roundData: IGetRoundDataResult,
-  dbConn: Pool,
+  dbConn: PoolClient,
   randomnessGenerator: Prando
 ): Promise<SQLUpdate[]> {
   // We initialize the round executor object and run it/get the new match state via `.endState()`
@@ -348,7 +351,7 @@ async function finalizeMatch(
   lobby: IGetLobbyByIdResult,
   timer: Timer,
   newState: MatchState,
-  pool: Pool
+  pool: PoolClient
 ): Promise<SQLUpdate[]> {
   const matchEnvironment = extractMatchEnvironment(lobby);
 

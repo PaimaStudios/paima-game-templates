@@ -1,0 +1,12 @@
+# Main chain
+evm:
+  type: 'evm-main'
+  chainUri: 'http://localhost:8545'
+  chainId: 31337
+  chainCurrencyName: 'Test Hardhat Tokens'
+  chainCurrencySymbol: 'TEST'
+  chainCurrencyDecimals: 18
+  chainExplorerUri: ''
+  funnelBlockGroupSize: 100
+  presyncStepSize: 1000
+  paimaL2ContractAddress: '0x5FbDB2315678afecb367f032d93F642f64180aa3'

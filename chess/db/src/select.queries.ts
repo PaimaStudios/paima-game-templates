@@ -566,16 +566,19 @@ export interface IGetMatchSeedsParams {
 /** 'GetMatchSeeds' return type */
 export interface IGetMatchSeedsResult {
   block_height: number;
-  done: boolean;
   execution_block_height: number | null;
   id: number;
   lobby_id: string;
+  main_chain_block_hash: Buffer;
   match_state: string;
+  ms_timestamp: Date;
+  paima_block_hash: Buffer | null;
   player_one_blocks_left: number;
   player_two_blocks_left: number;
   round_within_match: number;
   seed: string;
   starting_block_height: number;
+  ver: number;
 }
 
 /** 'GetMatchSeeds' query type */
@@ -584,14 +587,14 @@ export interface IGetMatchSeedsQuery {
   result: IGetMatchSeedsResult;
 }
 
-const getMatchSeedsIR: any = {"usedParamSet":{"lobby_id":true},"params":[{"name":"lobby_id","required":false,"transform":{"type":"scalar"},"locs":[{"a":132,"b":140}]}],"statement":"SELECT * FROM rounds\nINNER JOIN block_heights\nON block_heights.block_height = rounds.execution_block_height\nWHERE rounds.lobby_id = :lobby_id"};
+const getMatchSeedsIR: any = {"usedParamSet":{"lobby_id":true},"params":[{"name":"lobby_id","required":false,"transform":{"type":"scalar"},"locs":[{"a":130,"b":138}]}],"statement":"SELECT * FROM rounds\nINNER JOIN paima_blocks\nON paima_blocks.block_height = rounds.execution_block_height\nWHERE rounds.lobby_id = :lobby_id"};
 
 /**
  * Query generated from SQL:
  * ```
  * SELECT * FROM rounds
- * INNER JOIN block_heights
- * ON block_heights.block_height = rounds.execution_block_height
+ * INNER JOIN paima_blocks
+ * ON paima_blocks.block_height = rounds.execution_block_height
  * WHERE rounds.lobby_id = :lobby_id
  * ```
  */

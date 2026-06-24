@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, HttpStatusCodeLiteral, TsoaResponse, fetchMiddlewares } from '@tsoa/runtime';
+import { TsoaRoute, fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UserStatsController } from './../controllers/userStats';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -26,7 +26,9 @@ import { MatchWinnerController } from './../controllers/matchWinner';
 import { MatchExecutorController } from './../controllers/matchExecutor';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { LobbyStateController } from './../controllers/lobbyState';
-import type { RequestHandler, Router } from 'express';
+import type { Request as ExRequest, Response as ExResponse, RequestHandler, Router } from 'express';
+
+
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
@@ -179,9 +181,14 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"string","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MinaAddress": {
+        "dataType": "refAlias",
+        "type": {"dataType":"string","validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "WalletAddress": {
         "dataType": "refAlias",
-        "type": {"dataType":"union","subSchemas":[{"ref":"ETHAddress"},{"ref":"CardanoAddress"},{"ref":"PolkadotAddress"},{"ref":"AlgorandAddress"}],"validators":{}},
+        "type": {"dataType":"union","subSchemas":[{"ref":"ETHAddress"},{"ref":"CardanoAddress"},{"ref":"PolkadotAddress"},{"ref":"AlgorandAddress"},{"ref":"MinaAddress"}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "RoundStatusData": {
@@ -244,7 +251,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IGetBlockHeightsResult": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"seed":{"dataType":"string","required":true},"done":{"dataType":"boolean","required":true},"block_height":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"seed":{"dataType":"string","required":true},"block_height":{"dataType":"double","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "RoundExecutorData": {
@@ -423,21 +430,28 @@ const models: TsoaRoute.Models = {
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
-const validationService = new ValidationService(models);
+const templateService = new ExpressTemplateService(models, {"noImplicitAdditionalProperties":"throw-on-extras","bodyCoercion":true});
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
+
+
+
 export function RegisterRoutes(app: Router) {
+
     // ###########################################################################################################
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
+
+
+    
         app.get('/user_stats',
             ...(fetchMiddlewares<RequestHandler>(UserStatsController)),
             ...(fetchMiddlewares<RequestHandler>(UserStatsController.prototype.get)),
 
-            function UserStatsController_get(request: any, response: any, next: any) {
-            const args = {
+            async function UserStatsController_get(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
                     wallet: {"in":"query","name":"wallet","required":true,"dataType":"string"},
             };
 
@@ -445,13 +459,18 @@ export function RegisterRoutes(app: Router) {
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = getValidatedArgs(args, request, response);
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
                 const controller = new UserStatsController();
 
-
-              const promise = controller.get.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
+              await templateService.apiHandler({
+                methodName: 'get',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
             } catch (err) {
                 return next(err);
             }
@@ -461,8 +480,8 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(UserLobbiesBlockheightController)),
             ...(fetchMiddlewares<RequestHandler>(UserLobbiesBlockheightController.prototype.get)),
 
-            function UserLobbiesBlockheightController_get(request: any, response: any, next: any) {
-            const args = {
+            async function UserLobbiesBlockheightController_get(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
                     wallet: {"in":"query","name":"wallet","required":true,"dataType":"string"},
                     blockHeight: {"in":"query","name":"blockHeight","required":true,"dataType":"double"},
             };
@@ -471,13 +490,18 @@ export function RegisterRoutes(app: Router) {
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = getValidatedArgs(args, request, response);
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
                 const controller = new UserLobbiesBlockheightController();
 
-
-              const promise = controller.get.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
+              await templateService.apiHandler({
+                methodName: 'get',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
             } catch (err) {
                 return next(err);
             }
@@ -487,8 +511,8 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(UserLobbiesController)),
             ...(fetchMiddlewares<RequestHandler>(UserLobbiesController.prototype.get)),
 
-            function UserLobbiesController_get(request: any, response: any, next: any) {
-            const args = {
+            async function UserLobbiesController_get(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
                     wallet: {"in":"query","name":"wallet","required":true,"dataType":"string"},
                     count: {"in":"query","name":"count","dataType":"double"},
                     page: {"in":"query","name":"page","dataType":"double"},
@@ -498,13 +522,18 @@ export function RegisterRoutes(app: Router) {
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = getValidatedArgs(args, request, response);
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
                 const controller = new UserLobbiesController();
 
-
-              const promise = controller.get.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
+              await templateService.apiHandler({
+                methodName: 'get',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
             } catch (err) {
                 return next(err);
             }
@@ -514,8 +543,8 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(SearchOpenLobbiesController)),
             ...(fetchMiddlewares<RequestHandler>(SearchOpenLobbiesController.prototype.get)),
 
-            function SearchOpenLobbiesController_get(request: any, response: any, next: any) {
-            const args = {
+            async function SearchOpenLobbiesController_get(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
                     wallet: {"in":"query","name":"wallet","required":true,"dataType":"string"},
                     searchQuery: {"in":"query","name":"searchQuery","required":true,"dataType":"string"},
                     page: {"in":"query","name":"page","dataType":"double"},
@@ -526,13 +555,18 @@ export function RegisterRoutes(app: Router) {
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = getValidatedArgs(args, request, response);
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
                 const controller = new SearchOpenLobbiesController();
 
-
-              const promise = controller.get.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
+              await templateService.apiHandler({
+                methodName: 'get',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
             } catch (err) {
                 return next(err);
             }
@@ -542,8 +576,8 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(RoundStatusController)),
             ...(fetchMiddlewares<RequestHandler>(RoundStatusController.prototype.get)),
 
-            function RoundStatusController_get(request: any, response: any, next: any) {
-            const args = {
+            async function RoundStatusController_get(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
                     lobbyID: {"in":"query","name":"lobbyID","required":true,"dataType":"string"},
                     round: {"in":"query","name":"round","required":true,"dataType":"double"},
             };
@@ -552,13 +586,18 @@ export function RegisterRoutes(app: Router) {
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = getValidatedArgs(args, request, response);
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
                 const controller = new RoundStatusController();
 
-
-              const promise = controller.get.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
+              await templateService.apiHandler({
+                methodName: 'get',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
             } catch (err) {
                 return next(err);
             }
@@ -568,8 +607,8 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(RoundExecutorController)),
             ...(fetchMiddlewares<RequestHandler>(RoundExecutorController.prototype.get)),
 
-            function RoundExecutorController_get(request: any, response: any, next: any) {
-            const args = {
+            async function RoundExecutorController_get(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
                     lobbyID: {"in":"query","name":"lobbyID","required":true,"dataType":"string"},
                     round: {"in":"query","name":"round","required":true,"dataType":"double"},
             };
@@ -578,13 +617,18 @@ export function RegisterRoutes(app: Router) {
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = getValidatedArgs(args, request, response);
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
                 const controller = new RoundExecutorController();
 
-
-              const promise = controller.get.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
+              await templateService.apiHandler({
+                methodName: 'get',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
             } catch (err) {
                 return next(err);
             }
@@ -594,21 +638,26 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(RandomLobbyController)),
             ...(fetchMiddlewares<RequestHandler>(RandomLobbyController.prototype.get)),
 
-            function RandomLobbyController_get(request: any, response: any, next: any) {
-            const args = {
+            async function RandomLobbyController_get(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = getValidatedArgs(args, request, response);
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
                 const controller = new RandomLobbyController();
 
-
-              const promise = controller.get.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
+              await templateService.apiHandler({
+                methodName: 'get',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
             } catch (err) {
                 return next(err);
             }
@@ -618,21 +667,26 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(RandomActiveLobbyController)),
             ...(fetchMiddlewares<RequestHandler>(RandomActiveLobbyController.prototype.get)),
 
-            function RandomActiveLobbyController_get(request: any, response: any, next: any) {
-            const args = {
+            async function RandomActiveLobbyController_get(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = getValidatedArgs(args, request, response);
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
                 const controller = new RandomActiveLobbyController();
 
-
-              const promise = controller.get.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
+              await templateService.apiHandler({
+                methodName: 'get',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
             } catch (err) {
                 return next(err);
             }
@@ -642,8 +696,8 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(OpenLobbiesController)),
             ...(fetchMiddlewares<RequestHandler>(OpenLobbiesController.prototype.get)),
 
-            function OpenLobbiesController_get(request: any, response: any, next: any) {
-            const args = {
+            async function OpenLobbiesController_get(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
                     wallet: {"in":"query","name":"wallet","required":true,"dataType":"string"},
                     count: {"in":"query","name":"count","dataType":"double"},
                     page: {"in":"query","name":"page","dataType":"double"},
@@ -653,13 +707,18 @@ export function RegisterRoutes(app: Router) {
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = getValidatedArgs(args, request, response);
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
                 const controller = new OpenLobbiesController();
 
-
-              const promise = controller.get.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
+              await templateService.apiHandler({
+                methodName: 'get',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
             } catch (err) {
                 return next(err);
             }
@@ -669,8 +728,8 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(MatchWinnerController)),
             ...(fetchMiddlewares<RequestHandler>(MatchWinnerController.prototype.get)),
 
-            function MatchWinnerController_get(request: any, response: any, next: any) {
-            const args = {
+            async function MatchWinnerController_get(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
                     lobbyID: {"in":"query","name":"lobbyID","required":true,"dataType":"string"},
             };
 
@@ -678,13 +737,18 @@ export function RegisterRoutes(app: Router) {
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = getValidatedArgs(args, request, response);
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
                 const controller = new MatchWinnerController();
 
-
-              const promise = controller.get.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
+              await templateService.apiHandler({
+                methodName: 'get',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
             } catch (err) {
                 return next(err);
             }
@@ -694,8 +758,8 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(MatchExecutorController)),
             ...(fetchMiddlewares<RequestHandler>(MatchExecutorController.prototype.get)),
 
-            function MatchExecutorController_get(request: any, response: any, next: any) {
-            const args = {
+            async function MatchExecutorController_get(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
                     lobbyID: {"in":"query","name":"lobbyID","required":true,"dataType":"string"},
             };
 
@@ -703,13 +767,18 @@ export function RegisterRoutes(app: Router) {
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = getValidatedArgs(args, request, response);
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
                 const controller = new MatchExecutorController();
 
-
-              const promise = controller.get.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
+              await templateService.apiHandler({
+                methodName: 'get',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
             } catch (err) {
                 return next(err);
             }
@@ -719,8 +788,8 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(LobbyStateController)),
             ...(fetchMiddlewares<RequestHandler>(LobbyStateController.prototype.get)),
 
-            function LobbyStateController_get(request: any, response: any, next: any) {
-            const args = {
+            async function LobbyStateController_get(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
                     lobbyID: {"in":"query","name":"lobbyID","required":true,"dataType":"string"},
             };
 
@@ -728,13 +797,18 @@ export function RegisterRoutes(app: Router) {
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = getValidatedArgs(args, request, response);
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
                 const controller = new LobbyStateController();
 
-
-              const promise = controller.get.apply(controller, validatedArgs as any);
-              promiseHandler(controller, promise, response, undefined, next);
+              await templateService.apiHandler({
+                methodName: 'get',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
             } catch (err) {
                 return next(err);
             }
@@ -743,96 +817,6 @@ export function RegisterRoutes(app: Router) {
 
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
-
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-    function isController(object: any): object is Controller {
-        return 'getHeaders' in object && 'getStatus' in object && 'setStatus' in object;
-    }
-
-    function promiseHandler(controllerObj: any, promise: any, response: any, successStatus: any, next: any) {
-        return Promise.resolve(promise)
-            .then((data: any) => {
-                let statusCode = successStatus;
-                let headers;
-                if (isController(controllerObj)) {
-                    headers = controllerObj.getHeaders();
-                    statusCode = controllerObj.getStatus() || statusCode;
-                }
-
-                // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-                returnHandler(response, statusCode, data, headers)
-            })
-            .catch((error: any) => next(error));
-    }
-
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-    function returnHandler(response: any, statusCode?: number, data?: any, headers: any = {}) {
-        if (response.headersSent) {
-            return;
-        }
-        Object.keys(headers).forEach((name: string) => {
-            response.set(name, headers[name]);
-        });
-        if (data && typeof data.pipe === 'function' && data.readable && typeof data._read === 'function') {
-            response.status(statusCode || 200)
-            data.pipe(response);
-        } else if (data !== null && data !== undefined) {
-            response.status(statusCode || 200).json(data);
-        } else {
-            response.status(statusCode || 204).end();
-        }
-    }
-
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-    function responder(response: any): TsoaResponse<HttpStatusCodeLiteral, unknown>  {
-        return function(status, data, headers) {
-            returnHandler(response, status, data, headers);
-        };
-    };
-
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-    function getValidatedArgs(args: any, request: any, response: any): any[] {
-        const fieldErrors: FieldErrors  = {};
-        const values = Object.keys(args).map((key) => {
-            const name = args[key].name;
-            switch (args[key].in) {
-                case 'request':
-                    return request;
-                case 'query':
-                    return validationService.ValidateParam(args[key], request.query[name], name, fieldErrors, undefined, {"noImplicitAdditionalProperties":"throw-on-extras"});
-                case 'queries':
-                    return validationService.ValidateParam(args[key], request.query, name, fieldErrors, undefined, {"noImplicitAdditionalProperties":"throw-on-extras"});
-                case 'path':
-                    return validationService.ValidateParam(args[key], request.params[name], name, fieldErrors, undefined, {"noImplicitAdditionalProperties":"throw-on-extras"});
-                case 'header':
-                    return validationService.ValidateParam(args[key], request.header(name), name, fieldErrors, undefined, {"noImplicitAdditionalProperties":"throw-on-extras"});
-                case 'body':
-                    return validationService.ValidateParam(args[key], request.body, name, fieldErrors, undefined, {"noImplicitAdditionalProperties":"throw-on-extras"});
-                case 'body-prop':
-                    return validationService.ValidateParam(args[key], request.body[name], name, fieldErrors, 'body.', {"noImplicitAdditionalProperties":"throw-on-extras"});
-                case 'formData':
-                    if (args[key].dataType === 'file') {
-                        return validationService.ValidateParam(args[key], request.file, name, fieldErrors, undefined, {"noImplicitAdditionalProperties":"throw-on-extras"});
-                    } else if (args[key].dataType === 'array' && args[key].array.dataType === 'file') {
-                        return validationService.ValidateParam(args[key], request.files, name, fieldErrors, undefined, {"noImplicitAdditionalProperties":"throw-on-extras"});
-                    } else {
-                        return validationService.ValidateParam(args[key], request.body[name], name, fieldErrors, undefined, {"noImplicitAdditionalProperties":"throw-on-extras"});
-                    }
-                case 'res':
-                    return responder(response);
-            }
-        });
-
-        if (Object.keys(fieldErrors).length > 0) {
-            throw new ValidateError(fieldErrors, '');
-        }
-        return values;
-    }
 
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 }

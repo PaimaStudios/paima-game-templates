@@ -1,8 +1,13 @@
--- Generic paima engine table, that can't be modified
-CREATE TABLE block_heights ( 
+CREATE TABLE paima_blocks (
   block_height INTEGER PRIMARY KEY,
+  ver INTEGER NOT NULL,
+  main_chain_block_hash BYTEA NOT NULL,
   seed TEXT NOT NULL,
-  done BOOLEAN NOT NULL DEFAULT false
+  ms_timestamp TIMESTAMP without time zone NOT NULL,
+
+  -- note: slightly awkward, but this field is nullable
+  --       this helps other SQL queries refer to the block before the block is done being processed
+  paima_block_hash BYTEA
 );
 
 -- Extend the schema to fit your needs
@@ -32,8 +37,8 @@ CREATE TABLE rounds(
   match_state TEXT NOT NULL,
   player_one_blocks_left INTEGER NOT NULL,
   player_two_blocks_left INTEGER NOT NULL,
-  starting_block_height INTEGER NOT NULL references block_heights(block_height),
-  execution_block_Height INTEGER references block_heights(block_height)
+  starting_block_height INTEGER NOT NULL references paima_blocks(block_height),
+  execution_block_Height INTEGER references paima_blocks(block_height)
 );
 
 CREATE TYPE match_result AS ENUM ('win', 'tie', 'loss');
@@ -70,8 +75,8 @@ ON global_user_state (rating);
 
 CREATE FUNCTION update_lobby_round() RETURNS TRIGGER AS $$
 BEGIN
-  UPDATE lobbies 
-  SET 
+  UPDATE lobbies
+  SET
   current_round = NEW.round_within_match
   WHERE lobbies.lobby_id = NEW.lobby_id;
   RETURN NULL;
@@ -80,5 +85,5 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER update_current_round
 AFTER INSERT ON rounds
-FOR EACH ROW 
+FOR EACH ROW
 EXECUTE FUNCTION update_lobby_round();

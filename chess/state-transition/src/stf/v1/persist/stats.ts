@@ -2,9 +2,10 @@ import type { IGetUserStatsResult, INewStatsParams, IUpdateStatsParams } from '@
 import { newStats, updateStats } from '@chess/db';
 import type { SQLUpdate } from '@paima/node-sdk/db';
 import { createScheduledData } from '@paima/node-sdk/db';
-import type { WalletAddress } from '@paima/sdk/utils';
+import type { WalletAddress } from '@paima/sdk/chain-types';
 import type { ConciseResult } from '@chess/utils';
 import type { UserStats } from '../types';
+import { precompiles } from '@chess/precompiles';
 
 // Generate blank/empty user stats
 export function blankStats(wallet: string): SQLUpdate {
@@ -42,7 +43,11 @@ export function scheduleStatsUpdate(
   ratingChange: number,
   block_height: number
 ): SQLUpdate {
-  return createScheduledData(createStatsUpdateInput(wallet, result, ratingChange), block_height);
+  return createScheduledData(
+    createStatsUpdateInput(wallet, result, ratingChange),
+    { blockHeight: block_height },
+    { precompile: precompiles.default }
+  );
 }
 
 // Create stats update input
