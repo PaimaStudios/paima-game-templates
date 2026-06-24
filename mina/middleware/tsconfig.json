@@ -2,7 +2,8 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "build"
+    "outDir": "build",
+    "module": "ESNext"
   },
   "include": ["src/**/*"],
   "references": [{ "path": "../utils" }, { "path": "../game-logic" }]

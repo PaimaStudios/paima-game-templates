@@ -5,6 +5,7 @@ import type { ParsedSubmittedInput } from './types';
 const myGrammar = `
   sudokuEvent = mge|data
   sudokuAction = mga|data
+  sudokuProof = sp|data
 `;
 
 const PaimaParser_JSON = (keyName: string, input: string) => JSON.parse(input);
@@ -14,6 +15,9 @@ const parserCommands = {
     data: PaimaParser_JSON,
   },
   sudokuAction: {
+    data: PaimaParser_JSON,
+  },
+  sudokuProof: {
     data: PaimaParser_JSON,
   },
 };

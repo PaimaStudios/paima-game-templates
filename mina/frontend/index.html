@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Doop</title>
+    <style>
+      #log {
+        font-family: monospace;
+      }
+      #log th, #log td {
+        padding-right: 1ch;
+      }
+    </style>
+  </head>
+  <body>
+    <div>EVM to Mina delegation</div>
+    <table id="log">
+      <tr><th align="right">duration</th><th align="left">message</th></tr>
+      <tr><td align="right" id="duration0"><script>window.start0 = performance.now();</script></td><td>Loading</td></tr>
+    </table>
+
+    <script type="module" async>
+      import endpoints from './build/middleware/middleware.js';
+
+      // ----------------------------------------------------------------------
+      // Logging
+
+      class Chronometer {
+        constructor(target) {
+          this.target = target;
+          this.start = performance.now();
+          this.tick();
+        }
+        tick() {
+          this.target.innerText = ((performance.now() - this.start) / 1000).toFixed(1) + 's';
+          this.id = window.requestAnimationFrame(() => this.tick());
+        }
+        end() {
+          window.cancelAnimationFrame(this.id);
+        }
+      }
+
+      document.getElementById('duration0').innerText = ((performance.now() - window.start0) / 1000).toFixed(1) + 's';
+
+      function elem(ty, props, children) {
+        const e = document.createElement(ty);
+        Object.assign(e, props);
+        if (children) e.append(...children);
+        return e;
+      }
+
+      function log(message) {
+        console.log(message);
+        document.getElementById('log').appendChild(elem('tr', {}, [
+          elem('td', { align: 'right' }, []),
+          elem('td', {}, [typeof message === 'string' || typeof message === 'number' ? message : JSON.stringify(message)]),
+        ]));
+      }
+
+      function logChrono(message) {
+        let target;
+        document.getElementById('log').appendChild(elem('tr', {}, [
+          target = elem('td', { align: 'right' }, []),
+          elem('td', {}, [message]),
+        ]));
+        return new Chronometer(target);
+      }
+
+      async function logChrono2(message, promise) {
+        const chrono = logChrono(message);
+        promise.then(() => chrono.end());
+        return promise;
+      }
+
+      // ----------------------------------------------------------------------
+
+      log('Mina public key: ' + endpoints.publicKey.toBase58());
+      const sig = logChrono2('Waiting for your signature', endpoints.signature);
+      const vk = await logChrono2('Compiling', endpoints.verificationKey);
+      log(`Verification key JSON size is ${JSON.stringify(vk).length} B`);
+      await sig;
+      const proof = await logChrono2('Proving', endpoints.proof);
+      log(`Proof JSON size is ${JSON.stringify(proof).length} B`);
+
+    </script>
+  </body>
+</html>
