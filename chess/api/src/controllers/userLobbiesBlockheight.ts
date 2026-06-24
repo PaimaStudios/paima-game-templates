@@ -18,7 +18,6 @@ export class UserLobbiesBlockheightController extends Controller {
       throw new ValidateError({ blockHeight: { message: 'invalid number' } }, '');
     }
 
-    wallet = wallet.toLowerCase();
     const lobbies = await getNewLobbiesByUserAndBlockHeight.run(
       { wallet, block_height: blockHeight },
       pool

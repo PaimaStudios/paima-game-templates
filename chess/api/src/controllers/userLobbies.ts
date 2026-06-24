@@ -29,7 +29,6 @@ export class UserLobbiesController extends Controller {
       throw new ValidateError({ count: { message: 'invalid number' } }, '');
     }
 
-    wallet = wallet.toLowerCase();
     // after typecheck, valid data output is given in .right
     const p = valPage.right;
     const c = valCount.right;

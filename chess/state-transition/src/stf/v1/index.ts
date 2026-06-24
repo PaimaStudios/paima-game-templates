@@ -20,7 +20,7 @@ export default async function (
   dbConn: Pool
 ): Promise<SQLUpdate[]> {
   console.log(inputData, 'parsing input data');
-  const user = inputData.userAddress.toLowerCase();
+  const user = inputData.realAddress;
   const parsed = parse(inputData.inputData);
   console.log(`Processing input string: ${inputData.inputData}`);
   console.log(`Input string parsed as: ${parsed.input}`);
